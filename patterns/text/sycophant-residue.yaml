@@ -6,8 +6,6 @@ summary: >
   question!") or affirm eagerly before answering ("Certainly!", "Gerne!"); closing wishes such as
   "I hope this helps!" belong to the same family. They address an imagined chat partner and give the
   reader of the final text nothing.
-  Since 2026-09-20 the legacy knowledge base also frames the residue as a symptom of an
-  RLHF-induced stance of reflexive agreement, beyond a mere word list.
 category: tone
 status: core
 provisional: true
@@ -98,6 +96,9 @@ sources:
     note: >
       Not read directly; known only through skill-better-ai-writing (2026-09-20). Methodological
       deepening only, no change to threshold or examples.
+notes: >
+  Since 2026-09-20 the legacy knowledge base also frames the residue as a symptom of an RLHF-induced
+  stance of reflexive agreement, beyond a mere word list. The regex covers the surface formulas only.
 related:
   - {id: model-fingerprint-opener, relation: distinct-from}
   - {id: reasoning-leak, relation: distinct-from}

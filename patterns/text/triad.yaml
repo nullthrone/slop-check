@@ -64,7 +64,7 @@ notes: >
   text-wide rule (3 or more) for texts above short_text_max_words and the paragraph rule (2 or more
   in one paragraph) for short texts, where the legacy text-wide rule did not apply. A long text with
   exactly two triads in one paragraph and none elsewhere no longer triggers. The legacy example
-  shape "from X to Y to Z" is handled by false-range, not by the triad metric.
+  shape "from X to Y to Z" belongs to false-range; the triad metric does not count it.
 sources:
   - source: legacy-knowledge-base
     locator: "T2.1, base taxonomy 2026-07-30"

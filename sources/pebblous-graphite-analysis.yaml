@@ -1,0 +1,14 @@
+id: pebblous-graphite-analysis
+title: "Opus 5.5 Em-Dash AI Tells Drift"
+publisher: Pebblous
+published: 2026-10-05
+accessed: 2026-10-11
+type: blog
+derived_from: [graphite-ai-writing-study]
+access_note: "Published on blog.pebblous.ai; article URL not verified at migration."
+notes: >
+  Secondary analysis of the Graphite data by the publisher's data communication team; not an
+  independent primary source. Adds a wider model table for em dashes (human baseline 3.14 per 1,000
+  words), phrase multipliers ("this matters" 116x), a semicolon frequency drop from 6.10 to 1.64 per
+  1,000 words between Opus 5 and Opus 5.5 (taken from a third-party tally service) and a "mannered
+  prose score" whose method is not disclosed.
