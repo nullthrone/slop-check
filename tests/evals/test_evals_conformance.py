@@ -196,7 +196,7 @@ def test_run_conformance_unavailable_and_budget(tmp_path):
     assert out["models"][0]["id"] == "a/new" and any("now a/new" in n for n in out["notices"])
     out2 = K.run_conformance(
         make_skill(tmp_path),
-        models + [dict(repl, key="k2")],
+        [*models, dict(repl, key="k2")],
         FakeClient({"AUDITTEXT": reply([])}, budget_after=0),
         cases=cases,
         workers=1,

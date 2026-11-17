@@ -109,7 +109,10 @@ def test_fineweb_adapter_date_and_paragraphs():
 
 
 def test_wiki40b_adapter_decodes_bytes_literal_and_markers():
-    raw = "\n_START_ARTICLE_\nDale Peck\n_START_SECTION_\nLeben\n_START_PARAGRAPH_\nEr zog nach Kansas._NEWLINE_Sp\xe4ter mehr."
+    raw = (
+        "\n_START_ARTICLE_\nDale Peck\n_START_SECTION_\nLeben\n"
+        "_START_PARAGRAPH_\nEr zog nach Kansas._NEWLINE_Sp\xe4ter mehr."
+    )
     as_bytes = "b" + repr(raw.encode("utf-8"))[1:]
     for value in (raw, as_bytes):
         out = C.adapt_wiki40b({"text": value}, src(adapter="wiki40b", language="de"))

@@ -240,7 +240,8 @@ def _check_terms(report: Report, rel: str, pattern: dict) -> None:
 
 
 def _check_payload(report: Report, rel: str, pattern: dict) -> None:
-    """Regex and lexicon detectors need a payload for every language they apply to."""
+    """Regex and lexicon detectors need a payload for every language they apply to
+    (an error for candidate and core, a warning for observations)."""
     detector = pattern.get("detector")
     if not isinstance(detector, dict):
         return
@@ -250,9 +251,10 @@ def _check_payload(report: Report, rel: str, pattern: dict) -> None:
         return
     real = _realizations(pattern)
     star = bool((real.get("*") or {}).get(field_name))
+    emit = report.warn if pattern.get("status") == "observation" else report.error
     for lang, body in sorted(real.items()):
         if not body.get(field_name) and not star:
-            report.error(rel, f"detector kind {kind}: realizations.{lang} lacks '{field_name}' (so does '*')")
+            emit(rel, f"detector kind {kind}: realizations.{lang} lacks '{field_name}' (so does '*')")
 
 
 def _check_examples(report: Report, rel: str, pattern: dict, thresholds: dict) -> None:

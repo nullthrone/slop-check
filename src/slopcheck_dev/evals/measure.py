@@ -460,6 +460,18 @@ def measure(
         progress=progress,
     )
     notices.extend(eval_notices)
+    for judge in judges or []:
+        stats = getattr(judge, "stats", None)
+        if stats is not None and (getattr(stats, "errors", 0) or getattr(stats, "messages", None)):
+            jid = (getattr(judge, "entry", None) or {}).get("id", "judge")
+            first = "; ".join(stats.messages[:3])
+            notices.append(f"judge {jid}: {stats.errors} failed calls of {stats.calls}. {first}".strip())
+    if judges and llm_ids:
+        measurements_models = {
+            "judges": [(getattr(j, "entry", None) or {}).get("canonical_slug") for j in judges]
+        }
+    else:
+        measurements_models = {}
     if eval_notices:
         text_ids = [pid for pid in text_ids if pid not in llm_ids]
 
@@ -502,8 +514,11 @@ def measure(
         "verdict_thresholds": vt,
         "patterns": dict(sorted(patterns_out.items())),
     }
-    if models_used:
-        measurements["models"] = models_used
+    models_out = dict(models_used or {})
+    if measurements_models.get("judges") and any(measurements_models["judges"]):
+        models_out["judges"] = measurements_models["judges"]
+    if models_out:
+        measurements["models"] = models_out
     if notices:
         measurements["notices"] = notices
     return measurements

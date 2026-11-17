@@ -16,7 +16,7 @@ from collections.abc import Callable
 from dataclasses import dataclass, field
 
 from .budget import BudgetExceeded
-from .openrouter import OpenRouterClient
+from .openrouter import ModelUnavailableError, OpenRouterClient
 
 JUDGE_MAX_TOKENS = 2048
 
@@ -44,20 +44,41 @@ def make_judge(
     *,
     max_tokens: int = JUDGE_MAX_TOKENS,
     stats: JudgeStats | None = None,
+    refresh: Callable[[dict, set[str]], dict | None] | None = None,
 ) -> Callable[[str, list, str], dict]:
-    """Engine-compatible judge backed by one lockfile entry (role ``judges``)."""
+    """Engine-compatible judge backed by one lockfile entry (role ``judges``).
+
+    When the locked model has been renamed or retired (``ModelUnavailableError``), ``refresh``
+    re-resolves the selector live and the judge continues with the replacement. The entry in
+    use is exposed as ``judge.entry`` so the measurement records the model that really judged.
+    """
     from slopcheck.llm import build_messages, parse_json_object, verbatim_hits
 
     stats = stats if stats is not None else JudgeStats()
+    state = {"entry": entry, "failed": set()}
+
+    def call(messages: list[dict]):
+        while True:
+            current = state["entry"]
+            try:
+                return client.chat(
+                    current, messages, max_tokens=max_tokens, role="judges", params=judge_params(current)
+                )
+            except ModelUnavailableError:
+                state["failed"].add(current["id"])
+                replacement = refresh(current, set(state["failed"])) if refresh else None
+                if not replacement or replacement["id"] in state["failed"]:
+                    raise
+                stats.messages.append(f"{current['id']} unavailable; switched to {replacement['id']}")
+                state["entry"] = replacement
+                judge.entry = replacement  # type: ignore[attr-defined]
 
     def judge(text: str, patterns: list, lang: str) -> dict:
         ids = [p["id"] for p in patterns]
         messages = build_messages(text, patterns, lang)
         stats.calls += 1
         try:
-            res = client.chat(
-                entry, messages, max_tokens=max_tokens, role="judges", params=judge_params(entry)
-            )
+            res = call(messages)
             data = parse_json_object(res.text)
         except BudgetExceeded:
             stats.budget_exceeded = True
@@ -65,7 +86,7 @@ def make_judge(
         except Exception as exc:
             stats.errors += 1
             if len(stats.messages) < 20:
-                stats.messages.append(f"{entry.get('id')}: {type(exc).__name__}: {exc}")
+                stats.messages.append(f"{state['entry'].get('id')}: {type(exc).__name__}: {exc}")
             raise
         stats.usd += res.usd
         return verbatim_hits(data, text, ids)

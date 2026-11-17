@@ -105,7 +105,7 @@ METRIC_WORDS = {
     "paragraph_start_ratio": "Share of paragraphs that open with a term from the word list.",
     "nominalization_density": "Nouns with nominal suffixes per {per_words} words.",
     "bullet_bold_lead": "Longest run of list items within one list that open with a bold lead and a colon.",
-    "triad": "Coordinations of exactly three short items joined by a final and/or, each one to three words long.",
+    "triad": "Coordinations of exactly three short items joined by a final and/or, each up to three words.",
     "comma_density": "Commas per sentence.",
     "hyphenated_premodifier_density": "Hyphenated compound modifiers in front of a noun, per 100 words.",
 }

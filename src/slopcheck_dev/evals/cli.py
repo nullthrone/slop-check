@@ -235,7 +235,8 @@ def cmd_measure(args: argparse.Namespace) -> int:
         elif not budget.allows(0.01):
             reason = "budget cap reached before the run"
         else:
-            judges = [make_judge(client, e) for e in entries[:2]]
+            refresh = _refresher(lock or {})
+            judges = [make_judge(client, e, refresh=refresh) for e in entries[:2]]
             models_used["judges"] = [e.get("canonical_slug") for e in entries[:2]]
         if reason:
             _err(f"notice: llm patterns skipped: {reason}")
