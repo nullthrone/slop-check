@@ -132,21 +132,39 @@ def _publisher_key(source: dict) -> str | None:
     return " ".join(publisher.split()).casefold()
 
 
+ACADEMIC_TYPES = frozenset({"academic-preprint", "peer-reviewed"})
+
+
+def _author_keys(source: dict) -> set[str]:
+    authors = source.get("authors") or []
+    return {" ".join(a.split()).casefold() for a in authors if isinstance(a, str) and a.strip()}
+
+
 def source_clusters(sources: dict[str, dict]) -> dict[str, str]:
     """Map each source id to a cluster id.
 
     Two sources share a cluster if one lists the other in ``derived_from`` (followed
-    transitively, as connected components) or they have the same ``publisher``
-    (case-insensitive). The cluster id is the smallest source id in the cluster.
+    transitively, as connected components), or if they have the same ``publisher``
+    (case-insensitive). For academic sources (``academic-preprint``, ``peer-reviewed``)
+    the publisher is the venue or archive, so they cluster by shared authors instead.
+    The cluster id is the smallest source id in the cluster.
     """
     uf = _UnionFind()
     by_publisher: dict[str, str] = {}
+    by_author: dict[str, str] = {}
     for sid in sorted(sources):
         src = sources[sid] or {}
         uf.find(sid)
         for parent in src.get("derived_from") or []:
             if isinstance(parent, str) and parent in sources:
                 uf.union(sid, parent)
+        if src.get("type") in ACADEMIC_TYPES:
+            for key in _author_keys(src):
+                if key in by_author:
+                    uf.union(sid, by_author[key])
+                else:
+                    by_author[key] = sid
+            continue
         key = _publisher_key(src)
         if key is not None:
             if key in by_publisher:

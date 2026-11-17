@@ -281,7 +281,9 @@ Protected by CODEOWNERS.
 ### 5.2 Source independence
 
 Sources form clusters: two sources are in the same cluster if one lists the other in
-`derived_from` (transitively) or they share the same `publisher`. A pattern's number
+`derived_from` (transitively) or they share the same `publisher`. Academic sources
+(`academic-preprint`, `peer-reviewed`) cluster by shared authors instead, because their
+publisher is the archive or venue (for example arXiv). A pattern's number
 of independent sources is the number of distinct clusters among its references.
 Source types: `academic-preprint`, `peer-reviewed`, `corpus-study`, `commercial-study`,
 `community-directory`, `practitioner-skill`, `blog`, `press`, `documentation`, `own-observation`.

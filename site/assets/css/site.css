@@ -528,6 +528,12 @@ svg {
   white-space: pre;
 }
 
+/* Example requests and reports are prose: wrap them instead of scrolling. */
+.prose pre code.language-text {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
 .prose div.highlighter-rouge,
 .prose figure.highlight {
   margin: 0 0 var(--space-5);

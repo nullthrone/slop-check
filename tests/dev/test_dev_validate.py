@@ -392,3 +392,19 @@ def test_cli_validate_exit_codes(repo, capsys):
     assert main(["validate", "--root", str(repo.root), "--no-regex-timing"]) == 1
     err = capsys.readouterr().err
     assert "patterns/text/new-core.yaml: rule 1" in err
+
+
+def test_academic_sources_cluster_by_authors_not_publisher():
+    from slopcheck_dev.validate import source_clusters
+
+    sources = {
+        "paper-a": {"type": "academic-preprint", "publisher": "arXiv", "authors": ["A. One", "B. Two"]},
+        "paper-b": {"type": "academic-preprint", "publisher": "arXiv", "authors": ["C. Three"]},
+        "paper-c": {"type": "peer-reviewed", "publisher": "ACL", "authors": ["b. two"]},
+        "blog-a": {"type": "blog", "publisher": "Same Blog"},
+        "blog-b": {"type": "blog", "publisher": "same blog"},
+    }
+    clusters = source_clusters(sources)
+    assert clusters["paper-a"] != clusters["paper-b"]
+    assert clusters["paper-a"] == clusters["paper-c"]
+    assert clusters["blog-a"] == clusters["blog-b"]
