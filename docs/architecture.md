@@ -50,7 +50,9 @@ Generated output is never committed to `main`:
 ```
 dist/slop-check/                Installable skill package (pushed to branch `dist`, attached to releases)
 dist/slop-check.zip
-dist/exports/system-prompt.md   Single-file fallback for runtimes without skill support
+dist/slop-check-flat.zip        Same package with SKILL.md at the archive root
+dist/exports/system-prompt.md   Compact single-file fallback for runtimes without skill support
+dist/exports/knowledge.md       Full single-file export (all references) for runtimes with knowledge files
 ```
 
 Bot-owned data lives on the orphan branch `data` (written only by scheduled workflows):
