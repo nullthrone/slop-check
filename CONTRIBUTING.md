@@ -75,7 +75,7 @@ Parameters
 - Goal: <new patterns | more sources for <pattern-id> | <target language> realization of <pattern-id> | quantitative evidence for <pattern-id>>
 
 Existing catalog (do not duplicate; report overlaps as sources for the existing id):
-<paste `python scripts/slopcheck.py patterns --format md` output or the relevant pattern files>
+<paste the output of `python slop-check/scripts/slopcheck.py patterns --format md` or the relevant pattern files>
 
 Requirements
 1. A new pattern must be structurally distinct from every existing pattern. State the

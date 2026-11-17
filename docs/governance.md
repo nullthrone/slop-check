@@ -21,7 +21,7 @@ Every pattern file declares a status. Two more states come from measurement.
 
 | Status | How a pattern gets there | Effect in reports |
 |--------|--------------------------|-------------------|
-| `observation` | Declared. Needs one source. A detector is optional. | Not evaluated in the score. Kept as a lead for research. |
+| `observation` | Declared. Needs one source. A detector is optional. | Left out of reports and the score. Kept as a lead for research. |
 | `candidate` | Declared. Needs two independent sources, a detector and, per language, at least two positive and two negative examples. Must pass the pull request gate. | Reported as an observation with weight 0. |
 | `core` | Derived. A candidate becomes core when the scheduled measurement shows it meets the core criteria. | Counts in the score with a measured weight. |
 | `fading` | Derived. A core pattern that clearly stops standing out. | Reported with weight 0, like a candidate. |

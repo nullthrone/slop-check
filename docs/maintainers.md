@@ -1,9 +1,9 @@
 # Maintainer setup
 
 One-time settings the repository owner makes on GitHub so that the gate runs on its own
-(see D10 and section 8 of architecture.md). Menu paths follow the GitHub documentation at the time of
-writing. Points that the documentation does not state explicitly are marked "not confirmed in the
-docs"; check them once after setup with a test pull request.
+(see D10 and section 8 of [architecture.md](architecture.md)). Menu paths follow the GitHub
+documentation at the time of writing. Points that the documentation does not state explicitly
+are marked "not confirmed in the docs"; check them once after setup with a test pull request.
 
 ## 1. General settings
 
@@ -80,12 +80,15 @@ settings above, start the bots in this order from the Actions tab (Run workflow)
 
 The README and the site link to `releases/latest/download/slop-check.zip` and
 `releases/latest/download/system-prompt.md`, so these links work once the first release exists.
+They link `knowledge.md` on the `dist` branch (`exports/knowledge.md`), which exists after the
+first build of `main`.
 
 Merges that auto-merge performs after the workflow token enabled it are reported not to trigger
 `push` workflows (not confirmed in the docs; the documentation says only that events caused by
 the workflow token start no new runs). release.yml therefore also runs daily and rebuilds `dist`
-when `main` or the measurements changed since the last build. Conformance runs monthly in any case;
-after a change to `skill/` you can start it by hand.
+when `main` or the measurements changed since the last build. Conformance runs monthly and on
+pushes to `main` that touch `skill/`; when such a change arrived through auto-merge, start it by
+hand.
 
 ## 7. How the research routine contributes
 
@@ -93,8 +96,9 @@ The weekly research routine is a contributor like any other. It works on a fork 
 commits under its own agent identity, and opens a pull request with new patterns, sources or
 language realizations. The same gates apply: `ci-gate` measures deterministic detectors on the
 dev split, `llm-gate` judges `llm` detectors, and content-only pull requests merge on their own.
-A research pull request that touches anything outside `patterns/`, `sources/` and the
-contributor docs gets the label `needs-owner` and waits for your review.
+A research pull request that touches anything outside `patterns/`, `sources/` and `docs/`
+(except architecture.md, governance.md and maintainers.md) gets the label `needs-owner` and
+waits for your review.
 
 Give the routine a token of its own (a GitHub App or a fine-grained token limited to this
 repository with contents and pull request write access). A pull request opened with a workflow's

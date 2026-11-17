@@ -70,9 +70,8 @@ Gesamtbefund: <BEFUND> (Score <score>; Gelb ab <gelb>, Rot ab <rot>) | <wörter>
 3. Rationale. Name up to three findings in report order with their weights:
    `Heaviest findings: Antithesis template (2.5), Triad (rule of three) (1.0).` With German
    labels: `Schwerste Befunde: Antithesis template (2,5), Triad (rule of three) (1,0).` When
-   nothing triggered, write
-   `No scored pattern reached its threshold.` or `Kein gewertetes Muster hat seine Schwelle
-   erreicht.`
+   nothing triggered, write `No scored pattern reached its threshold.` or `Kein gewertetes
+   Muster hat seine Schwelle erreicht.`
 4. Findings. Always present. With zero findings, the next line repeats the sentence from the
    rationale. Order the findings by weight, then by hit count, both descending.
 5. Each finding line counts hits (`1 hit`, `2 hits`; German `1 Treffer`, `2 Treffer`). For a
