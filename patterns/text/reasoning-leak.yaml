@@ -71,13 +71,11 @@ notes: >
   lineage; slhck-claudish and popularai-ai-tells-2026 are independent clusters that describe
   reasoning or task decomposition reaching the reader. tropes.fyi and avoid-ai-writing stress
   different facets: tropes.fyi describes narrated deliberation in prose, avoid-ai-writing lists
-  visible task decomposition phrases. The legacy examples "Step 1:" and "First, let's consider"
-  are left out of the detector because tutorials and textbooks use them legitimately. Many search
-  hits for "reasoning leak" concern chain-of-thought leakage in model security research, a
-  different topic.
+  visible task decomposition phrases. Its phrases "Step 1:" and "First, let's consider" are left
+  out of the detector because tutorials and textbooks use them legitimately. The term "reasoning
+  leak" also names chain-of-thought leakage in model security research, a different topic.
 sources:
-  - source: legacy-knowledge-base
-    locator: "Candidate T2.20, opened 2026-09-20; section 5 (state 2026-11-15)"
+  - source: maintainer-observation
   - source: tropes-fyi
     locator: "entry 'Reasoning Leak', category Composition, status new"
     note: >

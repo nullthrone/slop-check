@@ -55,8 +55,9 @@ prevention: >
 notes: >
   Independent sources: tropes-fyi and authoritea-current-ai-tells; the second describes the
   recurrence of distinctive phrases (in fiction) without the staged-callback framing, a partial
-  match. The legacy knowledge base noted the closeness to T1.5 (compulsive
-  summary) and fractal summaries without merging. Threshold chosen at migration.
+  match. Close to compulsive-summary and fractal-summaries but kept separate: those restate the
+  point as a recap, while self-echo reuses a distinctive phrase as a callback. Threshold not yet
+  calibrated against the reference corpora.
 sources:
   - source: tropes-fyi
     locator: "entry 'Self-Echo', category Composition, status new"

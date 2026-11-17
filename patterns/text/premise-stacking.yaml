@@ -51,8 +51,8 @@ prevention: >
   State the point first and support it afterwards. Do not stack premises that make the conclusion
   obvious before you state it.
 notes: >
-  Single-source observation; tropes.fyi links this entry to reasoning leaks. Threshold chosen at
-  migration.
+  Single-source observation; tropes.fyi links this entry to reasoning leaks. Threshold not yet
+  calibrated against the reference corpora.
 sources:
   - source: tropes-fyi
     locator: "entry 'Premise Stacking', category Composition, status new"

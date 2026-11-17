@@ -54,8 +54,8 @@ prevention: >
   matters", "Where it stands".
 notes: >
   Single-source observation. "How" headings are left out because tutorials use them legitimately.
-  Threshold chosen at migration: two such headings, because the source describes the form as the
-  default shape across a document.
+  Threshold: two such headings, because the source describes the form as the default shape across
+  a document; not yet calibrated against the reference corpora.
 sources:
   - source: tropes-fyi
     locator: "entry 'Where/What/Why Headers', category Formatting, status new"

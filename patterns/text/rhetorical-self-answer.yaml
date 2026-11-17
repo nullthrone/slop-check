@@ -56,20 +56,17 @@ prevention: >
   Do not pose a short question and answer it yourself ("The result? Devastating."). State the point
   directly in a complete sentence.
 notes: >
-  The legacy knowledge base never promoted this pattern although it reached four precise sources in
-  2026-09, because tropes.fyi labelled the entry "fading". Under docs/architecture.md D4 and D5 a
-  directory trend label carries no weight; measurement decides. The "Self-QA volleys" variant
-  (several question-answer pairs in a row, "Is it fast? Yes. Is it cheap? Also yes.") is related
-  and only partly covered by the detector, which needs a noun-phrase question opened by a
-  determiner. Threshold taken from the provisional legacy proposal of 2026-08-02.
+  tropes.fyi labels the entry "fading". Under docs/architecture.md D4 and D5 a directory trend
+  label carries no weight; measurement decides. The "Self-QA volleys" variant (several
+  question-answer pairs in a row, "Is it fast? Yes. Is it cheap? Also yes.") is related and only
+  partly covered by the detector, which needs a noun-phrase question opened by a determiner.
+  Threshold: at least 2 occurrences per text, not yet calibrated against the reference corpora.
 sources:
-  - source: legacy-knowledge-base
-    locator: "Candidate T2.12, opened 2026-08-02; section 5 (state 2026-11-15)"
+  - source: maintainer-observation
   - source: tropes-fyi
     locator: "entry 'The X? A Y.' (formerly 'Rhetorical Q&A'), category Sentence Structure, status fading"
     note: >
-      Examples: "The result? Devastating.", "The worst part? Nobody saw it coming." Status label
-      checked repeatedly from 2026-08-30 to 2026-11-15, always "fading".
+      Examples: "The result? Devastating.", "The worst part? Nobody saw it coming."
   - source: lizontheweb-indicators
     locator: "entry 'The X? A Y.'"
   - source: ignorance-ai
@@ -82,7 +79,7 @@ sources:
     note: "Weaker, partial match: several question-answer pairs instead of one self-answer."
   - source: fireprompts-io
     locator: "'Fake rhetorical questions'"
-    note: "Recorded as an unconfirmed additional find; independence could not be verified."
+    note: "Unconfirmed additional find; its independence from the other sources is not verified."
   - source: aismells
     locator: "entry 'Self-Posed Question', category Sentence"
     note: >

@@ -59,16 +59,16 @@ notes: >
   Wikipedia guide; tropes.fyi names the Wikipedia guide as a reference, and the guide's entry
   cites the ACL study, so they are not counted separately. The detector only sees markdown
   headings and only the every-word variant (a capitalized function word inside the heading).
-  Threshold chosen at migration: two headings, because the pattern is the consistent habit across
-  a document. A 2025 personal essay on Medium makes the same claim; the legacy knowledge base
-  judged it methodologically weak and did not register it.
+  Threshold: two headings, because the pattern is the consistent habit across a document; not yet
+  calibrated against the reference corpora. A 2025 personal essay on Medium makes the same claim;
+  it is methodologically weak and not registered as a source.
 sources:
   - source: tropes-fyi
     locator: "entry 'Title Case Headings', category Formatting, status consistent"
     note: "Example: \"Understanding The Impact Of Modern Technology On Society\"."
   - source: fireprompts-io
     locator: "'Capitalized Heading Style'"
-    note: "Thematic match recorded on 2026-08-30; rated methodologically weak and not counted by the legacy knowledge base."
+    note: "Thematic match only; methodologically weak and not counted."
   - source: wikipedia-signs-of-ai-writing
     locator: "Style subpage, section 'Title case' (WP:AITITLECASE)"
     note: >

@@ -78,17 +78,17 @@ prevention: >
   Do not chain three or more clauses with "and" in one sentence. Break long sentences, and use
   punctuation to show which part depends on which.
 notes: >
-  The legacy knowledge base never found an operational threshold and suggested counting commas and
-  semicolons per 100 words. The registry metric comma_density counts commas per sentence, so the
-  value 0.4 with at least 8 sentences was chosen at migration and is uncalibrated. Expected false
+  No source gives an operational threshold; the closest operationalization of the evidence would
+  count commas and semicolons per 100 words. The registry metric comma_density counts commas per
+  sentence, so the value 0.4 with at least 8 sentences is a proxy and not yet calibrated against
+  the reference corpora. Expected false
   positives: texts built from many short sentences fall below the threshold without being sparse,
   because the metric does not normalize for sentence length. The and-stacking component is not
   covered by the metric; a host model applying the pattern by hand should check it. Evidence is
-  mixed: one source claims the opposite for semicolons (see sources), and a later secondary
-  analysis weakens that counter-claim.
+  mixed: one source claims the opposite for semicolons (see sources), and a secondary analysis of
+  the Graphite data weakens that counter-claim.
 sources:
-  - source: legacy-knowledge-base
-    locator: "Candidate T2.14, opened 2026-08-09; section 5 (state 2026-11-15)"
+  - source: maintainer-observation
   - source: economist-ai-writing-analysis
     note: >
       Names verbosity and low punctuation density as the clearest remaining signals of chatbot
@@ -96,7 +96,7 @@ sources:
       length-independent number. Syndicated coverage adds no independent data.
   - source: skill-avoid-ai-writing
     locator: "and-stacking entry"
-    note: "Supports the and-stacking component only; contains no punctuation-sparsity item (checked 2026-09-20)."
+    note: "Supports the and-stacking component only; contains no punctuation-sparsity item."
   - source: tropes-fyi
     locator: "entries 'Never-Ending Conclusion' (Composition) and 'Comma-Clipped Trailing Phrase' (Sentence Structure)"
     note: >
@@ -110,8 +110,8 @@ sources:
     note: >
       Semicolon frequency fell from 6.10 to 1.64 per 1,000 words between Opus 5 and Opus 5.5
       (figures from a third-party tally service). Weakens the semicolon-overuse counter-claim; one
-      model pair only, and derived from the Graphite data, so the legacy knowledge base did not
-      count it as a source.
+      model pair only, and derived from the Graphite data; it bears on the counter-claim, not on
+      the pattern itself.
   - source: reinhart-pnas-2025-llm-style
     note: >
       GPT-4o uses phrasal coordination at 1.9 times the human rate (paired Cohen's d = 0.81); both
@@ -123,7 +123,7 @@ sources:
     note: >
       2025 models are "much less diverse in their usage of punctuation" than 2023 models and human
       news prose; GPT-4o "generates very few em-dashes or semicolons". Single prompt-based news
-      genre; read on 2026-11-17.
+      genre.
   - source: russell-acl-2025-expert-detectors
     locator: "Table 17 (full clue taxonomy), category 'Grammar & Punctuation'"
     note: >

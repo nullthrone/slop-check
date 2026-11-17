@@ -53,7 +53,8 @@ prevention: >
   Do not say that an abstract quality "lives" somewhere. Name the concrete cause or component.
 notes: >
   Single-source observation. The detector restricts the subject to abstract nouns so that
-  technical uses ("the config lives in /etc") stay clear. Threshold chosen at migration.
+  technical uses ("the config lives in /etc") stay clear. Threshold not yet calibrated against the
+  reference corpora.
 sources:
   - source: tropes-fyi
     locator: "entry 'Where It Actually Lives', category Word Choice, status new"

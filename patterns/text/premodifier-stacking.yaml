@@ -44,13 +44,12 @@ prevention: >
   Avoid stacking hyphenated or participial modifiers in front of nouns. Prefer a relative clause or
   a short sentence that names the actor.
 notes: >
-  No source gives a threshold. The value of more than 2 hyphenated premodifiers per 100 words was
-  chosen at migration and is uncalibrated; very short texts reach it with a single hit. The legacy
-  knowledge base examined arXiv:2610.29162 and did not count it as a fourth source because it
-  measures noun-noun compounds, tracked separately as stacked-nouns.
+  No source gives a threshold. The value of more than 2 hyphenated premodifiers per 100 words is
+  not yet calibrated against the reference corpora; very short texts reach it with a single hit.
+  arxiv-2610-29162 is not a source here because it measures noun-noun compounds, tracked
+  separately as stacked-nouns.
 sources:
-  - source: legacy-knowledge-base
-    locator: "Candidate T2.24, opened 2026-11-01; section 5 (state 2026-11-15)"
+  - source: maintainer-observation
   - source: skill-better-ai-writing
     locator: "attributive-adjective stacking observation ('2026-07 research pass')"
     note: >
