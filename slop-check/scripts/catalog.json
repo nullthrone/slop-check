@@ -1,6 +1,6 @@
 {
   "catalog_version": "2026.11.17",
-  "generated_at": "2026-11-17T16:14:01Z",
+  "generated_at": "2026-11-17T17:31:09Z",
   "short_text_max_words": 150,
   "verdict_thresholds": {
     "yellow": 2.0,
@@ -1770,7 +1770,10 @@
         "min_count": 4,
         "per_words": 100,
         "comparison": "gte",
-        "scope": "text"
+        "scope": "text",
+        "short_text": {
+          "min_words": 100
+        }
       },
       "requires": null,
       "realizations": {
@@ -2242,6 +2245,9 @@
         "per_words": 100,
         "comparison": "gte",
         "scope": "text",
+        "short_text": {
+          "min_words": 100
+        },
         "context_overrides": {
           "informal": {
             "min_count": 2,
@@ -2580,6 +2586,9 @@
         "value": {
           "op": "gt",
           "x": 5.25
+        },
+        "short_text": {
+          "min_words": 100
         }
       },
       "requires": null,
@@ -2601,6 +2610,10 @@
           "test_texts": [
             {
               "text": "The fix — finally — landed on Friday. It was small — three lines — but it closed the oldest bug in the tracker.",
+              "expect": "no_trigger"
+            },
+            {
+              "text": "The fix — finally — landed on Friday. It was small — three lines — but it closed the oldest bug in the tracker. The bug had been open since the first public release and showed up only when two users saved the same draft within one second. Support had collected more than forty reports over the years, most of them from teams that share a single account. The patch adds a version check before each save and rejects the second write with a clear message. We ran the full test suite on three platforms and added two new tests for the race. The release notes describe the change and link to the original report.",
               "expect": "trigger"
             },
             {
@@ -2613,7 +2626,7 @@
       "legitimate_use": "Fiction and typeset publications use dashes as a deliberate style. German uses the spaced en dash as its standard Gedankenstrich, which the metric counts as well. Several independent studies find the signal model-dependent and falling sharply in recent models, so treat a hit as weak evidence and weigh it together with other findings; never read the absence of dashes as a sign of human authorship.\n",
       "fix": "Replace about half of the dashes with other punctuation (comma, parenthesis, colon) or split the sentence.\n",
       "prevention": "Use dashes sparingly, at most a few per 500 words. Prefer other punctuation or a new sentence.\n",
-      "notes": "Threshold set so that at most 4 % of the human reference corpus (pre-2022 texts, de and en) triggers it; separation from AI-generated text is not yet measured. German uses the spaced en dash as its Gedankenstrich, which the metric counts, so German human text runs higher: at more than 3 dashes per 500 words 10 % (de) and 7.7 % (en) of the human texts triggered. The threshold of more than 5.25 per 500 words (10.5 per 1,000) sits at the upper end of the human range that SlopDetector reports (up to about 10 per 1,000). The rule applies to all registers, not only to expository prose. Because density is computed per 500 words, two dashes trigger in texts shorter than about 190 words. Given the model dependence, a hit is best weighed together with other accumulation signals; this is not encoded as requires. Curly quotes are covered by curly-quotes.\n",
+      "notes": "Threshold set so that at most 4 % of the human reference corpus (pre-2022 texts, de and en) triggers it; separation from AI-generated text is not yet measured. German uses the spaced en dash as its Gedankenstrich, which the metric counts, so German human text runs higher: at more than 3 dashes per 500 words 10 % (de) and 7.7 % (en) of the human texts triggered. The threshold of more than 5.25 per 500 words (10.5 per 1,000) sits at the upper end of the human range that SlopDetector reports (up to about 10 per 1,000). The rule applies to all registers, not only to expository prose. Because density is computed per 500 words, two dashes trigger in texts shorter than about 190 words; below 100 words of analyzed text the short-text rule keeps the pattern from triggering, because one or two dashes there say nothing about density. Texts of more than 150 words are unaffected. Given the model dependence, a hit is best weighed together with other accumulation signals; this is not encoded as requires. Curly quotes are covered by curly-quotes.\n",
       "sources": [
         {
           "source": "maintainer-observation"
@@ -3648,7 +3661,10 @@
         "per_words": 1000,
         "comparison": "gte",
         "scope": "text",
-        "min_units": null
+        "min_units": null,
+        "short_text": {
+          "min_words": 100
+        }
       },
       "requires": null,
       "realizations": {
@@ -4566,6 +4582,9 @@
           "op": "gt",
           "x": 2
         },
+        "short_text": {
+          "min_words": 100
+        },
         "context_overrides": {
           "technical": {
             "value": {
@@ -4909,6 +4928,9 @@
           "op": "gte",
           "x": 23
         },
+        "short_text": {
+          "min_words": 100
+        },
         "context_overrides": {
           "academic": {
             "value": {
@@ -4940,6 +4962,10 @@
             },
             {
               "text": "Die Durchführung der Operationalisierung erfolgt nach Abschluss der Planung.",
+              "expect": "no_trigger"
+            },
+            {
+              "text": "Die Durchführung der Operationalisierung erfolgt nach Abschluss der Planung. Zur Sicherstellung der Wirksamkeit ist eine Überprüfung der Zielerreichung durch die Geschäftsleitung vorgesehen. Die Umsetzung der Maßnahmen setzt die Abstimmung aller Abteilungen voraus. Nach der Freigabe durch die Leitung beginnt die Einführung der neuen Arbeitsweise in zwei Pilotteams. Die Auswertung der Ergebnisse dient der Vorbereitung einer Entscheidung über die Ausweitung auf weitere Standorte. Für die Dokumentation der Fortschritte ist die Projektkoordination zuständig, die auch die Kommunikation mit den Beteiligten übernimmt. Eine Anpassung der Zeitplanung ist bei Verzögerungen in der Beschaffung möglich. Die Berichterstattung an den Vorstand findet quartalsweise statt. Rückfragen zur Abrechnung richten Sie bitte an die Verwaltung.",
               "expect": "trigger"
             }
           ]
@@ -4960,6 +4986,10 @@
             {
               "text": "The implementation of the optimization requires the alignment of all departments.",
               "context": "academic",
+              "expect": "no_trigger"
+            },
+            {
+              "text": "In today's fast-paced world, communication is more important than ever. It's not just about sending messages, it's about building real connections.",
               "expect": "no_trigger"
             }
           ]
@@ -4987,7 +5017,7 @@
           "relation": "overlaps"
         }
       ],
-      "notes": "Threshold set so that at most 4 % of the human reference corpus (pre-2022 texts, de and en) triggers it; separation from AI-generated text is not yet measured. Suffix tokens are common in ordinary prose: the median human text has about 8 per 300 words, and at 3 per 300 words 85 % (de) and 87 % (en) of the human texts triggered. The threshold of 23 per 300 words (about one word in thirteen) marks the densest 4 % of human texts in both languages. The reference corpus holds texts of 150 words and more; in very short texts two or three nominalizations already exceed the density. The academic override uses a value above the window size (more than 300 per 300 words) because the threshold object has no explicit off switch. The parameter names suffixes (per language) and min_word_length are specific to this metric; the architecture only states that the suffix list lives in params. This pattern covers verbs turned into nouns; premodifier-stacking covers modification moved into the noun phrase and stacked-nouns covers noun-noun compound chains.\n",
+      "notes": "Threshold set so that at most 4 % of the human reference corpus (pre-2022 texts, de and en) triggers it; separation from AI-generated text is not yet measured. Suffix tokens are common in ordinary prose: the median human text has about 8 per 300 words, and at 3 per 300 words 85 % (de) and 87 % (en) of the human texts triggered. The threshold of 23 per 300 words (about one word in thirteen) marks the densest 4 % of human texts in both languages. The reference corpus holds texts of 150 words and more; in very short texts two or three nominalizations already exceed the density, so the short-text rule requires at least 100 words of analyzed text (a 22-word sentence pair with \"communication\" and \"connections\" reached 27.3 per 300 words). Texts of more than 150 words are unaffected. The academic override uses a value above the window size (more than 300 per 300 words) because the threshold object has no explicit off switch. The parameter names suffixes (per language) and min_word_length are specific to this metric; the architecture only states that the suffix list lives in params. This pattern covers verbs turned into nouns; premodifier-stacking covers modification moved into the noun phrase and stacked-nouns covers noun-noun compound chains.\n",
       "effective_status": "core",
       "weight": 1.0,
       "weight_source": "provisional"
@@ -5322,6 +5352,9 @@
         "value": {
           "op": "gt",
           "x": 2
+        },
+        "short_text": {
+          "min_words": 100
         }
       },
       "requires": null,
@@ -5345,7 +5378,7 @@
       "legitimate_use": "Technical and legal writing relies on established compound modifiers (\"open-source license\", \"real-time system\", \"end-to-end test\", \"long-term contract\"); one or two per paragraph are normal. Dismiss hits on fixed terms of the field; flag dense chains where a relative clause or an \"of\" phrase would read more easily.\n",
       "fix": "Unpack dense noun phrases: move the modifier into a relative clause or a prepositional phrase, and name who did what (\"the issue that users reported\").\n",
       "prevention": "Avoid stacking hyphenated or participial modifiers in front of nouns. Prefer a relative clause or a short sentence that names the actor.\n",
-      "notes": "No source gives a threshold. The value of more than 2 hyphenated premodifiers per 100 words is not yet calibrated against the reference corpora; very short texts reach it with a single hit. arxiv-2610-29162 is not a source here because it measures noun-noun compounds, tracked separately as stacked-nouns.\n",
+      "notes": "No source gives a threshold. The value of more than 2 hyphenated premodifiers per 100 words is not yet calibrated against the reference corpora. Very short texts would reach it with a single hit, so the short-text rule requires at least 100 words of analyzed text. arxiv-2610-29162 is not a source here because it measures noun-noun compounds, tracked separately as stacked-nouns.\n",
       "sources": [
         {
           "source": "maintainer-observation"

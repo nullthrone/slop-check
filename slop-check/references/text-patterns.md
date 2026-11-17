@@ -478,6 +478,8 @@ Detection: Measured value (em_dash_density): Em dashes (and en dashes set betwee
 
 Threshold: value > 5.25.
 
+Short texts: value > 5.25, at least 100 words.
+
 Example hits (any language):
 
 - `The release — finally — shipped on Friday.`
@@ -816,6 +818,8 @@ Detection: Measured value (nominalization_density): Nouns with nominal suffixes 
 
 Threshold: value ≥ 23.
 
+Short texts: value ≥ 23, at least 100 words.
+
 Context academic: value > 300.
 
 Example hits (de):
@@ -1146,6 +1150,8 @@ Detection: Phrase match, anywhere in the text. Each phrase shaped like the examp
 
 Threshold: min 4 per 100 words.
 
+Short texts: min 4 per 100 words, at least 100 words.
+
 Example hits (any language):
 
 - `- Faster onboarding`
@@ -1239,6 +1245,8 @@ English text in an informal setting consistently avoids contractions ("I am not 
 Detection: Phrase match, anywhere in the text. Each phrase shaped like the example hits counts once.
 
 Threshold: min 4 per 100 words.
+
+Short texts: min 4 per 100 words, at least 100 words.
 
 Context informal: min 2 per 100 words.
 
@@ -1503,6 +1511,8 @@ Detection: Measured value (markdown_emphasis_density): Bold, italic and heading 
 
 Threshold: value > 2.
 
+Short texts: value > 2, at least 100 words.
+
 Context technical: value > 5.
 
 Example hits (any language):
@@ -1609,6 +1619,8 @@ Modification moves out of relative clauses and "of"/"von" phrases into the slot 
 Detection: Measured value (hyphenated_premodifier_density): Hyphenated compound modifiers in front of a noun, per 100 words.
 
 Threshold: value > 2.
+
+Short texts: value > 2, at least 100 words.
 
 Example hits (any language):
 
