@@ -1,0 +1,15 @@
+id: snake-oil-genai-hype
+title: "Generative AI models generate AI hype"
+url: https://www.normaltech.ai/p/generative-ai-models-generate-ai
+publisher: AI Snake Oil (Substack)
+published: 2022-09-09
+accessed: 2026-11-17
+type: blog
+notes: >
+  Newsletter post by two Princeton computer scientists. Generated 20 Stable Diffusion images each for
+  "artificial intelligence", "artificial intelligence in healthcare", "artificial intelligence in
+  science" and "cover image for a news article on artificial intelligence": all 20 images for the
+  plain prompt showed humanoids or robots, against 11 of the first 20 Shutterstock results; with the
+  domain prompts "19 of the 20 images still contain humanoids". "Machine learning" prompts produced
+  mostly unusable images with illegible characters. Small informal sample, but it compares model
+  output with a human-curated baseline.

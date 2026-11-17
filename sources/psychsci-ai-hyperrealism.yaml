@@ -1,0 +1,13 @@
+id: psychsci-ai-hyperrealism
+title: "AI Hyperrealism: Why AI Faces Are Perceived as More Real Than Human Ones"
+url: https://openresearch-repository.anu.edu.au/items/9f3aa103-8567-43aa-ad01-2290f140a2fc
+publisher: Psychological Science (Association for Psychological Science)
+published: null
+accessed: 2026-11-17
+type: peer-reviewed
+notes: >
+  Psychological Science, 2023, DOI 10.1177/09567976231207095; read via the ANU open research
+  repository record. Experiment 1 (N = 124) finds White AI faces (StyleGAN2) judged human more often
+  than real faces; Experiment 2 (N = 610) identifies attributes separating AI from human faces. The
+  institution's press release (2023-11-13) says AI faces "tend to be more in-proportion". Evidence
+  concerns GAN face synthesis; transfer to diffusion models is an inference.

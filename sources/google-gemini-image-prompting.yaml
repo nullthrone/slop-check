@@ -1,0 +1,13 @@
+id: google-gemini-image-prompting
+title: "How to prompt Gemini 2.5 Flash Image Generation for the best results"
+url: https://developers.googleblog.com/en/how-to-prompt-gemini-2-5-flash-image-generation-for-the-best-results/
+publisher: Google for Developers
+published: 2025-08-28
+accessed: 2026-11-17
+type: documentation
+notes: >
+  Vendor prompting guide. Core principle "Describe the scene, don't just list keywords": a narrative
+  paragraph yields more coherent images than disconnected words. Recommends camera angles, lens
+  types, lighting and fine details for photorealism, positive descriptions in place of exclusions
+  ("an empty, deserted street with no signs of traffic" instead of "no cars"), and exact wording plus
+  font description for text in images.

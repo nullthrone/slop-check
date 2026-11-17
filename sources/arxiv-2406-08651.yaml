@@ -1,0 +1,19 @@
+id: arxiv-2406-08651
+title: "How to Distinguish AI-Generated Images from Authentic Photographs"
+url: https://arxiv.org/abs/2406.08651
+publisher: arXiv
+published: 2024-06-12
+accessed: 2026-11-17
+type: academic-preprint
+notes: >
+  Illustrated field guide from a Northwestern University (Kellogg) research group, built from 138
+  images generated with Midjourney, Stable Diffusion and Firefly, 9 images from social media and 42
+  real photographs. Five categories: anatomical implausibilities (1.1 hands, 1.2 eyes, 1.3 teeth,
+  1.4 bodies, 1.5 merged bodies, 1.6 biometric artifacts), stylistic artifacts (2.1 plastic texture
+  "waxy, shiny, cartoonish, or glossy", 2.2 cinematization, 2.3 hyper-real detail, 2.4
+  inconsistencies in resolution and color), functional implausibilities (3.1 compositional, 3.2
+  dysfunctional objects, 3.3 detail rendering, 3.4 text and logos, 3.5 prompt overfitting),
+  violations of physics (4.1 lighting and shadows, 4.2 reflections, 4.3 depth and perspective) and
+  sociocultural implausibilities. Every section carries a caveat with real photographs that show
+  the same feature (fashion retouching, cinematic photography, lens distortion). Read from the v1
+  PDF (only version) on 2026-11-17.

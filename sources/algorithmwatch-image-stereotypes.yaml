@@ -1,0 +1,12 @@
+id: algorithmwatch-image-stereotypes
+title: "Some image generators produce more problematic stereotypes than others, but all fail at diversity"
+url: https://algorithmwatch.org/en/image-generators-stereotypes-diversity/
+publisher: AlgorithmWatch
+published: 2023-11-02
+accessed: 2026-11-17
+type: press
+notes: >
+  Small comparison of Midjourney, Kandinsky and Adobe Firefly on the same prompts (16 images per
+  generator for a hospital scene). Midjourney's presidential candidates were all white, male and
+  American, its doctors white men styled like the 1950s; none of the three produced a dark-skinned
+  doctor with a light-skinned child. Firefly appeared to rewrite prompts to vary skin tone and gender.

@@ -1,0 +1,15 @@
+id: sightengine-spot-ai-images
+title: "How to spot AI images and deepfakes: tips and limits"
+url: https://sightengine.com/how-to-spot-ai-images-and-deepfakes
+publisher: Sightengine
+published: 2024-09-18
+accessed: 2026-11-17
+type: blog
+notes: >
+  Guide by a commercial image-moderation and AI-image-detection vendor. Visual tells: skin that
+  "often lacks pores or appears overly polished", fabrics lacking fine detail, background lighting
+  that does not match the foreground, "shadows falling in different directions or absent where they
+  should be present", backgrounds that are overly blurred, repetitive or nonsensical, letters
+  "warped, stretched or twisted" and font switches within one word, wrong finger counts, eyes with
+  unusual reflections, inconsistent perspective, faces that seem "to come straight out of an animated
+  movie". Stresses that visual checks are only a first step.
