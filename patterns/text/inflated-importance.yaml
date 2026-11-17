@@ -1,0 +1,93 @@
+id: inflated-importance
+modality: text
+name: Inflated importance
+summary: >
+  Superlative significance framing of ordinary events ("stands as a testament to", "marks a pivotal
+  moment", "markiert einen Wendepunkt", "ein Meilenstein, der die Zukunft prägt"). The text declares
+  importance instead of describing an effect.
+category: tone
+status: core
+detector:
+  kind: regex
+  position: any
+threshold:
+  min_count: 2
+  comparison: gte
+  scope: text
+  short_text: {min_count: 1}
+requires: null
+realizations:
+  en:
+    patterns:
+      - '(?i)\b(?:a|as\s+a|is\s+a|stands\s+as\s+a|serves\s+as\s+a|remains\s+a)\s+(?:true\s+|lasting\s+|powerful\s+|living\s+|fitting\s+|shining\s+|enduring\s+)?testament\s+to\b'
+      - '(?i)\bmarks?\s+(?:a|an)\s+(?:significant|major|historic|new|important|key|landmark)\s+(?:milestone|turning\s+point|chapter|era|shift|leap)\b'
+      - '(?i)\b(?:a|an|this|the)\s+(?:pivotal|defining|watershed|transformative|monumental)\s+(?:moment|milestone|turning\s+point|chapter|era)\b'
+      - '(?i)\b(?:reshap|redefin|revolutioni[sz])(?:e|es|ed|ing)\s+(?:the\s+(?:future|landscape|way)|how\s+(?:we|people|businesses|teams))\b'
+      - '(?i)\b(?:shap|defin)(?:e|es|ed|ing)\s+the\s+future\s+of\b'
+      - '(?i)\bindelible\s+(?:mark|imprint|footprint)\b'
+      - '(?i)\bnothing\s+short\s+of\s+(?:remarkable|revolutionary|transformative|extraordinary|historic|groundbreaking|a\s+revolution|miraculous|game[- ]changing)\b'
+      - '(?i)\b(?:usher(?:s|ed|ing)?\s+in|herald(?:s|ed|ing)?)\s+a\s+new\s+era\b'
+      - '(?i)\bcan(?:not|[’'']t)\s+be\s+overstated\b'
+    examples:
+      positive:
+        - "The new bridge stands as a testament to the city's resilience."
+        - "This launch marks a pivotal moment for the industry."
+        - "The startup is reshaping the future of logistics."
+        - "The importance of this decision cannot be overstated."
+        - "The merger ushers in a new era for regional banking."
+      negative:
+        - "The 2019 report marks a 4% decline in emissions."
+        - "The court read the last will and testament to the heirs."
+        - "The release marks the end of support for Python 3.8."
+        - "We shaped the dough into twelve rolls."
+    test_texts:
+      - {text: "This launch marks a pivotal moment for the industry.", expect: trigger}
+      - {text: "The quarterly report is out. Revenue grew 4 % and churn fell to 2.1 %. The board approved the budget for 2027, and the new office in Leipzig opens in March. This launch marks a pivotal moment for the company, according to the press release. The team will hire twelve engineers over the next two quarters, mostly for the data platform and the billing service. Customer support moves to a new ticketing system in January; the old system stays read-only until June. Training sessions for all staff are scheduled for the second week of December, and the recordings will be available on the intranet. Questions about the migration go to the operations channel, which is staffed from 8:00 to 18:00 on weekdays and covered by an on-call rotation at night and on public holidays. Pricing stays unchanged for existing contracts until the end of the term, and new contracts follow the price list published on 1 November.", expect: no_trigger}
+  de:
+    patterns:
+      - '(?i)\bmarkier(?:t|en|te|ten)\s+(?:einen|eine|ein)\s+(?:echten\s+|historischen\s+|entscheidenden\s+|wichtigen\s+|bedeutenden\s+|regelrechten\s+|wahren\s+)?(?:Wendepunkt|Meilenstein|Zeitenwende|Paradigmenwechsel|Quantensprung|neues\s+(?:Kapitel|Zeitalter))\b'
+      - '(?i)\bein\s+(?:echter\s+|wahrer\s+|wichtiger\s+|bedeutender\s+|historischer\s+)?Meilenstein,\s+(?:der|welcher)\s+[^.!?\n]{0,40}?\b(?:prägt|prägen|verändert|verändern|neu\s+definiert|revolutioniert)\b'
+      - '(?i)\b(?:ein|als)\s+(?:eindrucksvolles|lebendiges|beeindruckendes|beredtes|starkes|bleibendes|eindrückliches)\s+(?:Zeugnis|Denkmal)\b'
+      - '(?i)\beine\s+neue\s+Ära\b'
+      - '(?i)\b(?:prägt|prägen|prägte|gestaltet|gestalten|gestaltete)\s+(?:maßgeblich\s+|entscheidend\s+|nachhaltig\s+)?die\s+Zukunft\s+(?:der|des|von|unserer|unseres)\b'
+      - '(?i)\bkann\s+(?:gar\s+)?nicht\s+(?:hoch\s+genug|genug)\s+(?:eingeschätzt|betont|bewertet|hervorgehoben|gewürdigt)\s+werden\b'
+      - '(?i)\bnichts\s+(?:weniger|Geringeres)\s+als\s+(?:eine?\s+)?(?:Revolution|revolutionär|bahnbrechend|historisch|Meilenstein|Zeitenwende|Quantensprung)'
+      - '(?i)\bunauslöschliche[nr]?\s+(?:Spuren|Spur|Eindruck|Abdruck)\b'
+    examples:
+      positive:
+        - "Die Eröffnung markiert einen Wendepunkt für die Region."
+        - "Das Projekt ist ein Meilenstein, der die Zukunft der Branche prägt."
+        - "Die neue Brücke ist ein eindrucksvolles Zeugnis für die Ingenieurskunst."
+        - "Die Bedeutung dieser Entscheidung kann gar nicht hoch genug eingeschätzt werden."
+        - "Die Fusion läutet eine neue Ära im Regionalbankwesen ein."
+      negative:
+        - "Der Grenzstein markiert die Grenze zwischen den Gemeinden."
+        - "Sie erhielt ein Zeugnis für das Praktikum."
+        - "Das Projekt erreichte den Meilenstein M3 am 4. Mai."
+        - "Über die Zukunft der Linie 7 entscheidet der Stadtrat im März."
+legitimate_use: >
+  Significance backed by evidence is fine ("The 1990 treaty marked a turning point: trade doubled
+  within five years"). Historical writing about a documented new era or milestone may use the words
+  literally. Flag the framing when an ordinary event is declared a milestone or turning point
+  without a concrete effect.
+fix: >
+  Delete the significance claim and describe the concrete causal effect instead: what changed and
+  for whom, with numbers where possible.
+prevention: >
+  Do not declare ordinary events milestones or turning points. Describe what changed and let the
+  reader judge its importance.
+sources:
+  - source: maintainer-observation
+  - source: tropes-fyi
+    locator: "entry 'Grandiose Stakes Inflation' (category Tone, status rising)"
+    note: "Describes the same mechanism; covered by this pattern rather than a separate one."
+  - source: aipromptindex-io
+    locator: "'Importance Puffery'"
+  - source: skill-no-ai-slop
+    locator: "'Importance puffery'"
+related:
+  - {id: hollow-sentences, relation: distinct-from}
+  - {id: false-agency, relation: distinct-from}
+  - {id: empty-intensifiers, relation: distinct-from}
+  - {id: participle-padding, relation: overlaps}
+  - {id: hallmark-vocabulary, relation: overlaps}

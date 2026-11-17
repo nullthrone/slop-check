@@ -1,0 +1,16 @@
+id: en-audit-concession-essay
+language: en
+mode: audit
+notes: Opinion essay that hedges with concession templates and stacks transitions.
+text: |
+  Remote work has changed office life for good. While it has its own limitations, it still offers employees a degree of freedom that few would give up.
+
+  Moreover, the numbers tell a clear story. Commuting time has dropped for millions of workers, and many of them now use those hours for family, exercise or simply sleep. That is honestly a remarkable shift, and it is truly hard to imagine a full return to the old model.
+
+  Furthermore, companies have learned to hire beyond their own city. A team in Leeds can now work with a designer in Porto and a developer in Gdansk, which really widens the talent pool.
+
+  Additionally, the tools have matured. Video calls are stable, shared documents update in real time, and project boards make progress visible to everyone.
+
+  Despite these challenges, remote work remains one of the most important changes of the decade. The truth likely lies somewhere in between: some roles need a desk in a shared office, and others simply do not.
+must_find: [concession-pivot, transition-stacking, empty-intensifiers]
+must_not_find: [emoji-decoration, bullet-bold-lead, curly-quotes, em-dash-inflation]

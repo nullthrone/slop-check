@@ -1,0 +1,40 @@
+name: False positive
+description: A pattern fired on text where the construction is legitimate.
+title: "False positive: "
+labels: ["false-positive"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Findings describe style patterns. They never claim that a text was written by an AI.
+        If a pattern fires on legitimate writing, the excerpt helps tighten its detector or its
+        `legitimate_use` guidance. Remove personal data from the excerpt before posting.
+  - type: textarea
+    id: excerpt
+    attributes:
+      label: Text excerpt
+      description: The sentence or paragraph that triggered the finding, with enough context to judge it.
+      render: text
+    validations:
+      required: true
+  - type: input
+    id: pattern
+    attributes:
+      label: Pattern id
+      description: The id from the report, for example `triad`.
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why it is legitimate
+      description: >
+        For example: a fixed term of the domain, a quotation, a genre convention, standard
+        typography of the language.
+    validations:
+      required: true
+  - type: input
+    id: context
+    attributes:
+      label: Language and context
+      description: Language and register of the text, for example "de, technical documentation".

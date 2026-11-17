@@ -1,0 +1,15 @@
+id: sej-ai-fingerprints
+title: "AI Writing Fingerprints: Identify (& Fix) AI-Generated Content"
+url: https://www.searchenginejournal.com/ai-writing-fingerprints-how-to-spot-fix-ai-generated-content/541613/
+publisher: Search Engine Journal
+authors: [Matt G. Southern]
+published: 2025-03-10
+accessed: 2026-11-17
+type: press
+derived_from: [sun-icml-2025-fingerprints]
+notes: >
+  Trade-press summary of model-specific openers: ChatGPT "Below is..." or "Sure!", Claude "here is a
+  summary", "according to the text", Gemini "certainly! below", Grok "which" or "where"; "first
+  words are highly predictable in AI content". The article cites arXiv 2502.12150, the same study
+  that skill-better-ai-writing cites, so it is registered as derived from sun-icml-2025-fingerprints
+  and does not count as independent of it for model-fingerprint-opener.

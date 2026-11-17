@@ -1,0 +1,23 @@
+id: en-rewrite-library-notice
+language: en
+mode: rewrite
+notes: Rewrite must drop the stock phrases and keep the opening hours and services.
+text: |
+  In today's fast-paced world, our library is more than just a building — it's a community hub. Visitors can borrow books, use the free Wi-Fi and join one of our reading groups.
+
+  Starting on 3 March, the library is open Monday to Friday from 9 am to 7 pm and on Saturdays from 10 am to 2 pm. The annual card still costs 12 pounds.
+
+  In conclusion, the library stands as a testament to the power of community.
+must_remove:
+  - "In today's fast-paced world"
+  - "more than just a building"
+  - "In conclusion"
+  - "testament to"
+must_keep:
+  - "3 March"
+  - "9 am to 7 pm"
+  - "10 am to 2 pm"
+  - "12 pounds"
+  - "Wi-Fi"
+min_length_ratio: 0.4
+max_length_ratio: 1.3

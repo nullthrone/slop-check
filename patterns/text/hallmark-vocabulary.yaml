@@ -1,0 +1,183 @@
+id: hallmark-vocabulary
+modality: text
+name: AI hallmark vocabulary
+summary: >
+  Words that appear far more often in LLM output than in human writing ("delve", "tapestry",
+  "landscape", "nahtlos", "ganzheitlich"). A single occurrence means nothing; the pattern counts only
+  when several accumulate in one text.
+category: lexical
+status: core
+detector:
+  kind: lexicon
+  position: any
+threshold:
+  min_count: 3
+  comparison: gte
+  scope: text
+  short_text: {min_count: 2}
+requires: null
+realizations:
+  en:
+    terms:
+      - delve*
+      - tapestr*
+      - realm
+      - realms
+      - landscape
+      - landscapes
+      - pivotal
+      - underscore
+      - underscores
+      - underscored
+      - underscoring
+      - robust
+      - robustly
+      - foster
+      - fosters
+      - fostered
+      - fostering
+      - showcas*
+      - navigate
+      - navigates
+      - navigated
+      - navigating
+      - leverag*
+      - harness
+      - harnessed
+      - harnessing
+      - streamlin*
+      - intricate
+      - intricately
+      - intricacies
+      - profound
+      - profoundly
+      - captivat*
+      - quiet confidence
+      - quiet strength
+      - quiet power
+      - quiet intensity
+      - quiet determination
+      - quiet resilience
+    examples:
+      positive:
+        - "Let's delve into the data."
+        - "Our robust platform helps teams navigate the compliance landscape."
+        - "These results underscore a pivotal shift."
+        - "She spoke with quiet confidence about the rollout."
+        - "The intricate tapestry of local traditions is captivating."
+      negative:
+        - "The landscaping crew finished the garden on Monday."
+        - "The navigation bar collapses on mobile."
+        - "Robustness checks are reported in Appendix B."
+        - "The room went quiet after the vote."
+    test_texts:
+      - {text: "We delve into a rich tapestry of ideas and navigate the regulatory landscape with a robust plan.", expect: trigger}
+      - {text: "The new build fixes the login bug and cuts startup time from 4.1 s to 2.7 s. Users now navigate the settings page with fewer clicks.", expect: no_trigger}
+  de:
+    terms:
+      - eintauch*
+      - eingetaucht
+      - einzutauchen
+      - ganzheitlich*
+      - nahtlos*
+      - maßgeschneidert*
+      - massgeschneidert*
+      - präzise*
+      - sauber
+      - saubere
+      - sauberen
+      - sauberem
+      - sauberer
+      - sauberes
+      - umfassend*
+      - zukunftssicher*
+      - robust
+      - robuste
+      - robusten
+      - robustem
+      - robuster
+      - robustes
+      - gezielt*
+      - entscheidend*
+      - prägend*
+    examples:
+      positive:
+        - "Wir schaffen nahtlose und maßgeschneiderte Lösungen."
+        - "Ein ganzheitlicher Ansatz ist entscheidend."
+        - "Die zukunftssichere Architektur ist robust."
+        - "Lassen Sie uns in die Details eintauchen."
+      negative:
+        - "Die Sauberkeit im Labor wird täglich geprüft."
+        - "Die Präzision der Messung liegt bei 0,1 mm."
+        - "Die Robustheit des Verfahrens zeigt Anhang B."
+        - "Die Naht ist lose und muss neu genäht werden."
+    test_texts:
+      - {text: "Unser ganzheitlicher Ansatz liefert nahtlose, maßgeschneiderte Lösungen.", expect: trigger}
+      - {text: "Das Update behebt den Login-Fehler und senkt die Startzeit von 4,1 auf 2,7 Sekunden. Die Messung war präzise.", expect: no_trigger}
+legitimate_use: >
+  Literal and technical senses are fine: "landscape" in geography or as screen orientation,
+  "underscore" as the character, "harness" as equipment or a test harness, "robust" as a statistical
+  term, "sauber" meaning physically clean, "präzise" for a measurement. Below the threshold, hits
+  never count as a finding. When the text already shows a strong accumulation of other findings,
+  they may be listed as a supplementary note without weight. Judge each hit by whether a more
+  specific verb or noun would say what actually happens.
+fix: >
+  Replace each word with a verb or noun that names the actual process or object ("delve into the
+  data" becomes "compare the March and April logs").
+prevention: >
+  Avoid the stock vocabulary of generated prose (delve, tapestry, realm, landscape, pivotal,
+  underscore, robust, foster, showcase, navigate, leverage, harness, streamline, intricate, profound,
+  captivate, "quiet" as an intensifier; eintauchen, ganzheitlich, nahtlos, maßgeschneidert, präzise,
+  sauber, umfassend, zukunftssicher, robust, gezielt, entscheidend, prägend). Use the specific word
+  for what happens.
+notes: >
+  Below the threshold, hits never count as a finding. When the text already shows a strong
+  accumulation of other findings, they may be listed as a supplementary note without weight. Vaguer
+  verbs that newer models are said to prefer (quietly, shape, land, earn, hold, pull, signal,
+  compound, real, actually, built different) are not in the list because the Graphite study finds
+  new vocabulary to be model- and version-specific, with no convergence across models. Pebblous
+  reports that a composite of eight classic LLM words now falls below the human level for three
+  newer models, so hit rates on recent models are expected to decline. The multi-word terms ("quiet
+  confidence" and similar) encode the rule that "quiet" counts only as a generic intensifier; they
+  assume the lexicon detector matches phrases as whole words. The threshold is an absolute count
+  independent of text length, so long documents reach it more easily; a scan of about two million
+  words of pre-2022 technical documentation found mostly technical senses (underscore, landscape
+  orientation) in long files.
+sources:
+  - source: maintainer-observation
+  - source: kobak-excess-vocabulary
+    note: >
+      Cited via SlopDetector.org: analysis of 14.2 million PubMed abstracts with a 25-fold rise in
+      the frequency of "delves" since ChatGPT spread.
+  - source: graphite-ai-writing-study
+    note: >
+      About 13,000 words and word combinations over-represented in AI text, with model-specific
+      instead of convergent results: "incredibly" 1,835 times more frequent in Gemini 3.1 Pro than in
+      GPT-6 Astra; "furthermore" absent in GPT-6 Astra; Claude Opus 5.5 uses "can help you" 8 times
+      and "is especially helpful" 12 times as often as Opus 5; GPT-6 Astra uses "not necessarily" 17
+      times as often as Opus 5.5.
+  - source: pebblous-graphite-analysis
+    note: >
+      Phrase multipliers against the human rate: "this matters" 116x, "why [X] matters" 92x, "is more
+      than a [X] it" 98x, "rather than simply" 32x, "looking ahead the" 40x, "dependable" 23x. A
+      composite of 8 classic LLM words (among them delve, tapestry, nuance) is below the human level
+      for three newer models. Own "mannered prose score" (Opus 5 16.75, Opus 5.5 10.57, human 6.65)
+      not used because its method is not disclosed.
+  - source: pangram-signs-of-ai-writing
+    locator: "'AI Phrases'"
+    note: >
+      12x the human baseline; "delve into" 45x, "navigate the tapestry of" 18x. No new words beyond
+      the existing list. Commercial corpus, methodology not disclosed.
+  - source: slopdetector-org
+    locator: "'Excess Style Words'"
+    note: "Points to the Kobak et al. analysis."
+  - source: forbes-jodie-cook
+    note: >
+      A column of 2026-05-21 reports that newer models shift to vaguer verbs such as quietly, shape,
+      land, earn, hold, pull, signal, compound, real, actually, built different; a column of
+      2026-08-10 names quietly, delve, landscape and journey again. The newer verbs are not in the
+      list (see notes).
+related:
+  - {id: brochure-tone, relation: overlaps}
+  - {id: empty-intensifiers, relation: distinct-from}
+  - {id: invented-concept-label, relation: distinct-from}

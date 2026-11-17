@@ -1,0 +1,92 @@
+id: format-bleed
+modality: text
+name: Format bleed
+summary: >
+  Markdown syntax that was never rendered shows up literally in the final text: asterisks around
+  words, hash signs in front of headings, backticks, pipe tables or bracketed link syntax in an
+  email, a chat message, a form field or a printed letter. It is a technical artifact of pasting
+  generated output into a medium that does not render markdown.
+category: formatting
+status: candidate
+detector:
+  kind: llm
+  position: any
+  rubric: >
+    Decide from the text itself whether its target medium renders markdown. Signals for plain
+    text: email greeting and sign-off, letter layout, SMS or chat style, form-field answers,
+    subtitles, social posts on platforms without markdown. Only for such texts, find literal
+    markdown syntax that a reader would see as stray characters: **bold** or __bold__ markers,
+    single asterisks or underscores used for italics, lines starting with #, ##, ###, backtick
+    code spans or fences, pipe-table rows, [text](url) links, and escaped markers such as \*.
+    Do not count markdown in documents meant for rendering (README files, wiki pages, chat
+    platforms that render markdown), asterisks used as footnote markers or censoring (f***),
+    hashtags in social posts, and code samples. Return each stray markup span as a hit.
+threshold:
+  min_count: 1
+  comparison: gte
+  scope: text
+requires: null
+realizations:
+  en:
+    examples:
+      positive:
+        - "Hi team,\n\n**Next steps:** please send the signed contract by Friday.\n\nBest regards"
+        - "Dear customer, thank you for your order. ### Delivery\nYour parcel ships on Monday."
+        - "Hello, the meeting moved to [Room 4](https://intranet.example/rooms/4). See you there!"
+      negative:
+        - "Hi team,\n\nNext steps: please send the signed contract by Friday.\n\nBest regards"
+        - "Loved the conference! #devops #berlin"
+        - "The results were significant* (*p < 0.05, see appendix)."
+  de:
+    examples:
+      positive:
+        - "Hallo zusammen,\n\n**Nächste Schritte:** Bitte schickt den unterschriebenen Vertrag bis Freitag.\n\nViele Grüße"
+        - "Sehr geehrte Kundin, vielen Dank für Ihre Bestellung. ### Lieferung\nIhr Paket wird am Montag verschickt."
+        - "Hallo, das Meeting findet jetzt in [Raum 4](https://intranet.example/raeume/4) statt."
+      negative:
+        - "Hallo zusammen,\n\nNächste Schritte: Bitte schickt den unterschriebenen Vertrag bis Freitag.\n\nViele Grüße"
+        - "Toller Konferenztag! #devops #berlin"
+        - "Die Ergebnisse waren signifikant* (*p < 0,05, siehe Anhang)."
+legitimate_use: >
+  Markdown is correct in documents that will be rendered (READMEs, wikis, many chat tools), and
+  asterisks or hash signs have other conventional uses (footnotes, hashtags, censoring). Flag
+  markup only where the medium shows it as stray characters.
+fix: >
+  Strip the markdown syntax and use the medium's own means: plain line breaks, capitalized labels
+  or the formatting tools of the email client.
+prevention: >
+  When writing for email, chat without markdown rendering, forms or print, write plain text with
+  no markdown syntax.
+notes: >
+  Independent sources: vrid-ai-signs, pangram-signs-of-ai-writing and the Wikipedia guide
+  (aismells repeats the latter and names it as its parent source). Detector kind llm because only
+  the target medium decides whether markup is an artifact; the engine cannot know whether a text
+  will be rendered. The pattern may be a rendering indicator more than a style pattern; it is
+  kept separate from the markdown-bleed aspect of markdown-emphasis-inflation, which measures
+  emphasis density in raw markup. Threshold not yet calibrated against the reference corpora.
+sources:
+  - source: vrid-ai-signs
+    locator: "entry 'Format Bleed'"
+    note: "Unrendered markdown characters (asterisks, hash signs) in the final text."
+  - source: wikipedia-signs-of-ai-writing
+    locator: "Markup subpage, section 'Use of Markdown' (WP:MARKDOWN), with 'Misuse of asterisks' and 'Misuse of number signs'"
+    note: >
+      Chatbot Markdown pasted into wikitext, which does not render it: asterisks for bold, ## for
+      headings, [text](url) links, --- dividers and fenced code blocks marked wikitext, each with
+      dated examples. The main page names Markdown among the most common signs of newly
+      AI-generated text on Wikipedia as of October 2026, and the subpage warns that Markdown alone
+      is "not such a strong indicator" because many people write it.
+  - source: pangram-signs-of-ai-writing
+    locator: "sign 1 'Markdown'"
+    note: >
+      Markdown encoded as plain characters: humans 8 vs. AI 90 per 10,000 words (12x); bold 43x,
+      headers 23x, inline code 5x, italics 2x; people writing in word processors, email clients
+      or forum boxes rarely produce it. Corpus size and method not disclosed.
+  - source: aismells
+    locator: "entry 'Emphasis Epidemic', category Formatting"
+    note: >
+      Includes visible unrendered markdown. aismells names the Wikipedia guide and tropes.fyi as
+      parent resources, so it is not independent of them.
+related:
+  - {id: markdown-emphasis-inflation, relation: overlaps}
+  - {id: emoji-decoration, relation: distinct-from}

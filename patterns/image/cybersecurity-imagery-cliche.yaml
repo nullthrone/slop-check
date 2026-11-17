@@ -1,0 +1,61 @@
+id: cybersecurity-imagery-cliche
+modality: image
+name: Cybersecurity imagery clichés
+summary: >
+  Security and hacking topics are illustrated with a hooded figure hunched over a laptop, often masked
+  or in a balaclava, green Matrix-style ones and zeros on black, glowing padlocks or shields over
+  circuit boards, and dark rooms lit by screens. A foundation-run design challenge (based on interviews
+  with security experts and visual creators), a newsroom handbook and a stock photographer's account
+  document the set and describe it as misleading about the people and the work involved.
+category: visual-subject
+status: candidate
+detector:
+  kind: vision
+  rubric: >
+    First decide whether the image illustrates cybersecurity, hacking, privacy, fraud or data
+    protection. If it does, flag it when its main motif is one of these: a hooded, masked or faceless
+    figure at a keyboard or laptop; streams of binary digits or green code on a dark background; a
+    glowing padlock, shield or keyhole floating over circuitry or a keyboard; a skull or warning symbol
+    on a screen in a dark room. Count one hit per image. Does not count: photos of real security work
+    (an analyst at a monitoring desk, a team in an incident meeting, a person using a hardware key);
+    real screenshots of phishing emails or warning dialogs; a padlock icon used as an interface element
+    in a UI mockup. Describe the visible pattern only; do not infer how the image was made.
+threshold: {min_count: 1}
+realizations:
+  "*":
+    examples:
+      positive:
+        - "Article image on ransomware: a hooded figure with no visible face typing on a laptop in a dark room, green binary code reflected on the screen."
+        - "A glowing blue padlock floating above a circuit board with streams of ones and zeros."
+        - "Illustration for a password guide: a figure in a balaclava holding a credit card in front of a monitor that shows a red skull."
+      negative:
+        - "Photo of an IT administrator in a bright office pressing a hardware security key into a laptop."
+        - "Screenshot of a real phishing email with the suspicious link highlighted."
+        - "Login screen mockup with a small padlock icon next to the password field."
+legitimate_use: >
+  Real security work, real artifacts such as phishing mails, warning dialogs and hardware keys,
+  interface icons, and knowing parody of the clichés.
+fix: >
+  Show the concrete threat or defense and the people affected: the employee reading a suspicious
+  invoice email, the help-desk call, the update screen on a hospital computer, the analyst's
+  monitoring dashboard. Replace the faceless attacker with the consequence or the defense.
+prevention: >
+  For security topics, describe the real situation and the people in it, for example "a clinic
+  receptionist hesitates over an email asking her to reset a password, bright daytime office". Ask for
+  hooded or masked figures, binary or green code, glowing padlocks or shields only when the brief is
+  about that imagery.
+sources:
+  - source: hewlett-cybersecurity-imagery
+    locator: "whole article"
+    note: "Men in hoodies, sometimes with burglar masks, looming over keyboards; green Matrix-style 1s and 0s; glowing locks and server racks."
+  - source: vice-hacker-stock-photos
+    locator: "introduction and interview"
+    note: "'a dark hooded figure leaning menacingly over a laptop'; padlock surrounded by Matrix typography; balaclava."
+  - source: cis-india-cybersecurity-visuals
+    locator: "introduction"
+    note: "Hooded anonymous figures on keyboards, closed locks, glowing green leetspeak on dark backgrounds, a maze of binary. Funded by the same foundation as hewlett-cybersecurity-imagery."
+related:
+  - {id: ai-imagery-cliche, relation: overlaps}
+notes: >
+  The sources document the stock-imagery cliché. Over-representation in image-model output relative to
+  human-made illustrations is untested and is the question for the image benchmark.

@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/nullthrone/slop-check/schema/source.schema.json",
+  "title": "slop-check source",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "title", "type", "accessed"],
+  "properties": {
+    "id": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$", "maxLength": 64},
+    "title": {"type": "string", "minLength": 3},
+    "url": {"type": "string", "pattern": "^https?://"},
+    "publisher": {"type": "string"},
+    "authors": {"type": "array", "items": {"type": "string"}},
+    "published": {"type": ["string", "null"], "format": "date"},
+    "accessed": {"type": "string", "format": "date"},
+    "type": {
+      "enum": [
+        "academic-preprint", "peer-reviewed", "corpus-study", "commercial-study",
+        "community-directory", "practitioner-skill", "blog", "press", "documentation", "own-observation"
+      ]
+    },
+    "derived_from": {"type": "array", "items": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"}},
+    "access_note": {"type": "string"},
+    "notes": {"type": "string"}
+  }
+}

@@ -1,0 +1,181 @@
+# Maintainer setup
+
+One-time settings the repository owner makes on GitHub so that the gate runs on its own
+(see D10 and section 8 of [architecture.md](architecture.md)). Menu paths follow the GitHub
+documentation at the time of writing. Points that the documentation does not state explicitly
+are marked "not confirmed in the docs"; check them once after setup with a test pull request.
+
+## 1. General settings
+
+Settings > General, section "Pull Requests":
+
+- Allow squash merging. The automerge workflow merges with squash, and the ruleset below
+  requires a linear history. Merge commits can be turned off.
+- Select "Allow auto-merge".
+- Select "Automatically delete head branches".
+
+Settings > Advanced Security: enable "Private vulnerability reporting" (used by
+[SECURITY.md](../SECURITY.md) and the issue chooser).
+
+## 2. Ruleset for main
+
+Settings > Rules > Rulesets > New branch ruleset. Target the default branch and set enforcement
+to Active.
+
+- Restrict deletions.
+- Block force pushes.
+- Require linear history.
+- Require a pull request before merging, with 0 required approvals and "Require review from Code
+  Owners" selected. Also select "Dismiss stale pull request approvals when new commits are
+  pushed", so an approval covers only the commits you reviewed. Allowed merge method: squash.
+- Require status checks to pass, with the checks `ci-gate` and `llm-gate`. `ci-gate` is a job of
+  the ci workflow; `llm-gate` is a commit status that llm-eval.yml posts, so leave its source on
+  "any source". Leave "Require branches to be up to date" off, otherwise every merge forces the
+  other open pull requests to rebase and rerun.
+- Bypass list: add the repository admin role, so you can merge your own changes to protected
+  paths (GitHub does not let you approve your own pull request) and pull requests on which
+  `llm-gate` cannot be posted.
+
+Not confirmed in the docs: that "Require review from Code Owners" is enforced when required
+approvals is 0. The rulesets page allows 0 approvals and the code owner option separately; test it
+with a pull request that touches `.github/`, which must wait for your review, and one that touches
+only `patterns/`, which must merge without it.
+
+## 3. Actions settings
+
+Settings > Actions > General:
+
+- Workflow permissions: read access for the `contents` and `packages` permissions (the restricted
+  setting). Every workflow requests the permissions it needs per job.
+- "Allow GitHub Actions to create and approve pull requests": leave it off. No workflow creates
+  or approves pull requests.
+- Approval for running fork pull request workflows from contributors: "Require approval for
+  first-time contributors". Every passing ci run of a pull request that changes an `llm` pattern
+  starts llm-eval, which spends up to the per-pull-request cap, so the weaker setting lets any
+  account older than a few days drain the monthly budget with repeated pushes.
+
+## 4. Secret and budget
+
+Settings > Secrets and variables > Actions > New repository secret: `OPENROUTER_API_KEY`.
+Without it the ci and models workflows still run. llm-eval then passes candidates with a notice
+and fails edits to scored LLM-judged patterns; measure skips corpus generation and LLM judging;
+conformance is skipped.
+
+The code enforces a monthly cap of 26 USD (about 25 EUR) from `governance/thresholds.yaml` before
+every call. As a second line of defense, set a credit limit on the key itself in OpenRouter
+(Key limit in the key dialog, monthly reset) to the same amount.
+
+## 5. Labels
+
+The automerge workflow creates `needs-owner` on first use. Create `pattern-proposal` and
+`false-positive` for the issue forms, which apply them to new issues.
+
+## 6. Branches data and dist
+
+Workflows create both orphan branches on their first run; nobody pushes to them by hand. After the
+settings above, start the bots in this order from the Actions tab (Run workflow):
+
+1. models: writes `models/lock.json` to `data`.
+2. measure: fetches the human corpus, generates the AI corpus, measures every pattern, opens the
+   issue "Measurement report YYYY-MM" and dispatches release with the tag `catalog-YYYY.MM.DD`.
+3. release: runs from that dispatch and fills `dist` plus the first GitHub release. A tag `v*` on
+   `main` also creates a release.
+
+The README and the site link to `releases/latest/download/slop-check.zip` and
+`releases/latest/download/system-prompt.md`, so these links work once the first release exists.
+They link `knowledge.md` on the `dist` branch (`exports/knowledge.md`), which exists after the
+first build of `main`.
+
+Merges that auto-merge performs after the workflow token enabled it are reported not to trigger
+`push` workflows (not confirmed in the docs; the documentation says only that events caused by
+the workflow token start no new runs). release.yml therefore also runs daily and rebuilds `dist`
+when `main` or the measurements changed since the last build. Conformance runs monthly and on
+pushes to `main` that touch `skill/`; when such a change arrived through auto-merge, start it by
+hand.
+
+## 7. How the research routine contributes
+
+The weekly research routine is a contributor like any other. It works on a fork or a branch,
+commits under its own agent identity, and opens a pull request with new patterns, sources or
+language realizations. The same gates apply: `ci-gate` measures deterministic detectors on the
+dev split, `llm-gate` judges `llm` detectors, and content-only pull requests merge on their own.
+A research pull request that touches anything outside `patterns/`, `sources/` and `docs/`
+(except architecture.md, governance.md and maintainers.md) gets the label `needs-owner` and
+waits for your review.
+
+Give the routine a token of its own (a GitHub App or a fine-grained token limited to this
+repository with contents and pull request write access). A pull request opened with a workflow's
+own token starts its checks only after a maintainer approves the run.
+
+## 8. Adjusting thresholds
+
+All admission numbers, weights, provisional values and budget caps live in
+`governance/thresholds.yaml`. Change them in a pull request; CODEOWNERS makes it wait for your
+review, and the pull request description should say why.
+
+- `admission.candidate.pr_gate` applies from the next ci and llm-eval run.
+- `admission.core` and `admission.fading` apply from the next measurement on the holdout split.
+  Run measure by hand if the change should take effect before the monthly run.
+- `weights.from_lift` changes how measured weights follow from the lift (next measurement).
+- `initial_core` lists the patterns that start as core and their provisional weights.
+  `verdict_provisional` holds the verdict thresholds used until a measurement provides measured
+  ones. Both stop mattering for a pattern once a measurement covers it.
+- `budget` caps take effect for the next privileged job.
+
+Model choices are not thresholds: `evals/models.yaml` holds selection rules, and the weekly models
+workflow resolves them. Change a rule there when a model family should be added or dropped.
+
+## 9. Routine work
+
+- Dependabot opens weekly pull requests for actions and Python dependencies. They touch protected
+  paths and wait for your review.
+- Pull requests labeled `needs-owner` wait for you. The automerge workflow never enables
+  auto-merge on them (and turns it off when a push adds a protected path), so after your review
+  you merge them yourself. Everything else either merges by itself or fails a check that the
+  contributor can see in the run.
+- Read the monthly measurement issue. It shows which patterns were promoted or demoted, and
+  which ones could not be measured.
+
+## 10. Verify after setup
+
+GitHub behaviour the workflows rely on but that cannot be tested outside the repository. Check each
+point once with a test pull request from a fork, or in the run logs.
+
+- Code-owner review with 0 required approvals (section 2): a fork pull request that touches
+  `.github/` must stay blocked until you approve it.
+- Auto-merge off after a fork push: enable auto-merge on a content-only fork pull request, then
+  push a commit that touches `.github/` from the fork. The pull request must get `needs-owner` and
+  show auto-merge disabled. GitHub documents that a push or base-branch change by a user without
+  write access disables auto-merge; the workflow re-checks on both.
+- Other base branches: open a fork pull request against `data` or `dist`. The automerge run must
+  withhold auto-merge, and nobody without write access may merge it. If `gh pr merge --auto`
+  merges at once when a pull request already meets all requirements (as on a branch without
+  rules), only the base-branch check stands between such a pull request and the branch, so
+  consider a ruleset for `data` and `dist` that blocks force pushes and deletion.
+- One budget queue: every job that calls OpenRouter shares the concurrency group
+  `openrouter-budget` (the judge job of llm-eval, the whole measure and conformance runs), so
+  spenders run one at a time and read `budget/ledger.json` only once they hold the group. This
+  relies on job-level and workflow-level groups of the same name sharing one queue; confirm it
+  once by starting measure by hand while an llm-eval judge runs (measure must wait).
+- What the queue leaves open: measure and conformance write the ledger before they release the
+  group, but llm-eval's `record-spend` runs after its judge released it, so the next spender may
+  miss up to one judge run's spend (at most the per-pull-request cap, which applies per run; each
+  push is a new run). Keep the OpenRouter key limit (section 4) at the cap; it is the hard stop.
+- GitHub keeps one pending entry per group and cancels it when a newer one queues. A cancelled
+  llm-eval judge posts an error status on the pull request ("push again or re-run"); measure and
+  conformance repeat daily in the first week of the month and skip once the month has a result.
+  Check after the first month that the report and the conformance result exist.
+- A cancelled llm-eval run (a newer push to the same commit cancels it) still records its spend:
+  `record-spend` runs with `always()`; look for the run's entry in `budget/ledger.json`.
+- Pinned dependencies: every workflow installs from `constraints/requirements-dev.txt` in
+  hash-checking mode. Confirm that Dependabot opens pull requests for that file (it is listed in
+  `.github/dependabot.yml`); if not, update the pins and hashes with
+  `pip-compile --generate-hashes` when you bump `pyproject.toml`.
+- workflow_run matches workflows by name: a fork pull request that adds a workflow named `ci`
+  starts llm-eval when that workflow passes. Such a pull request touches `.github/` and cannot
+  merge without you; the cost is budget, which the approval setting in section 3 limits.
+- Pages: the build job has `pages: read` only (configure-pages reads the site settings) and the
+  deploy job `pages: write` and `id-token: write`. Confirm the first pages run deploys.
+- Community health files: GitHub also reads `SUPPORT.md` and `CODE_OF_CONDUCT.md` from `docs/`,
+  which content pull requests may change. ci admits only lowercase file names in `docs/`; confirm
+  that GitHub does not pick up a lowercase `docs/support.md`.

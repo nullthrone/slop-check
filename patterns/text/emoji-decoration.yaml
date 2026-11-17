@@ -1,0 +1,78 @@
+id: emoji-decoration
+modality: text
+name: Emoji and Unicode decoration
+summary: >
+  Emoji and decorative Unicode symbols (check marks, arrows, stars, box-drawing characters,
+  mathematical operators) are used systematically as bullet markers and heading prefixes,
+  sometimes also as ornaments in running text, without any need for visual emphasis. A check mark
+  in front of every bullet or a rocket before "Einleitung" decorates structure that plain markers
+  would carry equally well.
+category: formatting
+status: core
+detector:
+  kind: metric
+  position: any
+  metric: emoji_decoration
+threshold:
+  value: {op: gte, x: 2}
+  short_text:
+    value: {op: gte, x: 1}
+requires: null
+realizations:
+  "*":
+    examples:
+      positive:
+        - "✅ Fast setup\n✅ No configuration\n✅ Works offline"
+        - "## 🚀 Einleitung\n\nDas Projekt startet im Mai.\n\n## 📌 Ziele\n\nWir wollen die Ladezeit halbieren."
+        - "- ⭐ Key benefits\n- ⭐ Pricing\n- ⭐ FAQ"
+        - "→ Schritt eins: Konto anlegen\n→ Schritt zwei: Daten importieren\n→ Schritt drei: Team einladen"
+      negative:
+        - "Thanks for the quick fix, see you on Monday 🙂"
+        - "- Fast setup\n- No configuration\n- Works offline"
+        - "```\nsrc/\n├── main.py\n└── util.py\n```"
+        - "Mapping: old_name → new_name, user_id → id."
+        - "Danke für die schnelle Antwort, bis Montag 👍"
+    notes: >
+      Negatives cover a single emoji at the end of a chat message, plain list markers, a
+      directory tree inside a fenced code block (excluded from analysis) and an inline arrow.
+legitimate_use: >
+  Emoji belong to the register of chat messages and social posts, and some product interfaces use
+  them as icons. Status symbols that carry information per row (pass or fail in a test report, a
+  warning sign on a real warning) are functional. A single emoji used on purpose is outside the
+  pattern. Directory trees and diagrams in code blocks use box-drawing characters legitimately.
+fix: >
+  Delete decorative symbols, or replace them with neutral list markers and plain-text headings.
+prevention: >
+  Do not prefix bullets or headings with emoji or decorative symbols (check marks, arrows, stars,
+  box-drawing characters). Use plain list markers and plain headings unless the symbol carries
+  information the reader needs.
+sources:
+  - source: maintainer-observation
+  - source: tropes-fyi
+    locator: "entry 'Unicode decoration' (/tropes/unicode-decoration)"
+  - source: aismells
+    locator: "entry 'Emoji Overload'"
+    note: "Names a check mark in front of every bullet as a fingerprint."
+  - source: pangram-signs-of-ai-writing
+    locator: "categories 'Unusual Unicode' and 'Emojis'"
+    note: >
+      Raw frequency multiples against a human baseline: check mark 167x, warning sign 57x, arrow
+      48x, decorative dash character 940x. No per-text threshold. Commercial corpus, methodology
+      not disclosed.
+  - source: jetwong-neocities
+    locator: "entry 'Emoji Insertion'"
+    note: "Compiled source; the primary source behind the entry could not be identified, so its independence is uncertain."
+  - source: aipromptindex-io
+    locator: "entry 'Formatting Slop'"
+    note: "Emoji in headings only."
+related:
+  - {id: em-dash-inflation, relation: distinct-from}
+  - {id: curly-quotes, relation: distinct-from}
+  - {id: bullet-bold-lead, relation: distinct-from}
+notes: >
+  The threshold (two decorative prefixes, one in short texts) is set by analogy with the count
+  thresholds of inflated-importance, german-stock-phrases, empty-intensifiers and false-agency; no
+  source quantifies it. The emoji_decoration metric counts line prefixes (bullets, headings) only;
+  emoji scattered through running text are left to the host model. em-dash-inflation and
+  curly-quotes cover punctuation, bullet-bold-lead covers the bold keyword structure of list
+  items.

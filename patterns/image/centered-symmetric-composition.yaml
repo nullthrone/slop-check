@@ -1,0 +1,55 @@
+id: centered-symmetric-composition
+modality: image
+name: Centered symmetric hero composition
+summary: >
+  The subject stands dead center, frontal and often mirror-symmetric, looking into the lens, with
+  nothing that leads the eye elsewhere. Practitioner sources describe it as the fallback when a prompt
+  gives no composition guidance. Centering is a valid choice for formal portraits, icons and symmetric
+  architecture; the pattern is centering that nobody chose.
+category: visual-composition
+status: candidate
+detector:
+  kind: vision
+  rubric: >
+    Check the framing. Flag the image if the main subject sits in the central area of the frame, seen
+    straight on at eye level, the composition is close to mirror-symmetric or static, and nothing in
+    the subject, the format or the brief motivates that framing. Typical signs: a person square to the
+    lens in the exact middle; an object floating centered on a plain or radial background; a glowing
+    focal element in the middle of a symmetric scene. Count one hit per image. Does not count: passport,
+    ID, catalog or icon images whose format requires centering; architecture or interiors photographed
+    along their axis of symmetry; formal portraits where the frontal pose is the point; centered images
+    that use depth, an unusual crop or angle, or a secondary subject to create tension. Describe the
+    visible pattern only; do not infer how the image was made.
+threshold: {min_count: 1}
+realizations:
+  "*":
+    examples:
+      positive:
+        - "Blog image on remote work: a smiling woman with a laptop exactly in the middle of the frame, square to the camera, identical bookshelves on both sides, shot at eye level."
+        - "Concept image for 'innovation': a glowing lightbulb dead center on a symmetric dark radial background with nothing else in the frame."
+        - "Fantasy warrior standing front-on in the middle of the image, arms at the sides, symmetric mountains behind, looking straight into the lens."
+      negative:
+        - "Street photo with the subject walking out of the right third of the frame, shot from a low angle, a passing bus blurred on the left."
+        - "Shop catalog image of a water bottle centered on white, as the catalog format requires."
+        - "Photo of a cathedral nave taken from the central aisle along the building's axis of symmetry."
+legitimate_use: >
+  Formats that need a centered subject (catalog, ID, icon), symmetric architecture, formal portraiture
+  and symmetry used as a deliberate design idea.
+fix: >
+  Recompose: move the subject onto a third or toward an edge, change camera height or angle, crop
+  tighter or wider, add a foreground element or a secondary subject, or let the subject look or move
+  out of frame. Keep centering only where the format needs it.
+prevention: >
+  State the composition: where the subject sits in the frame (left third, lower right), camera height
+  and angle (low angle, over the shoulder, top-down), crop and lens, and what the subject is doing
+  instead of posing ("caught mid-task, looking at the workbench"). Ask for centered symmetry only for
+  formats that require it.
+sources:
+  - source: openart-visual-cliches
+    locator: "cliché 3, dead-center symmetrical composition"
+    note: "'the subject squarely in the middle of the frame', 'weirdly static'."
+  - source: socialmediaexaminer-generic-ai-images
+    locator: "composition section"
+    note: "'Without composition guidance, the model defaults to a straight-on, centered shot.'"
+related:
+  - {id: averaged-face, relation: distinct-from}

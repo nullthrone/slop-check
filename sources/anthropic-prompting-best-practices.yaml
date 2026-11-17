@@ -1,0 +1,16 @@
+id: anthropic-prompting-best-practices
+title: "Prompting best practices (Claude Platform documentation)"
+url: https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices
+publisher: Anthropic
+published: null
+accessed: 2026-11-17
+type: documentation
+notes: >
+  Vendor prompting guide; no date visible. Section "Control the format of responses" offers a
+  sample instruction block named avoid_excessive_markdown_and_bullet_points that tells the model
+  to write long-form content in flowing prose, avoid bold and italics, use ordered or unordered
+  lists only for truly discrete items or on request, and "NEVER output a series of overly short
+  bullet points". It also notes that removing markdown from the prompt reduces markdown in the
+  output, and that one newer model "already formats less than earlier models". Evidence that the
+  vendor treats list- and emphasis-heavy output as a default that needs steering; it reports no
+  frequencies.

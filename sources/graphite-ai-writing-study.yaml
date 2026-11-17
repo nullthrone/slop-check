@@ -1,0 +1,15 @@
+id: graphite-ai-writing-study
+title: "Graphite study of AI writing tells across ten language models (2026)"
+publisher: Graphite
+published: null
+accessed: 2026-10-04
+type: commercial-study
+access_note: >
+  Primary publication not located; URL not verified. Known through VentureBeat (advance copy),
+  Gizmodo ("'This Matters': Researchers Identify Thousands of New Tells in AI Writing", 2026-10-02)
+  and ecosistemastartup.com.
+notes: >
+  Marketing agency study. Method: 10,000 web articles published before November 2022 (Common Crawl),
+  summarized by GPT-4.1 and regenerated from the summaries by ten LLMs; final corpus 9,974 topics.
+  Identifies about 13,000 over-represented words and word combinations, largely model-specific. Em
+  dash rate of Claude Opus 5.5 is 0.015 per 1,000 words against 2.92 for Opus 5.

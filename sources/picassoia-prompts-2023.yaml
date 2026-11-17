@@ -1,0 +1,13 @@
+id: picassoia-prompts-2023
+title: "Stop Writing AI Prompts Like It's 2023 (Here's What Changed)"
+url: https://blog.picassoia.com/stop-writing-ai-prompts-like-its-2023
+publisher: Picasso IA
+published: 2026-04-24
+accessed: 2026-11-17
+type: blog
+notes: >
+  Vendor blog. Argues tag-stacked prompts were a workaround for models with weak language
+  comprehension: "Keyword Stuffing Is Dead", quality descriptors waste token budget and confuse
+  composition, current models are "already biased toward high-quality output by default", platform
+  tags such as "trending on Artstation" "lost their punch". Recommends full-sentence scene
+  descriptions with subject, environment, lighting, camera and lens, and a named capture medium.

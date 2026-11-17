@@ -1,0 +1,100 @@
+id: brochure-tone
+modality: text
+name: Brochure tone
+summary: >
+  Promotional adjectives from travel and marketing copy accumulate in expository text ("vibrant",
+  "breathtaking", "captivating", "atemberaubend", "unvergesslich"). Each one asserts an impression
+  where the reader needs a property they could observe or measure.
+category: tone
+status: core
+detector:
+  kind: lexicon
+  position: any
+threshold:
+  min_count: 2
+  comparison: gte
+  scope: text
+  context_overrides:
+    technical: {min_count: 1}
+    academic: {min_count: 1}
+requires: null
+realizations:
+  en:
+    terms:
+      - vibrant
+      - breathtaking*
+      - captivating
+      - stunning*
+      - picturesque
+      - enchanting
+      - unforgettable
+      - awe-inspiring
+      - idyllic
+      - nestled
+      - bustling
+      - majestic
+      - must-see
+      - must-visit
+      - hidden gem*
+    examples:
+      positive:
+        - "Nestled between rolling hills, the vibrant town offers breathtaking views."
+        - "The new dashboard delivers a captivating experience with stunning visuals."
+        - "Our conference venue sits on a bustling, picturesque harbor that guests find unforgettable."
+        - "This hidden gem is a must-visit for every developer."
+      negative:
+        - "The town lies 12 km north of the pass at 1,450 m and has two hotels with 80 beds in total."
+        - "Each record carries a unique identifier that the importer checks for collisions."
+        - "The captive portal redirects unauthenticated clients to the login page."
+        - "The nested loop runs in quadratic time and dominates the profile."
+    test_texts:
+      - {text: "The API answers in a breathtaking 40 ms on average.", context: technical, expect: trigger}
+      - {text: "The old harbor is vibrant in summer and quiet in winter.", expect: no_trigger}
+      - {text: "The vibrant old town and the breathtaking coastline draw visitors all year.", expect: trigger}
+  de:
+    terms:
+      - atemberaubend*
+      - bezaubernd*
+      - einzigartig*
+      - unvergesslich*
+      - malerisch*
+      - traumhaft*
+      - idyllisch*
+      - zauberhaft*
+      - verwunschen*
+    examples:
+      positive:
+        - "Die atemberaubende Altstadt und der bezaubernde Hafen machen jeden Besuch unvergesslich."
+        - "Unsere Software bietet ein einzigartiges Nutzererlebnis."
+        - "Das malerische Dorf liegt in einer traumhaften Bucht."
+      negative:
+        - "Das Dorf liegt auf 1.450 m Höhe und hat zwei Hotels mit zusammen 80 Betten."
+        - "Jeder Datensatz hat eine eindeutige Kennung, die der Import auf Dubletten prüft."
+        - "Der Atemwegsinfekt dauerte bei den meisten Probanden fünf bis sieben Tage."
+        - "Die Einzelteile werden vor der Montage gezählt und gewogen."
+    test_texts:
+      - {text: "Die Schnittstelle antwortet in atemberaubenden 40 ms.", context: technical, expect: trigger}
+      - {text: "Im Sommer ist der Hafen malerisch, im Winter fast leer.", expect: no_trigger}
+legitimate_use: >
+  Travel guides, hotel and venue marketing, product reviews and fiction use evaluative adjectives
+  by genre; quoted customer feedback is also fine. Dismiss hits when the text is advertising copy
+  by design and the adjective sits next to concrete details. The finding targets expository prose,
+  technical and academic writing included, where the adjective replaces a description.
+fix: >
+  Replace each adjective with an observable or measurable property: altitude, distance, opening
+  hours, latency, a detail the reader can verify. Delete it if no such property exists.
+prevention: >
+  In expository text, technical and academic writing included, do not use promotional adjectives
+  such as "vibrant", "breathtaking", "stunning", "atemberaubend" or "einzigartig". Describe a
+  property the reader can check instead.
+sources:
+  - source: maintainer-observation
+  - source: gptzero-ai-patterns
+    locator: "pattern 'Sales-pitch Tone' (also shown as 'Promotional Tone')"
+related:
+  - {id: hallmark-vocabulary, relation: overlaps}
+notes: >
+  In technical and academic contexts a single promotional adjective already stands out, so the
+  threshold drops to 1 hit there; all other contexts need 2. The term lists start from vibrant,
+  breathtaking, captivating, atemberaubend, bezaubernd, einzigartig and unvergesslich and add
+  common brochure adjectives; "captivating" also overlaps with "captivate" in hallmark-vocabulary.

@@ -1,0 +1,127 @@
+id: empty-intensifiers
+modality: text
+name: Empty intensifiers
+summary: >
+  Filler adverbs and set phrases simulate emphasis or sincerity without adding content
+  ("literally", "honestly", "simply", "actually", "truly", "genuinely", "to be honest", "let's be
+  clear"; German "wirklich", "tatsächlich", "ehrlich gesagt"). One is harmless; several per text
+  inflate the tone and weaken the claims they decorate.
+category: lexical
+status: core
+detector:
+  kind: lexicon
+  position: any
+threshold:
+  min_count: 3
+  comparison: gte
+  scope: text
+  short_text: {min_count: 2}
+requires: null
+realizations:
+  en:
+    terms:
+      - literally
+      - honestly
+      - simply
+      - actually
+      - truly
+      - fundamentally
+      - importantly
+      - genuinely
+      - really
+      - crucially
+      - to be honest
+      - quite frankly
+      - let's be clear
+      - let’s be clear
+    examples:
+      positive:
+        - "Honestly, this is simply the best approach, and it truly matters."
+        - "Let's be clear: the new plan is genuinely better."
+        - "To be honest, the update is literally a game changer."
+        - "It's really just a matter of fundamentally rethinking the workflow."
+      negative:
+        - "The actual cost exceeded the estimate by 12 percent."
+        - "The simplified form needs one signature instead of three."
+        - "The court found the dismissal unjust and ordered back pay."
+        - "Real-time sync works on both clients."
+        - "She gave honest feedback on the second draft."
+    test_texts:
+      - {text: "Honestly, the fix is simple.", expect: no_trigger}
+      - {text: "Honestly, the fix is simply a one-line change.", expect: trigger}
+  de:
+    terms:
+      - wirklich
+      - tatsächlich
+      - buchstäblich
+      - ehrlich gesagt
+      - um ehrlich zu sein
+      - ganz ehrlich
+      - offen gesagt
+      - seien wir ehrlich
+      - schlichtweg
+      - schlicht und ergreifend
+      - wahrhaft
+      - wahrhaftig
+      - geradezu
+    examples:
+      positive:
+        - "Ehrlich gesagt ist das wirklich die beste Lösung."
+        - "Das ist tatsächlich ein buchstäblich neuer Ansatz."
+        - "Um ehrlich zu sein, ist der Plan schlichtweg besser."
+        - "Seien wir ehrlich: Das Ergebnis ist geradezu revolutionär."
+      negative:
+        - "Die tatsächlichen Kosten lagen 12 Prozent über der Schätzung."
+        - "Die Wirklichkeit im Lager sah anders aus als im Bericht."
+        - "Das Formular ist einfach gehalten und braucht nur eine Unterschrift."
+        - "Ehrliche Rückmeldungen helfen dem Team beim nächsten Entwurf."
+    test_texts:
+      - {text: "Ehrlich gesagt ist das wirklich die beste Lösung.", expect: trigger}
+legitimate_use: >
+  "Actually" marking a real contrast with an expectation is fine; quoted speech is exempt.
+  Conversational registers tolerate more of these words. The finding concerns accumulation (three
+  or more per text, two in short texts) where the words carry no meaning.
+fix: >
+  Delete the adverb or replace it with a concrete reason for the emphasis.
+prevention: >
+  Do not use emphasis fillers such as "literally", "honestly", "simply", "actually", "truly",
+  "genuinely", "to be honest", "wirklich", "tatsächlich" or "ehrlich gesagt". If a point needs
+  weight, give the reason.
+sources:
+  - source: maintainer-observation
+  - source: aipromptindex-io
+    locator: "entry 'Empty Adverbs'"
+  - source: skill-no-ai-slop
+    locator: "entry 'often-empty adverbs'"
+    note: "Nearly identical word list, worded independently."
+  - source: workbravely-substack
+    locator: "category 'Intensifier Adverbs/Adjectives'"
+    note: "importantly, crucially, fundamentally, truly, genuinely."
+  - source: skill-avoid-ai-writing
+    locator: "entry 'Hollow intensifiers'"
+  - source: skill-stop-slop
+    locator: "empty-adverb word list"
+    note: "really, just, literally, genuinely, honestly, simply, actually."
+  - source: arxiv-2609-23090
+    locator: "booster and hedge frequencies in CHI papers"
+    note: >
+      Broader booster vocabulary rises from 42.5 to 49.4 on the study's own scale (2025 to 2026)
+      while hedges stay stable. Supporting evidence for the thesis only: it measures a wider
+      linguistic category than this word list.
+related:
+  - {id: cya-disclaimer, relation: distinct-from}
+  - {id: inflated-importance, relation: distinct-from}
+  - {id: hallmark-vocabulary, relation: distinct-from}
+notes: >
+  Threshold set so that at most 4 % of the human reference corpus (pre-2022 texts, de and en)
+  triggers it; separation from AI-generated text is not yet measured. The count (3 per text, 2 in
+  short texts) is set by analogy with hallmark-vocabulary; no source quantifies it. "just" is not
+  in the list: in the human reference corpus it occurred 130 times in 70 of 260 English texts,
+  mostly meaning "only", "exactly" or "a moment ago" ("just $7.99", "just long enough", "have just
+  been"), and made up more than half of all hits. With "just" the English trigger rate was 9.2 %,
+  without it 3.8 %; keeping it would have required 6 hits per text. "really" and "crucially" come
+  from the cited source lists (stop-slop, workbravely). The German list uses direct equivalents of
+  the English words and leaves out "einfach" and "eigentlich" because both carry content in most
+  uses. At least one broad catalog of AI writing signs does not list the pattern. Demarcation:
+  cya-disclaimer covers meta announcements and inflated-importance exaggerates events; this pattern
+  covers single emphasis adverbs.

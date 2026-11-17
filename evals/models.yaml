@@ -1,0 +1,103 @@
+# Model selectors, resolved weekly against https://openrouter.ai/api/v1/models
+# by `slopcheck-dev models resolve` (docs/architecture.md section 6.6).
+# Never put fixed model IDs here. The resolved lockfile lives on branch `data`
+# (models/lock.json) and records the exact canonical_slug used by every run.
+#
+# Selector fields:
+#   family          model family label used for per-family metrics
+#   match           regex on the OpenRouter model id
+#   fallback_match  optional second regex if `match` finds nothing
+#   tier            cheap | frontier (informational, used for cost planning)
+#   max_completion_usd_per_mtok   price ceiling (completion tokens, USD per million)
+#   docs_per_language             generators only: AI documents per language
+# Global exclusions (unless a selector sets allow_preview: true):
+#   ids ending in :free or :batch, ids containing -preview, -exp, -image, -lite-image,
+#   models without text output, models whose expiration_date is within 30 days.
+
+exclusions:
+  id_regex:
+    - ':free$'
+    - ':batch$'
+    - '-preview'
+    - '-exp(-|$)'
+    - '-image'
+    - '-customtools'
+  expiration_grace_days: 30
+
+generators:
+  - family: anthropic
+    match: '^anthropic/claude-haiku-[0-9.]+$'
+    tier: cheap
+    max_completion_usd_per_mtok: 6
+    docs_per_language: 200
+  - family: google
+    match: '^google/gemini-[0-9.]+-flash$'
+    tier: cheap
+    max_completion_usd_per_mtok: 6
+    docs_per_language: 200
+  - family: openai
+    match: '^openai/gpt-[0-9.]+-luna$'
+    fallback_match: '^openai/gpt-[0-9.]+-mini$'
+    tier: cheap
+    max_completion_usd_per_mtok: 6
+    docs_per_language: 200
+  - family: deepseek
+    match: '^deepseek/deepseek-v[0-9.]+-flash$'
+    tier: cheap
+    max_completion_usd_per_mtok: 6
+    docs_per_language: 200
+  - family: mistral
+    match: '^mistralai/mistral-small-[0-9]{4}$'
+    tier: cheap
+    max_completion_usd_per_mtok: 6
+    docs_per_language: 200
+  - family: anthropic
+    match: '^anthropic/claude-sonnet-[0-9.]+$'
+    tier: frontier
+    max_completion_usd_per_mtok: 20
+    docs_per_language: 50
+  - family: openai
+    match: '^openai/gpt-[0-9.]+-sol$'
+    tier: frontier
+    max_completion_usd_per_mtok: 20
+    docs_per_language: 50
+
+# Two judges from different families. An llm-detector hit counts only if both agree.
+judges:
+  - family: anthropic
+    match: '^anthropic/claude-haiku-[0-9.]+$'
+    tier: cheap
+    max_completion_usd_per_mtok: 6
+  - family: openai
+    match: '^openai/gpt-[0-9.]+-luna$'
+    fallback_match: '^openai/gpt-[0-9.]+-mini$'
+    tier: cheap
+    max_completion_usd_per_mtok: 6
+
+# Skill conformance: the packaged skill is run on each of these.
+conformance:
+  - family: anthropic
+    match: '^anthropic/claude-sonnet-[0-9.]+$'
+    tier: frontier
+    max_completion_usd_per_mtok: 20
+  - family: google
+    match: '^google/gemini-[0-9.]+-flash$'
+    tier: cheap
+    max_completion_usd_per_mtok: 6
+  - family: openai
+    match: '^openai/gpt-[0-9.]+-terra$'
+    fallback_match: '^openai/gpt-[0-9.]+$'
+    tier: frontier
+    max_completion_usd_per_mtok: 20
+  - family: deepseek
+    match: '^deepseek/deepseek-v[0-9.]+-flash$'
+    tier: cheap
+    max_completion_usd_per_mtok: 6
+
+# Image-capable judge for image-modality candidates.
+vision_judge:
+  - family: google
+    match: '^google/gemini-[0-9.]+-flash$'
+    tier: cheap
+    max_completion_usd_per_mtok: 6
+    require_input_modalities: [image]

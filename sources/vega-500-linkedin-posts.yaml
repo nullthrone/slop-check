@@ -1,0 +1,21 @@
+id: vega-500-linkedin-posts
+title: "I Analyzed 500 AI-Generated LinkedIn Posts. Here's What They All Have in Common."
+url: https://dev.to/adrianvegaresearch/i-analyzed-500-ai-generated-linkedin-posts-heres-what-they-all-have-in-common-2h36
+publisher: DEV Community
+authors: [Adrian Vega]
+published: null
+accessed: 2026-11-17
+type: blog
+access_note: >
+  The page shows "Posted on Mar 1 • Edited on Mar 2" without a year; the author profile says
+  "Joined Feb 24, 2026", so the post is from 2026, but the year is not printed on the post.
+notes: >
+  Informal analysis of 500 LinkedIn posts from the prior 90 days by solopreneurs, founders,
+  consultants and creators, kept if they showed "strong AI-generation signals" (informal
+  judgement), compared against 100 posts from creators with distinctive voices. The author calls
+  it "directional data", not a rigorous study, and does not explain how the frequency multiples
+  were computed. Phrase table (multiple versus normal professional writing, author's rating):
+  "Here's the thing" 34x (170 of 500 posts), "Let that sink in" 28x Extreme, "Read that again"
+  22x High, "Game-changer" 19x, "It's not about X, it's about Y" 17x, "And honestly?" 15x,
+  "Full stop." 14x, "The truth is" 12x. Structures: one sentence per line in 91 % of the posts;
+  structure mix includes "question-answer-engagement bait" at 11 %.

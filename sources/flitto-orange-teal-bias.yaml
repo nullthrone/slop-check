@@ -1,0 +1,12 @@
+id: flitto-orange-teal-bias
+title: "This color scheme shouts that your image was AI-generated"
+url: https://datalab.flitto.com/en/company/blog/this-orange-and-teal-color-bias-shouts-that-your-image-was-ai-generated/
+publisher: Flitto DataLab
+published: 2024-03-04
+accessed: 2026-11-17
+type: blog
+notes: >
+  Analysis post by a data company. Describes an orange-and-teal bias "embedded in Midjourney's base
+  model" and also seen in Ideogram, with DALL-E tending toward a vibrant blue; "the more abstract the
+  prompt is, more prevalent the orange and teal color scheme becomes". Notes the palette alone proves
+  nothing. Advises naming the palette in the prompt and avoiding short abstract prompts.

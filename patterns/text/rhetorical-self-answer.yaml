@@ -1,0 +1,96 @@
+id: rhetorical-self-answer
+modality: text
+name: Rhetorical self-answer
+summary: >
+  A short rhetorical question that nobody asked, built from a bare noun phrase, is answered at once
+  by a clipped, often fragmentary sentence ("The result? Devastating."). The question adds no
+  information; it stages suspense for a point that a plain sentence would state faster.
+category: rhetoric
+status: candidate
+detector:
+  kind: regex
+  position: any
+threshold:
+  min_count: 2
+  comparison: gte
+  scope: text
+requires: null
+realizations:
+  en:
+    patterns:
+      - '(?:^|(?<=[.!?:]\s))(?:The|Our|Your|My|Their|His|Her|Its|This|That|And the|But the|So the)\s(?:(?!(?:is|are|was|were|has|have|had|does|do|did|will|can|could|would|should|not|no)\b)[\w’''-]{1,20}\s){0,3}[\w’''-]{1,20}\?\s{1,3}(?!Then\b|If\b)[A-Z][^.!?\n]{0,60}[.!]'
+    examples:
+      positive:
+        - "The result? Devastating."
+        - "The worst part? Nobody saw it coming."
+        - "The solution? It's simpler than you think."
+        - "We shipped on Friday. The scary part? This attack vector is perfect for developers."
+      negative:
+        - "What was the result? We lost two days of data because the backup job had failed silently."
+        - "The meeting is tomorrow? Nobody told me."
+        - "The server does not respond? Then check the firewall rules first."
+        - "Is the result correct? Yes, it matches the reference values to four decimal places."
+  de:
+    patterns:
+      - '(?:^|(?<=[.!?:]\s))(?:Der|Die|Das|Den|Dem|Des|Unser|Unsere|Ihr|Ihre|Mein|Meine|Sein|Seine|Und der|Und die|Und das)\s(?:(?!(?:ist|sind|war|waren|hat|haben|hatte|wird|werden|kann|können|soll|muss|nicht|kein|keine)\b)[\w’''-]{1,20}\s){0,3}[\w’''-]{1,20}\?\s{1,3}(?!Dann\b|Wenn\b)[A-ZÄÖÜ][^.!?\n]{0,60}[.!]'
+    examples:
+      positive:
+        - "Das Ergebnis? Ernüchternd."
+        - "Der Haken? Es gibt keinen."
+        - "Die Folge? Stillstand in der gesamten Abteilung."
+        - "Das Beste daran? Es kostet nichts."
+      negative:
+        - "Das Meeting ist morgen? Davon wusste ich nichts."
+        - "Der Server antwortet nicht? Dann prüfen Sie zuerst die Firewall."
+        - "Wie hoch war das Ergebnis? Genau 4,2 Prozent über Plan."
+        - "Die Frage ist offen: Wer zahlt den Umbau?"
+legitimate_use: >
+  Spoken-style formats (talks, podcasts, short social posts) use a single self-answered question as
+  a deliberate beat, and FAQ or troubleshooting texts pair a real reader question with its answer.
+  Dismiss a hit when the question is one the reader plausibly has, or when it occurs once in a long
+  text. Flag the reflexive form: repeated staged questions whose answers could stand alone.
+fix: >
+  Delete the question and state the answer as a full sentence with its subject ("The result was a
+  two-day outage"). If the suspense matters, earn it with the facts that lead up to the point.
+prevention: >
+  Do not pose a short question and answer it yourself ("The result? Devastating."). State the point
+  directly in a complete sentence.
+notes: >
+  tropes.fyi labels the entry "fading". Under docs/architecture.md D4 and D5 a directory trend
+  label carries no weight; measurement decides. The "Self-QA volleys" variant (several
+  question-answer pairs in a row, "Is it fast? Yes. Is it cheap? Also yes.") is related and only
+  partly covered by the detector, which needs a noun-phrase question opened by a determiner.
+  Threshold: at least 2 occurrences per text, not yet calibrated against the reference corpora.
+sources:
+  - source: maintainer-observation
+  - source: tropes-fyi
+    locator: "entry 'The X? A Y.' (formerly 'Rhetorical Q&A'), category Sentence Structure, status fading"
+    note: >
+      Examples: "The result? Devastating.", "The worst part? Nobody saw it coming."
+  - source: lizontheweb-indicators
+    locator: "entry 'The X? A Y.'"
+  - source: ignorance-ai
+    locator: "entry 'Mid-Sentence Questions'"
+    note: "\"Questions posed then immediately answered: 'The solution? It's simpler than you think.'\""
+  - source: ananas-ai-pattern-detector
+    locator: "'self-answered questions' under 'Signature constructions'"
+  - source: skill-avoid-ai-writing
+    locator: "entry 'Self-QA volleys'"
+    note: "Weaker, partial match: several question-answer pairs instead of one self-answer."
+  - source: fireprompts-io
+    locator: "'Fake rhetorical questions'"
+    note: "Unconfirmed additional find; its independence from the other sources is not verified."
+  - source: aismells
+    locator: "entry 'Self-Posed Question', category Sentence"
+    note: >
+      "The result? Devastating." as a repeated skeleton; the example repeats tropes.fyi, and
+      aismells names tropes.fyi and the Wikipedia guide as parent resources, so it adds no
+      independent cluster.
+  - source: authoritea-current-ai-tells
+    locator: "section 'Marketing'"
+    note: >
+      "One-word questions as fragments" and "Lots of rhetorical question openers or things like
+      'what does this mean for you?'" in marketing copy. Partial match; no data.
+related:
+  - {id: payoff-announcement, relation: distinct-from}
+  - {id: fragment-pathos, relation: distinct-from}

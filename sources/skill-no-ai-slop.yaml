@@ -1,0 +1,13 @@
+id: skill-no-ai-slop
+title: "no-ai-slop (agent writing skill)"
+published: null
+accessed: 2026-09-06
+type: practitioner-skill
+access_note: >
+  Public GitHub repository, published July 2026. URL not verified; only owner and repository name
+  are known.
+notes: >
+  Practitioner-curated rule set for writing agents. Relevant entries: "Synonym cycling",
+  "often-empty adverbs", "Weasel attribution", "Interpretive metadiscourse", plus several other
+  patterns of this catalog. Its wording is independent of the other sources cited for these
+  patterns.

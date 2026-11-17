@@ -1,0 +1,68 @@
+id: cinematic-default-lighting
+modality: image
+name: Default cinematic lighting
+summary: >
+  The scene is dramatized with movie-still light regardless of what it shows: warm low-sun backlight,
+  a glowing rim around the subject, haze and light shafts, theatrical contrast. The research guide
+  calls it cinematization; practitioner sources describe golden-hour light applied whether or not the
+  place and time of day could produce it. The look is generic because it ignores the light the depicted
+  location would have.
+category: visual-style
+status: candidate
+detector:
+  kind: vision
+  rubric: >
+    Decide whether the lighting is motivated by the depicted setting. Flag the image if it applies
+    dramatic cinematic lighting that the scene gives no reason for: warm low-sun backlight or a golden
+    glow in an indoor, overcast or midday setting; a rim light outlining the subject with no visible or
+    plausible source; haze, light shafts, lens flares or floating dust in an everyday scene such as an
+    office, kitchen or classroom; theatrical contrast that turns a mundane activity into a film still.
+    Count one hit per image. Does not count: scenes set at sunrise or sunset, in fog, at a concert or
+    on a stage, where light direction and color agree with the setting; briefs that are explicitly
+    cinematic (film poster, game key art, album cover); graded images whose light sources stay
+    physically consistent with the scene. Describe the visible pattern only; do not infer how the image
+    was made.
+threshold: {min_count: 1}
+realizations:
+  "*":
+    examples:
+      positive:
+        - "Stock-style image of two colleagues at a laptop in an open-plan office, backlit by a warm orange glow with light shafts through haze, although the windows show an overcast sky."
+        - "Portrait of a nurse in a hospital corridor with a bright golden rim light around her hair and shoulders and no lamp or window behind her."
+        - "Image of a person reading at a kitchen table, lit like a film poster with deep shadows, a lens flare and dust particles glowing in the beams."
+      negative:
+        - "Photo of hikers on a ridge at sunset, warm low light coming from the visible sun on the horizon and long shadows pointing away from it."
+        - "Office meeting under ceiling fluorescents with even, slightly cool light and soft shadows under the desks."
+        - "Film poster key art with a hero backlit by an explosion, where the brief is a poster."
+legitimate_use: >
+  Film posters, game key art and album covers, and scenes that are really set at golden hour, in fog
+  or under stage light. The finding concerns light that the setting does not motivate.
+fix: >
+  Relight to match the depicted place and time. Name the real source (a window on the left, ceiling
+  fluorescents, an overcast sky, a desk lamp) and let its color and direction govern every shadow;
+  remove haze, flares and rim light that have no source; lower contrast to what the setting would
+  produce.
+prevention: >
+  Specify the light source, its direction and its color temperature for the actual setting and time of
+  day, for example "flat overcast daylight from a window on the left" or "cool overhead fluorescent
+  light with soft shadows under the desk". Ask for golden hour, rim light, haze or light shafts only
+  when the scene is set where they occur or the brief is explicitly cinematic.
+sources:
+  - source: arxiv-2406-08651
+    locator: "section 2.2 Cinematization"
+    note: "Generated images 'often portray a cinematic or picturesque style that dramatizes the subjects'; caveat that real photography uses the same style."
+  - source: kellogg-insight-ai-photo-signs
+    locator: "sign 2, stylistic artifacts"
+    note: "'Overly cinematic-looking backgrounds'."
+  - source: openart-visual-cliches
+    locator: "cliché 2, golden-hour lighting"
+  - source: atlantic-why-ai-art-looks
+    locator: "description of the default look"
+    note: "Lighting described as 'dramatic'."
+  - source: fastcompany-gen-ai-aesthetic
+    locator: "contrast quote"
+    note: "'The contrast is too high'."
+related:
+  - {id: default-color-grade, relation: overlaps}
+  - {id: unmotivated-shallow-focus, relation: overlaps}
+  - {id: physics-inconsistency, relation: distinct-from}

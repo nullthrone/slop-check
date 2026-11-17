@@ -1,0 +1,60 @@
+id: stereotyped-default-people
+modality: image
+name: Stereotyped default people
+summary: >
+  When a prompt names a role, a nationality or a generic person without further description,
+  generators fill in a narrow stereotype: doctors and leaders as white men, "an Indian person" as an
+  old bearded man in a turban, a Mexican person in a sombrero, American scenes with a flag, women
+  younger and lighter-skinned than men. Studies of Midjourney, Kandinsky, Firefly and other
+  text-to-image models find the outputs uniform and report amplified racial and gender disparities.
+category: visual-subject
+status: candidate
+detector:
+  kind: vision
+  rubric: >
+    Look at the people and cultural markers in relation to the image's topic. Flag the image if the
+    people follow a narrow demographic or cultural stereotype for their role or origin that the brief
+    does not require: every person in a high-status role is a white man; every person in a care or
+    service role is a woman or a person of color; a nationality is reduced to costume clichés (turban,
+    sombrero, national flag), poverty markers or folkloric dress in an everyday scene; a group is uniform
+    in age, body type and skin tone where variety would be expected. Count one hit per image. Does not
+    count: images of specific real people or events; briefs that specify the demographics; traditional
+    dress at an occasion where it is worn; a single person depicted with specific individual features
+    and context. Describe the visible pattern only; do not infer how the image was made.
+threshold: {min_count: 1}
+realizations:
+  "*":
+    examples:
+      positive:
+        - "Image for 'a doctor talking to a nurse': an older white male doctor and a young female nurse, the same casting in every variant."
+        - "Image for 'a person from India' showing an elderly man with a long beard and a turban in a dusty street, although the prompt named no age, gender or setting."
+        - "Image for 'a family dinner in the USA' with a US flag standing on the table and printed on the plates."
+      negative:
+        - "Photo of surgeons of different genders, ages and skin tones working together in an operating room."
+        - "Image requested as 'an elderly Sikh man at a gurdwara', shown wearing a turban as the brief specifies."
+        - "Photo of a Mexican office worker in business clothes at a laptop in a Mexico City office."
+legitimate_use: >
+  Briefs that specify who is shown, documentation of specific people or events, and traditional dress
+  at occasions where it is worn.
+fix: >
+  Re-cast deliberately: decide age, gender, skin tone, body type and dress for each person according to
+  the setting and its real population, and remove costume or flag markers whose only job is to signal
+  nationality. Show contemporary everyday settings for any country.
+prevention: >
+  Define the people whenever a role or an origin could invite a stereotype: give each person an age,
+  gender, appearance and clothing that fit the real setting ("a woman in her forties in a lab coat and a
+  young man in scrubs"). Describe contemporary everyday settings for every country, and include flags or
+  folkloric costume only when the occasion calls for them.
+sources:
+  - source: restofworld-ai-stereotypes
+    locator: "results by country"
+    note: "About 3,000 Midjourney images; 'an Indian person' 99 of 100 men, 92 with headwear; 'a Mexican person' 99 of 100 with a sombrero or similar hat; all 100 American images with a flag."
+  - source: arxiv-2211-03759
+    locator: "abstract"
+    note: "Trait and role prompts reinforce whiteness as ideal; occupations amplify racial and gender disparities; stereotypes persist against counter-stereotypical prompting."
+  - source: algorithmwatch-image-stereotypes
+    locator: "comparison of three generators"
+    note: "Midjourney presidential candidates all white, male, American; doctors as white men in 1950s style."
+related:
+  - {id: averaged-face, relation: overlaps}
+  - {id: ai-imagery-cliche, relation: distinct-from}

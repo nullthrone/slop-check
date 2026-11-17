@@ -1,0 +1,61 @@
+id: hope-this-finds-you-well
+modality: text
+name: "\"Hope this finds you well\" opener"
+summary: >
+  An email or letter opens with the stock well-wishing line "I hope this email finds you well" or a
+  close variant ("Hope this message finds you well", "I trust this note finds you in good
+  health"). Writing assistants default to it, so the line now reads as template; it delays the
+  reason for writing and could open any email to anyone.
+category: tone
+status: candidate
+detector:
+  kind: regex
+  position: any
+threshold:
+  min_count: 1
+  comparison: gte
+  scope: text
+requires: null
+realizations:
+  en:
+    patterns:
+      - '(?i)\b(?:hope|trust)\s(?:this|my)\s(?:(?:e-?mail|message|note|letter)\s)?finds\syou\s(?:well|in\sgood\s(?:health|spirits)|doing\swell)\b'
+    examples:
+      positive:
+        - "Dear Dr. Chen,\n\nI hope this email finds you well. I am writing to ask about openings in your lab."
+        - "Hi Sam, hope this finds you well! Quick question about the invoice."
+        - "I trust this message finds you in good health."
+        - "Hello team, I hope my note finds you well after the long weekend."
+      negative:
+        - "I hope the move to Leeds went well and the boxes are unpacked."
+        - "I hope you had a good weekend at the coast."
+        - "This tool finds you the cheapest flights well before peak season."
+        - "I hope this email reaches the right team; the form on your site kept failing."
+legitimate_use: >
+  The line is an established courtesy in formal correspondence, and in some business cultures and
+  varieties of English (for example Indian English) it is the expected opening. Flag it where it is
+  the only opening content or appears in cold outreach and generated drafts; do not treat a single
+  formal letter that uses it as evidence on its own.
+fix: >
+  Open with the reason for writing, or with a well-wish that is specific to the recipient ("I hope
+  the launch went smoothly").
+prevention: >
+  Do not open emails with "I hope this email finds you well" or its variants. State the purpose in
+  the first sentence.
+notes: >
+  Mechanism: a fixed salutation formula in the first lines of an email. Closest existing patterns:
+  sycophant-residue (chat politeness addressed to the user, such as "I hope this helps!") and
+  generic-opening (openers that frame the present age or announce the text). This formula addresses
+  the email recipient and is a genre convention that writing assistants now produce by default.
+  Expected false positives: human formal email, where the phrase predates chat assistants; the gate
+  measures how far it separates the two. Both sources are vendor blogs without data.
+sources:
+  - source: grammarly-hope-this-email
+    locator: "introduction and section on why the phrase reads as a cliché"
+    note: "\"Many AI-generated emails default to 'I hope this email finds you well' or a close synonym\"."
+  - source: firstsales-ai-cold-emails
+    locator: "section on generic openers"
+    note: "Lists \"Hope this finds you well...\" among openers by which prospects spot AI-written cold emails."
+related:
+  - {id: sycophant-residue, relation: distinct-from}
+  - {id: generic-opening, relation: distinct-from}

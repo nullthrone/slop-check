@@ -1,0 +1,17 @@
+id: google-ai-forum-placeholder-names
+title: "AI replying with [Your Name]"
+url: https://discuss.ai.google.dev/t/ai-replying-with-your-name/42373
+publisher: Google AI Developers Forum
+published: 2024-10-08
+accessed: 2026-11-17
+type: blog
+access_note: >
+  Forum thread, not a blog; the source schema has no forum type. First post 2024-10-08, five
+  posts by four participants, read on 2026-11-17.
+notes: >
+  Developer report that Gemini 1.5 Pro, used conversationally with a system instruction,
+  "every once in a while" answers with "[Your Name]" or "[Your Store Name]" in the message even
+  after being instructed not to use name placeholders; a second developer reports "the exact same
+  problem". A suggested fix (stripping placeholders in post-processing) is answered with "sometimes
+  then the sentence doesn't make sense". Anecdotal; evidence that models emit bracketed slots
+  unprompted, independent of the Wikipedia guide.

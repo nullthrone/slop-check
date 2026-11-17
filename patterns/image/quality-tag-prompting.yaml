@@ -1,0 +1,70 @@
+id: quality-tag-prompting
+modality: image
+name: Quality-tag prompt stacking
+summary: >
+  Image prompts built from stacked generic quality and platform tags ("hyperrealistic, 8k, masterpiece,
+  best quality, highly detailed, trending on artstation, unreal engine") in place of a description of
+  the scene. The habit comes from early diffusion communities, where such quality boosters were taught
+  as standard practice; current vendor guidance asks for narrative scene descriptions, and practitioners
+  report that the tags add little on current models. The pattern lives in the prompt, and its visible
+  result is the generic default look covered by the other image patterns.
+category: visual-style
+status: candidate
+detector:
+  kind: vision
+  rubric: >
+    Evaluate the generation prompt when it is available together with the image (supplied by the user,
+    stored in the image metadata, or written by you before generating). Flag it if the prompt relies on
+    generic quality or platform tags instead of describing the scene: two or more terms such as
+    "masterpiece", "best quality", "high quality", "8k", "4k", "ultra HD", "hyperrealistic",
+    "hyper-detailed", "highly detailed", "intricate", "trending on artstation", "award-winning",
+    "octane render", "unreal engine", "epic" or "stunning", typically as a comma-separated list
+    appended to a short subject. Count one hit per prompt. Does not count: one technical term that
+    serves the brief (an output resolution required by a print specification, a game-engine look for a
+    game asset); camera, lens, film stock, medium or lighting terms that describe how the image is made;
+    prompts that describe the scene in full sentences and add a single quality word. If no prompt is
+    available, list the pattern as not evaluated.
+threshold: {min_count: 1}
+realizations:
+  "*":
+    examples:
+      positive:
+        - "Prompt: 'woman in a cafe, masterpiece, best quality, 8k, hyperrealistic, highly detailed, trending on artstation'."
+        - "Prompt: 'futuristic city, epic, stunning, ultra HD, octane render, unreal engine, award-winning'."
+        - "Prompt: 'portrait of an old fisherman, 4k, intricate, hyper-detailed, masterpiece'."
+      negative:
+        - "Prompt: 'An elderly fisherman mends a net on a wooden pier at dawn; flat grey light, 50mm lens at eye level, muted blues and browns, his hands in sharp focus.'"
+        - "Prompt: 'Poster artwork at 300 dpi for an A2 print: a hand-drawn map of the old town in ink and watercolor.'"
+        - "Prompt: 'Product photo of a ceramic mug on a linen tablecloth, soft window light from the left, shot on 35mm film.'"
+legitimate_use: >
+  Technical output requirements such as print resolution or aspect ratio, and concrete capture or
+  medium descriptions such as lens, film stock or ink and watercolor, are specifications. They do not
+  count as quality tags.
+fix: >
+  Rewrite the prompt as a scene description covering subject and action, setting, composition and camera
+  position, light source and time of day, palette, and medium. Delete the generic quality and platform
+  tags and regenerate.
+prevention: >
+  Write image prompts as a short descriptive paragraph that names subject and action, setting,
+  composition, light, palette and medium. Replace every generic quality or platform tag ("masterpiece",
+  "8k", "hyperrealistic", "highly detailed", "trending on artstation") with the concrete property it
+  was meant to produce: a lens, a light source, a texture, a medium.
+sources:
+  - source: google-gemini-image-prompting
+    locator: "principle 'Describe the scene, don't just list keywords'"
+    note: "Narrative description yields more coherent images than disconnected words; use camera, lens and lighting terms."
+  - source: picassoia-prompts-2023
+    locator: "'Keyword Stuffing Is Dead' section"
+    note: "Quality tags waste token budget and confuse composition; current models already default to high quality."
+  - source: arxiv-2204-13988
+    locator: "section on quality boosters"
+    note: "Documents 'trending on artstation', 'masterpiece', 'highly detailed', 'rendered in Unreal Engine' as community quality boosters; prevalence evidence."
+  - source: learnprompting-quality-boosters
+    locator: "list of quality boosters"
+    note: "Teaches 4K, 8K, masterpiece, best quality, hyper-detailed; prevalence evidence only."
+related:
+  - {id: uniform-hyper-detail, relation: overlaps}
+notes: >
+  Prompt-level pattern. The vision rubric applies to the prompt that accompanies an image and to prompts
+  the host model writes in prevent mode; an image audit without a prompt reports it under not
+  evaluated. The realization examples are prompts, which is the input this detector reads.

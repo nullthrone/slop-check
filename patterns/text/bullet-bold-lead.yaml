@@ -1,0 +1,44 @@
+id: bullet-bold-lead
+modality: text
+name: Bullet with bold lead
+summary: >
+  Lists whose items consistently start with a bold keyword and a colon, followed by a sentence that
+  paraphrases the keyword ("**Speed:** The new engine is faster.").
+category: formatting
+status: core
+detector:
+  kind: metric
+  position: any
+  metric: bullet_bold_lead
+  params: {}
+threshold:
+  value: {op: gte, x: 2}
+requires: null
+realizations:
+  "*":
+    examples:
+      positive:
+        - "- **Speed:** The new engine is faster.\n- **Security:** All data is encrypted at rest."
+        - "* **Geschwindigkeit:** Die neue Engine ist schneller.\n* **Sicherheit:** Alle Daten werden verschlüsselt."
+        - "- **Cost**: Lower than before.\n- **Support**: Available around the clock."
+      negative:
+        - "- Speed: the new engine is faster.\n- Security: all data is encrypted at rest."
+        - "**Speed:** The new engine is faster than the old one, according to the March benchmark."
+        - "- Install **pgvector** first.\n- Then run **make test**."
+        - "- Geschwindigkeit: Die neue Engine ist schneller.\n- Sicherheit: Alle Daten werden verschlüsselt."
+legitimate_use: >
+  Reference material such as glossaries or API parameter lists legitimately pairs a bold term with
+  its definition. Flag the shape when the bold lead only labels a sentence that
+  paraphrases it and continuous prose would carry the content better.
+fix: >
+  Turn the list into prose, or remove the bold and keep only items that carry distinct information.
+prevention: >
+  Do not format lists as "**Keyword:** sentence". Write prose, or use plain bullets when the items
+  are truly parallel.
+sources:
+  - source: maintainer-observation
+  - source: aicheckr-io
+related:
+  - {id: bullet-list-preference, relation: distinct-from}
+  - {id: markdown-emphasis-inflation, relation: distinct-from}
+  - {id: emoji-decoration, relation: distinct-from}

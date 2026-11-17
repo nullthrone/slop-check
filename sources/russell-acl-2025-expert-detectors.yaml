@@ -1,0 +1,21 @@
+id: russell-acl-2025-expert-detectors
+title: "People who frequently use ChatGPT for writing tasks are accurate and robust detectors of AI-generated text"
+url: https://aclanthology.org/2025.acl-long.267/
+publisher: Association for Computational Linguistics
+authors: [Jenna Russell, Marzena Karpinska, Mohit Iyyer]
+published: 2025-01-26
+accessed: 2026-11-17
+type: peer-reviewed
+access_note: >
+  Full text read from the ACL Anthology PDF (ACL 2025 long papers, pages 5342-5373,
+  DOI 10.18653/v1/2025.acl-long.267). The published date is that of arXiv v1 (2501.15654).
+notes: >
+  Five annotators who use LLMs for writing labelled 300 non-fiction English articles (human vs.
+  GPT-4o, Claude 3.5 Sonnet, o1-Pro, also paraphrased and humanized); the majority vote
+  misclassified 1 of 300. Their free-text explanations were coded into clue categories with
+  frequencies, among them "Formatting" 15.0 % ("AI-generated formatting is overly consistent (e.g.,
+  fully capitalized headings, bolded lists, paragraphs of similar length)"), "Formality" 12.3 %
+  (AI text "rarely contains filler words, contractions, slang, or abbreviations"), "Conclusions"
+  13.1 % and "Grammar & Punctuation" 24.8 % (grammatically perfect, "also avoiding dashes and
+  ellipses"). The paper also reports that o1-Pro's frequent contractions and colloquialisms misled
+  one annotator. Clue frequencies describe what experts noticed, not feature rates in text.

@@ -1,0 +1,16 @@
+id: de-audit-gegenstimme
+language: de
+mode: audit
+notes: Meinungsbeitrag mit Zugeständnis-Schablonen, gestapelten Übergängen und Verstärkern.
+text: |
+  Das Lastenrad hat sich in vielen Städten durchgesetzt. Obwohl es noch einige Schwächen hat, ist es dennoch für viele Familien eine echte Alternative zum Zweitwagen.
+
+  Darüber hinaus sind die Kosten überschaubar geworden. Ein gutes Modell mit Motor kostet heute etwa so viel wie ein gebrauchter Kleinwagen, und viele Kommunen zahlen einen Zuschuss. Das ist tatsächlich ein bemerkenswerter Wandel, denn vor zehn Jahren war ein solches Rad wirklich ein Nischenprodukt.
+
+  Zudem wächst die Infrastruktur. Breitere Radwege, sichere Abstellplätze und Leihsysteme machen den Umstieg leichter.
+
+  Außerdem verändert sich das Straßenbild. Wo früher Lieferwagen in zweiter Reihe parkten, bringen Kuriere ihre Pakete heute geradezu lautlos an die Haustür.
+
+  Trotz aller Herausforderungen bleibt das Lastenrad ein wichtiger Baustein für die Verkehrswende. Die Wahrheit liegt wohl irgendwo dazwischen: Nicht jede Familie kann auf das Auto verzichten, aber viele brauchen kein zweites.
+must_find: [concession-pivot, transition-stacking, empty-intensifiers]
+must_not_find: [emoji-decoration, bullet-bold-lead, sycophant-residue]

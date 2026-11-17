@@ -1,0 +1,14 @@
+id: skill-avoid-ai-writing
+title: "avoid-ai-writing (agent writing skill)"
+published: null
+accessed: 2026-09-20
+type: practitioner-skill
+derived_from: [tropes-fyi]
+access_note: >
+  Public GitHub repository. URL not verified; only owner and repository name are known.
+notes: >
+  Practitioner-curated catalog for writing agents. Relevant entries: Synonym cycling, Hollow
+  intensifiers, False Agency, Invented Labels, Notability Name-Dropping, Reasoning Chain Artifacts,
+  Numbered List Inflation, Self-QA volleys, and an and-stacking item. Independence caveat:
+  practitioner skills may copy publicly circulating examples such as tropes.fyi; one entry repeats
+  an example verbatim ("supervision paradox"). Encoded as derived_from tropes-fyi.

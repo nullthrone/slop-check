@@ -1,0 +1,51 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "slop-check"
+version = "0.1.0"
+description = "Multimodal, multi-language skill that detects and rewrites generic AI writing patterns"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.10"
+dependencies = []  # runtime engine is standard library only
+
+[project.urls]
+Homepage = "https://nullthrone.github.io/slop-check/"
+Repository = "https://github.com/nullthrone/slop-check"
+Issues = "https://github.com/nullthrone/slop-check/issues"
+
+[project.optional-dependencies]
+dev = [
+  "pyyaml>=6.0",
+  "jsonschema>=4.21",
+  "pytest>=8.0",
+  "ruff>=0.6",
+]
+
+[project.scripts]
+slopcheck = "slopcheck.cli:main"
+slopcheck-dev = "slopcheck_dev.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+slopcheck = ["*.json"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 110
+target-version = "py310"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "S", "RUF"]
+ignore = ["S101", "RUF001", "RUF002", "RUF003"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S"]

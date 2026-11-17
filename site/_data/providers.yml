@@ -1,0 +1,29 @@
+# Setup guides, in the order they appear in navigation and tables.
+- name: Anthropic
+  url: /setup/anthropic/
+  products: Claude apps, Claude Code, Claude API, Claude Agent SDK
+  method: Skill upload or skill folder
+- name: Google
+  url: /setup/google/
+  products: Gemini app, Gemini Enterprise, Gemini CLI, Antigravity CLI
+  method: Skill upload or skill folder
+- name: OpenAI
+  url: /setup/openai/
+  products: ChatGPT, Codex
+  method: Skill upload, skill folder, or project instructions
+- name: Microsoft
+  url: /setup/microsoft/
+  products: GitHub Copilot, Microsoft 365 Copilot Cowork, Copilot Studio
+  method: Skill folder or skill upload
+- name: Mistral
+  url: /setup/mistral/
+  products: Le Chat Work, Mistral Vibe
+  method: Skill form or skill folder
+- name: Other skill runtimes
+  url: /setup/other-runtimes/
+  products: Cursor, OpenCode, goose
+  method: Skill folder
+- name: No skill support
+  url: /setup/no-skill-support/
+  products: Any assistant with a system prompt or custom instructions
+  method: system-prompt.md

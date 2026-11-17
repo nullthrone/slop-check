@@ -1,0 +1,61 @@
+name: New pattern
+description: Propose a writing or image pattern that language models over-produce.
+title: "Pattern: "
+labels: ["pattern-proposal"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the proposal. A pattern enters the catalog as `observation` (one source) or
+        `candidate` (two or more independent sources). Only measurement promotes it to the scored
+        core. See docs/contributing-patterns.md and docs/governance.md in the repository.
+  - type: input
+    id: name
+    attributes:
+      label: Name
+      description: A short descriptive name, for example "Antithesis template".
+    validations:
+      required: true
+  - type: dropdown
+    id: modality
+    attributes:
+      label: Modality
+      options:
+        - text
+        - image
+    validations:
+      required: true
+  - type: input
+    id: languages
+    attributes:
+      label: Languages
+      description: Language subtags (de, en, fr, ...) or `*` if the pattern is language-agnostic.
+    validations:
+      required: true
+  - type: textarea
+    id: mechanism
+    attributes:
+      label: Mechanism
+      description: >
+        What the pattern does, in one or two sentences. Name the closest existing pattern and say
+        how this one differs.
+    validations:
+      required: true
+  - type: textarea
+    id: examples
+    attributes:
+      label: Examples
+      description: >
+        At least three positive examples per language and at least three near misses (legitimate
+        uses that a naive detector would flag). For images, describe each image in words.
+    validations:
+      required: true
+  - type: textarea
+    id: sources
+    attributes:
+      label: Sources with URLs
+      description: >
+        Title, URL, publisher and date for each source. Say whether a source copies or cites
+        another one; sources that copy each other count as one.
+    validations:
+      required: true

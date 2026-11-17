@@ -1,0 +1,14 @@
+id: arxiv-2211-03759
+title: "Easily Accessible Text-to-Image Generation Amplifies Demographic Stereotypes at Large Scale"
+url: https://arxiv.org/abs/2211.03759
+publisher: arXiv
+authors: [Federico Bianchi, Pratyusha Kalluri, Esin Durmus, Faisal Ladhak, Myra Cheng, Debora Nozza, Tatsunori Hashimoto, Dan Jurafsky, James Zou, Aylin Caliskan]
+published: 2022-11-07
+accessed: 2026-11-17
+type: academic-preprint
+notes: >
+  FAccT 2023 paper (published version DOI 10.1145/3593013.3594095); v2 revised 2023-06-07. Prompts
+  naming basic traits or social roles produce images "reinforcing whiteness as ideal", occupation
+  prompts amplify racial and gender disparities, object prompts reify American norms; stereotypes
+  appear without any demographic words in the prompt and persist against counter-stereotypical
+  requests and guardrails.

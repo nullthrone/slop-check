@@ -1,0 +1,23 @@
+id: arxiv-2610-29162
+title: "Why is AI-generated language so hard to understand?"
+url: https://arxiv.org/abs/2610.29162
+publisher: arXiv
+authors: [Thomas Hikaru Clark, Matias B. Martin, Kyle Mahowald]
+published: 2026-10-21
+accessed: 2026-11-17
+type: academic-preprint
+notes: >
+  Full text read (arXiv v1). Section 3.1 'Linguistic features of interest' defines, among others,
+  stacked noun compounds ("three or more nouns in a modifier relationship") and inanimate subjects
+  used with active verbs that typically take only animate subjects (examples "is_file() swallows
+  that and returns False" and "Puzzle patterns where this asymmetry bites"). The abstract reports
+  that, compared with human writing, all nine frontier and near-frontier models tested use more
+  inanimate subjects with animate verbs and more low-frequency n-grams, and most also use longer
+  dependencies, more stacked nouns and more reduced object relatives in conversation. Features are
+  read from spaCy dependency parses; candidates for denominal verbs and inanimate subjects are
+  judged by an automated classifier (appendix B.1). Human baselines are genre-matched
+  (OpenSubtitles for chat, StackExchange for coding, PERSUADE 2.0 student essays for essays);
+  inanimate subjects were not scored on the human chat and coding corpora, so their human
+  comparison rests on the essay setting. The introduction's example sentence in the style of model
+  prose contains "reader-patience budget". Authors, title, URL and submission date verified on the
+  abstract page.

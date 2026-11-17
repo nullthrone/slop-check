@@ -1,0 +1,100 @@
+id: antithesis-template
+modality: text
+name: Antithesis template
+summary: >
+  Negative parallelism that simulates depth by first denying a claim nobody made and then
+  asserting the "real" point ("It's not just X, it's Y"). A disguised variant splits denial and
+  claim into two sentences ("X isn't the point. Instead, Y."; "Das Tool spart keine Zeit.
+  Stattdessen verändert es, wie Teams denken."). Used once as a deliberate contrast it is
+  ordinary rhetoric; produced reflexively it signals template writing.
+category: rhetoric
+status: core
+detector:
+  kind: regex
+  position: any
+threshold:
+  min_count: 1
+  comparison: gte
+  scope: text
+requires: null
+realizations:
+  en:
+    patterns:
+      - '(?i)\b(?:it[’'']?s|it is|this is|that[’'']?s|that is)\s+not\s+(?:just|only|merely|simply)\b[^.!?\n]{1,80}?[,;:—–-]\s*(?:it[’'']?s|it is|but)\b'
+      - '(?i)\bnot\s+only\s+(?:does|do|did|is|are|was|were|can|will)\b[^.!?\n]{1,80}?[;,]\s*(?:it|they|this)\b'
+      - '(?i)\b(?:isn[’'']?t|is not|aren[’'']?t|are not|it[’'']s not|that[’'']s not)\s+(?:just\s+|merely\s+|simply\s+)?about\s+[^.!?\n]{1,60}?[.;,—–-]\s*(?:it[’'']?s|it is|they[’'']?re|they are|this is)\s+about\b'
+      - '(?i)\bnot\s+because\b[^.!?\n]{1,80}?,\s*but\s+because\b'
+      - '(?i)\b(?:(?:is|are)(?:n[’'']t|\s+not)|[’'']s\s+not)\s+(?:really\s+|actually\s+)?(?:the\s+(?:(?:real|main|whole)\s+)?(?:point|goal|story|question|issue)|what\s+matters)\s*[.!]\s+(?:instead|rather|the\s+(?:real\s+)?(?:point|question|story|goal)\s+is|what\s+matters\s+is|it[’'']?s\s+about|it\s+is\s+about)\b'
+      - '(?:^|[.!?]\s+|\n)(?!(?:I|We|You)\b)[A-Z][^.!?\n]{0,60}?\b(?:doesn[’'']t|does\s+not|isn[’'']t|is\s+not|aren[’'']t|are\s+not|don[’'']t|do\s+not|won[’'']t|will\s+not)\b[^.!?\n]{0,60}[.!]\s+(?:Instead|Rather),\s+(?:(?:it|this|that|they)\s+(?:will\s+)?(?:(?:chang|reshap|redefin|refram|forc|invit|becom|elevat|rewir)e?s?|(?:transform|shift|reveal|turn|unlock|empower|deepen|demand)s?|amplif(?:y|ies))\b|(?:it|this|that)(?:[’'']s|\s+is)\s+(?:(?:really|actually|ultimately)\s+)?about\b|they(?:[’'']re|\s+are)\s+(?:(?:really|actually|ultimately)\s+)?about\b)'
+    examples:
+      positive:
+        - "It's not just a tool — it's a movement."
+        - "This isn't about technology. It's about trust."
+        - "Not only does it cut costs; it reshapes how teams work."
+        - "It's not about speed. It's about trust."
+        - "Speed isn't the point. Instead, the real gain is clarity."
+        - "The tool doesn't save time. Instead, it changes how teams think."
+      negative:
+        - "The fix is not in the parser but in the tokenizer, see issue #12."
+        - "Not only the CPU but also the GPU was throttled during the test."
+        - "It is not clear whether the patch landed before the freeze."
+        - "We did not use Redis. Instead, we cached in memory to save 40 ms."
+        - "This method does not modify the list. Instead, it returns a new copy."
+  de:
+    patterns:
+      - '(?i)\b(?:es|das|dies)\s+ist\s+(?:nicht\s+(?:nur|bloß|einfach)|kein(?:e|en)?)\s+[^.!?\n]{1,80}?[,;:—–-]\s*(?:es|das|dies)\s+ist\b'
+      - '(?:^|[.!?]\s+)Nicht\s+[^.!?,\n]{1,60},\s*sondern\b'
+      - '(?i)\bweniger\s+(?:aus|um)\b[^.!?\n]{1,60}?\bals\s+(?:vielmehr\s+)?(?:aus|um)\b'
+      - '\b(?:ist|sind)\s+nicht\s+(?:der\s+(?:eigentliche\s+)?(?:Punkt|Kern)|das\s+(?:eigentliche\s+)?(?:Ziel|Thema|Entscheidende)|die\s+(?:eigentliche\s+)?Frage|entscheidend)\s*[.!]\s+(?:Stattdessen|Vielmehr|Entscheidend\s+ist|Es\s+geht\s+(?:vielmehr\s+)?um)\b'
+      - '\b[Ee]s\s+geht\s+(?:hier\s+)?nicht\s+(?:nur\s+|bloß\s+|einfach\s+)?ums?\b[^.!?\n]{1,80}?[.;:,—–-]\s*(?:[Ee]s\s+geht\s+(?:vielmehr\s+)?ums?|[Vv]ielmehr\s+geht\s+es\s+ums?|[Ss]tattdessen\s+geht\s+es\s+ums?)\b'
+      - '(?:^|[.!?]\s+|\n)(?!(?:Ich|Wir|Du|Ihr)\b)[A-ZÄÖÜ][^.!?\n]{0,60}?\b(?:nicht|kein(?:e|en|em|er|es)?)\b[^.!?\n]{0,60}[.!]\s+(?:Stattdessen|Vielmehr)\s+(?:(?:verändert|verwandelt|verschiebt|prägt|definiert|eröffnet|erzwingt|zwingt|stärkt|befähigt)\s+(?:es|er|sie|das|dies)\b|geht\s+es\s+(?:\w+\s+)?(?:um|darum)\b)'
+    examples:
+      positive:
+        - "Das ist kein Werkzeug, das ist eine Haltung."
+        - "Nicht die Technik entscheidet, sondern die Kultur."
+        - "Es ist nicht nur ein Update – es ist ein Neuanfang."
+        - "Es geht nicht um Technik. Es geht um Vertrauen."
+        - "Geschwindigkeit ist nicht der Punkt. Vielmehr geht es um Vertrauen."
+        - "Das Tool spart keine Zeit. Stattdessen verändert es, wie Teams denken."
+      negative:
+        - "Das Problem liegt nicht am Parser, sondern am Tokenizer."
+        - "Die Messung zeigt keine Regression; der Durchsatz bleibt bei 4,2 GB/s."
+        - "Es ist nicht nötig, den Dienst neu zu starten."
+        - "Wir haben Redis nicht genutzt. Stattdessen cachen wir im Speicher und sparen 40 ms."
+        - "Die Methode verändert die Liste nicht. Stattdessen liefert sie eine neue Kopie."
+legitimate_use: >
+  A single, substantive correction of a misconception the reader actually holds ("The outage was
+  not caused by the update but by an expired certificate") is not slop. The same holds for the
+  two-sentence form when it reports a concrete decision or behavior and its reason ("We did not
+  use Redis. Instead, we cached in memory to save 40 ms."; "This method does not modify the list.
+  Instead, it returns a new copy."). Flag the reflexive form: the denied claim is a strawman and
+  the text would lose nothing if it only stated the second half. In the disguised form the
+  denial stands as its own short sentence and the next one, opened by "Instead", "Rather",
+  "Stattdessen" or "Vielmehr", reframes the subject in abstract terms.
+fix: >
+  State the claim directly without the negation. If a real misconception exists, name it and
+  give the evidence that refutes it.
+prevention: >
+  Do not build sentences of the form "not X, but Y" or "it's not just X, it's Y" unless you are
+  correcting a misconception the reader demonstrably holds. State the point directly.
+sources:
+  - source: maintainer-observation
+  - source: pangram-signs-of-ai-writing
+    locator: "'not just X but Y' construction"
+    note: "Reported at 3x the human baseline (commercial corpus, methodology not disclosed)."
+related:
+  - {id: german-stock-phrases, relation: overlaps}
+notes: >
+  The regexes cover the disguised two-sentence variant only in narrow forms: a "not the point / goal
+  / question" sentence followed by Instead, Rather or a restated point (German: "ist nicht der
+  Punkt", "das Ziel", "die Frage" followed by Stattdessen, Vielmehr or "Es geht um"); "It's not
+  about X. It's about Y." and "Es geht nicht um X. Es geht um Y."; and a denial sentence without a
+  first-person subject (in English: doesn't, isn't, aren't, don't or won't, so narrative past tense
+  stays out) followed by Instead or Rather (Stattdessen, Vielmehr) and either a reframing verb from
+  a closed list (change, reshape, redefine, transform, reveal, ...; verändert, verwandelt, prägt,
+  definiert, ...) or "it's about" ("geht es um"). Concrete successor actions ("Instead, we cached
+  ...", "Instead, it returns ...", "Stattdessen cachen wir ...") stay outside the regexes. Other
+  two-sentence forms are left to the host model, which judges them against the summary and
+  legitimate_use. On the human reference corpus (pre-2022 texts, 260 per language) the two-sentence
+  regexes produce no hits; the pattern as a whole triggers on 3 of 260 texts (de) and 0 of 260 (en),
+  below the 4 % limit.

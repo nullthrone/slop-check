@@ -1,0 +1,15 @@
+id: sun-icml-2025-fingerprints
+title: "Idiosyncrasies in Large Language Models"
+url: https://arxiv.org/abs/2502.12150
+publisher: ICML 2025 proceedings
+authors: [Mingjie Sun, Yida Yin, Zhiqiu Xu, J. Zico Kolter, Zhuang Liu]
+published: 2025-02-17
+accessed: 2026-11-17
+type: peer-reviewed
+notes: >
+  skill-better-ai-writing cites it as "Sun et al., ICML 2025" with 97.1 % accuracy; identified by
+  venue, first-author surname and that figure. arXiv v1 dated 2025-02-17, published at ICML 2025.
+  Five-way classification of ChatGPT, Claude, Grok, Gemini and DeepSeek output reaches 97.1 % on
+  held-out data; the first token alone gives roughly 50 % (chance 20 %). The paper reports that
+  ChatGPT begins responses with "certainly" and "below is" and traces the idiosyncrasies to
+  word-level distributions.

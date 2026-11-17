@@ -1,0 +1,48 @@
+name: Human corpus
+description: >
+  Restore the human corpus from the Actions cache or fetch it with slopcheck-dev corpus fetch-human,
+  then verify it against corpus/human/manifest.json from branch data. The cache key is the hash of
+  that manifest and of evals/corpus/human.yaml. Human texts never leave the runner.
+inputs:
+  manifest:
+    description: Path to corpus/human/manifest.json from branch data
+    required: true
+  out:
+    description: Directory for the corpus (docs.jsonl and manifest.json)
+    required: false
+    default: .corpus/human
+outputs:
+  cache-hit:
+    description: Whether the corpus came from the cache
+    value: ${{ steps.cache.outputs.cache-hit }}
+runs:
+  using: composite
+  steps:
+    - name: Compute cache key
+      id: key
+      shell: bash
+      env:
+        MANIFEST: ${{ inputs.manifest }}
+      run: |
+        hash=$(cat "$MANIFEST" evals/corpus/human.yaml | sha256sum | cut -c1-32)
+        echo "hash=$hash" >> "$GITHUB_OUTPUT"
+    - name: Restore cached corpus
+      id: cache
+      uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+      with:
+        path: ${{ inputs.out }}
+        key: human-corpus-v1-${{ steps.key.outputs.hash }}
+    - name: Fetch human corpus
+      if: steps.cache.outputs.cache-hit != 'true'
+      shell: bash
+      env:
+        OUT: ${{ inputs.out }}
+      run: slopcheck-dev corpus fetch-human --out "$OUT"
+    - name: Verify against the manifest on branch data
+      shell: bash
+      env:
+        MANIFEST: ${{ inputs.manifest }}
+        OUT: ${{ inputs.out }}
+      run: |
+        # load_human_docs drops every document whose hash differs from this manifest
+        cp "$MANIFEST" "$OUT/manifest.json"

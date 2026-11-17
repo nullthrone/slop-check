@@ -1,0 +1,81 @@
+id: nominalization-density
+modality: text
+name: Nominalization density
+summary: >
+  Nouns derived from verbs pile up where an active verb with a named subject would do ("die
+  Durchführung der Operationalisierung" instead of "wir operationalisieren"; "the implementation
+  of the optimization" instead of "we optimize"). Outside academic writing this nominal style
+  hides who acts and slows reading.
+category: lexical
+status: core
+detector:
+  kind: metric
+  position: any
+  metric: nominalization_density
+  params:
+    per_words: 300
+    min_word_length: 7
+    suffixes:
+      de: [ung, heit, keit, tion, sion, tät, ismus]
+      en: [tion, sion, ment, ness, ity, ance, ence]
+threshold:
+  value: {op: gte, x: 23}
+  context_overrides:
+    academic:
+      value: {op: gt, x: 300}
+requires: null
+realizations:
+  de:
+    examples:
+      positive:
+        - "Die Durchführung der Operationalisierung erfolgt nach Abschluss der Planung."
+        - "Zur Sicherstellung der Wirksamkeit ist eine Überprüfung der Zielerreichung durch die Geschäftsleitung vorgesehen."
+      negative:
+        - "Wir operationalisieren die Variablen, bevor wir messen."
+        - "Das Team prüft heute, ob die Zahlen stimmen, und schickt sie dann weiter."
+        - "Wir planen den Umbau im Mai und testen ihn vorher im Labor."
+    test_texts:
+      - {text: "Die Durchführung der Operationalisierung erfolgt nach Abschluss der Planung.", context: academic, expect: no_trigger}
+      - {text: "Die Durchführung der Operationalisierung erfolgt nach Abschluss der Planung.", expect: trigger}
+  en:
+    examples:
+      positive:
+        - "The implementation of the optimization requires the alignment of all departments."
+        - "Successful execution depends on the effectiveness of stakeholder engagement and the clarity of governance."
+      negative:
+        - "We tested the parser on 40 files and fixed two bugs."
+        - "She signs the contract once the legal team approves it."
+        - "We patch the loop first and measure again on Friday."
+    test_texts:
+      - {text: "The implementation of the optimization requires the alignment of all departments.", context: academic, expect: no_trigger}
+legitimate_use: >
+  Academic writing and legal texts use nominal style by convention; the threshold is switched off
+  for the academic context. Lexicalized nouns ("information", "government", "Zeitung", "Wohnung")
+  and verbs that happen to end in a listed suffix ("implement") are suffix matches without
+  stylistic weight; the host model should discount them.
+fix: >
+  Turn nominalizations back into verbs with a named subject ("wir operationalisieren" instead of
+  "die Durchführung der Operationalisierung"; "we optimize" instead of "the implementation of the
+  optimization").
+prevention: >
+  Prefer verbs with a named actor over nouns derived from verbs (-ung, -heit, -keit, -tion in
+  German; -tion, -ment, -ness, -ity in English), especially outside academic writing.
+sources:
+  - source: maintainer-observation
+related:
+  - {id: premodifier-stacking, relation: distinct-from}
+  - {id: stacked-nouns, relation: distinct-from}
+  - {id: german-stock-phrases, relation: overlaps}
+notes: >
+  Threshold set so that at most 4 % of the human reference corpus (pre-2022 texts, de and en)
+  triggers it; separation from AI-generated text is not yet measured. Suffix tokens are common in
+  ordinary prose: the median human text has about 8 per 300 words, and at 3 per 300 words 85 %
+  (de) and 87 % (en) of the human texts triggered. The threshold of 23 per 300 words (about one
+  word in thirteen) marks the densest 4 % of human texts in both languages. The reference corpus
+  holds texts of 150 words and more; in very short texts two or three nominalizations already
+  exceed the density. The academic override uses a value above the window size (more than 300
+  per 300 words) because the threshold object has no explicit off switch. The parameter names
+  suffixes (per language) and min_word_length are specific to this metric; the architecture only
+  states that the suffix list lives in params. This pattern covers verbs turned into nouns;
+  premodifier-stacking covers modification moved into the noun phrase and stacked-nouns covers
+  noun-noun compound chains.

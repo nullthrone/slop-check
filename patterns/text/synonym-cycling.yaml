@@ -1,0 +1,80 @@
+id: synonym-cycling
+modality: text
+name: Synonym cycling
+summary: >
+  The text keeps switching labels for one and the same referent ("dashboard", "interface",
+  "portal", "analytics hub"; "developers", "engineers", "practitioners", "builders") although a
+  precise term is available and repetition would be clearer. The variation avoids repetition at
+  the cost of making readers wonder whether several things are meant.
+category: lexical
+status: core
+detector:
+  kind: llm
+  position: any
+  rubric: >
+    Within each paragraph, find referents (a product, system, screen, group of people,
+    organization or concept) that are named by three or more different noun phrases although
+    one precise term would serve throughout, for example "dashboard", "interface", "portal" and
+    "analytics hub" for the same screen. Count only full noun phrases; pronouns, possessives and
+    an abbreviation introduced right after its long form do not count as new labels. Do not flag
+    deliberate distinctions (a broader term used once to widen a claim, terms the text defines
+    as different things), quoted product names, or legal and technical texts that repeat one
+    defined term. Return one hit per paragraph and referent, quoting the variant labels.
+threshold:
+  min_count: 1
+  comparison: gte
+  scope: paragraph
+requires: null
+realizations:
+  en:
+    examples:
+      positive:
+        - "The dashboard shows weekly revenue. The interface also lists refunds, and the portal lets managers export everything from the analytics hub."
+        - "Developers love the new CLI. Engineers can script it, practitioners can extend it, and builders can ship plugins in an afternoon."
+        - "Our assistant drafts replies to customers. The agent also tags each ticket, and the tool escalates anything the system cannot classify."
+      negative:
+        - "The dashboard shows weekly revenue. The dashboard also lists refunds, and managers can export both tables from it."
+        - "The dashboard shows revenue, while the API serves the same numbers to the mobile app."
+        - "Kubernetes (K8s) schedules the pods, and K8s restarts any pod that fails its health check."
+  de:
+    examples:
+      positive:
+        - "Das Dashboard zeigt die Wochenumsätze. Über das Interface lassen sich Filter setzen, und das Portal exportiert die Daten direkt aus dem Analytics-Hub."
+        - "Entwickler schätzen das neue CLI. Ingenieure automatisieren damit Builds, Praktiker erweitern es, und Macher veröffentlichen Plugins an einem Nachmittag."
+        - "Unser Assistent entwirft Antworten. Der Agent verschlagwortet außerdem jedes Ticket, und das Tool eskaliert alles, was das System nicht zuordnen kann."
+      negative:
+        - "Das Dashboard zeigt die Wochenumsätze. Im Dashboard lassen sich außerdem Filter setzen, und beide Tabellen lassen sich exportieren."
+        - "Das Dashboard zeigt die Umsätze, die API liefert dieselben Zahlen an die App."
+        - "Die Datenschutz-Grundverordnung (DSGVO) gilt seit 2018, und die DSGVO verlangt ein Verzeichnis der Verarbeitungstätigkeiten."
+legitimate_use: >
+  Pronouns and a defined abbreviation are normal variation, as is an occasional broader term.
+  Literary prose may vary labels for style. The finding applies when three or more labels rotate
+  for one referent inside a paragraph and the variation adds no distinction.
+fix: >
+  Pick one precise term and use it throughout. Repeating the word is no style error here.
+prevention: >
+  Choose one precise term per referent and keep it; do not rotate synonyms such as "dashboard",
+  "interface" and "portal" for the same thing.
+sources:
+  - source: maintainer-observation
+  - source: tropes-fyi
+    locator: "entry 'Synonym cycling' (/tropes/synonym-cycling)"
+  - source: aipromptindex-io
+    locator: "entry 'Synonym Cycling'"
+    note: "Rotating different words for the same thing (agent, assistant, tool, system) instead of repeating the clear term."
+  - source: skill-no-ai-slop
+    locator: "entry 'Synonym cycling'"
+    note: "Rotating terms unnecessarily instead of repeating the precise word."
+  - source: skill-avoid-ai-writing
+    locator: "entry 'Synonym cycling'"
+    note: "Nearly identical example."
+related:
+  - {id: german-stock-phrases, relation: distinct-from}
+  - {id: hallmark-vocabulary, relation: distinct-from}
+notes: >
+  The threshold (three or more labels per referent within one paragraph) is set by analogy with
+  the count thresholds of hallmark-vocabulary and german-stock-phrases; no source quantifies it.
+  This pattern concerns referent consistency whatever words are used, while german-stock-phrases
+  targets phrase clichés and hallmark-vocabulary a fixed word list. At least one broad catalog of
+  AI writing signs does not list the pattern. Kind llm: the human trigger rate cannot be measured
+  without a judge and has not been measured yet.

@@ -1,0 +1,106 @@
+id: uniform-rhythm
+modality: text
+name: Uniform sentence rhythm
+summary: >
+  Several consecutive paragraphs share the same build: a constant number of sentences (often
+  exactly three) and sentence lengths that barely vary (typically 15 to 20 words). The prose has
+  no prosodic variation, which readers perceive as a metronome ("balanced paragraph").
+category: rhythm
+status: core
+detector:
+  kind: metric
+  position: any
+  metric: sentence_length_cv
+  params:
+    run: 4
+    min_sentences_per_paragraph: 3
+threshold:
+  value: {op: lt, x: 0.38}
+  min_units: 3
+requires: null
+realizations:
+  "*":
+    examples:
+      positive:
+        - |-
+          Our team reviewed the quarterly results and found steady growth in every region we track. The sales department exceeded its targets while keeping costs within the planned budget. Customer feedback stayed positive throughout the period and pointed to high satisfaction with support.
+
+          The product group shipped three major releases and fixed most of the reported defects. Each release went through a structured review process with clear criteria for quality and scope. The roadmap for next year builds on these results and adds two new markets for expansion.
+
+          Our people strategy also delivered measurable progress across hiring, training and retention this year. New team members completed onboarding faster thanks to the redesigned mentoring program for all roles. Leadership will continue to invest in these programs to support long-term growth and stability.
+
+          The finance team closed the annual accounts two weeks earlier than in the previous year. The new reporting tool cut manual work and reduced the number of open review items. Next year we plan to extend the same approach to procurement and the regional offices.
+        - |-
+          Unser Team hat die Ergebnisse des Quartals geprüft und ein stabiles Wachstum in allen Regionen festgestellt. Der Vertrieb hat seine Ziele übertroffen und die Kosten dabei innerhalb des geplanten Budgets gehalten. Die Rückmeldungen der Kunden blieben im gesamten Zeitraum positiv und zeigten eine hohe Zufriedenheit.
+
+          Die Produktgruppe hat drei größere Versionen veröffentlicht und die meisten gemeldeten Fehler behoben. Jede Version durchlief einen strukturierten Prüfprozess mit klaren Kriterien für Qualität und Umfang. Die Planung für das nächste Jahr baut auf diesen Ergebnissen auf und erschließt zwei neue Märkte.
+
+          Auch im Personalbereich gab es in diesem Jahr messbare Fortschritte bei Einstellung und Weiterbildung. Neue Mitarbeitende haben die Einarbeitung dank des überarbeiteten Mentoring-Programms deutlich schneller abgeschlossen. Die Geschäftsführung wird weiter in diese Programme investieren und so ein langfristiges Wachstum sichern.
+
+          Die Finanzabteilung hat den Jahresabschluss diesmal ganze zwei Wochen früher als im Vorjahr fertiggestellt. Das neue Berichtswerkzeug hat viel Handarbeit erspart und die Zahl der offenen Prüfpunkte deutlich reduziert. Im nächsten Jahr soll derselbe Ansatz auch im Einkauf und in den Regionalbüros greifen.
+      negative:
+        - |-
+          The build broke at 3 a.m. Nobody noticed until the morning stand-up, when three people tried to deploy the same hotfix at once and the queue jammed for forty minutes. We rolled back.
+
+          The cause was boring. A dependency had published a patch release that changed a default timeout from thirty seconds to five, and our integration tests never waited that long. Pinning fixed it.
+
+          Next week we add a lockfile check to CI. It takes ninety seconds. If that sounds slow, compare it with the forty minutes we lost on Tuesday while everyone stared at the same red dashboard.
+
+          Two people asked why we did not pin everything from the start. Fair point. The answer is that nobody here had been burned by an unpinned patch release before, and pinning has a cost of its own: someone has to bump every version by hand each month.
+        - |-
+          Der Build brach um drei Uhr nachts ab. Bemerkt hat es erst das Team im Daily, als drei Leute gleichzeitig denselben Hotfix ausrollen wollten und die Warteschlange vierzig Minuten lang blockierte. Wir haben zurückgerollt.
+
+          Die Ursache war banal. Eine Abhängigkeit hatte in einem Patch-Release das Standard-Timeout von dreißig auf fünf Sekunden gesenkt, und unsere Integrationstests haben nie so lange gewartet. Ein fester Versionsstand behob das.
+
+          Nächste Woche kommt eine Lockfile-Prüfung in die CI. Sie dauert neunzig Sekunden. Das wirkt langsam, bis man es mit den vierzig Minuten vergleicht, die wir am Dienstag vor demselben roten Dashboard verloren haben.
+
+          Zwei Kolleginnen fragten, warum wir nicht von Anfang an alles festgeschrieben haben. Berechtigt. Bisher hatte uns noch kein ungepinntes Patch-Release erwischt, und feste Versionen kosten auch etwas: Jemand muss sie jeden Monat von Hand anheben.
+        - |-
+          Our team reviewed the quarterly results and found steady growth in every region we track. The sales department exceeded its targets while keeping costs within the planned budget. Customer feedback stayed positive throughout the period and pointed to high satisfaction with support.
+
+          The product group shipped three major releases and fixed most of the reported defects. Each release went through a structured review process with clear criteria for quality and scope. The roadmap for next year builds on these results and adds two new markets for expansion.
+    notes: >
+      The third negative example is uniform but has only two paragraphs, below the four-paragraph
+      run. The first two negatives have four paragraphs with varied sentence lengths.
+legitimate_use: >
+  Some genres keep sentence length steady on purpose: step-by-step instructions, legal clauses,
+  glossary entries, verse with a fixed meter. Lists and tables are units of their own and do not
+  count as paragraphs. Treat the finding as a revision hint for running prose.
+fix: >
+  Vary sentence structure: put a short sentence after a long one, merge two related sentences,
+  break up a nested one, and let paragraphs differ in length.
+prevention: >
+  Vary sentence length within and across paragraphs. Mix short sentences with longer ones and do
+  not give every paragraph the same number of sentences.
+sources:
+  - source: maintainer-observation
+  - source: slopdetector-org
+    locator: "pattern 'Burstiness'"
+    note: >
+      Coefficient of variation of sentence length below 0.4 counts as monotone; human texts
+      typically range from 0.6 to 1.2. Measured over a whole text, so it is a different
+      quantification from the paragraph runs used here.
+  - source: arxiv-2605-06030
+    locator: "share of short sentences"
+    note: >
+      2025 models reduce the share of sentences under 15 tokens by a factor of 9 to 30 relative
+      to human reference prose (NYT lead sentences only). Supports the thesis; not a burstiness
+      index.
+  - source: imperfectly-app
+    locator: "entry 'The Metronome Rhythm'"
+  - source: ignorance-ai
+    locator: "field guide entries on sentence rhythm"
+notes: >
+  Threshold set so that at most 4 % of the human reference corpus (pre-2022 texts, de and en)
+  triggers it; separation from AI-generated text is not yet measured. The metric is the
+  coefficient of variation (CV) of sentence length pooled over a run of consecutive paragraphs; a
+  CV of 0.38 corresponds to a standard deviation of about 6 to 7 words at 17 words per sentence.
+  Paragraphs with fewer than three sentences break a run. Without that rule, runs of one-line
+  paragraphs on web pages (menu labels, product features, hard-wrapped lines) made up the human
+  triggers, and runs of four paragraphs needed a CV below 0.1 to stay within the limit. With at
+  least three sentences per paragraph, runs of four paragraphs and a CV below 0.38, 3.5 % (de) and
+  2.3 % (en) of the 520 human texts trigger; 11.5 % (de) and 7.3 % (en) contain such a run at all.
+  The remaining human triggers are running prose (encyclopedia articles, reviews, news digests).
+  Shorter runs or shorter paragraphs need a stricter limit at the same rate: runs of three
+  paragraphs allow a CV below 0.31 with at least three sentences and below 0.26 with at least two.
+  The constant number of sentences per paragraph is left to the host model.

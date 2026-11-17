@@ -1,0 +1,55 @@
+id: uniform-hyper-detail
+modality: image
+name: Uniform hyper-detail
+summary: >
+  Fine detail is spread evenly over the whole image or piled up where no viewer would look: intricate
+  ornament on every surface, strand-by-strand windswept hair in a still scene, filigree on clothing and
+  props. With no area of rest the image has no focal hierarchy. The research guide describes locally
+  excessive hyper-real detail; practitioner sources describe busy maximalism with nothing emphasized.
+category: visual-composition
+status: candidate
+detector:
+  kind: vision
+  rubric: >
+    Assess how detail is distributed. Flag the image if intricate detail covers most surfaces at the
+    same intensity so that no area offers visual rest and the subject does not stand out, or if one
+    element (hair, fur, fabric, ornament) shows fine detail that clashes with the rest of the image,
+    for example individually rendered windswept hair in an otherwise still, softly rendered scene.
+    Count one hit per image. Does not count: subjects that are intricate in reality (a baroque altar, a
+    coral reef, a crowded market stall) where the detail follows the subject; deliberately maximalist
+    formats chosen by the brief (fantasy maps, hidden-object puzzles, ornamental pattern design); macro
+    photography of textures. Describe the visible pattern only; do not infer how the image was made.
+threshold: {min_count: 1}
+realizations:
+  "*":
+    examples:
+      positive:
+        - "Fantasy portrait in which armor, background walls, sky and floor are all covered in equally intricate filigree, so the face does not stand out from anything."
+        - "Photo-style image of a man standing still in a calm office whose hair is rendered as thousands of fine strands blowing in a strong wind while nothing else moves."
+        - "Book cover illustration where every part of the frame holds gears, vines, gems and patterns at the same density."
+      negative:
+        - "Photo of a gothic cathedral facade, intricate because the building is."
+        - "Portrait with a sharply detailed face against a plain, softly blurred wall."
+        - "Hidden-object puzzle illustration whose purpose is dense detail."
+legitimate_use: >
+  Intricate real subjects, ornamental design, hidden-object and map illustrations, and maximalist
+  styles that the brief asks for.
+fix: >
+  Decide the focal point and reduce detail elsewhere: simplify the background, give large areas a plain
+  material or negative space, calm hair and fabric to match the motion in the scene, and keep the
+  finest detail where the eye should land first.
+prevention: >
+  Name one focal point and describe the rest of the frame as calm, for example "simple, uncluttered
+  background with negative space", "plain painted wall", "hair tied back and still". Describe only the
+  details that matter for the subject in place of generic boosters such as "intricate", "highly
+  detailed" or "hyper-detailed".
+sources:
+  - source: openart-visual-cliches
+    locator: "cliché 4, over-detailed everything"
+    note: "'intricate patterns on every surface', 'a busy maximalism with no rest for the eye'."
+  - source: arxiv-2406-08651
+    locator: "section 2.3 Hyper-Real Detail"
+    note: "Unnatural detail in specific parts, e.g. hair 'excessively soft, fine-grained and windswept' inconsistent with the scene."
+related:
+  - {id: quality-tag-prompting, relation: overlaps}
+  - {id: dysfunctional-objects, relation: distinct-from}

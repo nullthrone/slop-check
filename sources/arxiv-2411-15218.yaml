@@ -1,0 +1,26 @@
+id: arxiv-2411-15218
+title: "Academ-AI: documenting the undisclosed use of generative artificial intelligence in academic publishing"
+url: https://arxiv.org/abs/2411.15218
+publisher: arXiv
+authors: [Alex Glynn]
+published: 2024-11-20
+accessed: 2026-11-17
+type: academic-preprint
+access_note: >
+  Full text of v2 (15 November 2025) read from the arXiv PDF on 2026-11-17; v1 is dated
+  2024-11-20.
+notes: >
+  Analysis of the first 768 published documents (633 journal articles, 107 conference papers,
+  28 book chapters) in the Academ-AI repository of suspected undeclared AI use. Cases were found
+  by querying Google Scholar for chatbot phrasing ("as an AI language model", "certainly, here
+  are", "don't have access to real-time"), supplemented with the Retraction Watch list of papers
+  with evidence of ChatGPT and with reports on PubPeer and X, then checked by hand. Table 1 gives
+  the prevalence of regex-defined features in the 768 documents: first person singular 52.2 %,
+  "knowledge update" (update|cutoff) 43.9 %, "Certainly, here..." 33.6 %, "important to note"
+  13.9 %, second person 11.3 %, "can provide" 9.9 %, "Regenerate response" 61 cases (8 %), lack
+  of access 7.0 %, self-identification as AI 6.8 %, "the user" 4.4 %, apologetic language 0.8 %.
+  Section 3.1 names the common formations "since my last update", "since my last knowledge
+  update" and "as of my most recent update", and "I am an AI language model" / "as an AI language
+  model" followed by statements of limitation ("I don't have...", "I am unable to...").
+  The corpus is selected by these phrases, so the percentages describe the flagged documents,
+  not a rate in AI text generally.

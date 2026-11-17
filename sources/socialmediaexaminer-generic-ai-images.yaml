@@ -1,0 +1,14 @@
+id: socialmediaexaminer-generic-ai-images
+title: "Why Your AI Images Look Like Everyone Else's (and How to Fix It)"
+url: https://www.socialmediaexaminer.com/why-your-ai-images-look-like-everyone-elses-and-how-to-fix-it/
+publisher: Social Media Examiner
+published: 2026-08-11
+accessed: 2026-11-17
+type: blog
+notes: >
+  Marketing-practice interview article. "Without composition guidance, the model defaults to a
+  straight-on, centered shot"; every detail left out is decided by the model toward the most average
+  version; stock settings for generic prompts. Also states that older tells such as six-fingered
+  hands and plastic-looking skin have largely disappeared from current models (counter-evidence
+  recorded on the affected patterns). Recommends specifying medium, subject and action, setting,
+  composition, lighting, aesthetic and intent.

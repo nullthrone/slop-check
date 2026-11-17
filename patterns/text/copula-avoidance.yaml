@@ -1,0 +1,87 @@
+id: copula-avoidance
+modality: text
+name: Copula avoidance
+summary: >
+  A plain "is", "are" or "has" is replaced by a more elaborate verb: the gallery "serves as" the
+  city's venue, the bridge "stands as" a reminder, the hotel "boasts" 200 rooms, the school "holds
+  the distinction of being" the oldest. The substitute verbs add a note of function, monument or
+  pride that the facts do not carry, and repeated across a text they make plain description sound
+  like a brochure or a plaque.
+category: lexical
+status: candidate
+detector:
+  kind: regex
+  position: any
+threshold:
+  min_count: 2
+  comparison: gte
+  scope: text
+requires: null
+realizations:
+  en:
+    patterns:
+      - '(?i)\b(?:serves?|stands?)\sas\s(?:a|an|the|one\sof)\b(?![^.!?\n]{0,30}\bcandidate\b)'
+      - '(?i)\bboasts?\s(?:a|an|over|more\sthan|some|nearly|around|its\sown|one\sof|several|numerous)\b'
+      - '(?i)\bholds?\sthe\sdistinction\sof\sbeing\b'
+    examples:
+      positive:
+        - "The gallery serves as the city's main venue for contemporary art."
+        - "Today the bridge stands as a reminder of the region's industrial past."
+        - "The hotel boasts over 200 rooms and a rooftop pool."
+        - "The school holds the distinction of being the oldest in the county."
+        - "The square serves as a gathering place, and the old town hall stands as a symbol of civic pride."
+      negative:
+        - "The gallery is the city's main venue for contemporary art."
+        - "She served as a senator from 2004 to 2010."
+        - "He stands as the Green Party candidate in the northern ward."
+        - "The protein functions as a receptor for the hormone."
+        - "The town boasted of its new library for years."
+legitimate_use: >
+  "Serves as" is precise when something takes on a role it does not normally have ("the gym serves
+  as an emergency shelter"), and "stands as a candidate" is standard British usage. Technical writing
+  uses "serves as" for components with a defined role. Flag the verbs when they replace "is" or
+  "has" in plain description, especially when several appear in one text.
+fix: >
+  Use "is", "are" or "has" unless the elaborate verb says something the copula does not: "The
+  gallery is the city's main venue", "The hotel has 200 rooms". If the point is a role or a symbol,
+  state who uses it that way and how.
+prevention: >
+  Prefer "is", "are" and "has" for description. Use "serves as" only for a role something does not
+  normally have, and never use "boasts" or "stands as" for neutral facts.
+notes: >
+  Mechanism: avoidance of the basic copula in favor of verbs with built-in emphasis. Closest
+  existing patterns: inflated-importance (significance framing such as "stands as a testament to",
+  "marks a pivotal moment") and brochure-tone (promotional adjectives). This pattern concerns the
+  verb slot in ordinary description and fires on "serves as the main venue" or "boasts 200 rooms",
+  which state no significance; "stands as a testament to" hits both patterns. Past-tense "served as"
+  is left out because it reports offices held ("served as a senator"), and "functions as" and
+  "represents" because they are standard in science writing. Threshold 2 per text, since one
+  "serves as" is ordinary. Independence: the Wikipedia guide cites the Geng and Trotta decline of
+  "is" and "are" in its section, but its entry rests on its own dated examples, and the study's
+  frequency data do not depend on the guide, so the two count as separate lines of evidence.
+  tropes-fyi reuses the guide's "Gallery 825" example and gptzero-ai-patterns states that its
+  taxonomy is derived from the guide; neither is counted as independent here.
+sources:
+  - source: wikipedia-signs-of-ai-writing
+    locator: "Language and grammar: 'Avoidance of basic copulatives (\"is\"/\"are\" phrases)'"
+    note: >
+      Words to watch "serves as/stands as/marks/functions as/operates as/represents [a]",
+      "boasts/features/maintains/offers [a]", "refers to"; examples from August 2023 (an edit that
+      changed "is LAAA's exhibition arm" to "serves as LAAA's exhibition space") and November 2024
+      ("holds the distinction of being the first and oldest Malay-language tabloid"). Reported for
+      GPT and Gemini models.
+  - source: arxiv-2404-08627
+    locator: "section on decreasing words; Table 1"
+    note: >
+      "is" and "are" dropped by more than 10 % in 2023 arXiv abstracts after years of stable
+      counts; GPT-3.5 revisions of 2022 abstracts cut them by up to 14 % and 17 % (computer science).
+  - source: tropes-fyi
+    locator: "entry 'The \"Serves As\" dodge', category Word Choice, directory status fading"
+    note: "Repeats the Wikipedia guide's Gallery 825 example; not an independent line of evidence."
+  - source: gptzero-ai-patterns
+    locator: "pattern 6 'Dressed-up Verbs'"
+    note: "Replacing \"is\" or \"are\" with constructions such as \"serves as\"; the article says its taxonomy is derived from the Wikipedia guide."
+related:
+  - {id: inflated-importance, relation: overlaps}
+  - {id: brochure-tone, relation: distinct-from}
+  - {id: nominalization-density, relation: distinct-from}

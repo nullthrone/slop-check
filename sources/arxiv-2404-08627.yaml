@@ -1,0 +1,22 @@
+id: arxiv-2404-08627
+title: "Is ChatGPT Transforming Academics' Writing Style?"
+url: https://arxiv.org/abs/2404.08627
+publisher: arXiv
+authors: [Mingmeng Geng, Roberto Trotta]
+published: 2024-04-12
+accessed: 2026-11-17
+type: academic-preprint
+access_note: >
+  Read from the arXiv HTML of v2 on 2026-11-17. Submission history on the abstract page: v1
+  2024-04-12, v2 2024-11-08.
+notes: >
+  Word-frequency analysis of about one million arXiv abstracts (May 2018 to January 2024, split
+  into 100 periods of 10,000 abstracts) plus a simulation in which GPT-3.5 revised 10,000
+  abstracts from April to July 2022. The counts of "is" and "are" per 10,000 abstracts "were quite
+  stable before 2023", then "the frequency of these two terms has dropped by more than 10% in
+  2023", which the authors attribute to ChatGPT. In the simulation ("revise the following
+  sentences"), the per-abstract frequency of "is" and "are" fell by about 14 % and 17 % in computer
+  science, 9 % and 5 % in mathematics, 11 % and 1 % in astrophysics, 16 % and 13 % in condensed
+  matter. The paper measures the decline of the copulas, not which verbs replace them. The
+  Wikipedia guide (wikipedia-signs-of-ai-writing, section "Avoidance of basic copulatives")
+  cites this decline.

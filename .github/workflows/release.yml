@@ -1,0 +1,104 @@
+# Build the skill package with the current measurements and publish it.
+# - Builds of main replace the tree of the orphan branch "dist" (slop-check/ and exports/).
+# - Tags v* and dispatches with release_tag create a GitHub release with the assets
+#   slop-check.zip, slop-check-flat.zip, system-prompt.md and knowledge.md (the README and
+#   the site link to them).
+# The daily schedule is a safety net: merges done by auto-merge that was enabled with the
+# workflow token do not trigger push workflows, so the schedule rebuilds dist when main or
+# the measurements moved since the last build and skips otherwise.
+name: release
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "patterns/**"
+      - "sources/**"
+      - "skill/**"
+      - "src/**"
+      - "governance/**"
+    tags: ["v*"]
+  schedule:
+    - cron: "53 6 * * *"
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: Also create a GitHub release with this tag (empty for a dist build only)
+        type: string
+        default: ""
+
+permissions: {}
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    if: github.repository == 'nullthrone/slop-check'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      RELEASE_TAG: ${{ github.ref_type == 'tag' && github.ref_name || inputs.release_tag }}
+      IS_MAIN: ${{ github.ref == format('refs/heads/{0}', github.event.repository.default_branch) }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Read branch data
+        id: data
+        run: |
+          python3 .github/scripts/data_branch.py checkout --branch data --dir "$RUNNER_TEMP/data"
+          echo "MEASUREMENTS=$RUNNER_TEMP/data/measurements/measurements.json" >> "$GITHUB_ENV"
+
+      - name: Skip scheduled runs when nothing changed
+        id: plan
+        env:
+          EVENT: ${{ github.event_name }}
+          DATA_COMMIT: ${{ steps.data.outputs.commit }}
+        run: |
+          stamp="main@$GITHUB_SHA data@${DATA_COMMIT:-none}"
+          echo "STAMP=$stamp" >> "$GITHUB_ENV"
+          build=true
+          if [ "$EVENT" = schedule ] && git ls-remote --exit-code --heads origin dist > /dev/null; then
+            git fetch --no-tags --depth=1 origin dist
+            if git log -1 --format=%B FETCH_HEAD | grep -qF "$stamp"; then
+              build=false
+              echo "dist is already built from $stamp"
+            fi
+          fi
+          echo "build=$build" >> "$GITHUB_OUTPUT"
+
+      - uses: ./.github/actions/setup
+        if: steps.plan.outputs.build == 'true'
+
+      - name: Build
+        if: steps.plan.outputs.build == 'true'
+        run: |
+          measurements=()
+          if [ -f "$MEASUREMENTS" ]; then measurements=(--measurements "$MEASUREMENTS"); fi
+          slopcheck-dev build --out dist "${measurements[@]}"
+
+      - name: Push the package to branch dist
+        if: steps.plan.outputs.build == 'true' && env.IS_MAIN == 'true'
+        run: |
+          mkdir -p "$RUNNER_TEMP/dist-tree"
+          cp -R dist/slop-check dist/exports "$RUNNER_TEMP/dist-tree/"
+          python .github/scripts/data_branch.py publish --branch dist --source "$RUNNER_TEMP/dist-tree" \
+            --replace --message "Build slop-check from $STAMP"
+
+      - name: Create or update the GitHub release
+        if: steps.plan.outputs.build == 'true' && env.RELEASE_TAG != ''
+        run: |
+          # folder archive, SKILL.md-at-root archive (section 7), single-file and knowledge exports
+          assets=(dist/slop-check.zip dist/slop-check-flat.zip dist/exports/system-prompt.md dist/exports/knowledge.md)
+          if gh release view "$RELEASE_TAG" > /dev/null 2>&1; then
+            gh release upload "$RELEASE_TAG" "${assets[@]}" --clobber
+          elif [ "$GITHUB_REF_TYPE" = tag ]; then
+            gh release create "$RELEASE_TAG" "${assets[@]}" --verify-tag --title "$RELEASE_TAG" --generate-notes
+          else
+            gh release create "$RELEASE_TAG" "${assets[@]}" --target "$GITHUB_SHA" --title "$RELEASE_TAG" \
+              --generate-notes
+          fi

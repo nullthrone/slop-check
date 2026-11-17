@@ -1,0 +1,59 @@
+id: curly-quotes
+modality: text
+name: Curly quotes in plain text
+summary: >
+  Typographic (curly) quotation marks and apostrophes in plain-text contexts, typically carried over
+  by copy and paste from an interface that renders them. Kept apart from em dash density so that
+  the two typography signals are measured separately.
+category: typography
+status: observation
+detector:
+  kind: metric
+  position: any
+  metric: curly_quotes
+  params:
+    exempt_languages: [de]
+threshold:
+  value: {op: gte, x: 1}
+requires: null
+realizations:
+  "*":
+    examples:
+      positive:
+        - "The memo called it “a turning point” for the team."
+        - "She answered ‘no’ twice before the vote."
+        - "It’s ready for review."
+      negative:
+        - "The memo called it \"a turning point\" for the team."
+        - "She answered 'no' twice before the vote."
+        - "Er nannte es »einen Wendepunkt« und ging."
+        - "„Das ist nicht die Lösung, die wir brauchen“, sagte die Leiterin und verwies auf die Messwerte aus dem Juni."
+legitimate_use: >
+  Word processors and phone keyboards insert curly quotes and apostrophes automatically, and typeset
+  publications use them by design. German („…“, ‚…‘) is exempt, and
+  other languages with their own quotation conventions deserve the same treatment. Treat a hit as an
+  artifact signal only in plain-text channels such as commit messages or Markdown files, where
+  writers normally type straight quotes.
+fix: >
+  Convert curly quotes and apostrophes to straight ones in plain-text channels.
+prevention: >
+  In plain-text channels use straight quotes (" and ') unless the target language or the
+  publication style requires typographic quotes.
+notes: >
+  Observation, not scored. Any curly quote or apostrophe counts; the metric also counts U+2019
+  used as an apostrophe. In the human reference corpus (pre-2022 texts) 42 % of the English texts
+  contain at least one, because editors, publishing systems and phone keyboards insert them
+  automatically. Keeping the English trigger rate at or below 4 % would need about 23 curly
+  characters per text, a count that tracks text length and editing software rather than generated
+  text, so no meaningful core threshold exists for this metric. German is exempt via
+  exempt_languages (no German text triggers). The pattern can move to the candidate track if a
+  length-normalized measure or a scope limited to plain-text channels (commit messages, Markdown
+  source) shows separation from AI-generated text. The German negative example with „…“ relies on
+  language detection recognising the sentence as German.
+sources:
+  - source: maintainer-observation
+  - source: fireprompts-io
+    note: "Lists curly quotes, together with em dashes, as typography markers of generated text."
+related:
+  - {id: em-dash-inflation, relation: split-from}
+  - {id: emoji-decoration, relation: distinct-from}

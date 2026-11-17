@@ -1,0 +1,74 @@
+id: german-stock-phrases
+modality: text
+name: German stock phrases
+summary: >
+  German text strings together cliché building blocks: repeated "nicht nur X, sondern auch Y",
+  "eine zentrale Rolle spielen", "das volle Potenzial ausschöpfen", "einen echten Mehrwert bieten"
+  and coined compound chains. Each phrase is grammatical; the accumulation makes the text read as
+  assembled from templates.
+category: lexical
+status: core
+detector:
+  kind: regex
+  position: any
+threshold:
+  min_count: 2
+  comparison: gte
+  scope: text
+requires: null
+realizations:
+  de:
+    patterns:
+      - '(?i)\bnicht\s{1,3}nur\b[^.!?\n]{1,80}?\bsondern\s{1,3}auch\b'
+      - '(?i)\beine\s{1,3}(?:(?:zentrale|entscheidende|tragende|maßgebliche|wesentliche|herausragende)\s{1,3}Rolle|Schlüsselrolle)\b'
+      - '(?i)\bvon\s{1,3}(?:zentraler|entscheidender|herausragender|immenser)\s{1,3}Bedeutung\b'
+      - '(?i)\b(?:das|sein|ihr|ihre[mns]?|unser|euer|deren|dessen)\s{1,3}(?:volle[ns]?|gesamte[ns]?|ganze[ns]?)\s{1,3}Poten[tz]ial\b'
+      - '(?i)\b(?:einen|echten|klaren|spürbaren|nachhaltigen|deutlichen|messbaren)\s{1,3}Mehrwert\b'
+      - '(?i)\bauf\s{1,3}(?:ein\s{1,3}(?:ganz\s{1,3})?neues|das\s{1,3}nächste)\s{1,3}Level\b'
+      - '(?i)\b(?:geh(?:en|t)\s{1,3}Hand\s{1,3}in\s{1,3}Hand|Hand\s{1,3}in\s{1,3}Hand\s{1,3}geh(?:en|t))\b'
+      - '\b[A-ZÄÖÜ](?:[a-zäöüß]{0,25}?(?:ung|heit|keit|tion|tät)){3}[a-zäöüß]{0,25}\b'
+    examples:
+      positive:
+        - "Digitalisierung spielt dabei eine zentrale Rolle."
+        - "Nur so lässt sich das volle Potenzial ausschöpfen."
+        - "Das Tool spart nicht nur Zeit, sondern auch Kosten."
+        - "Unsere Lösung bietet einen echten Mehrwert und hebt Ihr Team auf das nächste Level."
+        - "Die Prozessoptimierungsumsetzungsplanung startet im Mai."
+      negative:
+        - "Nicht alle Tests liefen durch, sondern nur die Unit-Tests."
+        - "Die Rolle des Bundesrats regelt Artikel 50 des Grundgesetzes."
+        - "Das Potenzial der Anlage liegt bei 4,2 MW."
+        - "Auf den Rechnungen ist die Mehrwertsteuer getrennt ausgewiesen."
+        - "Die Arbeitsunfähigkeitsbescheinigung muss am dritten Tag vorliegen."
+    test_texts:
+      - {text: "Das Tool spart nicht nur Zeit, sondern auch Kosten.", expect: no_trigger}
+      - {text: "Das Tool spart nicht nur Zeit, sondern auch Kosten. Automatisierung spielt dabei eine zentrale Rolle.", expect: trigger}
+legitimate_use: >
+  One "nicht nur ..., sondern auch" that adds a second relevant fact is ordinary German, and so is
+  a single "zentrale Rolle" with the role spelled out. Established compound terms of legal and
+  technical language are fine. The finding concerns accumulation (two or more stock phrases in one
+  text) and compounds coined ad hoc.
+fix: >
+  Break the phrase up and state the claim directly: name the role or the benefit concretely, with
+  numbers or examples. Split coined compounds into a noun with a verb or a prepositional phrase.
+prevention: >
+  In German text, avoid stock phrases such as "eine zentrale Rolle spielen", "das volle Potenzial
+  ausschöpfen", "einen echten Mehrwert bieten", repeated "nicht nur ..., sondern auch" and coined
+  compound chains. Say concretely what happens and who does it.
+sources:
+  - source: maintainer-observation
+related:
+  - {id: antithesis-template, relation: overlaps}
+  - {id: nominalization-density, relation: overlaps}
+  - {id: transition-stacking, relation: distinct-from}
+  - {id: synonym-cycling, relation: distinct-from}
+notes: >
+  German only by design. The core phrases are "nicht nur X, sondern auch Y" (when repeated), "eine
+  zentrale Rolle spielen", "das volle Potenzial ausschöpfen" and unnatural compound chains. Close
+  variants ("von zentraler Bedeutung", "Schlüsselrolle") and common German marketing phrases
+  ("Mehrwert", "auf das nächste Level", "Hand in Hand") extend the list; they have no evidence of
+  their own yet. The compound regex flags capitalized words with three or more nominal suffixes
+  (-ung, -heit, -keit, -tion, -tät), which spares established two-suffix terms such as
+  "Arbeitsunfähigkeitsbescheinigung". transition-stacking covers formal connectors at paragraph
+  start and synonym-cycling covers changing labels for one referent; this pattern covers phrase
+  clichés regardless of position.

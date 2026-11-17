@@ -1,0 +1,22 @@
+---
+layout: default
+---
+<main id="main" class="main main--home">
+  <section class="hero band" aria-labelledby="hero-title">
+    <div class="container hero__inner">
+      <p class="eyebrow eyebrow--band">{{ page.eyebrow }}</p>
+      <h1 class="hero__title" id="hero-title">{{ site.title }}</h1>
+      <p class="hero__lead">{{ page.lead }}</p>
+      <div class="hero__actions">
+        <a class="btn btn--accent btn--lg" href="{{ site.download_zip }}">Download the skill</a>
+        <a class="btn btn--on-band btn--lg" href="{{ '/setup/' | relative_url }}">Set up your assistant</a>
+      </div>
+    </div>
+  </section>
+  <div class="container">
+    {% include steprule.html %}
+    <div class="home">
+      {{ content }}
+    </div>
+  </div>
+</main>

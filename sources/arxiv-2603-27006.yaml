@@ -1,0 +1,14 @@
+id: arxiv-2603-27006
+title: "The Last Fingerprint: How Markdown Training Shapes LLM Prose"
+url: https://arxiv.org/abs/2603.27006
+publisher: arXiv
+authors: [E. M. Freeburg]
+published: 2026-03-27
+accessed: 2026-11-17
+type: academic-preprint
+notes: >
+  12 instruction-tuned models from 5 providers, about 240,000 generated words; each model ran once
+  with an instruction to avoid markdown and once without it. Em dashes persist under suppression
+  (GPT-4.1 about 9 per 1,000 words, Llama none), read as a provider-specific fine-tuning signal;
+  Llama 3.1 8B base model 0.49 per 1,000. Human baseline 3.23 per 1,000 (8 published essays).
+  Independent of the Graphite data.

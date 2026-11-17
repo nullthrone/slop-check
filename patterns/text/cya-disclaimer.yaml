@@ -1,0 +1,74 @@
+id: cya-disclaimer
+modality: text
+name: Cover-your-ass disclaimer
+summary: >
+  Meta announcements that something is important or worth mentioning ("It's important to note
+  that...", "Es sei darauf hingewiesen, dass..."). The announcement adds no information; the
+  sentence after "that" works on its own.
+category: rhetoric
+status: core
+detector:
+  kind: regex
+  position: any
+threshold:
+  min_count: 1
+  comparison: gte
+  scope: text
+requires: null
+realizations:
+  en:
+    patterns:
+      - '(?i)\b(?:it[’'']?s|it\s+is)\s+(?:important|crucial|essential|vital|worth|key|interesting)\s+(?:to\s+(?:note|mention|emphasi[sz]e|highlight|point\s+out|stress|underline|recogni[sz]e)|noting|mentioning|pointing\s+out|emphasi[sz]ing|highlighting|stressing)\b'
+      - '(?i)\bit\s+(?:should|must|needs\s+to)\s+be\s+(?:noted|emphasi[sz]ed|mentioned|stressed|pointed\s+out|acknowledged)\s+that\b'
+      - '(?i)\bit\s+bears\s+(?:mentioning|repeating|noting|emphasi[sz]ing)\b'
+      - '(?i)\b(?:it[’'']?s|it\s+is)\s+(?:important|essential|crucial|vital)\s+to\s+(?:keep\s+in\s+mind|bear\s+in\s+mind|remember|understand|recogni[sz]e)\s+that\b'
+    examples:
+      positive:
+        - "It's important to note that results may vary."
+        - "It's worth mentioning that the API is still in beta."
+        - "It should be noted that the survey had 40 respondents."
+        - "It is crucial to keep in mind that every team is different."
+        - "It’s worth noting that the defaults changed in 2.0."
+      negative:
+        - "It is important to back up the database before upgrading."
+        - "Note that the flag defaults to false."
+        - "The detour is worth the extra 20 minutes."
+        - "Mention the ticket number in the commit message."
+  de:
+    patterns:
+      - '(?i)\bes\s+ist\s+(?:wichtig|entscheidend|wesentlich|unerlässlich|ratsam),?\s+(?:zu\s+(?:beachten|betonen|erwähnen|bedenken|berücksichtigen|unterstreichen|verstehen|wissen)|darauf\s+hinzuweisen|im\s+Hinterkopf\s+zu\s+behalten)\b'
+      - '(?i)\bes\s+ist\s+(?:erwähnenswert|hervorzuheben|festzuhalten|anzumerken|darauf\s+hinzuweisen),?\s+dass\b'
+      - '(?i)\bes\s+sei\s+(?:an\s+dieser\s+Stelle\s+|hier\s+)?(?:darauf\s+)?(?:hingewiesen|angemerkt|erwähnt|betont)\b'
+      - '(?i)\bwichtig\s+zu\s+(?:erwähnen|betonen|beachten|wissen)\s+ist\b'
+      - '(?i)\berwähnenswert\s+ist(?:\s+(?:dabei|hierbei|auch|noch|zudem))?\s*,?\s*dass\b'
+    examples:
+      positive:
+        - "Es ist wichtig zu beachten, dass die Ergebnisse variieren können."
+        - "Es sei darauf hingewiesen, dass die API noch in der Beta ist."
+        - "Erwähnenswert ist auch, dass jedes Team anders arbeitet."
+        - "Es ist entscheidend, im Hinterkopf zu behalten, dass sich Daten ändern."
+        - "Wichtig zu erwähnen ist, dass die Lizenz befristet ist."
+      negative:
+        - "Wichtig ist, dass der Dienst vor dem Update gestoppt wird."
+        - "Dabei ist zu beachten, dass Port 8443 offen sein muss."
+        - "Es ist wichtig, die Datenbank vor dem Upgrade zu sichern."
+        - "Der Hinweis auf Seite 3 nennt die Frist."
+legitimate_use: >
+  A warning that changes what the reader does ("Note that the command deletes all data") carries
+  information. Academic texts sometimes use an explicit "it should be noted" to mark a limitation
+  that follows. Flag the phrase when deleting it loses nothing because the sentence after "that"
+  stands on its own.
+fix: >
+  Delete the announcement and keep the sentence that follows it. If the point needs emphasis, give
+  the reason it matters (a consequence, a number) instead of saying that it is important.
+prevention: >
+  Do not announce that a point is important or worth noting. State the point.
+sources:
+  - source: maintainer-observation
+  - source: aicheckr-io
+    note: "Lists the meta announcement as an AI writing marker."
+  - source: aipromptindex-io
+    locator: "'Empty Filler Phrases'"
+related:
+  - {id: concession-pivot, relation: distinct-from}
+  - {id: empty-intensifiers, relation: distinct-from}

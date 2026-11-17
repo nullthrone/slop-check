@@ -1,0 +1,97 @@
+id: announce-then-answer
+modality: text
+name: Announce-then-answer preamble
+summary: >
+  The text opens by previewing what it is about to do, prefacing the point or restating the
+  question instead of making the point: "In this article, I'll walk you through ...", "Here's what
+  you need to know", "You're asking whether ...". The reader reads a promise before the content.
+category: composition
+status: candidate
+detector:
+  kind: regex
+  position: paragraph_start
+threshold:
+  min_count: 1
+  comparison: gte
+  scope: text
+requires: null
+realizations:
+  en:
+    patterns:
+      - '(?i)^in\sthis\s(?:article|post|piece|guide|essay|answer|response|write-up)\s?,?\s(?:I|we)(?:[’'']ll|\swill)\s(?:explain|explore|look\sat|walk\s(?:you\s)?through|cover|discuss|break\sdown|outline|show\syou|unpack)\b'
+      - '(?i)^(?:here[’'']?s|here\sis)\swhat\s(?:you\sneed\sto\sknow|we[’'']ll\scover|this\s(?:article|post|guide)\scovers)\b'
+      - '(?i)^before\s(?:we|I)\s(?:dive|get)\sin(?:to\s\w{1,20})?,'
+      - '(?i)^you[’'']re\sasking\s(?:about|whether|how|what|why|if)\b'
+    examples:
+      positive:
+        - "In this article, I'll walk you through the new billing rules."
+        - "Here's what you need to know about the merger."
+        - "Before we dive in, a quick word on terminology."
+        - "You're asking whether the update is safe to install."
+      negative:
+        - "In this article, published in 2019, the author argued for a carbon tax."
+        - "Here's what happened: the backup job failed at 02:00."
+        - "You're asking the wrong person; the finance team owns that budget."
+        - "Before we left, we locked the server room."
+  de:
+    patterns:
+      - '(?i)^in\sdiesem\s(?:Artikel|Beitrag|Text|Leitfaden|Guide)\s(?:werde\sich|werden\swir|erkläre\sich|zeige\sich|zeigen\swir|erfahren\sSie|erfährst\sdu|schauen\swir\suns)\b'
+      - '(?i)^(?:hier|das)\s(?:ist|sind),?\swas\s(?:Sie|du)\s(?:[\w-]{1,20}\s){0,5}?wissen\s(?:müssen|musst|sollten|solltest)\b'
+      - '(?i)^bevor\swir\s(?:einsteigen|eintauchen|ins\sDetail\sgehen),'
+      - '(?i)^(?:Sie\sfragen|du\sfragst),?\s(?:ob|wie|was|warum|wann)\b'
+    examples:
+      positive:
+        - "In diesem Artikel zeige ich Ihnen die neuen Abrechnungsregeln."
+        - "Hier ist, was Sie über die Fusion wissen müssen."
+        - "Bevor wir einsteigen, kurz ein Wort zur Terminologie."
+        - "Sie fragen, ob das Update sicher installiert werden kann."
+      negative:
+        - "In diesem Artikel aus dem Jahr 2019 argumentiert die Autorin für eine CO2-Steuer."
+        - "Hier ist der Schlüssel, den du vergessen hast."
+        - "Bevor wir gingen, haben wir den Serverraum abgeschlossen."
+        - "Sie fragen beim Support nach, wenn die Lieferung ausbleibt."
+legitimate_use: >
+  Long guides and course material benefit from a short orientation, and an email reply may restate
+  a question to avoid ambiguity. Flag preambles in short texts and answers where the content could
+  start in the first sentence.
+fix: >
+  Delete the preamble and start with the first substantive sentence, usually the answer or the main
+  claim.
+prevention: >
+  Do not announce what the text will do or restate the question. Start with the answer or the main
+  point.
+notes: >
+  Independent sources: tropes-fyi and pangram-signs-of-ai-writing (phrase multipliers for
+  assistant openers); popularai-ai-tells-2026 describes the same throat-clearing. tropes.fyi also
+  counts announcing the count or shape of what follows ("Two constraints shape the design.") and
+  throat-clearing frames ("The more important point is where the decision itself sits."); the
+  first overlaps compulsive-counting, the second is left to a reader's judgement because the
+  phrases are common in ordinary prose. Close to generic-opening and payoff-announcement but kept
+  separate: the preamble previews the answer or restates the question, while generic-opening frames
+  the world or the present age and payoff-announcement builds suspense before a punchline.
+  Threshold not yet calibrated against the reference corpora.
+sources:
+  - source: tropes-fyi
+    locator: "entry 'Preamble' (announce-then-answer), category Composition, status new"
+    note: >
+      Opening by previewing the output, prefacing the point or restating the prompt. Examples:
+      "Two constraints shape the design.", "The more important point is where the decision itself
+      sits."
+  - source: pangram-signs-of-ai-writing
+    locator: "sign 8 'AI-style headers'"
+    note: >
+      Overly helpful openers and introductions; phrase table "Here's what you need to know" 5
+      human vs. 85 AI (11x), "Certainly! Here's" 70x, "Sure! Here's a" 18x, "I'd be happy to" 5x;
+      the sign as a whole averages 1 (human) vs. 2 (AI) per 10,000 words. Corpus size and method
+      not disclosed.
+  - source: popularai-ai-tells-2026
+    locator: "tell 'The compulsory warm-up lap'"
+    note: >
+      AI writing "cannot resist clearing its throat before it does anything"; examples
+      "Certainly.", "Here's a structured way to think about it." No data; cites neither
+      tropes.fyi nor the Wikipedia guide.
+related:
+  - {id: generic-opening, relation: overlaps}
+  - {id: payoff-announcement, relation: overlaps}
+  - {id: compulsive-counting, relation: overlaps}
+  - {id: reasoning-leak, relation: overlaps}

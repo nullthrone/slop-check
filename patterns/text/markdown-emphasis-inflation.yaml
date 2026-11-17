@@ -1,0 +1,91 @@
+id: markdown-emphasis-inflation
+modality: text
+name: Markdown emphasis inflation
+summary: >
+  Bold, italics, inline code and headings appear at a high, constant density regardless of need,
+  often in places that expect plain text (an email, a chat reply without markdown rendering, a
+  forum post). Where nothing renders the markup, raw asterisks and hash signs leak into the text.
+  When everything is emphasized, nothing stands out.
+category: formatting
+status: candidate
+detector:
+  kind: metric
+  position: any
+  metric: markdown_emphasis_density
+  params: {}
+threshold:
+  value: {op: gt, x: 2}
+  context_overrides:
+    technical:
+      value: {op: gt, x: 5}
+requires: null
+realizations:
+  "*":
+    examples:
+      positive:
+        - "Hi team, **quick update**: the *new* release is **ready**. Please **test it today** and send **feedback** by **Friday**."
+        - |-
+          ## Summary
+          Thanks for the call. **Key point:** we *should* move the launch. **Next step:** confirm the date.
+        - "Hallo zusammen, **kurzes Update**: Das *neue* Release ist **fertig**. Bitte **heute testen** und **Feedback** bis **Freitag** schicken."
+      negative:
+        - "Hi team, the new release is ready. Please test it today and send feedback by Friday, so that we can fix the last issues before the launch on Monday."
+        - "The migration finished at 05:40 after the export had been restarted. Disk usage on the database host is back to 61 %, and the alert thresholds are now set at 80 and 90 %. One table, the audit log, still needs a manual vacuum, which we will run on Thursday night when traffic is low. **Do not** restart the replica before then; it would replay the full log and take about four hours. The vacuum job is scripted in section 4 of the runbook and needs no manual steps beyond starting it. After it finishes, we will close the incident ticket and share a short write-up with the team. Questions go to the on-call channel as usual."
+        - "Hallo zusammen, das neue Release ist fertig. Bitte testet es heute und schickt Feedback bis Freitag, damit wir die letzten Fehler vor dem Start am Montag beheben können."
+    notes: >
+      The second negative example has one bold span in about 115 words, below the threshold
+      whether the metric counts spans or individual markers.
+legitimate_use: >
+  Documentation, reference pages and structured reports use headings and code formatting
+  functionally, and one bold warning in a long email is fine. Dismiss hits where the markup will be
+  rendered and helps navigation; flag dense emphasis in short or conversational texts, and any raw
+  markup in media that do not render it.
+fix: >
+  Remove emphasis that does not mark something the reader must not miss; keep at most one emphasis
+  per paragraph. Drop headings from short texts, and strip markdown entirely where it will not be
+  rendered.
+prevention: >
+  Use bold, italics and headings only where they help the reader find or not miss something. Write
+  plain text for emails, chat replies and other media that do not render markdown.
+notes: >
+  No source gives a per-text threshold (Pangram reports frequency multiples). The value of more
+  than 2 emphasis markers per 100 words, with more than 5 in technical context, is not yet
+  calibrated against the reference corpora. The metric reads raw markup, so it also catches
+  markdown bleed; whether a text will be rendered is unknown to the engine. Demarcation:
+  bullet-bold-lead covers the bold-keyword structure of list items; this pattern covers emphasis
+  density regardless of list structure or rendering.
+sources:
+  - source: maintainer-observation
+  - source: pangram-signs-of-ai-writing
+    locator: "markdown formatting"
+    note: >
+      12x the human baseline, described as "Markdown formatting inserted into plain text
+      contexts"; per 10,000 words bold 43x, headings 23x, inline code 5x, italics 2x. Corpus size
+      and methodology not disclosed.
+  - source: aismells
+    locator: "entry 'Emphasis Epidemic', category Formatting"
+    note: >
+      "AI bolds and italicizes at rates no human editor would tolerate"; also describes markdown
+      bleed and an unsupported RLHF explanation.
+  - source: wikipedia-signs-of-ai-writing
+    locator: "Style subpage, section 'Overuse of boldface' (WP:AIBOLD); Markup subpage, 'Misuse of asterisks'"
+    note: >
+      Boldface "in an excessive, mechanical manner", often emphasizing "every instance of a chosen
+      word or phrase" in a key-takeaways fashion, with dated examples from 2025 and 2026; notes
+      that some newer models or apps are instructed to avoid it. aismells names this guide as its
+      parent source.
+  - source: arxiv-2603-27006
+    locator: "section 3.2 and Table 1"
+    note: >
+      Unrequested headings and bold appear in essay output ("bold text highlights terms the model
+      considers structurally salient"); overt markdown features counted together reach up to 6.27
+      per 1,000 words and vanish under a prose instruction. Bold is not reported separately.
+  - source: anthropic-prompting-best-practices
+    locator: "section 'Control the format of responses'"
+    note: >
+      Vendor sample instruction for long-form content: "Avoid using **bold** and *italics*" and
+      reserve markdown for code and simple headings.
+related:
+  - {id: bullet-bold-lead, relation: distinct-from}
+  - {id: emoji-decoration, relation: distinct-from}
+  - {id: format-bleed, relation: overlaps}

@@ -1,0 +1,15 @@
+id: economist-ai-writing-analysis
+title: "The Economist data analysis of chatbot prose against Economist writing (August 2026)"
+publisher: The Economist
+published: 2026-08-03
+accessed: 2026-08-09
+type: corpus-study
+access_note: >
+  URL not verified. Known through the article and its syndicated coverage (Fast Company, Dataconomy
+  and others), which reports the same analysis and adds no independent data.
+notes: >
+  55,940 sentences (1.2 million words) of output from four chatbots (ChatGPT, Claude, Gemini, Grok)
+  compared with Economist prose. Names verbosity and low punctuation density as the clearest
+  remaining signals; em dash frequency loses discriminative power (only Claude above the human
+  rate, ChatGPT below). Also confirms "it's not X, it's Y", the rule of three and uniform sentence
+  length, plus higher nominalization and rarer vocabulary.

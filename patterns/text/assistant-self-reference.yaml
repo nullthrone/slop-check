@@ -1,0 +1,84 @@
+id: assistant-self-reference
+modality: text
+name: Assistant self-reference
+summary: >
+  The chat assistant speaks about itself inside the finished text: it names itself as an AI ("As
+  an AI language model, I can't ..."), dates its own knowledge ("As of my last knowledge update in
+  January 2022"), states what it cannot access ("I don't have access to real-time data"), or the
+  label of an interface button ("Regenerate response") was pasted along with the answer. The lines
+  belong to a conversation the reader never saw and show that the output was not edited.
+category: composition
+status: candidate
+detector:
+  kind: regex
+  position: any
+threshold:
+  min_count: 1
+  comparison: gte
+  scope: text
+requires: null
+realizations:
+  en:
+    patterns:
+      - '(?i)\bas\s(?:an\sAI\s(?:language\smodel|assistant|model|chatbot)|a\s(?:large\s)?language\smodel)\b'
+      - '(?i)\bI(?:[’'']m|\sam)\s(?:just\s|only\s|merely\s)?(?:an\sAI\s(?:language\smodel|assistant|model|chatbot)|a\s(?:large\s)?language\smodel|an\sAI(?=\s*[,.;!]))'
+      - '(?i)\bmy\s(?:(?:last|latest|most\srecent)\s(?:knowledge|training)\s(?:update|cut-?off)|(?:knowledge|training(?:\sdata)?)\scut-?off)\b'
+      - '(?i)\bI\s(?:do\snot|don[’'']t)\shave\s(?:direct\s)?access\sto\s(?:real-time|current|live|up-to-date)\s(?:information|data|events|updates|news)\b'
+      - '(?i)\bI\s(?:cannot|can[’'']t|am\sunable\sto)\sbrowse\s(?:the\s)?(?:internet|web)\b'
+      - '(?i)\bregenerate\sresponse\b'
+    examples:
+      positive:
+        - "As an AI language model, I can't add the content for you, but I can help you draft the bibliography."
+        - "As of my last knowledge update in January 2022, the hospital had not announced a new director."
+        - "I don't have access to real-time data, so please check the regulator's website for current rates."
+        - "In summary, the treatment remains contested. I'm sorry, but I am a large language model and cannot give medical advice."
+        - "The findings are summarized in Table 2.\n\nRegenerate response"
+      negative:
+        - "As an AI researcher, I spend most of my time on evaluation, not on model training."
+        - "Since my last update in March, we have hired two engineers and closed the Berlin office."
+        - "I'm an AI ethicist by training and a product manager by trade."
+        - "The chatbot said it had no access to live prices, so I called the dealer instead."
+        - "The model's training cutoff is listed in the vendor documentation as October 2023."
+legitimate_use: >
+  Articles, papers and reports about chatbots quote such lines on purpose, fiction can have an AI
+  narrator, and a tutorial may describe the "Regenerate response" button. Flag a hit when the line
+  speaks in the voice of the document's author and refers to the author's own nature, knowledge
+  cutoff or access, which a human author would never claim.
+fix: >
+  Delete the self-reference and everything that only makes sense in the chat (apologies, offers,
+  limitations). If the limitation was real, replace it with the missing fact from a checked source
+  or with a dated statement in the author's voice ("Figures as of March 2026").
+prevention: >
+  Never write as the assistant inside a deliverable: no "as an AI", no knowledge-cutoff dates, no
+  statements about what you can or cannot access. Give the content, or state plainly which fact is
+  missing.
+notes: >
+  Mechanism: the assistant's self-description leaks into a text that has a human author. Closest
+  existing patterns: sycophant-residue (politeness formulas such as "Great question!" or "I hope
+  this helps") and model-fingerprint-opener (stock first words such as "Certainly! Here's"). Both
+  are conversational framing; this pattern is the assistant describing itself, its training date or
+  its tool limits, which also occurs mid-text. reasoning-leak covers narrated deliberation, not
+  self-identification. The Wikipedia guide lists knowledge-cutoff statements (2022 to 2023) and
+  prompt refusals as historical indicators that have become rare in current models; Academ-AI
+  shows they nevertheless reached hundreds of published papers. The detector requires "AI" to be
+  followed by "language model", "assistant", "model" or "chatbot" (or punctuation after "I am an
+  AI") so that job titles such as "an AI researcher" do not match, and leaves out the bare "since my
+  last update", which human status updates use.
+sources:
+  - source: wikipedia-signs-of-ai-writing
+    locator: "Historical indicators: 'Statements about knowledge cutoffs' and 'Prompt refusal'"
+    note: >
+      Words to watch "Up to my last training update", "as of my last knowledge update", "as an AI
+      language model", "as a large language model", "I'm sorry"; example from a November 2023 article
+      revision: "As of my last knowledge update in January 2022, I don't have specific information
+      about the current status". Marked as historical: outright refusals have become rare.
+  - source: arxiv-2411-15218
+    locator: "Table 1 and sections 3.1.1, 3.1.2, 3.1.5"
+    note: >
+      In 768 published documents with suspected undeclared AI use: knowledge-update or cutoff wording
+      43.9 %, lack of access 7.0 %, self-identification as AI 6.8 %, "Regenerate response" 61 cases
+      (8 %). Corpus selected by such phrases, so these are shares of flagged documents.
+related:
+  - {id: sycophant-residue, relation: distinct-from}
+  - {id: model-fingerprint-opener, relation: distinct-from}
+  - {id: reasoning-leak, relation: distinct-from}

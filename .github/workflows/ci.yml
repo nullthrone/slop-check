@@ -1,0 +1,285 @@
+# Checks for every pull request and every push to main. Read-only token, no secrets.
+# Pull requests run their own code here. That is safe because a change to workflows,
+# engine, eval code or thresholds needs code-owner review (.github/CODEOWNERS) before it
+# can merge, so a pull request cannot merge a manipulated gate.
+# The final job "ci-gate" is the required status check on main.
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions: {}
+
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup
+      - run: ruff check .
+
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup
+      - run: pytest
+
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 2
+          persist-credentials: false
+      # Content pull requests merge without review (D10), so the content paths may hold only
+      # regular files of the shapes the tooling reads, at most 256 KiB each. Symlinks are
+      # refused: a pattern file linked into docs/ would let later docs/ edits change the
+      # pattern while no pattern file shows up as changed for the empirical gate.
+      - name: Content paths hold only data files
+        run: |
+          bad=0
+          while IFS= read -r -d '' entry; do
+            path=${entry#*$'\t'}
+            read -r mode object _ <<< "${entry%%$'\t'*}"
+            reason=
+            if [ "$mode" != 100644 ]; then
+              reason="mode $mode (symlink, submodule or executable)"
+            elif ! [[ $path =~ ^(patterns/(text|image|code|audio|video)/[a-z0-9]+(-[a-z0-9]+)*\.yaml|sources/[a-z0-9]+(-[a-z0-9]+)*\.yaml|docs/[a-z0-9]+(-[a-z0-9]+)*\.md)$ ]]; then
+              reason="not patterns/<modality>/<id>.yaml, sources/<id>.yaml or docs/<name>.md"
+            elif [ "$(git cat-file -s "$object")" -gt 262144 ]; then
+              reason="larger than 256 KiB"
+            fi
+            if [ -n "$reason" ]; then
+              printf '%q: %s\n' "$path" "$reason"
+              bad=1
+            fi
+          done < <(git ls-files -s -z -- patterns sources docs)
+          if [ "$bad" -ne 0 ]; then
+            echo "::error title=Content paths::patterns/, sources/ and docs/ hold files they must not hold (listed above)."
+            exit 1
+          fi
+      - uses: ./.github/actions/setup
+      - run: slopcheck-dev validate
+      # The gates skip deleted files, other modalities and detectors they cannot run, so a content
+      # pull request could take a scored pattern out of the score unmeasured. The guard fails that
+      # unless the pull request also changes governance/ (code-owner review).
+      - name: Scored patterns stay in the gate
+        env:
+          EVENT: ${{ github.event_name }}
+          BEFORE: ${{ github.event.before }}
+        run: |
+          base=HEAD^1  # pull_request: parent 1 of the merge commit is the base branch tip
+          if [ "$EVENT" = push ] && [ -n "$BEFORE" ] && [ "$BEFORE" != 0000000000000000000000000000000000000000 ]; then
+            if git fetch --no-tags --depth=1 origin "$BEFORE"; then base=$BEFORE; fi
+          fi
+          python .github/scripts/data_branch.py checkout --branch data --dir "$RUNNER_TEMP/data"
+          measurements=()
+          if [ -f "$RUNNER_TEMP/data/measurements/measurements.json" ]; then
+            measurements=(--measurements "$RUNNER_TEMP/data/measurements/measurements.json")
+          fi
+          rc=0
+          slopcheck-dev guard --base "$base" "${measurements[@]}" --summary "$GITHUB_STEP_SUMMARY" || rc=$?
+          if [ "$rc" -eq 1 ]; then
+            echo "::error title=Scored-pattern guard::This change takes a scored pattern out of the gate and needs a maintainer (see the job summary)."
+          fi
+          exit "$rc"
+
+  fixtures:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup
+      - run: slopcheck-dev check-fixtures
+
+  # Deterministic empirical gate on the dev split for the text patterns this change touches.
+  # Corpus data comes from branch "data"; while it does not exist yet the gate is skipped
+  # with a notice for candidates, so the repository works before the first measurement, and
+  # fails pull requests that modify an existing pattern declaring status core.
+  empirical:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 2
+          persist-credentials: false
+      - name: Changed text patterns
+        id: changed
+        env:
+          EVENT: ${{ github.event_name }}
+          BEFORE: ${{ github.event.before }}
+        run: |
+          set -o pipefail  # a failing git diff must not read as "no pattern changed"
+          base=HEAD^1  # pull_request: parent 1 of the merge commit is the base branch tip
+          if [ "$EVENT" = push ] && [ -n "$BEFORE" ] && [ "$BEFORE" != 0000000000000000000000000000000000000000 ]; then
+            if git fetch --no-tags --depth=1 origin "$BEFORE"; then base=$BEFORE; fi
+          fi
+          # T (type change, e.g. file to symlink) counts as a change too
+          ids=$(git diff --name-only --diff-filter=ACMRT "$base" HEAD -- patterns/text/ \
+            | sed -n -E 's#^patterns/text/([a-z0-9]+(-[a-z0-9]+)*)\.yaml$#\1#p' | sort -u | tr '\n' ' ')
+          ids=${ids% }
+          echo "ids=$ids" >> "$GITHUB_OUTPUT"
+          if [ -z "$ids" ]; then
+            echo "::notice title=Empirical gate::No text pattern changed; nothing to measure."
+          else
+            echo "Changed text patterns: $ids"
+          fi
+      - uses: ./.github/actions/setup
+        if: steps.changed.outputs.ids != ''
+      - name: Read branch data
+        id: data
+        if: steps.changed.outputs.ids != ''
+        env:
+          EVENT: ${{ github.event_name }}
+          IDS: ${{ steps.changed.outputs.ids }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          echo "DATA=$RUNNER_TEMP/data" >> "$GITHUB_ENV"
+          DATA=$RUNNER_TEMP/data
+          python .github/scripts/data_branch.py checkout --branch data --dir "$DATA"
+          if [ -f "$DATA/corpus/human/manifest.json" ] && compgen -G "$DATA/corpus/ai/*/*.jsonl*" > /dev/null; then
+            echo "corpus=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "corpus=false" >> "$GITHUB_OUTPUT"
+            # Candidates carry no weight and may pass unmeasured. A pattern that declares status
+            # core and already exists on the base commit is scored at once, so a pull request must
+            # not modify it unmeasured. Newly added core patterns are gated already: status core
+            # requires an initial_core entry in governance/thresholds.yaml, which CODEOWNERS
+            # protects (except an id whose file an earlier pull request deleted).
+            # shellcheck disable=SC2086  # IDS holds kebab-case ids separated by spaces
+            core=$(python -c 'import sys; from slopcheck_dev.patterns import load_yaml; print(" ".join(i for i in sys.argv[1:] if (load_yaml(f"patterns/text/{i}.yaml") or {}).get("status") == "core"))' $IDS)
+            if [ "$EVENT" = pull_request ] && [ -n "$core" ]; then
+              git cat-file -e "$BASE_SHA^{commit}" 2>/dev/null || git fetch --no-tags --depth=1 origin "$BASE_SHA"
+              modified=
+              for id in $core; do
+                if git cat-file -e "$BASE_SHA:patterns/text/$id.yaml" 2>/dev/null; then modified="$modified $id"; fi
+              done
+              if [ -n "$modified" ]; then
+                echo "::error title=Empirical gate::Branch data has no corpus yet, so changes to these scored core patterns cannot be measured:$modified"
+                exit 1
+              fi
+            fi
+            echo "::notice title=Empirical gate skipped::Branch data has no corpus yet. The first measurement creates it."
+          fi
+      - uses: ./.github/actions/human-corpus
+        if: steps.data.outputs.corpus == 'true'
+        with:
+          manifest: ${{ runner.temp }}/data/corpus/human/manifest.json
+      - name: Measure changed patterns on the dev split
+        if: steps.data.outputs.corpus == 'true'
+        env:
+          IDS: ${{ steps.changed.outputs.ids }}
+        run: |
+          extra=()
+          if [ -f "$DATA/models/lock.json" ]; then
+            # admission metrics use only generators in the lock; never re-resolve here
+            extra+=(--lock-filter --lock "$DATA/models/lock.json" --max-lock-age 36500)
+          fi
+          # shellcheck disable=SC2086  # IDS holds kebab-case ids separated by spaces
+          slopcheck-dev measure --human .corpus/human --ai "$DATA/corpus/ai" --split dev \
+            --patterns $IDS "${extra[@]}" --out .eval-out/measure-dev.json
+      - name: Gate
+        if: steps.data.outputs.corpus == 'true'
+        env:
+          IDS: ${{ steps.changed.outputs.ids }}
+        run: |
+          current=()
+          if [ -f "$DATA/measurements/measurements.json" ]; then
+            current=(--current "$DATA/measurements/measurements.json")
+          fi
+          # shellcheck disable=SC2086
+          slopcheck-dev gate --measure .eval-out/measure-dev.json --patterns $IDS "${current[@]}" \
+            --summary "$GITHUB_STEP_SUMMARY"
+
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup
+      - run: slopcheck-dev build --out dist
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: slop-check
+          path: dist/slop-check.zip
+          if-no-files-found: error
+          retention-days: 14
+
+  # Runs the packaged skill's own CLI on the repository's prose. Findings are informational;
+  # the job fails only if the packaged CLI itself breaks.
+  dogfood:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.12"
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: slop-check
+          path: ${{ runner.temp }}/package
+      - name: Audit README, CONTRIBUTING and docs with the packaged CLI
+        env:
+          PACKAGE: ${{ runner.temp }}/package
+        run: |
+          unzip -q "$PACKAGE/slop-check.zip" -d "$PACKAGE"
+          {
+            echo "## Dogfood: slopcheck audit on the repository's own prose"
+            echo
+            echo "Informational. Findings here do not fail the build."
+            echo
+            python "$PACKAGE/slop-check/scripts/slopcheck.py" audit README.md CONTRIBUTING.md docs/*.md --format md
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  ci-gate:
+    if: always()
+    needs: [lint, test, validate, fixtures, empirical, build, dogfood]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions: {}
+    steps:
+      - name: All checks passed
+        env:
+          NEEDS: ${{ toJSON(needs) }}
+        run: |
+          echo "$NEEDS" | jq -r 'to_entries[] | "\(.key): \(.value.result)"'
+          # empirical may be skipped; every other job must succeed
+          echo "$NEEDS" | jq -e 'to_entries | all(.value.result == "success"
+            or (.key == "empirical" and .value.result == "skipped"))' > /dev/null

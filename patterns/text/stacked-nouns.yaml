@@ -1,0 +1,72 @@
+id: stacked-nouns
+modality: text
+name: Stacked nouns
+summary: >
+  Chains of three or more nouns in which the leading nouns modify the head noun pile up in English
+  prose ("reader-patience budget", "model evaluation pipeline failure mode"). Each chain compresses
+  a relation that a preposition or a verb would make explicit, and the reader has to reconstruct
+  it.
+category: lexical
+status: candidate
+detector:
+  kind: llm
+  position: any
+  rubric: >
+    Find noun chains of three or more nouns (hyphenated or not) in which the leading nouns modify
+    the last one, such as "reader-patience budget" or "deployment risk mitigation plan". Count a
+    chain only if it is not an established term or name (customer service team, data center
+    cooling system, United Nations Security Council, product names) and if unpacking it with a
+    preposition or verb would make the relation clearer ("the patience readers have left"). Do not
+    count adjective-noun phrases (see premodifier-stacking), German compound words, which are
+    standard orthography, and technical identifiers. Return each chain as a hit.
+threshold:
+  min_count: 3
+  comparison: gte
+  scope: text
+requires: null
+realizations:
+  en:
+    examples:
+      positive:
+        - "Every extra paragraph draws down the reader-patience budget."
+        - "The model evaluation pipeline failure mode went unnoticed for weeks."
+        - "We need a deployment risk mitigation plan before the release."
+      negative:
+        - "The customer service team answers calls until 8 p.m."
+        - "The data center cooling system failed on Tuesday."
+        - "Readers lose patience with every extra paragraph."
+legitimate_use: >
+  Technical and administrative English has many established noun compounds, and headlines
+  compress by convention. Flag ad-hoc chains in running prose where a preposition or verb would
+  make the relation explicit.
+fix: >
+  Unpack the chain: put the head noun first and attach the modifiers with prepositions or a
+  clause ("a plan to reduce the risks of deployment").
+prevention: >
+  Avoid chains of three or more nouns that are not established terms. Use prepositions or a
+  clause to show how the nouns relate.
+notes: >
+  Independent sources: arxiv-2610-29162 (abstract and full text) and slhck-claudish. English
+  only: German writes noun compounds as one word by rule, and unnatural compound chains in German
+  are covered by german-stock-phrases. Distinct from premodifier-stacking (adjective
+  premodification; arxiv-2610-29162 is not a source there) and from nominalization-density
+  (verbal nouns). Threshold not yet calibrated against the reference corpora.
+sources:
+  - source: arxiv-2610-29162
+    locator: "abstract; section 3.1 'Linguistic features of interest', paragraph 'Stacked noun compounds'"
+    note: >
+      Stacked noun compounds are defined as "three or more nouns in a modifier relationship";
+      compared with genre-matched human baselines, most of the nine frontier and near-frontier
+      models tested "use longer dependencies, more stacked nouns, and more reduced object
+      relatives in conversation". The paper's opening example sentence, written in the style of
+      model prose, contains "reader-patience budget". Figures from arXiv v1 (2026-10-21).
+  - source: slhck-claudish
+    locator: "level 2 of 'Claudish'"
+    note: >
+      Output degrades into "highly compressed half-sentences, with nouns as adjectives" ("This is
+      a real fleet-storm collapse", "Cap the study-lifecycle handlers ..."), more often after long
+      reasoning or tool use. Anecdotal, one model family.
+related:
+  - {id: premodifier-stacking, relation: distinct-from}
+  - {id: nominalization-density, relation: distinct-from}
+  - {id: german-stock-phrases, relation: distinct-from}

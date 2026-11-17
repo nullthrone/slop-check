@@ -1,0 +1,14 @@
+id: ananas-ai-pattern-detector
+title: "ai-pattern-detector (agent plugin)"
+publisher: ananas-agency
+published: null
+accessed: 2026-09-27
+type: practitioner-skill
+derived_from: [tropes-fyi]
+access_note: >
+  MIT-licensed GitHub repository. URL not verified.
+notes: >
+  Plugin for a coding agent that flags AI writing patterns. Its "Signature constructions" list
+  includes false agency and self-answered questions; it also describes several other patterns of
+  this catalog. A common origin with other directories cannot be ruled out, so it is encoded as
+  derived_from tropes-fyi as a precaution.

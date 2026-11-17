@@ -1,0 +1,115 @@
+id: reasoning-leak
+modality: text
+name: Reasoning leak
+summary: >
+  Traces of the writer's deliberation or task decomposition stay visible in the final text instead
+  of leading straight to the result: "Let me think step by step", "Breaking this down:", "Here's my
+  thought process", or narration of the writer's own moves and decisions ("I want to be exact about
+  my own role here"). The reader gets the scaffolding along with the building.
+category: composition
+status: candidate
+detector:
+  kind: regex
+  position: any
+threshold:
+  min_count: 1
+  comparison: gte
+  scope: text
+requires: null
+realizations:
+  en:
+    patterns:
+      - '(?i)\b(?:let[’'']?s|let\sme)\s(?:think|reason|work)\s(?:this\s|it\s)?(?:through\s)?(?:step\sby\sstep|this\sthrough|it\sthrough)\b'
+      - '(?i)\b(?:here[’'']?s|here\sis)\smy\s(?:thought\sprocess|reasoning|thinking)\b'
+      - '(?i)\bto\sapproach\sthis\ssystematically\b'
+      - '(?i)\bworking\sthrough\sthis\slogically\b'
+      - '(?i)(?:^|(?<=[.!?]\s))breaking\s(?:this|it)\sdown\s?[:,]'
+      - '(?i)\bI\s(?:want\sto\sbe\s(?:exact|precise|careful)\sabout\smy\sown|should\sbe\sclear\sthat\snone\sof\sthis)\b'
+    examples:
+      positive:
+        - "Let me think step by step about the budget."
+        - "Here's my thought process: first I checked the logs."
+        - "To approach this systematically, I will start with the assumptions."
+        - "Breaking this down: there are three factors."
+        - "I want to be exact about my own role here."
+      negative:
+        - "Let me know if the build fails again."
+        - "Breaking news: the vote was postponed until Friday."
+        - "Breaking the results down by region, sales rose 4 % in the north."
+        - "The committee approached the problem systematically and found three causes."
+        - "Step by step, the river carved the canyon over millions of years."
+  de:
+    patterns:
+      - '(?i)\b(?:lass(?:t)?\s(?:mich|uns)|lassen\sSie\s(?:mich|uns))\s(?:das\s|dies\s)?Schritt\sfür\sSchritt\s(?:durchdenken|überlegen|durchgehen|analysieren)\b'
+      - '(?i)\bhier\sist\smein\s(?:Gedankengang|Denkprozess)\b'
+      - '(?i)\bum\s(?:das|dies|diese\sFrage)\ssystematisch\sanzugehen\b'
+      - '(?i)(?:^|(?<=[.!?]\s))(?:schlüsseln|brechen)\swir\s(?:das|es)\s(?:auf|herunter)\s?[:.]'
+    examples:
+      positive:
+        - "Lass mich das Schritt für Schritt durchdenken."
+        - "Hier ist mein Gedankengang: Zuerst prüfe ich die Kosten."
+        - "Um das systematisch anzugehen, betrachte ich zuerst die Annahmen."
+        - "Brechen wir das herunter: Es gibt drei Faktoren."
+      negative:
+        - "Lass mich wissen, ob der Build wieder fehlschlägt."
+        - "Wir gehen die Migration in vier Schritten an, beginnend mit dem Backup."
+        - "Der Gedankengang des Autors bleibt im zweiten Kapitel unklar."
+        - "Die Arbeitsgruppe hat das Problem systematisch untersucht und drei Ursachen gefunden."
+legitimate_use: >
+  Tutorials, worked examples and teaching texts show their reasoning on purpose, and a personal
+  disclosure ("I should be clear that I hold shares in the company") is information. Dismiss a hit
+  when the reasoning is the content the reader asked for; flag leftover planning phrases in text
+  whose job is to deliver a result.
+fix: >
+  Delete the planning phrase and the narration of your own moves. Start with the result, then give
+  the reasons the reader needs.
+prevention: >
+  Do not narrate your reasoning process or announce how you will approach the task ("Let me think
+  step by step", "Breaking this down"). Deliver the result and the reasons directly.
+notes: >
+  tropes-fyi, skill-avoid-ai-writing (registered as derived from it) and aismells form one
+  lineage; slhck-claudish and popularai-ai-tells-2026 are independent clusters that describe
+  reasoning or task decomposition reaching the reader. tropes.fyi and avoid-ai-writing stress
+  different facets: tropes.fyi describes narrated deliberation in prose, avoid-ai-writing lists
+  visible task decomposition phrases. Its phrases "Step 1:" and "First, let's consider" are left
+  out of the detector because tutorials and textbooks use them legitimately. The term "reasoning
+  leak" also names chain-of-thought leakage in model security research, a different topic.
+  Demarcation: sycophant-residue covers politeness formulas; this pattern covers visible task
+  decomposition and meta-cognition.
+sources:
+  - source: maintainer-observation
+  - source: tropes-fyi
+    locator: "entry 'Reasoning Leak', category Composition, status new"
+    note: >
+      Narrating the text's own moves or the model's deliberation, planning or decisions instead of
+      producing the output. Examples: "I want to be exact about my own role here.", "I should be
+      clear that none of this fell on me."
+  - source: skill-avoid-ai-writing
+    locator: "entry 'Reasoning Chain Artifacts'"
+    note: >
+      Phrase list: "Let me think step by step", "Breaking this down", "To approach this
+      systematically", "Step 1:", "Here's my thought process", "First, let's consider", "Working
+      through this logically".
+  - source: slhck-claudish
+    locator: "level 3 of 'Claudish'"
+    note: >
+      Revised reports carry reasoning-style phrasing ("the single most important correction", "the
+      corrections matter because", "it does not survive contact with the source data") and read
+      like "an AI proving its reasoning rather than informing a reader", as if reasoning tokens had
+      reached the output. Anecdotal; cites neither tropes.fyi nor the Wikipedia guide.
+  - source: popularai-ai-tells-2026
+    locator: "tell 'The \"let's narrow this down\" reflex'"
+    note: >
+      Narrated scoping instead of an answer: "We are narrowing the scope." "We are defining
+      parameters." No data.
+  - source: aismells
+    locator: "entry 'Eager Tour Guide', category Tone"
+    note: >
+      "Let's unpack this", "Let's break this down" as a pedagogical co-pilot voice. aismells names
+      the Wikipedia guide and tropes.fyi as parent resources, so it is not independent of them.
+related:
+  - {id: sycophant-residue, relation: distinct-from}
+  - {id: cya-disclaimer, relation: distinct-from}
+  - {id: payoff-announcement, relation: distinct-from}
+  - {id: announce-then-answer, relation: overlaps}
+  - {id: premise-stacking, relation: overlaps}

@@ -1,0 +1,77 @@
+id: plastic-texture
+modality: image
+name: Plastic skin and surface texture
+summary: >
+  Skin rendered waxy, poreless or glossy, and materials such as fabric, food, wood or stone rendered
+  as uniformly smooth surfaces with a soft specular sheen. Image generators drift toward this
+  idealized smoothness when a prompt leaves texture open; retouched fashion and product photography
+  shows the same finish by choice, so the pattern is the finish appearing where the image claims
+  documentary realism.
+category: visual-style
+status: candidate
+detector:
+  kind: vision
+  rubric: >
+    Look at every visible area of human skin and at the main material surfaces. Flag the image if
+    skin lacks pores, fine lines, fine hair and tonal variation and reads as wax, resin, vinyl or a
+    3D render, or if it carries an even, oily highlight that the scene lighting does not explain.
+    Also flag it when fabrics, food, wood or stone show no fine texture and share one uniform glossy
+    finish. Count one hit per image. Does not count: a deliberate stylization (cartoon, 3D animation,
+    clay or toy look) that the whole image commits to; retouched skin in an image that is plainly a
+    beauty, fashion or product advertisement and keeps texture elsewhere; low-resolution or heavily
+    compressed images where texture cannot be judged; surfaces that are genuinely glossy (wet skin,
+    lacquer, polished metal, glass) with highlights consistent with the light sources. Describe the
+    visible pattern only; do not infer how the image was made.
+threshold: {min_count: 1}
+realizations:
+  "*":
+    examples:
+      positive:
+        - "Close-up portrait of a middle-aged man whose cheeks and forehead show no pores or wrinkles, the skin uniformly smooth with a soft sheen like polished resin, while his beard is drawn strand by strand."
+        - "Product shot of a knitted sweater on a table: the knit shows no loops or fuzz, and the wool looks like molded plastic with a glossy highlight along every fold."
+        - "Photo-style image of a farmer in a dusty field at midday whose face is flawless, poreless and evenly glowing, unlike the harsh light on everything around him."
+      negative:
+        - "Candid street photo of an elderly woman with visible pores, age spots and fine wrinkles under flat overcast light."
+        - "Stylized 3D animated character with smooth vinyl skin, consistent with the toy-like style of the whole frame."
+        - "Studio advertisement for foundation makeup with retouched skin, where hair, fabric and background keep natural texture and the retouching is the product message."
+legitimate_use: >
+  Beauty and cosmetics advertising, fashion editorials and stylized 3D or toy-like illustration use
+  smooth skin on purpose. Report a finding only when the smoothness contradicts the register the image
+  claims, for example a documentary scene, a portrait meant to look candid, or a product whose
+  material should be visible.
+fix: >
+  Restore texture wherever the image claims realism. Retouch or re-render skin with pores, fine lines,
+  peach fuzz, uneven tone and small blemishes; give fabric its weave, food its crumbs and wood its
+  grain; reduce specular highlights to those the light sources justify. If the smooth finish is the
+  intent, commit to a clearly stylized medium across the whole frame.
+prevention: >
+  When a photographic look is wanted, describe skin and materials explicitly: natural skin texture
+  with visible pores, fine lines and uneven tone, no retouching or beauty filter; name each material
+  texture ("coarse wool knit", "matte unglazed ceramic", "scuffed leather"). State a light quality that
+  keeps texture visible, such as soft side light or overcast daylight. Ask for smooth, glossy finishes
+  only when the brief is a stylized 3D or advertising look.
+sources:
+  - source: arxiv-2406-08651
+    locator: "section 2.1 Plastic Texture"
+    note: "Skin texture of generated people 'waxy, shiny, cartoonish, or glossy'; caveat that fashion photos also show perfect skin."
+  - source: kellogg-insight-ai-photo-signs
+    locator: "sign 2, stylistic artifacts"
+    note: "'The skin might be waxy and shiny'."
+  - source: sightengine-spot-ai-images
+    locator: "skin and texture section"
+    note: "Skin 'often lacks pores or appears overly polished'; fabrics lack fine mesh detail."
+  - source: openart-visual-cliches
+    locator: "cliché 1, plastic poreless skin"
+  - source: fastcompany-gen-ai-aesthetic
+    locator: "designer and artist quotes"
+    note: "'very glossy', 'as smooth as a Barbie doll', 'a certain plasticity'."
+  - source: atlantic-why-ai-art-looks
+    locator: "description of the default look"
+    note: "Surfaces 'blurred or airbrushed'."
+related:
+  - {id: averaged-face, relation: overlaps}
+  - {id: default-color-grade, relation: distinct-from}
+notes: >
+  Counter-evidence: socialmediaexaminer-generic-ai-images (2026-08-11) reports plastic-looking skin as
+  largely gone from current models. The image benchmark should measure the rate on current output
+  before any promotion.

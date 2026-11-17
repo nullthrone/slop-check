@@ -1,0 +1,13 @@
+id: kobak-excess-vocabulary
+title: "Delving into LLM-assisted writing in biomedical publications through excess vocabulary"
+url: https://arxiv.org/abs/2406.07016
+publisher: arXiv
+authors: [Dmitry Kobak, Rita González-Márquez, Emőke-Ágnes Horvát, Jan Lause]
+published: 2024-06-11
+accessed: 2026-11-17
+type: academic-preprint
+notes: >
+  Excess-vocabulary analysis of PubMed abstracts from 2010 to 2024. SlopDetector.org cites it with
+  14.2 million abstracts and a 25-fold rise of "delves"; the abstract of the current arXiv version
+  speaks of more than 15 million abstracts. Title (current version), URL and first-version date
+  verified.

@@ -1,0 +1,60 @@
+id: imagine-a-world-opener
+modality: text
+name: "\"Imagine a world\" invitation"
+summary: >
+  A sentence invites the reader to imagine an ideal state ("Imagine a world where every tool you use
+  talks to the others", "Imagine never having to chase an invoice again", "Imagine if your team
+  could ship in hours") and then lists the outcomes the product or idea promises. The hypothetical
+  pitch replaces a description of what the thing does today and asks the reader to grant the
+  premise before any evidence.
+category: rhetoric
+status: observation
+detector:
+  kind: regex
+  position: any
+threshold:
+  min_count: 1
+  comparison: gte
+  scope: text
+requires: null
+realizations:
+  en:
+    patterns:
+      - '(?i)(?:^|(?<=[.!?]\s))(?:now\s|just\s|so\s)?imagine\s(?:a\s(?:world|future|day|workplace|team|life|company|city)\s(?:where|in\swhich|without)\b|if\s(?:you|your|every|everyone|we|our)\b|being\sable\sto\b|never\shaving\sto\b|waking\sup\b)'
+    examples:
+      positive:
+        - "Imagine a world where every tool you use talks to every other tool."
+        - "Imagine never having to chase an unpaid invoice again."
+        - "Imagine if your team could ship features in hours instead of weeks."
+        - "Now imagine a workplace where nobody dreads Monday."
+      negative:
+        - "I can't imagine a world where the tax code gets simpler."
+        - "Imagine Dragons played two encores at the stadium."
+        - "Imagine the cube rotated 90 degrees; which face is now on top?"
+        - "John Lennon released \"Imagine\" in 1971."
+legitimate_use: >
+  Thought experiments, puzzles and teaching examples ask the reader to imagine a precisely defined
+  situation ("Imagine the cube rotated 90 degrees"), and fiction or speeches may use the invitation
+  once on purpose. Flag the open-ended "imagine a world where / imagine if your ..." pitch in
+  marketing, product and opinion prose.
+fix: >
+  Replace the hypothetical with what the product or idea does now, for whom, and with what measured
+  result. If the future state matters, state it as a claim with the conditions it depends on.
+prevention: >
+  Do not open with "Imagine a world where" or "Imagine if". Describe the current situation and the
+  concrete change.
+notes: >
+  Mechanism: a second-person invitation to an idealized hypothetical that frames the pitch.
+  Closest existing patterns: generic-opening ("In today's fast-paced world", "In a world where"),
+  which frames the present age, and false-range ("from startups to Fortune 500s"). This pattern
+  invites the reader into an imagined future instead of describing the present; it is not limited
+  to the text start. "I can't imagine a world where" and similar first-person uses are excluded by
+  requiring "Imagine" at sentence start. tropes.fyi rates the entry as fading. Single-source
+  observation.
+sources:
+  - source: tropes-fyi
+    locator: "entry 'Imagine a world where...' (/tropes/imagine-a-world), category Tone, directory status fading"
+    note: "\"The classic AI invitation to futurism\": \"Imagine\" opens a pitch followed by a list of appealing outcomes."
+related:
+  - {id: generic-opening, relation: distinct-from}
+  - {id: false-range, relation: distinct-from}

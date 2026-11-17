@@ -1,0 +1,98 @@
+id: false-agency
+modality: text
+name: False agency
+summary: >
+  Inanimate or abstract entities (data, tools, decisions, cultures, complaints) appear as actors
+  that tell or choose things, or that change on their own ("the data tells a story", "the tool
+  chose to focus", "complaints become fixes"). The phrasing hides the person or institution that
+  acted.
+category: rhetoric
+status: core
+detector:
+  kind: llm
+  position: any
+  rubric: >
+    Flag clauses whose grammatical subject is an inanimate or abstract entity (data, a tool, a
+    decision, a culture, a market, complaints, a strategy, a document) combined with a verb that
+    presupposes intention, perception, speech or choice (tells, chooses, decides, wants, knows,
+    believes, insists) or with a self-causing change (the decision emerged, complaints become
+    fixes, cultures shift), where the sentence thereby hides the person or institution who acted.
+    Count each such clause once. Do not flag conventional descriptions of mechanical behavior
+    (a function returns a value, a sensor measures, a valve opens, a thermostat switches),
+    institutions acting through their members (the board decided, the court ruled), established
+    citation metonymy (the study found, the report lists), or deliberate personification in
+    fiction and poetry. In code descriptions, flag only the anthropomorphic verb: in
+    "is_file() swallows that and returns False", "swallows" counts and "returns" does not.
+threshold:
+  min_count: 2
+  comparison: gte
+  scope: text
+  short_text: {min_count: 1}
+requires: null
+realizations:
+  en:
+    examples:
+      positive:
+        - "The data tells a clear story about our customers."
+        - "The tool chose to focus on speed over accuracy."
+        - "After weeks of discussion, the decision emerged."
+        - "In our team, complaints become fixes within a week."
+      negative:
+        - "The function returns False when the file is missing."
+        - "The board decided to delay the launch until March."
+        - "Our analysts read 400 tickets and found that refunds cause most complaints."
+        - "The thermostat switches the heating off at 21 °C."
+  de:
+    examples:
+      positive:
+        - "Die Daten erzählen eine klare Geschichte über unsere Kundschaft."
+        - "Das Tool hat sich entschieden, auf Geschwindigkeit zu setzen."
+        - "Im Laufe der Gespräche ist die Entscheidung entstanden."
+        - "Bei uns werden aus Beschwerden innerhalb einer Woche Verbesserungen."
+      negative:
+        - "Die Funktion gibt False zurück, wenn die Datei fehlt."
+        - "Der Vorstand hat beschlossen, den Start auf März zu verschieben."
+        - "Unsere Analystinnen haben 400 Tickets gelesen und festgestellt, dass Erstattungen die meisten Beschwerden auslösen."
+        - "Das Thermostat schaltet die Heizung bei 21 °C ab."
+legitimate_use: >
+  Technical descriptions of what a program or device does, collective actors with human members (a
+  board, a court, a parliament), citation shorthand such as "the study found", and deliberate
+  personification in fiction are fine. The finding concerns clauses where the abstract subject
+  replaces an identifiable human or institutional actor.
+fix: >
+  Replace the abstract subject with the actual human or institutional actor, in an active or
+  passive construction with a concrete subject ("our analysts read 400 tickets" instead of "the
+  data tells a story").
+prevention: >
+  Do not make abstract nouns such as data or decisions the acting subject of verbs that need a
+  person (tell, choose, decide, want). Name who did it.
+sources:
+  - source: maintainer-observation
+  - source: vrid-ai-signs
+    locator: "entry 'Personified Abstractions'"
+    note: "Examples 'the data tells a story', 'the tool chose to focus'."
+  - source: skill-avoid-ai-writing
+    locator: "entry 'False Agency'"
+  - source: skill-stop-slop
+    locator: "entry 'False Agency'"
+    note: "Examples 'complaints become fixes', 'cultures shift', 'data tells us'."
+  - source: ananas-ai-pattern-detector
+    locator: "'Signature constructions', item 'false agency'"
+  - source: arxiv-2610-29162
+    locator: "abstract; section 3.1 'Linguistic features of interest', paragraph 'Inanimate subjects'"
+    note: >
+      Same mechanism under a linguistic definition: inanimate subjects used with active verbs that
+      typically take only animate subjects, read as personification that violates a selectional
+      restriction. Compared with human writing, all nine frontier and near-frontier models tested
+      use more of them; the human comparison for this feature rests on student essays. The
+      paper's examples come partly from the code register ("is_file() swallows that and returns
+      False"), which this pattern's legitimate_use exempts when it describes what a program does.
+      Read from arXiv v1. Supporting academic evidence.
+related:
+  - {id: inflated-importance, relation: distinct-from}
+notes: >
+  The threshold is set by analogy with the count thresholds of inflated-importance and
+  german-stock-phrases; no source quantifies it. inflated-importance exaggerates a real event,
+  while this pattern invents an actor role for an abstract noun regardless of any significance
+  framing. Kind llm: the human trigger rate cannot be measured without a judge and has not been
+  measured yet.

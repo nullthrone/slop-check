@@ -1,0 +1,17 @@
+id: en-audit-launch-announcement
+language: en
+mode: audit
+notes: Product launch copy built from template rhetoric, dash chains and hallmark vocabulary.
+text: |
+  It's not just a product update — it's a new way of working.
+
+  Today we are proud to unveil Horizon 4, a robust platform that helps teams navigate the complex landscape of modern project work. We built it to foster collaboration across departments — and to streamline the reporting that slows everyone down. Horizon 4 is fast, flexible and secure. It connects your tools, your people and your goals.
+
+  Our customers told us what they needed — clarity, speed and trust. So we listened. We rebuilt the dashboard from the ground up, we redesigned the planning view, and we added smart summaries that showcase what your team has achieved this week — without a single spreadsheet.
+
+  Whether you lead a small crew or a global department — Horizon adapts to you. Setup takes minutes, the learning curve is gentle, and our support team is there whenever you need it.
+
+  This release marks a pivotal moment for our company. It stands as a testament to what a small, focused team can build when it listens — and we can't wait to see what you will create with it.
+must_find: [antithesis-template, em-dash-inflation, hallmark-vocabulary, triad, inflated-importance]
+must_not_find: [emoji-decoration, bullet-bold-lead, curly-quotes, german-stock-phrases]
+expect_verdict: [RED]

@@ -1,0 +1,89 @@
+id: concession-pivot
+modality: text
+name: Concession pivot
+summary: >
+  An objection is granted in passing and immediately turned into a positive or neutral verdict
+  without any engagement with the objection itself ("Despite its challenges, X remains promising",
+  "Trotz dieser Herausforderungen bleibt X vielversprechend"). The false-balance close ("the truth
+  lies somewhere in between") belongs to the same formula.
+category: rhetoric
+status: core
+detector:
+  kind: regex
+  position: any
+threshold:
+  min_count: 1
+  comparison: gte
+  scope: text
+requires: null
+realizations:
+  en:
+    patterns:
+      - '(?i)\bdespite\s+(?:all\s+)?(?:its|their|these|those|the|such|some|any|his|her|our|certain)\s+(?:[\w-]+\s+)?(?:challenges|limitations|drawbacks|shortcomings|concerns|setbacks|hurdles|obstacles|flaws|criticisms|difficulties|imperfections|headwinds|growing\s+pains)\b[^.!?\n]{0,40}?,\s*[^.!?\n]{0,60}?\b(?:remains?|continues?\s+to|is\s+still|are\s+still|still\s+(?:offers?|holds?|shows?|represents?|stands?|has|delivers?)|holds?\s+(?:great\s+|real\s+)?promise|shows?\s+(?:great\s+|real\s+)?promise)\b'
+      - '(?i)\b(?:while|although|though|even\s+though)\s+[^.!?\n,]{1,60}?\s(?:has|have|faces?|comes?\s+with|is\s+not\s+without|are\s+not\s+without)\s+(?:(?:its|their|some|certain|clear|obvious|real|a\s+few)\s+)?(?:own\s+)?(?:challenges|limitations|drawbacks|shortcomings|flaws|downsides|weaknesses|imperfections|critics|caveats)\b[^.!?\n]{0,30}?,\s*[^.!?\n]{0,40}?\b(?:still|remains?|nonetheless|nevertheless|undeniably)\b'
+      - '(?i)\bthe\s+(?:truth|answer|reality|right\s+answer)\s+(?:likely\s+|probably\s+|usually\s+|often\s+)?(?:lies|is|sits)\s+somewhere\s+(?:in\s+)?(?:between|in\s+the\s+middle)\b'
+      - '(?i)\bboth\s+(?:approaches|sides|options|views|perspectives|camps|positions)\s+have\s+(?:their\s+)?(?:own\s+)?(?:merits?|strengths|valid\s+points|pros\s+and\s+cons)\b'
+    examples:
+      positive:
+        - "Despite its challenges, the project remains promising."
+        - "Despite these challenges, the initiative continues to thrive."
+        - "While the framework has limitations, it's still remarkable."
+        - "Critics argue it is too slow, supporters say it is safer. The truth lies somewhere in between."
+        - "Both approaches have their merits."
+      negative:
+        - "Despite the outage, the team shipped the release on Friday."
+        - "Despite these limitations, we report results only for the English subset."
+        - "While the tool has limitations, they are listed in the README with workarounds."
+        - "Both sides have filed motions, which the court will hear on 3 June."
+  de:
+    patterns:
+      - '(?i)\btrotz\s+(?:all\s+)?(?:aller|dieser|der|seiner|ihrer|einiger|mancher|solcher|bestehender|verbleibender|gewisser|aktueller|anfänglicher)\s+(?:[\w-]+\s+)?(?:Herausforderungen|Schwierigkeiten|Einschränkungen|Hürden|Schwächen|Mängel|Kritikpunkte|Rückschläge|Probleme|Bedenken|Grenzen|Unzulänglichkeiten|Widrigkeiten|Startschwierigkeiten)\b[^.!?\n]{0,40}?\s(?:bleibt|bleiben|ist|sind|bietet|bieten|zeigt|zeigen|gilt|gelten|stellt|stellen|birgt|bergen|hat|haben)\b[^.!?\n]{0,60}?(?:vielversprechend|wertvoll|bemerkenswert|beeindruckend|zukunftsweisend|unverzichtbar|erfolgreich|Potenzial|weiterhin|nach\s+wie\s+vor|ein\s+(?:wichtiger|bedeutender|wertvoller|großer)\b|eine\s+(?:wichtige|bedeutende|wertvolle|große)\b)'
+      - '(?i)\b(?:obwohl|obgleich|auch\s+wenn|wenngleich|wenn\s+auch)\s+[^.!?\n,]{1,60}?\s(?:(?:seine|ihre|gewisse|einige|klare|deutliche|noch)\s+)?(?:Herausforderungen|Schwächen|Nachteile|Grenzen|Einschränkungen|Mängel|Schwachstellen|Kinderkrankheiten|Kritiker)\s+(?:hat|haben|aufweist|aufweisen|mit\s+sich\s+bringt)\b[^.!?\n]{0,10}?,\s*[^.!?\n]{0,50}?\b(?:dennoch|trotzdem|nichtsdestotrotz|nach\s+wie\s+vor|weiterhin|zweifellos|unbestreitbar)\b'
+      - '(?i)\bdie\s+Wahrheit\s+liegt\s+(?:wohl\s+|vermutlich\s+|wie\s+so\s+oft\s+|meist\s+)?(?:irgendwo\s+)?(?:dazwischen|in\s+der\s+Mitte)\b'
+      - '(?i)\bbeide\s+(?:Ansätze|Seiten|Optionen|Positionen|Sichtweisen|Lager|Perspektiven)\s+haben\s+(?:ihre|jeweils\s+ihre)\s+(?:Berechtigung|Vorzüge|Stärken|Vorteile|Daseinsberechtigung)\b'
+    examples:
+      positive:
+        - "Trotz dieser Herausforderungen bleibt das Projekt vielversprechend."
+        - "Trotz aller Schwierigkeiten ist die Initiative weiterhin auf Erfolgskurs."
+        - "Auch wenn das Tool seine Grenzen hat, ist es dennoch bemerkenswert."
+        - "Kritiker halten es für zu langsam, Befürworter für sicherer. Die Wahrheit liegt wie so oft in der Mitte."
+        - "Beide Ansätze haben ihre Berechtigung."
+      negative:
+        - "Trotz der Störung wurde das Release am Freitag ausgeliefert."
+        - "Trotz dieser Einschränkungen sind die Ergebnisse nur für den deutschen Teil gültig."
+        - "Obwohl das Tool Grenzen hat, sind sie im README mit Workarounds dokumentiert."
+        - "Beide Seiten haben Klage eingereicht; das Gericht verhandelt am 3. Juni."
+legitimate_use: >
+  A concession that is actually weighed is fine: the objection is named concretely and the verdict
+  follows from evidence ("Despite the 40 % higher cost we kept vendor A, because a migration would
+  take nine months"). Limitation paragraphs in research papers that list concrete limits and then
+  state, with numbers, what still holds are also fine. Flag the formula when the objection stays
+  vague ("its challenges") and the turn to a positive or neutral verdict comes without an argument.
+fix: >
+  Name the objection concretely and weigh it, or delete both the concession and the verdict. If the
+  honest answer is mixed, say with evidence what each side gets right instead of placing the truth
+  in the middle.
+prevention: >
+  Do not wave off objections with "despite these challenges" or "while it has limitations, it
+  remains...". Either name the specific objection and answer it with evidence, or leave it out.
+sources:
+  - source: maintainer-observation
+    note: >
+      A Substack field guide to AI tells ("I Asked the Machine to Tell on Itself", 2026-04-24, entry
+      "False Concession") describes the same formula; it is not registered as a source.
+  - source: tropes-fyi
+    locator: "entry 'Despite Its Challenges'"
+  - source: vrid-ai-signs
+  - source: skill-avoid-ai-writing
+    locator: "patterns #6 and #22"
+  - source: imperfectly-app
+    locator: "'The Diplomatic Hedge'"
+    note: >
+      "both approaches have merit, the truth lies somewhere between"; describes the false-balance
+      variant.
+  - source: forbes-jodie-cook
+    locator: "'Setup-and-dismiss sentences' (article of 2026-08-10)"
+    note: "Related but vaguer; weak supporting evidence only."
+related:
+  - {id: cya-disclaimer, relation: split-from}
+  - {id: antithesis-template, relation: overlaps}

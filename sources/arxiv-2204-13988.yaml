@@ -1,0 +1,15 @@
+id: arxiv-2204-13988
+title: "A Taxonomy of Prompt Modifiers for Text-To-Image Generation"
+url: https://arxiv.org/abs/2204.13988
+publisher: arXiv
+authors: [Jonas Oppenlaender]
+published: 2022-04-20
+accessed: 2026-11-17
+type: academic-preprint
+notes: >
+  Three-month ethnographic study of an online text-to-image community; v3 2023-06-14 (journal
+  version DOI 10.1080/0144929X.2023.2286532). Defines "quality boosters" as terms intended to
+  improve image quality, with examples "trending on artstation", "award-winning", "masterpiece",
+  "highly detailed", "epic", "rendered in Unreal Engine", and notes they are often added as "extra
+  fluff"; reports "Trending on artstation" in a default configuration of a public notebook. Documents
+  prevalence of the practice; does not test its effect.

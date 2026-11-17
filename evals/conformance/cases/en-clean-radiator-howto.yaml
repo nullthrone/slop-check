@@ -1,0 +1,18 @@
+id: en-clean-radiator-howto
+language: en
+mode: audit
+notes: Practical how-to with numbers and steps. Expected GREEN with no scored findings.
+text: |
+  Bleeding a radiator takes about ten minutes and needs a radiator key, which most hardware shops sell for a couple of pounds. Do it when the heating has been off for an hour. Hot water can spray out and scald you.
+
+  Find the bleed valve first. It sits at one of the top corners of the radiator and looks like a small square nut inside a round fitting. Hold a cloth under it, fit the key and turn it anticlockwise by a quarter turn. You should hear air hissing out.
+
+  Wait until the hissing stops and the first drops of water appear, then close the valve again. Don't overtighten it, because the seal is soft and wears out.
+
+  If you have a combi boiler, check the pressure gauge afterwards. Letting air out lowers the pressure in the system, and many boilers refuse to fire below one bar. The manual explains how to top it up, usually by opening a filling loop under the boiler until the needle reaches about 1.5.
+
+  When several radiators need bleeding, start with the one closest to the boiler and work outwards.
+must_find: []
+must_not_find: [cya-disclaimer, generic-opening, compulsive-summary, hallmark-vocabulary, em-dash-inflation]
+expect_verdict: [GREEN]
+max_findings: 0

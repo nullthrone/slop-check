@@ -1,0 +1,93 @@
+id: vague-attribution
+modality: text
+name: Vague or falsely precise attribution
+summary: >
+  Claims lean on authority that cannot be traced. The vague form invokes unnamed studies or
+  experts ("Studies show...", "Experts agree...", "Studien zeigen..."); the falsely precise form
+  states an exact figure with no traceable source ("73% of businesses now use AI"). The signal is
+  weak on its own and counts only alongside several other findings.
+category: attribution
+status: core
+detector:
+  kind: regex
+  position: any
+threshold:
+  min_count: 1
+  comparison: gte
+  scope: text
+requires:
+  min_other_findings: 3
+realizations:
+  en:
+    patterns:
+      - '(?i)(?:^|(?<=[.!?:;]\s)|(?<=,\s)|(?<=\bthat\s)|(?<=\bbecause\s)|(?<=\bsince\s))(?:(?:many|most|some|numerous|several|countless|leading|top|industry|recent|independent)\s{1,3})?(?:studies|research|experts|scientists|researchers|surveys|analysts|statistics)\s{1,3}(?:(?:have|has)\s{1,3})?(?:(?:consistently|repeatedly|long|clearly)\s{1,3})?(?:show|shows|shown|suggest|suggests|suggested|indicate|indicates|indicated|agree|agreed|confirm|confirms|confirmed|prove|proves|proven|reveal|reveals|revealed|warn|believe|predict|predicts|estimate|estimates)\b(?![^.!?\n]{0,200}?(?:\(|\[|\bet\s{1,3}al\b|\b(?:19|20)\d\d\b|\baccording\s{1,3}to\b|https?://))'
+      - '(?i)\bit(?:[’'']s|\s{1,3}is)\s{1,3}(?:widely|generally|commonly|universally)\s{1,3}(?:believed|accepted|known|recogni[sz]ed|acknowledged|agreed)\b(?![^.!?\n]{0,200}?(?:\(|\[|\bet\s{1,3}al\b|\b(?:19|20)\d\d\b|\baccording\s{1,3}to\b|https?://))'
+      - '(?i)\baccording\s{1,3}to\s{1,3}(?:(?:many|most|some|leading|industry|recent)\s{1,3})?(?:experts|studies|research|researchers|scientists|analysts|surveys)\b(?!\s{1,3}(?:at|from|of|by|in)\b)'
+      - '(?i)(?:^|(?<=[.!?]\s))(?![^.!?\n]{0,200}?(?:\baccording\s{1,3}to\b|\bsurvey|\bstud(?:y|ies)\b|\breport|\bpoll|\bcensus|\bsource|\banalysis\b|\bdata\s{1,3}from\b|\(|\[|\b(?:19|20)\d\d\b))[^.!?\n]{0,80}?\b\d{1,3}(?:[.,]\d{1,2})?\s?(?:%|percent)\s{1,3}of\s{1,3}(?:all\s{1,3})?(?:[a-z-]{1,20}\s){0,2}(?:businesses|companies|firms|organi[sz]ations|enterprises|people|consumers|customers|users|employees|workers|managers|leaders|executives|marketers|developers|teams|adults|shoppers|buyers|professionals|respondents|Americans|Germans|Europeans)\b'
+    examples:
+      positive:
+        - "Studies show that remote teams are more productive."
+        - "Experts agree that this trend will accelerate."
+        - "73% of businesses now use AI."
+        - "It is widely accepted that onboarding drives retention."
+        - "According to experts, the market will double by the end of the decade."
+      negative:
+        - "A 2023 survey of 18,000 employees found that 23% feel engaged at work."
+        - "Our survey of 412 customers shows that 61% of respondents prefer email."
+        - "Research suggests (see the 2021 meta-analysis in reference [4]) that sleep affects recall."
+        - "Experts at the national weather service expect 40 mm of rain on Sunday."
+        - "Studies by the Federal Statistical Office show a rise in part-time work since 2015."
+  de:
+    patterns:
+      - '(?i)(?:^|(?<=[.!?:;]\s)|(?<=,\s)|(?<=\bdass\s)|(?<=\bweil\s)|(?<=\bdenn\s))(?:(?:viele|zahlreiche|aktuelle|neuere|neueste|führende|unabhängige|renommierte|etliche)\s{1,3})?(?:Studien|Untersuchungen|Umfragen|Experten|Expertinnen|Fachleute|Wissenschaftler(?:innen)?|Forscher(?:innen)?|Analysten|Statistiken)\s{1,3}(?:zeigen|belegen|beweisen|bestätigen|legen\s{1,3}nahe|deuten\s{1,3}darauf\s{1,3}hin|sind\s{1,3}sich\s{1,3}einig|gehen\s{1,3}davon\s{1,3}aus|warnen|empfehlen|schätzen|prognostizieren|kommen\s{1,3}zu\s{1,3}dem\s{1,3}Schluss)\b(?![^.!?\n]{0,200}?(?:\(|\[|\bet\s{1,3}al\b|\b(?:19|20)\d\d\b|\blaut\b|\bzufolge\b|https?://))'
+      - '(?i)\b(?:Studien|Experten|Fachleuten|Forschern|Wissenschaftlern|Untersuchungen)\s{1,3}zufolge\b'
+      - '(?i)\blaut\s{1,3}(?:(?:vielen|zahlreichen|aktuellen|neueren|führenden)\s{1,3})?(?:Studien|Experten|Fachleuten|Forschern|Wissenschaftlern|Umfragen|Untersuchungen)\b(?!\s{1,3}(?:der|des|von|vom|aus|am|an|im)\b)'
+      - '(?i)\bes\s{1,3}ist\s{1,3}(?:allgemein|weithin|hinlänglich|längst)\s{1,3}(?:bekannt|anerkannt|erwiesen|unbestritten)\b(?![^.!?\n]{0,200}?(?:\(|\[|\b(?:19|20)\d\d\b|\blaut\b|\bzufolge\b|https?://))'
+      - '(?i)(?:^|(?<=[.!?]\s))(?![^.!?\n]{0,200}?(?:\blaut\b|\bzufolge\b|\bStudie|\bUmfrage|\bBefragung|\bErhebung|\bBericht|\bQuelle|\bStatisti|\bZensus|\bAnalyse|\bAuswertung|\(|\[|\b(?:19|20)\d\d\b))[^.!?\n]{0,80}?\b\d{1,3}(?:,\d{1,2})?\s?(?:%|Prozent)\s{1,3}(?:aller|der)\s{1,3}(?:[a-zäöüß-]{1,20}\s){0,2}(?:Unternehmen|Firmen|Betriebe|Deutschen|Menschen|Verbraucher(?:innen)?|Kunden|Kundinnen|Nutzer(?:innen)?|Beschäftigten|Mitarbeitenden|Mitarbeiter(?:innen)?|Führungskräfte|Befragten|Mittelständler|Erwachsenen|Haushalte)\b'
+    examples:
+      positive:
+        - "Studien zeigen, dass hybride Teams produktiver sind."
+        - "Experten sind sich einig, dass der Trend anhält."
+        - "73 % der Unternehmen setzen bereits KI ein."
+        - "Laut Experten wird sich der Markt bis Ende des Jahrzehnts verdoppeln."
+        - "Es ist allgemein bekannt, dass Einarbeitung die Bindung stärkt."
+      negative:
+        - "Laut dem Geschäftsbericht 2025 stieg der Umsatz um 12 %."
+        - "Neuere Studien zeigen (Meta-Analyse von 2021, Tabelle 3), dass Schlaf die Erinnerung beeinflusst."
+        - "Experten des Wetterdienstes erwarten am Sonntag 40 mm Regen."
+        - "In unserer Befragung von 412 Kunden bevorzugten 61 % der Befragten E-Mail."
+        - "Laut Experten des Umweltbundesamts sinkt der Verbrauch seit fünf Jahren."
+legitimate_use: >
+  Attribution is fine when the reader can find the source: the same sentence or a nearby footnote
+  says who published the figure and when, or links to it. Common knowledge needs no citation, and
+  figures from the author's own data are fine when the text says so. The finding applies to
+  unnamed authorities and to exact figures without any traceable origin.
+fix: >
+  Name the source (who published it and when) or remove the claim. Replace invented precision with
+  a sourced figure or a qualitative statement.
+prevention: >
+  Do not write "studies show", "experts agree", "Studien zeigen" or exact percentages without
+  naming the study with its publisher and year. If you have no source, drop the claim.
+sources:
+  - source: maintainer-observation
+  - source: slopdetector-org
+    locator: "pattern 'Fake-authority phrases'"
+  - source: aipromptindex-io
+    locator: "entry 'Weasel Attribution'"
+  - source: skill-no-ai-slop
+    locator: "entry 'Weasel attribution'"
+  - source: aicheckr-io
+    locator: "unsourced-statistics example"
+    note: "Before/after example 'Studies show that 73% of businesses now use AI'."
+  - source: gptzero-ai-patterns
+    locator: "pattern 'Phantom Experts'"
+related:
+  - {id: hollow-sentences, relation: distinct-from}
+  - {id: name-dropping, relation: distinct-from}
+notes: >
+  The signal is weak on its own, so it counts only when at least three other scored patterns
+  trigger in the same text (requires.min_other_findings, decision D3). The regexes cover surface
+  forms and skip sentences that carry a citation marker (parenthesis, bracket, year, "according
+  to", "laut", "zufolge", link). Unsourced figures in other shapes need host-model judgment.
+  hollow-sentences lack concrete content altogether, and name-dropping piles up named sources,
+  while this pattern names none.

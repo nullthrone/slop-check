@@ -1,0 +1,62 @@
+id: ai-imagery-cliche
+modality: image
+name: AI imagery clichés
+summary: >
+  Images about artificial intelligence fall back on a small set of stock motifs: white humanoid robots,
+  a robot hand reaching for a human hand in the pose of The Creation of Adam, glowing or half-circuit
+  brains, blue circuit boards and holographic panels, descending code, and an overabundance of blue.
+  Research on AI stock imagery documents the set and its misleading effect; a small test found humanoids
+  or robots in all 20 images an image model generated for the plain prompt "artificial intelligence",
+  against 11 of the first 20 results of a stock library.
+category: visual-subject
+status: candidate
+detector:
+  kind: vision
+  rubric: >
+    First decide whether the image illustrates AI, machine learning, automation or a generic digital
+    topic. If it does, flag it when its main motif is one of these: a humanoid or white robot,
+    especially one thinking, writing or working at screens; a robot hand touching or reaching for a
+    human hand; a brain that glows, is built from circuits or particles, or floats above a chip;
+    descending or floating code; holographic interface panels; a dominant blue palette of nodes,
+    networks and circuitry with no concrete application. Count one hit per image. Does not count:
+    images of actual robots in actual use (an industrial arm on an assembly line, a delivery robot on a
+    sidewalk); diagrams or screenshots of real systems; neuroscience images of real brains; images whose
+    brief is a critique or parody of these clichés. Describe the visible pattern only; do not infer how
+    the image was made.
+threshold: {min_count: 1}
+realizations:
+  "*":
+    examples:
+      positive:
+        - "Header image for an article on AI in hospitals: a white humanoid robot touching a glowing blue holographic display, with no doctors or patients in sight."
+        - "A human hand and a robotic hand reaching toward each other against a blue background, fingertips almost touching with a spark of light between them."
+        - "A translucent brain made of glowing circuit lines floating above a microchip on a dark blue background."
+      negative:
+        - "Photo of a radiologist reviewing a scan with the region flagged by detection software highlighted on the monitor."
+        - "Industrial robot arms welding car bodies in a factory hall."
+        - "Screenshot of a chatbot interface showing a real conversation."
+legitimate_use: >
+  Real robots in real use, real interfaces, real people working with AI systems, and images that quote
+  the clichés knowingly for critique or satire.
+fix: >
+  Replace the motif with the concrete application and the people involved: the clinician and the
+  software on the screen, the warehouse worker and the sorting system, the data center, the labelling
+  work, the dataset. Take colors from the setting instead of default blue.
+prevention: >
+  When illustrating an AI or technology topic, describe the specific application, place and people:
+  who uses which system for what ("a pharmacist checks a dosage warning on a desktop screen in a small
+  pharmacy"). Take the palette from that setting. Ask for humanoid robots, glowing brains, touching
+  hands, floating code or holograms only when the story is about exactly those things.
+sources:
+  - source: better-images-of-ai-guide
+    locator: "Executive Summary; pages 10 to 11"
+    note: "Elements to avoid: the colour blue, descending code, the human brain, science fiction references, white robots, white men in suits, anthropomorphism, variations on The Creation of Adam."
+  - source: philtech-images-of-ai
+    locator: "abstract; section on stock images"
+    note: "Excessive blue, androgyne faces, half-flesh half-circuit brains, Creation of Adam variations, code waving in space."
+  - source: snake-oil-genai-hype
+    locator: "experiment description"
+    note: "Stable Diffusion: 20 of 20 images for 'artificial intelligence' show humanoids or robots versus 11 of 20 stock results; 19 of 20 with domain prompts."
+related:
+  - {id: cybersecurity-imagery-cliche, relation: overlaps}
+  - {id: stereotyped-default-people, relation: distinct-from}

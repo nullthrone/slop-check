@@ -1,0 +1,62 @@
+id: premise-stacking
+modality: text
+name: Premise stacking
+summary: >
+  Supporting statements pile up ahead of the point, often ahead of a question, so that by the time
+  the point arrives it has already been made two or three times. The reader works through
+  preparation that the conclusion then repeats ("Now imagine if this was simply: Is next-day
+  delivery available in this region?").
+category: composition
+status: observation
+detector:
+  kind: llm
+  position: any
+  rubric: >
+    Find passages where two or more sentences of setup or evidence precede a point (a claim, a
+    recommendation or a question) and that point merely restates what the setup has already made
+    clear. Count a passage when deleting the final point, or deleting most of the setup, would
+    lose no information. Do not count arguments in which each premise adds a distinct step that
+    the conclusion needs, worked examples, legal or mathematical reasoning, and stories that build
+    toward an outcome the reader cannot predict. Return each stacked passage as a hit, quoting the
+    point it leads up to.
+threshold:
+  min_count: 1
+  comparison: gte
+  scope: text
+requires: null
+realizations:
+  en:
+    examples:
+      positive:
+        - "Customers want to know whether they can get their order tomorrow. They search for it on the product page. They ask support about it every day. Now imagine if this was simply: Is next-day delivery available in this region?"
+        - "Our logs show slow queries. Users report timeouts. The database CPU sits at 95 % every afternoon. So the question is: is the database overloaded?"
+      negative:
+        - "The bridge carries 40 tonnes. The new trucks weigh 44 tonnes when loaded. So the trucks must use the bypass until the bridge is reinforced."
+        - "The test failed only on Windows. The path separator differs there. We changed the code to use os.path.join, and the test now passes on all platforms."
+  de:
+    examples:
+      positive:
+        - "Kunden wollen wissen, ob ihre Bestellung morgen ankommt. Sie suchen danach auf der Produktseite. Sie fragen täglich beim Support nach. Stellen Sie sich vor, es hieße einfach: Ist Lieferung am nächsten Tag in dieser Region möglich?"
+        - "Die Logs zeigen langsame Abfragen. Nutzer melden Timeouts. Die Datenbank-CPU liegt jeden Nachmittag bei 95 Prozent. Die Frage lautet also: Ist die Datenbank überlastet?"
+      negative:
+        - "Die Brücke trägt 40 Tonnen. Die neuen Lkw wiegen beladen 44 Tonnen. Deshalb müssen sie die Umfahrung nutzen, bis die Brücke verstärkt ist."
+        - "Der Test schlug nur unter Windows fehl. Dort ist das Pfadtrennzeichen anders. Wir nutzen jetzt os.path.join, und der Test läuft auf allen Plattformen."
+legitimate_use: >
+  Arguments whose premises each contribute a necessary step, worked examples and suspenseful
+  narratives build up to their point by design. Flag setups whose conclusion only repeats them.
+fix: >
+  Lead with the point, then give only the evidence the reader needs to accept it. Delete setup
+  sentences that the conclusion restates.
+prevention: >
+  State the point first and support it afterwards. Do not stack premises that make the conclusion
+  obvious before you state it.
+notes: >
+  Single-source observation; tropes.fyi links this entry to reasoning leaks. Threshold not yet
+  calibrated against the reference corpora.
+sources:
+  - source: tropes-fyi
+    locator: "entry 'Premise Stacking', category Composition, status new"
+    note: "Example: \"Now imagine if this was simply: Is next-day delivery available in this region?\""
+related:
+  - {id: reasoning-leak, relation: overlaps}
+  - {id: hollow-sentences, relation: overlaps}

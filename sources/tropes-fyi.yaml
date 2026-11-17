@@ -1,0 +1,13 @@
+id: tropes-fyi
+title: "Tropes: AI Writing Pattern Directory"
+url: https://tropes.fyi/directory
+publisher: tropes.fyi
+published: null
+accessed: 2026-11-17
+type: community-directory
+derived_from: [wikipedia-signs-of-ai-writing]
+notes: >
+  Community directory of AI writing tropes. Since late August 2026 it lists 49 entries with a status
+  label per entry (new, rising, fading, consistent); entry pages live under /tropes/<slug>, for
+  example quotable-one-liners, synonym-cycling and unicode-decoration. The latest changelog entry is
+  dated 2026-08-14. Status labels are directory-internal trend labels, not measurements.

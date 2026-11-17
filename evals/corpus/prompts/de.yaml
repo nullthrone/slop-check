@@ -1,0 +1,47 @@
+# German generation prompts for the AI corpus (docs/architecture.md section 6.1).
+# Same structure as en.yaml. The prompt text is German so that models answer in German
+# without an explicit language instruction.
+
+language: de
+prompts:
+  - id: de-blog-post
+    register: blog-post
+    human_registers: [web]
+    user: |
+      Schreib einen Blogbeitrag zu diesem Thema: {topic}
+      Länge: etwa {words} Wörter.
+
+  - id: de-marketing-page
+    register: marketing-page
+    human_registers: [web]
+    user: |
+      Schreib den Text für eine Webseite, die Folgendes potenziellen Kunden oder Besuchern vorstellt: {topic}
+      Länge: etwa {words} Wörter.
+
+  - id: de-opinion-piece
+    register: opinion-piece
+    human_registers: [web]
+    user: |
+      Schreib einen Meinungsbeitrag zu diesem Thema: {topic}
+      Länge: etwa {words} Wörter.
+
+  - id: de-email
+    register: email
+    human_registers: [web]
+    user: |
+      Schreib eine E-Mail zu folgendem Thema an Leute, die sich dafür interessieren könnten: {topic}
+      Länge: etwa {words} Wörter.
+
+  - id: de-encyclopedic-article
+    register: encyclopedic-article
+    human_registers: [encyclopedic]
+    user: |
+      Schreib einen Lexikonartikel über: {topic}
+      Länge: etwa {words} Wörter.
+
+  - id: de-explainer
+    register: explainer
+    human_registers: [qa]
+    user: |
+      Jemand hat diese Frage in einem Onlineforum gestellt: {topic}
+      Schreib eine Antwort, die die Frage beantwortet und erklärt. Länge: etwa {words} Wörter.

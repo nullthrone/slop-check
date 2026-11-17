@@ -1,0 +1,86 @@
+id: triad
+modality: text
+name: Triad (rule of three)
+summary: >
+  Groups of three adjectives or short phrases ("innovativ, transformativ, bahnbrechend") used as a
+  reflex rhythm. One triad is ordinary rhetoric; the pattern counts their accumulation within a
+  paragraph or across a text.
+category: rhetoric
+status: core
+detector:
+  kind: metric
+  position: any
+  metric: triad
+  params: {}
+threshold:
+  min_count: 6.5
+  per_words: 500
+  comparison: gte
+  scope: text
+  short_text:
+    scope: paragraph
+    min_count: 2
+    per_words: null
+requires: null
+realizations:
+  en:
+    examples:
+      positive:
+        - "The platform is fast, secure, and scalable."
+        - "We value honesty, courage and curiosity."
+        - "Our tools are simple, powerful and affordable."
+      negative:
+        - "Install the package and restart the service."
+        - "We migrated the billing service to the new cluster, moved the search index to SSD storage and retired the legacy cron host."
+        - "The test compares PostgreSQL with SQLite on the same disk."
+    test_texts:
+      - {text: "Our platform is fast, secure and scalable. It helps teams plan, build and ship. Customers call it simple, powerful and reliable.", expect: trigger}
+      - {text: "The release fixes the login bug. It also adds a retry loop and better logging for the export job.", expect: no_trigger}
+  de:
+    examples:
+      positive:
+        - "Die Lösung ist innovativ, transformativ und bahnbrechend."
+        - "Wir stehen für Qualität, Vertrauen und Leidenschaft."
+        - "Das Tool ist schnell, sicher und skalierbar."
+      negative:
+        - "Installieren Sie das Paket und starten Sie den Dienst neu."
+        - "Wir haben den Abrechnungsdienst auf den neuen Cluster verschoben, den Suchindex auf SSD-Speicher migriert und den alten Cron-Server abgeschaltet."
+        - "Der Test vergleicht PostgreSQL mit SQLite auf derselben Platte."
+    test_texts:
+      - {text: "Unsere Plattform ist schnell, sicher und skalierbar. Sie hilft Teams beim Planen, Bauen und Ausliefern. Kunden nennen sie einfach, stark und zuverlässig.", expect: trigger}
+      - {text: "Das Release behebt den Login-Fehler. Außerdem gibt es eine Wiederholungslogik und bessere Logs für den Export.", expect: no_trigger}
+legitimate_use: >
+  Enumerations of exactly three real items (three named cities or the three steps of a procedure)
+  are content. Flag triads whose items are near-synonyms or generic qualities, where
+  dropping one loses nothing.
+fix: >
+  Delete the weakest item of each triad, or replace the group with one specific claim.
+prevention: >
+  Do not group adjectives or phrases in threes by default. Use as many items as the content has; if
+  two qualities matter, name two.
+notes: >
+  Threshold set so that at most 4 % of the human reference corpus (pre-2022 texts, de and en)
+  triggers it; separation from AI-generated text is not yet measured. Encyclopedic and web prose
+  often contains several real three-item enumerations: with a fixed count of 3 triads per text 18 %
+  (de) and 21 % (en) of the human texts triggered. Texts above short_text_max_words therefore use
+  a density, 6.5 or more triads per 500 words (3 triads in a text of up to 230 words, 13 in 1,000
+  words); the densest human texts reach 12.5 to 14 per 500 words. A fixed count would have to be 7
+  per text to meet the limit, which misses short and medium texts and lets long ones accumulate
+  freely. Short texts use a paragraph count instead (2 or more triads in one paragraph), because a
+  single triad in a few dozen words would already exceed the density. A "from X to Y to Z" chain
+  is a triad in the sense of this pattern, but the triad metric does not count it, so the host
+  model should count it; false-range covers only two-endpoint ranges with closed vocabularies.
+sources:
+  - source: maintainer-observation
+  - source: pangram-signs-of-ai-writing
+    locator: "triads"
+    note: "Reported at 4x the human baseline (commercial corpus, methodology not disclosed)."
+  - source: economist-ai-writing-analysis
+    note: "Its data analysis of chatbot output supports the rule of three as a marker."
+  - source: slopdetector-org
+    locator: "'Rule-of-Three on Autopilot'"
+  - source: imperfectly-app
+    locator: "'The Rule of Three Overreach'"
+related:
+  - {id: compulsive-counting, relation: distinct-from}
+  - {id: false-range, relation: overlaps}
