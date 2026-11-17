@@ -1,0 +1,591 @@
+{
+  "run_at": "2026-11-17T17:31:31Z",
+  "skill": {
+    "name": "slop-check",
+    "path": "dist/slop-check",
+    "sha256": "95e01fc3c1d518359107ee96e66ef636f80a8e2ca9442a4870b5d92db24ee322",
+    "files": [
+      "SKILL.md",
+      "references/audit-procedure.md",
+      "references/image-patterns.md",
+      "references/prevention-procedure.md",
+      "references/prevention-rules-image.md",
+      "references/prevention-rules-text.md",
+      "references/report-format.md",
+      "references/rewrite-procedure.md",
+      "references/scripts-usage.md",
+      "references/text-patterns.md"
+    ]
+  },
+  "cases": [
+    {
+      "id": "de-audit-gegenstimme",
+      "language": "de",
+      "mode": "audit"
+    },
+    {
+      "id": "de-audit-liste",
+      "language": "de",
+      "mode": "audit"
+    },
+    {
+      "id": "de-audit-ratgeber",
+      "language": "de",
+      "mode": "audit"
+    },
+    {
+      "id": "de-audit-unternehmensblog",
+      "language": "de",
+      "mode": "audit"
+    },
+    {
+      "id": "de-audit-werbetext",
+      "language": "de",
+      "mode": "audit"
+    },
+    {
+      "id": "de-clean-fahrradkette",
+      "language": "de",
+      "mode": "audit"
+    },
+    {
+      "id": "de-clean-wanderbericht",
+      "language": "de",
+      "mode": "audit"
+    },
+    {
+      "id": "de-rewrite-bibliothek",
+      "language": "de",
+      "mode": "rewrite"
+    },
+    {
+      "id": "en-audit-assistant-reply",
+      "language": "en",
+      "mode": "audit"
+    },
+    {
+      "id": "en-audit-concession-essay",
+      "language": "en",
+      "mode": "audit"
+    },
+    {
+      "id": "en-audit-launch-announcement",
+      "language": "en",
+      "mode": "audit"
+    },
+    {
+      "id": "en-audit-listicle",
+      "language": "en",
+      "mode": "audit"
+    },
+    {
+      "id": "en-audit-thought-leadership",
+      "language": "en",
+      "mode": "audit"
+    },
+    {
+      "id": "en-clean-bakery-review",
+      "language": "en",
+      "mode": "audit"
+    },
+    {
+      "id": "en-clean-radiator-howto",
+      "language": "en",
+      "mode": "audit"
+    },
+    {
+      "id": "en-rewrite-library-notice",
+      "language": "en",
+      "mode": "rewrite"
+    }
+  ],
+  "models": [
+    {
+      "key": "conformance/anthropic/frontier",
+      "family": "anthropic",
+      "id": "anthropic/claude-sonnet-5.5",
+      "canonical_slug": "anthropic/claude-sonnet-5.5-20260928",
+      "summary": {
+        "cases": 16,
+        "passed": 0,
+        "recall": 0.0,
+        "precision": null,
+        "true_positives": 0,
+        "false_negatives": 37,
+        "false_positives": 0,
+        "verdict_accuracy": 0.0,
+        "clean_pass_rate": 0.0,
+        "rewrite_pass_rate": 0.0,
+        "parse_failures": 14,
+        "errors": 16,
+        "usd": 0.0
+      },
+      "cases": [
+        {
+          "id": "de-audit-gegenstimme",
+          "mode": "audit",
+          "language": "de",
+          "passed": false,
+          "parse_ok": false,
+          "error": "OpenRouter 402: This request requires more credits, or fewer max_tokens. You requested up to 6000 tokens, but can only afford 4000. To increase, visit https://openrouter.ai/workspaces/slop-check/keys/e59f617975bf51efe7f2b92b3217e5b87413adb404c015e0770892c1ee721329 and adjust the key's monthly limit",
+          "missing": [
+            "concession-pivot",
+            "transition-stacking",
+            "empty-intensifiers"
+          ],
+          "usd": 0.0
+        },
+        {
+          "id": "de-audit-liste",
+          "mode": "audit",
+          "language": "de",
+          "passed": false,
+          "parse_ok": false,
+          "error": "OpenRouter 402: This request requires more credits, or fewer max_tokens. You requested up to 6000 tokens, but can only afford 4000. To increase, visit https://openrouter.ai/workspaces/slop-check/keys/e59f617975bf51efe7f2b92b3217e5b87413adb404c015e0770892c1ee721329 and adjust the key's monthly limit",
+          "missing": [
+            "bullet-bold-lead",
+            "emoji-decoration",
+            "payoff-announcement"
+          ],
+          "usd": 0.0
+        },
+        {
+          "id": "de-audit-ratgeber",
+          "mode": "audit",
+          "language": "de",
+          "passed": false,
+          "parse_ok": false,
+          "error": "OpenRouter 402: This request requires more credits, or fewer max_tokens. You requested up to 6000 tokens, but can only afford 4000. To increase, visit https://openrouter.ai/workspaces/slop-check/keys/e59f617975bf51efe7f2b92b3217e5b87413adb404c015e0770892c1ee721329 and adjust the key's monthly limit",
+          "missing": [
+            "sycophant-residue",
+            "generic-opening",
+            "cya-disclaimer",
+            "compulsive-summary"
+          ],
+          "usd": 0.0
+        },
+        {
+          "id": "de-audit-unternehmensblog",
+          "mode": "audit",
+          "language": "de",
+          "passed": false,
+          "parse_ok": false,
+          "error": "OpenRouter 402: This request requires more credits, or fewer max_tokens. You requested up to 6000 tokens, but can only afford 4000. To increase, visit https://openrouter.ai/workspaces/slop-check/keys/e59f617975bf51efe7f2b92b3217e5b87413adb404c015e0770892c1ee721329 and adjust the key's monthly limit",
+          "missing": [
+            "vague-attribution",
+            "inflated-importance",
+            "brochure-tone",
+            "generic-opening",
+            "compulsive-summary"
+          ],
+          "usd": 0.0
+        },
+        {
+          "id": "de-audit-werbetext",
+          "mode": "audit",
+          "language": "de",
+          "passed": false,
+          "parse_ok": false,
+          "error": "OpenRouter 402: This request requires more credits, or fewer max_tokens. You requested up to 6000 tokens, but can only afford 4000. To increase, visit https://openrouter.ai/workspaces/slop-check/keys/e59f617975bf51efe7f2b92b3217e5b87413adb404c015e0770892c1ee721329 and adjust the key's monthly limit",
+          "missing": [
+            "antithesis-template",
+            "german-stock-phrases",
+            "hallmark-vocabulary"
+          ],
+          "usd": 0.0
+        },
+        {
+          "id": "de-clean-fahrradkette",
+          "mode": "audit",
+          "language": "de",
+          "passed": false,
+          "parse_ok": false,
+          "error": "OpenRouter 402: This request requires more credits, or fewer max_tokens. You requested up to 6000 tokens, but can only afford 4000. To increase, visit https://openrouter.ai/workspaces/slop-check/keys/e59f617975bf51efe7f2b92b3217e5b87413adb404c015e0770892c1ee721329 and adjust the key's monthly limit",
+          "usd": 0.0
+        },
+        {
+          "id": "de-clean-wanderbericht",
+          "mode": "audit",
+          "language": "de",
+          "passed": false,
+          "parse_ok": false,
+          "error": "OpenRouter 402: This request requires more credits, or fewer max_tokens. You requested up to 6000 tokens, but can only afford 4000. To increase, visit https://openrouter.ai/workspaces/slop-check/keys/e59f617975bf51efe7f2b92b3217e5b87413adb404c015e0770892c1ee721329 and adjust the key's monthly limit",
+          "usd": 0.0
+        },
+        {
+          "id": "de-rewrite-bibliothek",
+          "mode": "rewrite",
+          "language": "de",
+          "passed": false,
+          "parse_ok": false,
+          "error": "OpenRouter 402: This request requires more credits, or fewer max_tokens. You requested up to 6000 tokens, but can only afford 4000. To increase, visit https://openrouter.ai/workspaces/slop-check/keys/e59f617975bf51efe7f2b92b3217e5b87413adb404c015e0770892c1ee721329 and adjust the key's monthly limit",
+          "usd": 0.0
+        },
+        {
+          "id": "en-audit-assistant-reply",
+          "mode": "audit",
+          "language": "en",
+          "passed": false,
+          "parse_ok": false,
+          "error": "OpenRouter 402: This request requires more credits, or fewer max_tokens. You requested up to 6000 tokens, but can only afford 4000. To increase, visit https://openrouter.ai/workspaces/slop-check/keys/e59f617975bf51efe7f2b92b3217e5b87413adb404c015e0770892c1ee721329 and adjust the key's monthly limit",
+          "missing": [
+            "sycophant-residue",
+            "generic-opening",
+            "cya-disclaimer",
+            "compulsive-summary"
+          ],
+          "usd": 0.0
+        },
+        {
+          "id": "en-audit-concession-essay",
+          "mode": "audit",
+          "language": "en",
+          "passed": false,
+          "parse_ok": false,
+          "error": "OpenRouter 402: This request requires more credits, or fewer max_tokens. You requested up to 6000 tokens, but can only afford 4000. To increase, visit https://openrouter.ai/workspaces/slop-check/keys/e59f617975bf51efe7f2b92b3217e5b87413adb404c015e0770892c1ee721329 and adjust the key's monthly limit",
+          "missing": [
+            "concession-pivot",
+            "transition-stacking",
+            "empty-intensifiers"
+          ],
+          "usd": 0.0
+        },
+        {
+          "id": "en-audit-launch-announcement",
+          "mode": "audit",
+          "language": "en",
+          "passed": false,
+          "parse_ok": false,
+          "error": "OpenRouter 402: This request requires more credits, or fewer max_tokens. You requested up to 6000 tokens, but can only afford 4000. To increase, visit https://openrouter.ai/workspaces/slop-check/keys/e59f617975bf51efe7f2b92b3217e5b87413adb404c015e0770892c1ee721329 and adjust the key's monthly limit",
+          "missing": [
+            "antithesis-template",
+            "em-dash-inflation",
+            "hallmark-vocabulary",
+            "triad",
+            "inflated-importance"
+          ],
+          "usd": 0.0
+        },
+        {
+          "id": "en-audit-listicle",
+          "mode": "audit",
+          "language": "en",
+          "passed": false,
+          "parse_ok": false,
+          "error": "OpenRouter 402: This request requires more credits, or fewer max_tokens. You requested up to 6000 tokens, but can only afford 4000. To increase, visit https://openrouter.ai/workspaces/slop-check/keys/e59f617975bf51efe7f2b92b3217e5b87413adb404c015e0770892c1ee721329 and adjust the key's monthly limit",
+          "missing": [
+            "bullet-bold-lead",
+            "emoji-decoration",
+            "payoff-announcement"
+          ],
+          "usd": 0.0
+        },
+        {
+          "id": "en-audit-thought-leadership",
+          "mode": "audit",
+          "language": "en",
+          "passed": false,
+          "parse_ok": false,
+          "error": "OpenRouter 402: This request requires more credits, or fewer max_tokens. You requested up to 6000 tokens, but can only afford 4000. To increase, visit https://openrouter.ai/workspaces/slop-check/keys/e59f617975bf51efe7f2b92b3217e5b87413adb404c015e0770892c1ee721329 and adjust the key's monthly limit",
+          "missing": [
+            "vague-attribution",
+            "inflated-importance",
+            "false-range",
+            "participle-padding"
+          ],
+          "usd": 0.0
+        },
+        {
+          "id": "en-clean-bakery-review",
+          "mode": "audit",
+          "language": "en",
+          "passed": false,
+          "parse_ok": false,
+          "error": "OpenRouter 402: This request requires more credits, or fewer max_tokens. You requested up to 6000 tokens, but can only afford 4000. To increase, visit https://openrouter.ai/workspaces/slop-check/keys/e59f617975bf51efe7f2b92b3217e5b87413adb404c015e0770892c1ee721329 and adjust the key's monthly limit",
+          "usd": 0.0
+        },
+        {
+          "id": "en-clean-radiator-howto",
+          "mode": "audit",
+          "language": "en",
+          "passed": false,
+          "parse_ok": false,
+          "error": "OpenRouter 402: This request requires more credits, or fewer max_tokens. You requested up to 6000 tokens, but can only afford 4000. To increase, visit https://openrouter.ai/workspaces/slop-check/keys/e59f617975bf51efe7f2b92b3217e5b87413adb404c015e0770892c1ee721329 and adjust the key's monthly limit",
+          "usd": 0.0
+        },
+        {
+          "id": "en-rewrite-library-notice",
+          "mode": "rewrite",
+          "language": "en",
+          "passed": false,
+          "parse_ok": false,
+          "error": "OpenRouter 402: This request requires more credits, or fewer max_tokens. You requested up to 6000 tokens, but can only afford 4000. To increase, visit https://openrouter.ai/workspaces/slop-check/keys/e59f617975bf51efe7f2b92b3217e5b87413adb404c015e0770892c1ee721329 and adjust the key's monthly limit",
+          "usd": 0.0
+        }
+      ]
+    },
+    {
+      "key": "conformance/google/cheap",
+      "family": "google",
+      "id": "google/gemini-3.8-flash",
+      "canonical_slug": "google/gemini-3.8-flash-20260902",
+      "summary": {
+        "cases": 16,
+        "passed": 0,
+        "recall": 0.0,
+        "precision": null,
+        "true_positives": 0,
+        "false_negatives": 37,
+        "false_positives": 0,
+        "verdict_accuracy": 0.0,
+        "clean_pass_rate": 0.0,
+        "rewrite_pass_rate": 0.0,
+        "parse_failures": 14,
+        "errors": 16,
+        "usd": 0.0
+      },
+      "cases": [
+        {
+          "id": "de-audit-gegenstimme",
+          "mode": "audit",
+          "language": "de",
+          "passed": false,
+          "parse_ok": false,
+          "error": "OpenRouter 402: Prompt tokens limit exceeded: 58146 > 53333. To increase, visit https://openrouter.ai/workspaces/slop-check/keys/e59f617975bf51efe7f2b92b3217e5b87413adb404c015e0770892c1ee721329 and adjust the key's monthly limit",
+          "missing": [
+            "concession-pivot",
+            "transition-stacking",
+            "empty-intensifiers"
+          ],
+          "usd": 0.0
+        },
+        {
+          "id": "de-audit-liste",
+          "mode": "audit",
+          "language": "de",
+          "passed": false,
+          "parse_ok": false,
+          "error": "OpenRouter 402: Prompt tokens limit exceeded: 58107 > 53333. To increase, visit https://openrouter.ai/workspaces/slop-check/keys/e59f617975bf51efe7f2b92b3217e5b87413adb404c015e0770892c1ee721329 and adjust the key's monthly limit",
+          "missing": [
+            "bullet-bold-lead",
+            "emoji-decoration",
+            "payoff-announcement"
+          ],
+          "usd": 0.0
+        },
+        {
+          "id": "de-audit-ratgeber",
+          "mode": "audit",
+          "language": "de",
+          "passed": false,
+          "parse_ok": false,
+          "error": "OpenRouter 402: Prompt tokens limit exceeded: 58153 > 53333. To increase, visit https://openrouter.ai/workspaces/slop-check/keys/e59f617975bf51efe7f2b92b3217e5b87413adb404c015e0770892c1ee721329 and adjust the key's monthly limit",
+          "missing": [
+            "sycophant-residue",
+            "generic-opening",
+            "cya-disclaimer",
+            "compulsive-summary"
+          ],
+          "usd": 0.0
+        },
+        {
+          "id": "de-audit-unternehmensblog",
+          "mode": "audit",
+          "language": "de",
+          "passed": false,
+          "parse_ok": false,
+          "error": "OpenRouter 402: Prompt tokens limit exceeded: 58146 > 53333. To increase, visit https://openrouter.ai/workspaces/slop-check/keys/e59f617975bf51efe7f2b92b3217e5b87413adb404c015e0770892c1ee721329 and adjust the key's monthly limit",
+          "missing": [
+            "vague-attribution",
+            "inflated-importance",
+            "brochure-tone",
+            "generic-opening",
+            "compulsive-summary"
+          ],
+          "usd": 0.0
+        },
+        {
+          "id": "de-audit-werbetext",
+          "mode": "audit",
+          "language": "de",
+          "passed": false,
+          "parse_ok": false,
+          "error": "OpenRouter 402: Prompt tokens limit exceeded: 58118 > 53333. To increase, visit https://openrouter.ai/workspaces/slop-check/keys/e59f617975bf51efe7f2b92b3217e5b87413adb404c015e0770892c1ee721329 and adjust the key's monthly limit",
+          "missing": [
+            "antithesis-template",
+            "german-stock-phrases",
+            "hallmark-vocabulary"
+          ],
+          "usd": 0.0
+        },
+        {
+          "id": "de-clean-fahrradkette",
+          "mode": "audit",
+          "language": "de",
+          "passed": false,
+          "parse_ok": false,
+          "error": "OpenRouter 402: Prompt tokens limit exceeded: 58156 > 53333. To increase, visit https://openrouter.ai/workspaces/slop-check/keys/e59f617975bf51efe7f2b92b3217e5b87413adb404c015e0770892c1ee721329 and adjust the key's monthly limit",
+          "usd": 0.0
+        },
+        {
+          "id": "de-clean-wanderbericht",
+          "mode": "audit",
+          "language": "de",
+          "passed": false,
+          "parse_ok": false,
+          "error": "OpenRouter 402: Prompt tokens limit exceeded: 58123 > 53333. To increase, visit https://openrouter.ai/workspaces/slop-check/keys/e59f617975bf51efe7f2b92b3217e5b87413adb404c015e0770892c1ee721329 and adjust the key's monthly limit",
+          "usd": 0.0
+        },
+        {
+          "id": "de-rewrite-bibliothek",
+          "mode": "rewrite",
+          "language": "de",
+          "passed": false,
+          "parse_ok": false,
+          "error": "OpenRouter 402: Prompt tokens limit exceeded: 58032 > 53333. To increase, visit https://openrouter.ai/workspaces/slop-check/keys/e59f617975bf51efe7f2b92b3217e5b87413adb404c015e0770892c1ee721329 and adjust the key's monthly limit",
+          "usd": 0.0
+        },
+        {
+          "id": "en-audit-assistant-reply",
+          "mode": "audit",
+          "language": "en",
+          "passed": false,
+          "parse_ok": false,
+          "error": "OpenRouter 402: Prompt tokens limit exceeded: 58162 > 53333. To increase, visit https://openrouter.ai/workspaces/slop-check/keys/e59f617975bf51efe7f2b92b3217e5b87413adb404c015e0770892c1ee721329 and adjust the key's monthly limit",
+          "missing": [
+            "sycophant-residue",
+            "generic-opening",
+            "cya-disclaimer",
+            "compulsive-summary"
+          ],
+          "usd": 0.0
+        },
+        {
+          "id": "en-audit-concession-essay",
+          "mode": "audit",
+          "language": "en",
+          "passed": false,
+          "parse_ok": false,
+          "error": "OpenRouter 402: Prompt tokens limit exceeded: 58139 > 53333. To increase, visit https://openrouter.ai/workspaces/slop-check/keys/e59f617975bf51efe7f2b92b3217e5b87413adb404c015e0770892c1ee721329 and adjust the key's monthly limit",
+          "missing": [
+            "concession-pivot",
+            "transition-stacking",
+            "empty-intensifiers"
+          ],
+          "usd": 0.0
+        },
+        {
+          "id": "en-audit-launch-announcement",
+          "mode": "audit",
+          "language": "en",
+          "passed": false,
+          "parse_ok": false,
+          "error": "OpenRouter 402: Prompt tokens limit exceeded: 58163 > 53333. To increase, visit https://openrouter.ai/workspaces/slop-check/keys/e59f617975bf51efe7f2b92b3217e5b87413adb404c015e0770892c1ee721329 and adjust the key's monthly limit",
+          "missing": [
+            "antithesis-template",
+            "em-dash-inflation",
+            "hallmark-vocabulary",
+            "triad",
+            "inflated-importance"
+          ],
+          "usd": 0.0
+        },
+        {
+          "id": "en-audit-listicle",
+          "mode": "audit",
+          "language": "en",
+          "passed": false,
+          "parse_ok": false,
+          "error": "OpenRouter 402: Prompt tokens limit exceeded: 58115 > 53333. To increase, visit https://openrouter.ai/workspaces/slop-check/keys/e59f617975bf51efe7f2b92b3217e5b87413adb404c015e0770892c1ee721329 and adjust the key's monthly limit",
+          "missing": [
+            "bullet-bold-lead",
+            "emoji-decoration",
+            "payoff-announcement"
+          ],
+          "usd": 0.0
+        },
+        {
+          "id": "en-audit-thought-leadership",
+          "mode": "audit",
+          "language": "en",
+          "passed": false,
+          "parse_ok": false,
+          "error": "OpenRouter 402: Prompt tokens limit exceeded: 58151 > 53333. To increase, visit https://openrouter.ai/workspaces/slop-check/keys/e59f617975bf51efe7f2b92b3217e5b87413adb404c015e0770892c1ee721329 and adjust the key's monthly limit",
+          "missing": [
+            "vague-attribution",
+            "inflated-importance",
+            "false-range",
+            "participle-padding"
+          ],
+          "usd": 0.0
+        },
+        {
+          "id": "en-clean-bakery-review",
+          "mode": "audit",
+          "language": "en",
+          "passed": false,
+          "parse_ok": false,
+          "error": "OpenRouter 402: Prompt tokens limit exceeded: 58113 > 53333. To increase, visit https://openrouter.ai/workspaces/slop-check/keys/e59f617975bf51efe7f2b92b3217e5b87413adb404c015e0770892c1ee721329 and adjust the key's monthly limit",
+          "usd": 0.0
+        },
+        {
+          "id": "en-clean-radiator-howto",
+          "mode": "audit",
+          "language": "en",
+          "passed": false,
+          "parse_ok": false,
+          "error": "OpenRouter 402: Prompt tokens limit exceeded: 58149 > 53333. To increase, visit https://openrouter.ai/workspaces/slop-check/keys/e59f617975bf51efe7f2b92b3217e5b87413adb404c015e0770892c1ee721329 and adjust the key's monthly limit",
+          "usd": 0.0
+        },
+        {
+          "id": "en-rewrite-library-notice",
+          "mode": "rewrite",
+          "language": "en",
+          "passed": false,
+          "parse_ok": false,
+          "error": "OpenRouter 402: Prompt tokens limit exceeded: 58012 > 53333. To increase, visit https://openrouter.ai/workspaces/slop-check/keys/e59f617975bf51efe7f2b92b3217e5b87413adb404c015e0770892c1ee721329 and adjust the key's monthly limit",
+          "usd": 0.0
+        }
+      ]
+    },
+    {
+      "key": "conformance/openai/frontier",
+      "family": "openai",
+      "id": "openai/gpt-5.4",
+      "canonical_slug": "openai/gpt-5.4-20260305",
+      "summary": {
+        "cases": 0,
+        "passed": 0,
+        "recall": null,
+        "precision": null,
+        "true_positives": 0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "verdict_accuracy": null,
+        "clean_pass_rate": null,
+        "rewrite_pass_rate": null,
+        "parse_failures": 0,
+        "errors": 0,
+        "usd": 0
+      },
+      "cases": []
+    }
+  ],
+  "aborted": true,
+  "notices": [
+    "conformance/openai/frontier: openai/gpt-6.1-terra unavailable; now openai/gpt-5.6-terra",
+    "conformance/openai/frontier: openai/gpt-5.6-terra unavailable; now openai/gpt-5.4",
+    "budget cap reached; conformance run aborted, results are partial"
+  ],
+  "budget": {
+    "month": "2026-11",
+    "month_total_usd": 0,
+    "monthly_cap_usd": 26.0,
+    "month_remaining_usd": 26.0,
+    "run_id": "gh-44137816947-1",
+    "run_kind": "conformance",
+    "run_total_usd": 0,
+    "run_cap_usd": 6.0,
+    "call_cap_usd": 0.25
+  }
+}
