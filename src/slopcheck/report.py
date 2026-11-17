@@ -42,8 +42,8 @@ LABELS = {
             "requires_vision": "requires an image judge",
             "llm_error": "language model call failed",
         },
-        "note_provisional": "Weights are provisional: bootstrap values derived from the legacy tiers apply "
-        "until the first measurement.",
+        "note_provisional": "Some weights are provisional: they apply until the first measurement replaces "
+        "them with measured values.",
         "note_short": "Short text ({words} words): short-text thresholds apply.",
         "note_und": "Language not detected: only language-independent patterns ran.",
         "note_llm_error": "Language model error: {error}",
@@ -79,8 +79,8 @@ LABELS = {
             "requires_vision": "benötigt eine Bildbewertung",
             "llm_error": "Aufruf des Sprachmodells fehlgeschlagen",
         },
-        "note_provisional": "Die Gewichte sind vorläufig: Bis zur ersten Messung gelten Startwerte aus den "
-        "früheren Stufen.",
+        "note_provisional": "Einige Gewichte sind vorläufig: Sie gelten, bis die erste Messung sie "
+        "durch gemessene Werte ersetzt.",
         "note_short": "Kurzer Text ({words} Wörter): Es gelten die Schwellen für kurze Texte.",
         "note_und": "Sprache nicht erkannt: Nur sprachunabhängige Muster wurden geprüft.",
         "note_llm_error": "Fehler des Sprachmodells: {error}",

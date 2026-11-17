@@ -71,7 +71,7 @@ def make_catalog(
         "catalog_version": catalog_version,
         "generated_at": None,
         "short_text_max_words": short_text_max_words,
-        "verdict_thresholds": verdict_thresholds or {"yellow": 2.0, "red": 5.0, "source": "bootstrap"},
+        "verdict_thresholds": verdict_thresholds or {"yellow": 2.0, "red": 5.0, "source": "provisional"},
         "patterns": patterns,
     }
 

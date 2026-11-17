@@ -402,7 +402,7 @@ def _assemble(
         "verdict": verdict_for(score, thresholds),
         "score": score,
         "verdict_thresholds": thresholds,
-        "provisional": any(ev.pattern.get("weight_source") == "bootstrap" for ev in scored),
+        "provisional": any(ev.pattern.get("weight_source") == "provisional" for ev in scored),
         "words": model.word_count,
         "language": model.language,
         "context": context,

@@ -12,7 +12,7 @@ def build_pattern(
     kind: str = "regex",
     status: str = "core",
     weight: float = 1.0,
-    weight_source: str = "bootstrap",
+    weight_source: str = "provisional",
     realizations: dict | None = None,
     threshold: dict | None = None,
     position: str = "any",

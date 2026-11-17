@@ -1,4 +1,4 @@
-# Admission thresholds, weights, verdict bootstrap and budget.
+# Admission thresholds, weights, provisional verdict thresholds, budget and initial core.
 # Protected by CODEOWNERS: changing this file changes the gate.
 # Semantics: docs/architecture.md sections 5 and 6.
 

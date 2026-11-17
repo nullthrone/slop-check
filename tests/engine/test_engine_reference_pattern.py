@@ -15,7 +15,7 @@ PATTERN_FILE = Path(__file__).resolve().parents[2] / "patterns" / "text" / "anti
 
 def load_reference() -> dict:
     pattern = yaml.safe_load(PATTERN_FILE.read_text(encoding="utf-8"))
-    pattern.update({"effective_status": "core", "weight": 2.5, "weight_source": "bootstrap"})
+    pattern.update({"effective_status": "core", "weight": 2.5, "weight_source": "provisional"})
     return pattern
 
 

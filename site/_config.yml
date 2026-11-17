@@ -1,0 +1,41 @@
+# Jekyll configuration for the slop-check documentation site.
+# Built by .github/workflows/pages.yml with actions/jekyll-build-pages (source ./site).
+
+title: slop-check
+description: >-
+  Style-pattern audit and cleanup for text, plus prevention rules for image prompts.
+  An Agent Skills package for Claude, Gemini, ChatGPT, Copilot and other assistants.
+url: https://nullthrone.github.io
+baseurl: /slop-check
+lang: en
+
+repository_url: https://github.com/nullthrone/slop-check
+download_zip: https://github.com/nullthrone/slop-check/releases/latest/download/slop-check.zip
+download_prompt: https://github.com/nullthrone/slop-check/releases/latest/download/system-prompt.md
+releases_url: https://github.com/nullthrone/slop-check/releases
+kofi_url: https://ko-fi.com/tsprock
+
+markdown: kramdown
+kramdown:
+  input: GFM
+  auto_ids: true
+  hard_wrap: false
+  syntax_highlighter_opts:
+    disable: true
+
+permalink: pretty
+
+defaults:
+  - scope:
+      path: ""
+    values:
+      layout: page
+
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - vendor
+  - node_modules
+  - .jekyll-cache
+  - .sass-cache
+  - README.md

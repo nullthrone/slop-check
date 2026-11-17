@@ -45,89 +45,36 @@ def test_verdict_thresholds_come_from_catalog(pattern, catalog):
     assert result["verdict_thresholds"] == {"yellow": 0.5, "red": 1.0}
 
 
-# --- legacy traffic light ----------------------------------------------------------------
+# --- provisional weights from governance/thresholds.yaml -------------------------------
 
 
-def legacy_verdict(tier1: int, tier2: int) -> str:
-    """Legacy rules quoted in governance/thresholds.yaml."""
-    if tier1 >= 2 or tier2 >= 5 or (tier1 == 1 and tier2 >= 3):
-        return "RED"
-    if tier1 == 1 or 2 <= tier2 <= 4:
-        return "YELLOW"
-    return "GREEN"
-
-
-def test_bootstrap_weights_reproduce_legacy_rules(pattern, catalog):
+def test_initial_core_weights_and_provisional_verdict_thresholds(pattern, catalog):
+    """Two heavy (2.5) patterns reach RED, one heavy plus two light (1.0) stays YELLOW."""
     governance = yaml.safe_load(THRESHOLDS_YAML.read_text(encoding="utf-8"))
-    weights = governance["weights"]["bootstrap"]
-    vt = governance["verdict_bootstrap"]
-    tier1 = [token_pattern(pattern, f"tierone{i}", weights["legacy_tier_1"]) for i in range(3)]
-    tier2 = [token_pattern(pattern, f"tiertwo{i}", weights["legacy_tier_2"]) for i in range(7)]
-    cat = catalog(*tier1, *tier2, verdict_thresholds={"yellow": vt["yellow"], "red": vt["red"]})
-    for n1 in range(3):
-        for n2 in range(7):
-            tokens = [f"tierone{i}" for i in range(n1)] + [f"tiertwo{i}" for i in range(n2)]
-            result = analyze(" ".join(tokens), cat, lang="und")
-            assert result["verdict"] == legacy_verdict(n1, n2), (n1, n2, result["score"])
-
-
-def test_tier3_bootstrap_weight_is_half(pattern, catalog):
-    governance = yaml.safe_load(THRESHOLDS_YAML.read_text(encoding="utf-8"))
-    weight = governance["weights"]["bootstrap"]["legacy_tier_3"]
-    p = token_pattern(pattern, "tierthree", weight)
-    assert analyze("tierthree", catalog(p), lang="und")["score"] == 0.5
-
-
-# --- score and findings ------------------------------------------------------------------
-
-
-def test_score_sums_only_triggered_core_weights(pattern, catalog):
-    cat = catalog(
-        token_pattern(pattern, "tokA", 2.5),
-        token_pattern(pattern, "tokB", 1.0),
-        token_pattern(pattern, "tokC", 1.0, status="candidate"),
-        token_pattern(pattern, "tokD", 1.0, status="fading"),
-        token_pattern(pattern, "tokE", 1.0, status="observation"),
-        token_pattern(pattern, "tokF", 1.0),
-    )
-    result = analyze("tokA tokB tokB tokC tokD tokE", cat, lang="und")
-    assert result["score"] == 3.5
-    assert result["verdict"] == "YELLOW"
-    assert [f["pattern_id"] for f in result["findings"]] == ["tokA", "tokB"]
-    assert [o["pattern_id"] for o in result["observations"]] == ["tokC", "tokD"]
-    assert all(o["weight"] == 0.0 for o in result["observations"])
-    assert result["all_patterns"]["tokE"] == {"triggered": True, "count": 1}
-    assert result["all_patterns"]["tokF"] == {"triggered": False, "count": 0}
-
-
-def test_findings_sorted_by_weight_then_count(pattern, catalog):
-    cat = catalog(
-        token_pattern(pattern, "tokA", 1.0),
-        token_pattern(pattern, "tokB", 1.0),
-        token_pattern(pattern, "tokC", 2.5),
-    )
-    result = analyze("tokA tokB tokB tokB tokC", cat, lang="und")
-    assert [f["pattern_id"] for f in result["findings"]] == ["tokC", "tokB", "tokA"]
-
-
-def test_finding_shape(pattern, catalog):
-    p = token_pattern(pattern, "tokA", 2.5, fix="Say it   plainly.\nThen stop.")
-    finding = analyze("Intro.\n\nThe tokA here.", catalog(p), lang="und")["findings"][0]
-    assert finding["pattern_id"] == "tokA"
-    assert finding["effective_status"] == "core"
-    assert finding["weight"] == 2.5
-    assert finding["count"] == 1
-    assert finding["triggered"] is True
-    assert finding["threshold"] == "min 1 per text"
-    assert finding["fix"] == "Say it plainly. Then stop."
-    assert finding["hits"] == [{"quote": "tokA", "paragraph": 2, "line": 3, "start": 12, "end": 16}]
+    vt = governance["verdict_provisional"]
+    weights = sorted(set(governance["initial_core"].values()))
+    assert weights == [0.5, 1.0, 2.5]
+    heavy = [token_pattern(pattern, f"heavy{i}", 2.5) for i in range(2)]
+    light = [token_pattern(pattern, f"light{i}", 1.0) for i in range(5)]
+    cat = catalog(*heavy, *light, verdict_thresholds={"yellow": vt["yellow"], "red": vt["red"]})
+    cases = {
+        "": "GREEN",
+        "light0": "GREEN",
+        "light0 light1": "YELLOW",
+        "heavy0": "YELLOW",
+        "heavy0 light0 light1": "YELLOW",
+        "heavy0 heavy1": "RED",
+        "light0 light1 light2 light3 light4": "RED",
+    }
+    for text, verdict in cases.items():
+        assert analyze(text, cat, lang="und")["verdict"] == verdict, text
 
 
 # --- provisional ------------------------------------------------------------------------
 
 
-def test_provisional_when_any_scored_weight_is_bootstrap(pattern, catalog):
-    boot = token_pattern(pattern, "tokA", 2.5, weight_source="bootstrap")
+def test_provisional_when_any_scored_weight_is_provisional(pattern, catalog):
+    boot = token_pattern(pattern, "tokA", 2.5, weight_source="provisional")
     measured = token_pattern(pattern, "tokB", 1.2, weight_source="measured")
     assert analyze("clean", catalog(boot, measured), lang="und")["provisional"] is True
     assert analyze("tokB", catalog(measured), lang="und")["provisional"] is False

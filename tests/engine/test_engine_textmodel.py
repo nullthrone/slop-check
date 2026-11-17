@@ -167,7 +167,7 @@ def test_detects_english():
 
 def test_undetermined_for_short_or_neutral_text():
     assert detect_language("Game over.") == "und"
-    assert detect_language("Mapping: old_name → new_name, legacy_id → id.") == "und"
+    assert detect_language("Mapping: old_name → new_name, user_id → id.") == "und"
     assert detect_language("") == "und"
 
 
