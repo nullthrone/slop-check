@@ -15,7 +15,7 @@ from . import __version__
 from .detectors import lexicon_hits, make_hit, regex_hits
 from .metrics import METRICS, MetricInput, MetricResult
 from .textmodel import PROSE_KINDS, TextModel, build_text_model
-from .thresholds import count_met, describe_rule, effective_rule, units_ok, value_met
+from .thresholds import count_met, describe_rule, effective_rule, units_ok, value_met, words_ok
 
 DEFAULT_SHORT_TEXT_MAX_WORDS = 150
 DEFAULT_VERDICT_THRESHOLDS = {"yellow": 2.0, "red": 5.0}
@@ -348,8 +348,22 @@ def analyze(
         evaluations.append(ev)
 
     llm_error = _run_llm(llm_queue, model, llm_judge, evaluations, not_evaluated)
+    for ev in evaluations:
+        _apply_min_words(ev, model)
     _resolve_requires(evaluations)
     return _assemble(catalog, model, short, context, modality, evaluations, not_evaluated, llm_error)
+
+
+def _apply_min_words(ev: Evaluation, model: TextModel) -> None:
+    """``min_words``: a text with fewer analyzed words never triggers the rule. Aggregate metrics
+    (densities) then report no hits, as when their value rule is not met."""
+    if words_ok(ev.rule, model.word_count):
+        return
+    ev.base = False
+    detector = ev.pattern.get("detector") or {}
+    spec = METRICS.get(detector.get("metric")) if detector.get("kind") == "metric" else None
+    if spec is not None and spec.aggregate and ev.rule.get("value"):
+        ev.hits = []
 
 
 def _run_llm(
@@ -359,13 +373,13 @@ def _run_llm(
     evaluations: list[Evaluation],
     not_evaluated: dict[str, str],
 ) -> str | None:
-    """Call the judge once for all llm patterns that meet ``min_units``."""
+    """Call the judge once for all llm patterns that meet ``min_units`` and ``min_words``."""
     if not queue or judge is None:
         return None
     ask = []
     for ev in queue:
         total, _ = _llm_units(ev, model)
-        if units_ok(ev.rule, total):
+        if units_ok(ev.rule, total) and words_ok(ev.rule, model.word_count):
             ask.append(ev)
     if not ask:
         return None

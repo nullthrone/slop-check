@@ -53,6 +53,10 @@ ALLOWED_EXTENSIONS = (".md", ".py", ".json", ".yaml", ".txt")
 ARCHIVE_EXTENSIONS = (".zip", ".tar", ".gz", ".tgz", ".bz2", ".xz", ".7z", ".rar", ".jar", ".whl", ".egg")
 WARN_BYTES = 5 * 1024 * 1024
 MAX_BYTES = 100 * 1024 * 1024
+# claude.ai rejects skill archives with more than 200 files (community reports, November 2026).
+# check_package counts conservatively: every file and folder of the package plus the root folder,
+# which is the number of entries in slop-check.zip.
+MAX_FILES = 200
 HANDWRITTEN_REFERENCES = (
     "audit-procedure.md",
     "report-format.md",
@@ -906,6 +910,12 @@ def check_package(pkg_dir: str | Path) -> tuple[list[str], list[str]]:
             kind = _archive_kind(path)
             if kind:
                 errors.append(f"{rel}: contains {kind} archive data")
+    entries = 1 + sum(1 for _ in pkg.rglob("*"))
+    if entries > MAX_FILES:
+        errors.append(
+            f"package holds {entries} files and folders (zip entries); claude.ai rejects archives with more "
+            f"than {MAX_FILES}"
+        )
     if total >= MAX_BYTES:
         errors.append(f"package size {total / 1048576:.1f} MB exceeds the 100 MB limit")
     elif total >= WARN_BYTES:

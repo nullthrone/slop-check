@@ -6,13 +6,14 @@ override for the requested context. Overrides replace keys shallowly.
 
 Count rules compare the number of hits (or the density ``hits * per_words / words``)
 with ``min_count``; scope ``paragraph`` triggers if any single paragraph reaches it.
-Value rules compare a metric value with ``{op, x}``. ``min_units`` is a precondition:
-below it the rule never triggers.
+Value rules compare a metric value with ``{op, x}``. ``min_units`` and ``min_words`` are
+preconditions: below that many sentences or paragraphs (``min_units``, in the detector's unit)
+or words of analyzed text (``min_words``) the rule never triggers.
 """
 
 from __future__ import annotations
 
-RULE_KEYS = ("min_count", "per_words", "comparison", "scope", "value", "min_units")
+RULE_KEYS = ("min_count", "per_words", "comparison", "scope", "value", "min_units", "min_words")
 DEFAULT_RULE = {
     "min_count": 1,
     "per_words": None,
@@ -20,6 +21,7 @@ DEFAULT_RULE = {
     "scope": "text",
     "value": None,
     "min_units": None,
+    "min_words": None,
 }
 _EPS = 1e-9
 
@@ -53,6 +55,11 @@ def compare(measure: float, op: str, x: float) -> bool:
 def units_ok(rule: dict, units: int) -> bool:
     """True unless ``min_units`` is set and not reached."""
     return not rule.get("min_units") or units >= rule["min_units"]
+
+
+def words_ok(rule: dict, words: int) -> bool:
+    """True unless ``min_words`` is set and the analyzed text has fewer words."""
+    return not rule.get("min_words") or words >= rule["min_words"]
 
 
 def value_met(rule: dict, value: float | None) -> bool:
@@ -111,6 +118,7 @@ _TEXT = {
         "in_paragraph": "in one paragraph",
         "value": "value {op} {x}",
         "min_units": "at least {n} {unit}",
+        "min_words": "at least {n} words",
         "requires": "only with {n} other findings",
     },
     "de": {
@@ -122,6 +130,7 @@ _TEXT = {
         "in_paragraph": "in einem Absatz",
         "value": "Wert {op} {x}",
         "min_units": "mind. {n} {unit}",
+        "min_words": "mind. {n} Wörter",
         "requires": "nur mit {n} weiteren Befunden",
     },
 }
@@ -159,6 +168,8 @@ def describe_rule(rule: dict, requires: dict | None = None, unit: str = "sentenc
     if rule.get("min_units"):
         unit_name = _UNIT_NAMES.get(lang, _UNIT_NAMES["en"]).get(unit, unit)
         text += ", " + t["min_units"].format(n=rule["min_units"], unit=unit_name)
+    if rule.get("min_words"):
+        text += ", " + t["min_words"].format(n=rule["min_words"])
     if requires and requires.get("min_other_findings"):
         text += "; " + t["requires"].format(n=requires["min_other_findings"])
     return text

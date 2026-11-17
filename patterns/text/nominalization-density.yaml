@@ -20,6 +20,7 @@ detector:
       en: [tion, sion, ment, ness, ity, ance, ence]
 threshold:
   value: {op: gte, x: 23}
+  short_text: {min_words: 100}
   context_overrides:
     academic:
       value: {op: gt, x: 300}
@@ -36,7 +37,19 @@ realizations:
         - "Wir planen den Umbau im Mai und testen ihn vorher im Labor."
     test_texts:
       - {text: "Die Durchführung der Operationalisierung erfolgt nach Abschluss der Planung.", context: academic, expect: no_trigger}
-      - {text: "Die Durchführung der Operationalisierung erfolgt nach Abschluss der Planung.", expect: trigger}
+      - {text: "Die Durchführung der Operationalisierung erfolgt nach Abschluss der Planung.", expect: no_trigger}
+      - text: >-
+          Die Durchführung der Operationalisierung erfolgt nach Abschluss der Planung. Zur
+          Sicherstellung der Wirksamkeit ist eine Überprüfung der Zielerreichung durch die
+          Geschäftsleitung vorgesehen. Die Umsetzung der Maßnahmen setzt die Abstimmung aller
+          Abteilungen voraus. Nach der Freigabe durch die Leitung beginnt die Einführung der neuen
+          Arbeitsweise in zwei Pilotteams. Die Auswertung der Ergebnisse dient der Vorbereitung einer
+          Entscheidung über die Ausweitung auf weitere Standorte. Für die Dokumentation der
+          Fortschritte ist die Projektkoordination zuständig, die auch die Kommunikation mit den
+          Beteiligten übernimmt. Eine Anpassung der Zeitplanung ist bei Verzögerungen in der
+          Beschaffung möglich. Die Berichterstattung an den Vorstand findet quartalsweise statt.
+          Rückfragen zur Abrechnung richten Sie bitte an die Verwaltung.
+        expect: trigger
   en:
     examples:
       positive:
@@ -48,6 +61,7 @@ realizations:
         - "We patch the loop first and measure again on Friday."
     test_texts:
       - {text: "The implementation of the optimization requires the alignment of all departments.", context: academic, expect: no_trigger}
+      - {text: "In today's fast-paced world, communication is more important than ever. It's not just about sending messages, it's about building real connections.", expect: no_trigger}
 legitimate_use: >
   Academic writing and legal texts use nominal style by convention; the threshold is switched off
   for the academic context. Lexicalized nouns ("information", "government", "Zeitung", "Wohnung")
@@ -73,7 +87,9 @@ notes: >
   (de) and 87 % (en) of the human texts triggered. The threshold of 23 per 300 words (about one
   word in thirteen) marks the densest 4 % of human texts in both languages. The reference corpus
   holds texts of 150 words and more; in very short texts two or three nominalizations already
-  exceed the density. The academic override uses a value above the window size (more than 300
+  exceed the density, so the short-text rule requires at least 100 words of analyzed text (a
+  22-word sentence pair with "communication" and "connections" reached 27.3 per 300 words). Texts
+  of more than 150 words are unaffected. The academic override uses a value above the window size (more than 300
   per 300 words) because the threshold object has no explicit off switch. The parameter names
   suffixes (per language) and min_word_length are specific to this metric; the architecture only
   states that the suffix list lives in params. This pattern covers verbs turned into nouns;
