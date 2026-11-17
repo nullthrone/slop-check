@@ -1,0 +1,139 @@
+# Monthly measurement: refresh the corpora, measure every text pattern on the holdout split,
+# write measurements and a report to branch data, open or update the monthly issue, then
+# rebuild and release the package with the new weights.
+name: measure
+
+on:
+  schedule:
+    - cron: "23 2 1 * *"
+  workflow_dispatch:
+    inputs:
+      generate_ai:
+        description: Generate missing AI corpus documents (spends budget)
+        type: boolean
+        default: true
+      release:
+        description: Dispatch release.yml with a catalog release afterwards
+        type: boolean
+        default: true
+
+permissions: {}
+
+concurrency:
+  group: measure
+  cancel-in-progress: false
+
+jobs:
+  measure:
+    if: github.repository == 'nullthrone/slop-check'
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    permissions:
+      contents: write
+      issues: write
+      actions: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+      GENERATE_AI: ${{ github.event_name == 'schedule' || inputs.generate_ai }}
+      RELEASE: ${{ github.event_name == 'schedule' || inputs.release }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+      - uses: ./.github/actions/setup
+
+      - name: Read branch data
+        run: |
+          {
+            echo "STAGE=$RUNNER_TEMP/stage"
+            echo "DATE=$(date -u +%Y-%m-%d)"
+            echo "MONTH=$(date -u +%Y-%m)"
+          } >> "$GITHUB_ENV"
+          python .github/scripts/data_branch.py checkout --branch data --dir "$RUNNER_TEMP/stage"
+          if [ -z "$OPENROUTER_API_KEY" ]; then
+            echo "::warning title=No API key::OPENROUTER_API_KEY is not set. AI corpus generation and llm patterns are skipped."
+          fi
+
+      - name: Model lock
+        run: |
+          if [ ! -f "$STAGE/models/lock.json" ]; then
+            echo "No models/lock.json on branch data; resolving now."
+            slopcheck-dev models resolve --out "$STAGE/models/lock.json"
+          fi
+
+      - name: Fetch human corpus
+        run: |
+          slopcheck-dev corpus fetch-human --out .corpus/human
+          mkdir -p "$STAGE/corpus/human"
+          cp .corpus/human/manifest.json "$STAGE/corpus/human/manifest.json"
+
+      - name: Generate missing AI corpus documents
+        if: env.GENERATE_AI == 'true' && env.OPENROUTER_API_KEY != ''
+        run: |
+          set +e
+          slopcheck-dev corpus generate-ai --human .corpus/human --out "$STAGE/corpus/ai" \
+            --lock "$STAGE/models/lock.json" --ledger "$STAGE/budget/ledger.json" --run-kind scheduled
+          rc=$?
+          set -e
+          if [ "$rc" -eq 3 ]; then
+            echo "::warning title=Budget::Budget cap reached during corpus generation; the corpus is partial."
+          elif [ "$rc" -ne 0 ]; then
+            exit "$rc"
+          fi
+
+      - name: Measure all text patterns on the holdout split
+        run: |
+          previous=()
+          if [ -f "$STAGE/measurements/measurements.json" ]; then
+            previous=(--measurements "$STAGE/measurements/measurements.json")
+          fi
+          llm=()
+          if [ -n "$OPENROUTER_API_KEY" ]; then llm=(--llm); fi
+          mkdir -p "$STAGE/measurements/reports"
+          set +e
+          slopcheck-dev measure --human .corpus/human --ai "$STAGE/corpus/ai" --split holdout "${llm[@]}" \
+            --lock-filter --lock "$STAGE/models/lock.json" --ledger "$STAGE/budget/ledger.json" \
+            --run-kind scheduled "${previous[@]}" \
+            --out "$STAGE/measurements/measurements.json" --report "$STAGE/measurements/reports/$DATE.md"
+          rc=$?
+          set -e
+          if [ "$rc" -eq 3 ]; then
+            echo "::warning title=Budget::Budget cap reached while judging llm patterns; they are missing from this measurement."
+          elif [ "$rc" -ne 0 ]; then
+            exit "$rc"
+          fi
+          cat "$STAGE/measurements/reports/$DATE.md" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Commit to branch data
+        run: |
+          python .github/scripts/data_branch.py publish --branch data --source "$STAGE" \
+            --path measurements/measurements.json --path "measurements/reports/$DATE.md" \
+            --path corpus/ai --path corpus/human/manifest.json --path models/lock.json \
+            --ledger budget/ledger.json --message "Measurement $DATE"
+
+      - name: Open or update the monthly issue
+        env:
+          SERVER: ${{ github.server_url }}
+          REPO: ${{ github.repository }}
+          RUN_ID: ${{ github.run_id }}
+        run: |
+          title="Measurement report $MONTH"
+          {
+            cat "$STAGE/measurements/reports/$DATE.md"
+            echo
+            echo "Data: branch \`data\`, \`measurements/reports/$DATE.md\`. Run: $SERVER/$REPO/actions/runs/$RUN_ID"
+          } > "$RUNNER_TEMP/issue.md"
+          number=$(gh issue list --state all --search "\"$title\" in:title" --json number,title \
+            --jq "map(select(.title == \"$title\")) | first | .number // empty")
+          if [ -n "$number" ]; then
+            gh issue edit "$number" --body-file "$RUNNER_TEMP/issue.md"
+          else
+            gh issue create --title "$title" --body-file "$RUNNER_TEMP/issue.md"
+          fi
+
+      - name: Rebuild and release the package
+        if: env.RELEASE == 'true'
+        env:
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+        run: gh workflow run release.yml --ref "$DEFAULT_BRANCH" -f "release_tag=catalog-$DATE"
