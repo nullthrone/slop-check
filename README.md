@@ -17,7 +17,7 @@ each. Keep the folder name `slop-check` when you unzip `slop-check.zip`.
 |---|---|
 | Claude apps, Claude Code, Claude API, Claude Agent SDK | [slop-check.zip](https://github.com/nullthrone/slop-check/releases/latest/download/slop-check.zip), uploaded as it is or unzipped into `~/.claude/skills/` |
 | ChatGPT, Codex, OpenAI API | [slop-check.zip](https://github.com/nullthrone/slop-check/releases/latest/download/slop-check.zip), uploaded, or unzipped into `~/.agents/skills/` for Codex |
-| Gemini Enterprise, Gemini CLI, Antigravity CLI | [slop-check.zip](https://github.com/nullthrone/slop-check/releases/latest/download/slop-check.zip), uploaded, or unzipped into `~/.gemini/skills/` for the CLIs |
+| Gemini Enterprise, Gemini CLI, Antigravity | [slop-check.zip](https://github.com/nullthrone/slop-check/releases/latest/download/slop-check.zip), uploaded to Gemini Enterprise, or unzipped into `~/.gemini/skills/` (Gemini CLI) or `~/.gemini/config/skills/` (Antigravity) |
 | Gemini app | [slop-check-lite.zip](https://github.com/nullthrone/slop-check/releases/latest/download/slop-check-lite.zip) |
 | GitHub Copilot | [slop-check.zip](https://github.com/nullthrone/slop-check/releases/latest/download/slop-check.zip), unzipped into `~/.copilot/skills/` or `.github/skills/` |
 | Microsoft 365 Copilot Chat, Agent Builder, Copilot Studio | [slop-check-flat.zip](https://github.com/nullthrone/slop-check/releases/latest/download/slop-check-flat.zip) |
@@ -69,10 +69,12 @@ when it runs inside a model.
 
 ## Releases and the dist branch
 
-Each GitHub release carries `slop-check.zip`, `system-prompt.md` and `knowledge.md`. The `dist`
-branch holds the unpacked package built from the latest `main` and the latest measurement:
-`slop-check/` and `exports/` with `system-prompt.md` and `knowledge.md`. Nothing generated is
-committed to `main`.
+Each GitHub release carries three packages and three exports: `slop-check.zip` (folder
+`slop-check/` with scripts), `slop-check-flat.zip` (`SKILL.md` at the archive root),
+`slop-check-lite.zip` (no scripts), `instructions.md` (at most 7,500 characters),
+`system-prompt.md` and `knowledge.md`. The `dist` branch holds the unpacked package built from
+the latest `main` and the latest measurement: `slop-check/` and `exports/`. Nothing generated
+is committed to `main`.
 
 ## How measurement works
 

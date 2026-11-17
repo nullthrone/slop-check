@@ -134,7 +134,7 @@ in case you want to approve commands first.
 ## Devin Desktop
 
 Devin Desktop was formerly called Windsurf. It reads `.devin/skills/` in the workspace and
-`~/.config/devin/skills/` in your home folder, and also reads `.agents/skills/`, the legacy
+`~/.config/devin/skills/` in your home folder, and also reads `.agents/skills/`, the older
 `.windsurf/skills/` and `~/.agents/skills/`.
 
 1. Download [slop-check.zip]({{ site.download_zip }}).

@@ -56,7 +56,7 @@ names no way to do it. The guide for each product links its sources.
 | Gemini app | `slop-check-lite.zip` | Yes, for active skills | `/` (or `@`), then pick the skill | No (observed; Google does not document it) | On demand, when Gemini decides to | Upload only on gemini.google.com and in the Mac app. Mobile apps can use the skill. |
 | Gemini Enterprise | `slop-check.zip` | Yes | `@` or `/` mention, or "Use the slop-check skill" | Yes, Python and Bash; runtime version and network unverified | Yes, on demand | An administrator turns skills on. Skills do not work together with agents. |
 | Gemini CLI | `slop-check.zip`, unzipped into `~/.gemini/skills/` or `~/.agents/skills/` | Yes, after a consent prompt | None documented | Yes, locally, after approval | Yes, on demand | Workspace skills load only in trusted folders. |
-| Antigravity CLI, App and IDE | `slop-check.zip`, unzipped into `~/.gemini/config/skills/` (all three) or `~/.gemini/skills/` (CLI only) | Yes | `/slop-check` | Yes, locally | Yes, as needed | Project skills go in `.agents/skills/`, not `.gemini/skills/`. |
+| Antigravity CLI, App and IDE | `slop-check.zip`, unzipped into `~/.gemini/config/skills/` | Yes | `/slop-check` | Yes, locally | Yes, as needed | Project skills go in `.agents/skills/`, not `.gemini/skills/`. |
 | Gemini API managed agents | Folder from `slop-check.zip`, mounted at `.agents/skills/slop-check/` | Yes | None documented | Yes, in the sandbox | Yes | Preview. Network follows the sandbox's egress allowlist. |
 | Agent Platform Skill Registry | `slop-check.zip` | Yes | None documented | Unverified | Unverified | For developers. Zip up to 10 MB. |
 | Gemini API without agents | `system-prompt.md` as the system instruction | n/a | n/a | No | n/a | The API has no skills. |
@@ -138,11 +138,11 @@ folders each agent reads, as documented on the pages linked from its guide.
 | Zed | `~/.agents/skills/` | `.agents/skills/` |
 | JetBrains Junie | `~/.agents/skills/`, `~/.junie/skills/` | `.agents/skills/` (trusted projects), `.junie/skills/` |
 | Vibe CLI | `~/.agents/skills/`, `~/.vibe/skills/` | `.agents/skills/`, `.vibe/skills/` (trusted folders) |
-| Antigravity CLI | `~/.gemini/skills/`, `~/.gemini/config/skills/` | `.agents/skills/` |
+| Antigravity CLI, App and IDE | `~/.gemini/config/skills/` | `.agents/skills/` |
 | Claude Code | `~/.claude/skills/` | `.claude/skills/` |
 | Kiro | `~/.kiro/skills/` | `.kiro/skills/` |
 
-Antigravity CLI, Claude Code and Kiro do not read `~/.agents/skills/`. Give them their own copy.
+Antigravity, Claude Code and Kiro do not read `~/.agents/skills/`. Give them their own copy.
 
 ## Check that it works
 

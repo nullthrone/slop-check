@@ -173,9 +173,7 @@ skill = client.skills.create(files=[open("slop-check.zip", "rb")])
 response = client.messages.create(
     model="claude-opus-5-5",
     max_tokens=4096,
-    container={
-        "skills": [{"type": "custom", "skill_id": skill.id, "version": "latest"}]
-    },
+    container={"skills": [{"type": "custom", "skill_id": skill.id, "version": "latest"}]},
     messages=[{"role": "user", "content": "Use the slop-check skill to audit this text: ..."}],
     tools=[{"type": "code_execution_20250825", "name": "code_execution"}],
 )
