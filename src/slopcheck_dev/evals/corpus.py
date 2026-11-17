@@ -336,6 +336,19 @@ def prose_ok(text: str, min_letter_share: float = 0.85) -> bool:
     return sum(1 for ch in chars if ch.isalpha()) / len(chars) >= min_letter_share
 
 
+_MACHINE_TRANSLATION_RE = re.compile(
+    r"(?i)\b(?:maschinell|automatisch)\s+(?:und\s+nicht\s+von\s+einem\s+Menschen\s+)?übersetzt"
+    r"|\b(?:machine|automatically)[- ]translated\b"
+    r"|\btranslated\s+by\s+(?:a\s+)?(?:machine|computer)\b"
+    r"|\bmaschinelle\s+Übersetzung\b"
+)
+
+
+def human_written_ok(text: str) -> bool:
+    """Reject pages that declare themselves machine translated (not human-written prose)."""
+    return _MACHINE_TRANSLATION_RE.search(text) is None
+
+
 ADAPTERS: dict[str, Callable[[dict, HumanSource], dict | None]] = {
     "fineweb": adapt_fineweb,
     "wiki40b": adapt_wiki40b,
@@ -437,7 +450,11 @@ def _accept_rows(
         if "\ufffd" in text:
             continue  # mojibake
         if not (
-            language_ok(text, src.language) and prose_ok(text) and repetition_ok(text) and table_ok(text)
+            language_ok(text, src.language)
+            and prose_ok(text)
+            and human_written_ok(text)
+            and repetition_ok(text)
+            and table_ok(text)
         ):
             continue
         words = count_words(text)
@@ -604,9 +621,36 @@ def clean_topic(text: str) -> str:
     return t.strip(" -–—:;,.|")
 
 
-def first_sentence(text: str) -> str:
-    para = next((p for p in text.split("\n\n") if p.strip()), text)
-    return _SENT_END_RE.split(para.strip(), maxsplit=1)[0]
+# Lines that say nothing about the document's subject: site notices and quoted text.
+_BOILERPLATE_RE = re.compile(
+    r"(?i)\b(?:aktivieren|akzeptieren|zulassen|enable|accept|allow)\b[^.]{0,60}\b(?:cookies?|javascript)\b"
+    r"|\b(?:cookies?|javascript)\b[^.]{0,60}\b(?:aktivieren|akzeptieren|zulassen|aktiviert|enabled?|accept|allow)\b"
+    r"|\b(?:this|diese)\s+(?:site|website|webseite|seite)\s+(?:uses|verwendet|nutzt)\s+cookies\b"
+)
+
+
+def _topic_lines(text: str) -> list[str]:
+    """Non-empty lines without quotation markers and site boilerplate, in document order."""
+    out = []
+    for line in text.splitlines():
+        s = line.strip()
+        if not s or s.startswith(">") or _BOILERPLATE_RE.search(s) or not human_written_ok(s):
+            continue
+        out.append(s)
+    return out
+
+
+def first_sentence(text: str, min_words: int = 3) -> str:
+    """First sentence of the first usable line; a dateline ("Berlin.") takes the next one too."""
+    lines = _topic_lines(text)
+    para = lines[0] if lines else text.strip()
+    sentences = _SENT_END_RE.split(para)
+    kept: list[str] = []
+    for s in sentences:
+        kept.append(s)
+        if count_words(" ".join(kept)) >= min_words:
+            break
+    return " ".join(kept)
 
 
 def _shorten(text: str, max_words: int) -> str:
@@ -624,13 +668,20 @@ def _shorten(text: str, max_words: int) -> str:
 
 
 def derive_topic(doc: dict, max_words: int = 20) -> str:
-    """Deterministic topic: title, else a short first line, else the (shortened) first sentence."""
+    """Deterministic topic: title, else a short first line, else the (shortened) first sentence.
+
+    A title may be a single word (an encyclopedia lemma). The first line needs at least two
+    words, and quoted lines and site boilerplate (cookie or translation notices) are skipped.
+    """
     text = doc.get("text") or ""
-    first_line = next((ln.strip() for ln in text.splitlines() if ln.strip()), "")
-    for candidate in (doc.get("title") or "", first_line):
-        t = clean_topic(candidate)
-        if 2 <= count_words(t) <= max_words:
-            return t
+    title = clean_topic(doc.get("title") or "")
+    if 1 <= count_words(title) <= max_words:
+        return title
+    lines = _topic_lines(text)
+    first_line = lines[0] if lines else next((ln.strip() for ln in text.splitlines() if ln.strip()), "")
+    t = clean_topic(first_line)
+    if 2 <= count_words(t) <= max_words:
+        return t
     sentence = clean_topic(first_sentence(text))
     return clean_topic(_shorten(sentence, max_words)) or clean_topic(first_line)[:160]
 
