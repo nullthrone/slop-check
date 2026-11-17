@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/t11z/slop-check/schema/pattern.schema.json",
+  "$id": "https://github.com/nullthrone/slop-check/schema/pattern.schema.json",
   "title": "slop-check pattern",
   "type": "object",
   "additionalProperties": false,

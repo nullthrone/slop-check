@@ -24,6 +24,7 @@ them in the same pull request.
 | D13 | Repository language is English. Examples, word lists and regexes live in their own language. v1 ships `de` and `en` realizations; language-agnostic patterns (`*`) apply to every language. | Contributors can add a language by adding realizations. |
 | D14 | The weekly research routine opens pull requests against this repository and passes the same gates as any contributor. | Research output becomes reviewable data. |
 | D15 | No hard-coded model IDs. `evals/models.yaml` holds selection rules; a weekly resolver picks concrete OpenRouter models and writes a lockfile to branch `data`. | Renamed, added or retired models are picked up without a code change; every measurement records the exact `canonical_slug` it used. |
+| D16 | Canonical home is the `nullthrone` organization: repository `github.com/nullthrone/slop-check`, site `nullthrone.github.io/slop-check`. Absolute links use these; workflows use `github.repository` and never hard-code the owner. | The transfer from `t11z/slop-check` needs no content change; GitHub redirects repository URLs but not Pages, so the site URL is set to its final value from the start. A test fails on stray `t11z/slop-check` links. |
 
 ## 2. Repository layout
 
