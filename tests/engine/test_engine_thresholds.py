@@ -125,7 +125,9 @@ def test_min_words_for_count_rules(pattern, catalog):
 
 def test_min_words_for_density_metrics(pattern, catalog):
     threshold = {"value": {"op": "gt", "x": 5.25}, "short_text": {"min_words": 100}}
-    p = pattern("dash", kind="metric", metric="em_dash_density", params={"per_words": 500}, threshold=threshold)
+    p = pattern(
+        "dash", kind="metric", metric="em_dash_density", params={"per_words": 500}, threshold=threshold
+    )
     short = "The fix — finally — landed on Friday."
     result = analyze(short, catalog(p), lang="en")
     entry = result["all_patterns"]["dash"]

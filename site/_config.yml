@@ -10,10 +10,22 @@ baseurl: /slop-check
 lang: en
 
 repository_url: https://github.com/nullthrone/slop-check
-download_zip: https://github.com/nullthrone/slop-check/releases/latest/download/slop-check.zip
-download_prompt: https://github.com/nullthrone/slop-check/releases/latest/download/system-prompt.md
-knowledge_url: https://github.com/nullthrone/slop-check/blob/dist/exports/knowledge.md
 releases_url: https://github.com/nullthrone/slop-check/releases
+# Release assets (.github/workflows/release.yml). The pages link to these keys.
+# Folder slop-check/ at the zip root, with scripts.
+download_zip: https://github.com/nullthrone/slop-check/releases/latest/download/slop-check.zip
+# The same files with SKILL.md at the zip root.
+download_flat_zip: https://github.com/nullthrone/slop-check/releases/latest/download/slop-check-flat.zip
+# SKILL.md and references/ at the zip root, no scripts.
+download_lite_zip: https://github.com/nullthrone/slop-check/releases/latest/download/slop-check-lite.zip
+# At most 7,500 characters, for instruction fields of about 8,000 characters.
+download_instructions: https://github.com/nullthrone/slop-check/releases/latest/download/instructions.md
+# Full single-file catalog, for knowledge and project files.
+download_knowledge: https://github.com/nullthrone/slop-check/releases/latest/download/knowledge.md
+# About 62,000 characters, for API system messages and large fields.
+download_prompt: https://github.com/nullthrone/slop-check/releases/latest/download/system-prompt.md
+# Same file as download_knowledge, under the key some pages use.
+knowledge_url: https://github.com/nullthrone/slop-check/releases/latest/download/knowledge.md
 kofi_url: https://ko-fi.com/tsprock
 
 markdown: kramdown

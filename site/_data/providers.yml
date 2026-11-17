@@ -13,17 +13,17 @@
   method: Skill upload, skill folder, or project instructions
 - name: Microsoft
   url: /setup/microsoft/
-  products: GitHub Copilot, Microsoft 365 Copilot Cowork, Copilot Studio
+  products: GitHub Copilot, Microsoft 365 Copilot Chat, Microsoft 365 Copilot Cowork, Agent Builder, Copilot Studio
   method: Skill folder or skill upload
 - name: Mistral
   url: /setup/mistral/
-  products: Le Chat Work, Mistral Vibe
+  products: Vibe Work (formerly Le Chat), Vibe CLI
   method: Skill form or skill folder
 - name: Other skill runtimes
   url: /setup/other-runtimes/
-  products: Cursor, OpenCode, goose
+  products: Cursor, OpenCode, goose, Devin Desktop, Amp, Zed, JetBrains Junie, Kiro
   method: Skill folder
 - name: No skill support
   url: /setup/no-skill-support/
-  products: Any assistant with a system prompt or custom instructions
-  method: system-prompt.md
+  products: Assistants with an instruction field, knowledge files or an API system message
+  method: instructions.md, knowledge.md or system-prompt.md

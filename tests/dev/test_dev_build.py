@@ -19,6 +19,11 @@ from slopcheck_dev.build import (
     CORE_CATALOG_END,
     CORE_CATALOG_START,
     MAX_DESCRIPTION_CHARS,
+    MAX_FILES,
+    MAX_INSTRUCTIONS_CHARS,
+    MAX_LITE_COMPANION_FILES,
+    MAX_SKILL_LINES,
+    MAX_SKILL_TOKENS,
     BuildError,
     build,
     check_package,
@@ -27,6 +32,7 @@ from slopcheck_dev.build import (
     package_skill_md,
     parse_frontmatter,
     render_core_catalog,
+    render_instructions,
     render_patterns_markdown,
     render_prevention_markdown,
     replace_marked_region,
@@ -604,7 +610,261 @@ def test_cli_build(skill_repo, tmp_path, capsys):
     stdout = capsys.readouterr().out
     assert "build: catalog 2026.12.01 (candidate 2, core 3, observation 1)" in stdout
     assert (out / "slop-check.zip").is_file() and (out / "exports" / "system-prompt.md").is_file()
-    assert (out / "slop-check-flat.zip").is_file()
+    assert (out / "slop-check-flat.zip").is_file() and (out / "slop-check-lite.zip").is_file()
+    assert (out / "exports" / "instructions.md").is_file()
+    assert re.search(
+        r"build: SKILL\.md \d+ lines, \d+ characters, about \d+ tokens \(limits 500 lines", stdout
+    )
+    assert re.search(r"build: instructions\.md \d+ characters \(limit 7500\)", stdout)
+
+
+# ---------------------------------------------------------------------------
+# core catalog in SKILL.md (section 7: the packaged SKILL.md suffices on its own)
+
+
+def core_region(text: str) -> str:
+    return text.split(CORE_CATALOG_START + "\n", 1)[1].split("\n" + CORE_CATALOG_END, 1)[0]
+
+
+def test_render_core_catalog_lists_core_patterns_thresholds_and_candidate_ids(thresholds):
+    catalog = catalog_with_fading(thresholds)
+    region = render_core_catalog(catalog)
+    assert region.startswith(
+        "Catalog 2026.11.17. Verdict: a score below 2.0 is GREEN, from 2.0 YELLOW, from 5.0 RED "
+        "(provisional thresholds). A short text has at most 150 words.\n"
+    )
+    assert "The weights are provisional, so every report carries the provisional-weights note." in region
+    lines = {
+        re.match(r"- `([^`]+)`", line).group(1): line
+        for line in region.splitlines()
+        if line.startswith("- `")
+    }
+    assert list(lines) == ["core-one", "core-two", "core-three"]  # weight order, core only
+    assert lines["core-one"] == (
+        "- `core-one` Foo opener, weight 2.5. Phrase; threshold min 1 per text. en: `foo`, `Foo`."
+    )
+    assert lines["core-two"] == (
+        "- `core-two` Showy words, weight 1.0. Listed words; threshold min 2 per text "
+        "(short texts: min 1 per text; informal: min 3 per text). en: `delve`, `tapestr*`."
+    )
+    assert "threshold min 1 per text; only with 3 other findings." in lines["core-three"]
+    assert "Candidates (weight 0, observations only): `cand-one`." in region
+    assert "Fading (weight 0, observations only): `core-fade`." in region
+    assert "obs-one" not in region and "img-one" not in region
+    assert "Example" not in region.split("Candidates")[1]  # candidates are IDs only
+    assert formatting_problems(region) == []
+    assert "`foo`" not in render_core_catalog(catalog, examples=0)
+
+
+def test_render_core_catalog_with_measured_weights(thresholds):
+    pattern = make_pattern("core-one", status="core", name="Foo opener")
+    measurements = {
+        "verdict_thresholds": {"yellow": 2.1, "red": 5.4},
+        "patterns": {
+            "core-one": {"pattern_hash": pattern_hash(pattern), "lift": math.e**2, "meets_core": True}
+        },
+    }
+    region = render_core_catalog(compile_catalog([pattern], measurements, thresholds, generated_at=STAMP))
+    assert "from 2.1 YELLOW, from 5.4 RED (measured thresholds)" in region
+    assert "All weights are measured, so reports carry no provisional-weights note." in region
+    assert "- `core-one` Foo opener, weight 2.0." in region
+    empty = render_core_catalog(compile_catalog([], None, thresholds, generated_at=STAMP))
+    assert "No scored patterns yet: every text audit is GREEN." in empty
+
+
+def test_build_injects_core_catalog_into_packaged_skill_md(skill_repo, tmp_path):
+    source = (skill_repo.root / "skill" / "SKILL.md").read_text(encoding="utf-8")
+    result = build(tmp_path / "out", root=skill_repo.root)
+    packaged = (result.package_dir / "SKILL.md").read_text(encoding="utf-8")
+    assert "(Filled in by the build.)" not in packaged
+    assert packaged.count(CORE_CATALOG_START) == 1 and packaged.count(CORE_CATALOG_END) == 1
+    region = core_region(packaged)
+    core_ids = [p["id"] for p in result.catalog["patterns"] if p["effective_status"] == "core"]
+    assert core_ids and all(f"`{pid}`" in region for pid in core_ids)
+    assert "a score below 2.0 is GREEN, from 2.0 YELLOW, from 5.0 RED" in region
+    before, after = source.split("(Filled in by the build.)")
+    assert packaged.startswith(before) and packaged.endswith(after)  # only the region changes
+    assert (skill_repo.root / "skill" / "SKILL.md").read_text(encoding="utf-8") == source
+
+
+@pytest.mark.parametrize(
+    "body",
+    [
+        "# Skill\n\nNo markers.\n",
+        f"# Skill\n\n{CORE_CATALOG_START}\nno end marker\n",
+        f"# Skill\n\n{CORE_CATALOG_END}\nreversed\n{CORE_CATALOG_START}\n",
+        f"# Skill\n\n{CORE_CATALOG_START}\n{CORE_CATALOG_END}\n{CORE_CATALOG_START}\n{CORE_CATALOG_END}\n",
+    ],
+)
+def test_build_requires_one_pair_of_core_catalog_markers(skill_repo, tmp_path, body):
+    skill_md = skill_repo.root / "skill" / "SKILL.md"
+    frontmatter = skill_md.read_text(encoding="utf-8").split("---\n", 2)
+    skill_md.write_text(f"---\n{frontmatter[1]}---\n{body}", encoding="utf-8")
+    with pytest.raises(BuildError, match="needs exactly one line '<!-- slopcheck:core-catalog -->'"):
+        build(tmp_path / "out", root=skill_repo.root)
+
+
+def test_skill_md_size_budget_drops_typical_hits_then_fails(skill_repo, tmp_path, monkeypatch, thresholds):
+    catalog = compile_catalog(text_patterns(), None, thresholds, generated_at=STAMP)
+    source = (skill_repo.root / "skill" / "SKILL.md").read_text(encoding="utf-8")
+    full = replace_marked_region(source, render_core_catalog(catalog, 2))
+    bare = replace_marked_region(source, render_core_catalog(catalog, 0))
+    assert skill_size(bare)["tokens"] < skill_size(full)["tokens"]
+    text, size, warnings = package_skill_md(source, catalog)
+    assert (text, warnings) == (full, []) and size == skill_size(full)
+    # a budget between the smallest and the full catalog: fewer typical hits and a warning
+    monkeypatch.setattr(build_mod, "MAX_SKILL_TOKENS", skill_size(full)["tokens"] - 1)
+    text, _size, warnings = package_skill_md(source, catalog)
+    assert text != full and len(warnings) == 1 and "typical hits per language instead of 2" in warnings[0]
+    result = build(tmp_path / "out", root=skill_repo.root)
+    assert any("typical hits per language" in w for w in result.warnings)
+    # below the smallest catalog the build fails before anything is zipped
+    monkeypatch.setattr(build_mod, "MAX_SKILL_TOKENS", skill_size(bare)["tokens"] - 1)
+    with pytest.raises(BuildError, match=r"Shorten the hand-written text of skill/SKILL\.md"):
+        build(tmp_path / "out2", root=skill_repo.root)
+    assert not (tmp_path / "out2" / "slop-check.zip").exists()
+    monkeypatch.setattr(build_mod, "MAX_SKILL_TOKENS", 10**6)
+    monkeypatch.setattr(build_mod, "MAX_SKILL_LINES", skill_size(bare)["lines"] - 1)
+    with pytest.raises(BuildError, match="lines"):
+        package_skill_md(source, catalog)
+
+
+def test_skill_size_estimates_tokens():
+    assert skill_size("abcd\nefgh\n") == {"lines": 2, "chars": 10, "tokens": 3}
+    assert skill_size("") == {"lines": 0, "chars": 0, "tokens": 0}
+
+
+def copy_real_skill(repo) -> str:
+    """Replace the mini repository's skill/ with the repository's real SKILL.md and references."""
+    import shutil
+
+    target = repo.root / "skill"
+    shutil.rmtree(target)
+    shutil.copytree(REPO / "skill", target)
+    return (target / "SKILL.md").read_text(encoding="utf-8")
+
+
+def test_real_skill_md_packages_self_sufficient_and_within_limits(skill_repo, tmp_path):
+    source = copy_real_skill(skill_repo)
+    assert source.count(CORE_CATALOG_START) == 1 and source.count(CORE_CATALOG_END) == 1
+    assert core_region(source) == "(Filled in by `slopcheck-dev build` from the pattern catalog.)"
+    result = build(tmp_path / "out", root=skill_repo.root)
+    pkg = result.package_dir
+    assert check_package(pkg) == ([], [])
+    packaged = (pkg / "SKILL.md").read_text(encoding="utf-8")
+    meta, _ = parse_frontmatter(packaged)
+    source_meta, _ = parse_frontmatter(source)
+    assert meta["description"] == source_meta["description"]
+    assert len(meta["description"].strip()) <= MAX_DESCRIPTION_CHARS
+    size = skill_size(packaged)
+    assert size["lines"] <= MAX_SKILL_LINES and size["tokens"] <= MAX_SKILL_TOKENS
+    region = core_region(packaged)
+    for p in result.catalog["patterns"]:
+        if p["effective_status"] == "core" and p.get("modality", "text") == "text":
+            assert f"- `{p['id']}`" in region
+    # the report skeleton in SKILL.md matches the layouts of report-format.md
+    report_format = (REPO / "skill" / "references" / "report-format.md").read_text(encoding="utf-8")
+    layouts = report_format.split("## Audit report in Markdown")[1].split("### Line by line")[0]
+    headings = re.findall(r"^## .+$", layouts, flags=re.MULTILINE)
+    assert len(headings) == 8
+    for heading in headings:
+        assert heading in packaged.replace("<candidate|fading>", "<status>"), heading
+    for label in ("Verdict: <", "Gesamtbefund: <", "Suggestion: <", "Vorschlag: <"):
+        assert label in packaged
+    for note in re.findall(
+        r"`((?:Some weights|Einige Gewichte|Findings describe|Die Befunde)[^`]+)`", report_format
+    ):
+        assert " ".join(note.split()) in packaged
+    # the script is optional and the manual audit comes first
+    assert packaged.index("works fully without code") < packaged.index("scripts/slopcheck.py")
+    assert "Optional: if `scripts/slopcheck.py` exists" in packaged
+
+
+def test_compact_export_lists_the_core_patterns_once(skill_repo, tmp_path):
+    result = build(tmp_path / "out", root=skill_repo.root)
+    export = result.export_path.read_text(encoding="utf-8")
+    assert "In this single-file export, the scored patterns" in export
+    assert "Each line: ID, name, weight" not in export  # the inline list is not repeated
+    for pid in ("core-one", "core-two", "core-three"):
+        assert len(re.findall(rf"^- `{pid}`", export, flags=re.MULTILINE)) == 1
+    knowledge = (result.export_path.parent / "knowledge.md").read_text(encoding="utf-8")
+    assert "Each line: ID, name, weight" in knowledge  # the package body keeps its inline list
+
+
+# ---------------------------------------------------------------------------
+# lite archive and instruction export
+
+
+def test_build_writes_lite_zip_without_scripts(skill_repo, tmp_path):
+    copy_real_skill(skill_repo)
+    result = build(tmp_path / "out", root=skill_repo.root)
+    assert result.lite_zip_path == tmp_path / "out" / "slop-check-lite.zip"
+    with zipfile.ZipFile(result.lite_zip_path) as zf:
+        files = sorted(n for n in zf.namelist() if not n.endswith("/"))
+        skill = zf.read("SKILL.md")
+    assert skill == (result.package_dir / "SKILL.md").read_bytes()
+    assert CORE_CATALOG_START.encode() in skill and b"Gesamtbefund: <" in skill
+    expected = {
+        f"references/{p.name}"
+        for p in (result.package_dir / "references").glob("*.md")
+        if p.name != "scripts-usage.md"
+    }
+    assert set(files) == {"SKILL.md"} | expected
+    assert not any(n.startswith(("scripts/", "slop-check/")) for n in files)
+    assert len(files) - 1 <= MAX_LITE_COMPANION_FILES
+
+
+def test_check_package_lite_rules(tmp_path):
+    pkg = make_pkg(tmp_path)
+    assert check_package(pkg, lite=True) == ([], [])
+    for i in range(MAX_LITE_COMPANION_FILES):  # with references/a.md: one more than allowed
+        (pkg / "references" / f"extra-{i}.md").write_text("# X\n", encoding="utf-8")
+    errors, _ = check_package(pkg, lite=True)
+    assert errors == [
+        f"lite package holds 21 files besides SKILL.md; at most {MAX_LITE_COMPANION_FILES} are allowed"
+    ]
+    assert check_package(pkg) == ([], [])  # the full package has no such limit
+    (pkg / "references" / "extra-0.md").unlink()
+    (pkg / "scripts").mkdir()
+    errors, _ = check_package(pkg, lite=True)
+    assert errors == ["lite package must not contain scripts/"]
+
+
+def test_build_fails_when_lite_package_breaks_its_limit(skill_repo, tmp_path):
+    refs = skill_repo.root / "skill" / "references"
+    for i in range(MAX_LITE_COMPANION_FILES):
+        (refs / f"extra-{i}.md").write_text("# Extra\n", encoding="utf-8")
+    with pytest.raises(BuildError, match="lite package violates section 7"):
+        build(tmp_path / "out", root=skill_repo.root)
+
+
+def test_instructions_export_fits_an_instruction_field(skill_repo, tmp_path):
+    copy_real_skill(skill_repo)
+    result = build(tmp_path / "out", root=skill_repo.root)
+    text = result.instructions_path.read_text(encoding="utf-8")
+    assert result.instructions_path == tmp_path / "out" / "exports" / "instructions.md"
+    assert len(text) <= MAX_INSTRUCTIONS_CHARS
+    assert "never authorship" in text and "never with a free-form review" in text
+    assert "Below 2.0 is GREEN, from 2.0 YELLOW, from 5.0 RED" in text
+    assert "Verdict: <GREEN|YELLOW|RED> (score <score>; yellow from 2.0, red from 5.0)" in text
+    for pid in ("core-one", "core-two", "core-three"):
+        assert len(re.findall(rf"^- `{pid}` ", text, flags=re.MULTILINE)) == 1
+    assert "cand-one" not in text and "core-fade" not in text and "obs-one" not in text
+    assert text.rstrip().endswith("and the detailed procedures.") and "knowledge.md" in text
+    assert "- `core-two` Showy words, 1.0, min 2 per text" in text
+
+
+def test_instructions_export_limit_is_enforced(skill_repo, tmp_path, monkeypatch, thresholds):
+    catalog = compile_catalog(text_patterns(), None, thresholds, generated_at=STAMP)
+    full, bare = render_instructions(catalog, 3), render_instructions(catalog, 0)
+    assert len(bare) < len(full)
+    monkeypatch.setattr(build_mod, "MAX_INSTRUCTIONS_CHARS", len(full) - 1)
+    result = build(tmp_path / "out", root=skill_repo.root)
+    assert any("key phrases per pattern instead of 3" in w for w in result.warnings)
+    assert len(result.instructions_path.read_text(encoding="utf-8")) < len(full)
+    monkeypatch.setattr(build_mod, "MAX_INSTRUCTIONS_CHARS", len(bare) - 1)
+    with pytest.raises(BuildError, match=r"instructions\.md has \d+ characters without key phrases"):
+        build(tmp_path / "out2", root=skill_repo.root)
 
 
 # ---------------------------------------------------------------------------
@@ -690,6 +950,19 @@ def test_check_package_size_limits(tmp_path, monkeypatch):
     monkeypatch.setattr(build_mod, "MAX_BYTES", 1500)
     errors, warnings = check_package(pkg)
     assert len(errors) == 1 and "exceeds the 100 MB limit" in errors[0] and warnings == []
+
+
+def test_check_package_file_limit(tmp_path):
+    pkg = make_pkg(tmp_path)  # root folder, SKILL.md, references/, references/a.md: 4 zip entries
+    for i in range(MAX_FILES - 4):
+        (pkg / "references" / f"f{i}.md").write_text("x\n", encoding="utf-8")
+    assert check_package(pkg) == ([], [])
+    (pkg / "references" / "one-more.md").write_text("x\n", encoding="utf-8")
+    errors, _ = check_package(pkg)
+    assert errors == [
+        f"package holds {MAX_FILES + 1} files and folders (zip entries); claude.ai rejects archives with "
+        f"more than {MAX_FILES}"
+    ]
 
 
 def test_check_package_requires_skill_md(tmp_path):
