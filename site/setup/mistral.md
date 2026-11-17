@@ -33,7 +33,7 @@ does not describe uploading a finished skill package, so you copy the parts in.
 
 If the form does not accept the files, paste the content of
 [system-prompt.md]({{ site.download_prompt }}) into the `SKILL.md` field instead. It combines the
-skill instructions with every reference in one text.
+skill instructions with the report format and a condensed catalog in one text.
 
 ## Mistral Vibe
 

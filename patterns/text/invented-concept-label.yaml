@@ -66,25 +66,26 @@ prevention: >
   the mechanism in plain words, or use the established term of the field.
 notes: >
   Detector kind llm because separating coined labels from established terms needs world knowledge;
-  a regex on "call it the ..." would catch only the marked subset. Threshold taken from the
-  provisional legacy proposal of 2026-08-02 (at least 2 coined labels in one text); tropes.fyi
-  likewise says several in one piece are the signal.
+  a regex on "call it the ..." would catch only the marked subset. Threshold: at least 2 coined,
+  unsupported labels in one text, because tropes.fyi says several in one piece are the signal; not
+  yet calibrated against the reference corpora. tropes-fyi and skill-avoid-ai-writing form one
+  cluster; lizontheweb-indicators is the second.
 sources:
-  - source: legacy-knowledge-base
-    locator: "Candidate T2.13, opened 2026-08-02; section 5 (state 2026-11-15)"
+  - source: maintainer-observation
   - source: tropes-fyi
     locator: "entry 'Invented Concept Labels' (entry page under the slug named-concept-abuse), category Tone, status rising"
     note: >
-      Examples "the supervision paradox", "the acceleration trap", "workload creep"; two more added
-      by 2026-10-11: "the complexity divide", "the identity inversion".
+      Examples "the supervision paradox", "the acceleration trap", "workload creep", "the
+      complexity divide", "the identity inversion".
   - source: lizontheweb-indicators
     locator: "entry on invented concept labels"
   - source: skill-avoid-ai-writing
     locator: "entry 'Invented Labels'"
     note: >
       "Pseudo-analytical compound terms coined mid-sentence and never defined ('the supervision
-      paradox,' 'the context-collapse problem,' 'a coordination tax')". Counted cautiously by the
-      legacy knowledge base because it repeats the example "supervision paradox".
+      paradox,' 'the context-collapse problem,' 'a coordination tax')". Repeats the tropes.fyi
+      example "supervision paradox" and is registered as derived from tropes-fyi, so it adds no
+      independent cluster.
 related:
   - {id: hallmark-vocabulary, relation: distinct-from}
   - {id: inflated-importance, relation: distinct-from}

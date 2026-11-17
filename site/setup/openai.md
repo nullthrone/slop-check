@@ -49,7 +49,9 @@ in that project and take precedence over your global custom instructions.
 4. If the instructions field is too short for the whole file, add `system-prompt.md` to the project
    as a file instead and write one line of instructions: "Apply system-prompt.md to every text you
    check or write in this project."
-5. Start chats inside the project.
+5. For the full pattern detail, add [knowledge.md]({{ site.knowledge_url }}) to the project as a
+   file as well.
+6. Start chats inside the project.
 
 The same approach works for a custom GPT: put the file content into its instructions or attach
 the file as knowledge. Check OpenAI's help center for the current menu names.

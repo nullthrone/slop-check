@@ -49,12 +49,11 @@ prevention: >
   plain text for emails, chat replies and other media that do not render markdown.
 notes: >
   No source gives a per-text threshold (Pangram reports frequency multiples). The value of more
-  than 2 emphasis markers per 100 words, with more than 5 in technical context, was chosen at
-  migration and is uncalibrated. The metric reads raw markup, so it also catches markdown bleed;
+  than 2 emphasis markers per 100 words, with more than 5 in technical context, is not yet
+  calibrated against the reference corpora. The metric reads raw markup, so it also catches markdown bleed;
   whether a text will be rendered is unknown to the engine.
 sources:
-  - source: legacy-knowledge-base
-    locator: "Candidate T2.26, opened 2026-11-15; section 5 (state 2026-11-15)"
+  - source: maintainer-observation
   - source: pangram-signs-of-ai-writing
     locator: "markdown formatting"
     note: >

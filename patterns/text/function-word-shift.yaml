@@ -40,13 +40,14 @@ prevention: >
   Use "across", "beyond", "into", "where" and "while" only for their literal relation; prefer the
   concrete phrasing when the relation is vague.
 notes: >
-  Both sources are arXiv preprints on academic registers and form one independence cluster (same
-  publisher), so the pattern stays an observation. English only, so there is no German
-  realization; German equivalents have no evidence yet. The density threshold of 12 per 1,000
-  words was chosen at migration without calibration and is expected to misfire on many ordinary
-  English texts; it exists to let a measurement test the claim. The legacy knowledge base found no
-  second source with a nameable trope and example sentences. Related to the function-word decline
-  that supports premodifier-stacking.
+  Both sources are arXiv preprints on academic registers. They count as two clusters under
+  docs/architecture.md section 5.2 (academic sources cluster by shared authors), but
+  kobak-excess-vocabulary corroborates only "across", and no known source describes the shift as
+  a nameable trope with example sentences, so the pattern stays an observation. English only, so
+  there is no German realization; German equivalents have no evidence yet. The density threshold
+  of 12 per 1,000 words is not calibrated against the reference corpora and is expected to misfire
+  on many ordinary English texts; it exists to let a measurement test the claim. Related to the
+  function-word decline that supports premodifier-stacking.
 sources:
   - source: arxiv-2609-23090
     note: >
@@ -59,6 +60,6 @@ sources:
       "across" (with "within") belongs to the set of ten common excess style words in 2024 PubMed
       abstracts (across, additionally, comprehensive, crucial, enhancing, exhibited, insights,
       notably, particularly, within) whose combined frequency gap gives a lower bound on LLM use.
-      Corroborates "across" only; same publisher cluster as arxiv-2609-23090. Read on 2026-11-17.
+      Corroborates "across" only.
 related:
   - {id: premodifier-stacking, relation: overlaps}

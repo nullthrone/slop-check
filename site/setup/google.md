@@ -32,9 +32,9 @@ root, the package holds text files only, and its scripts never need internet acc
 
 ## Gems and skills
 
-Google is replacing Gems with skills. For personal accounts, Gems became read-only on
-2026-11-17 and are removed on 2026-12-17; Google recreates each Gem as a skill. Work and school
-accounts follow in 2027.
+Google is replacing Gems with skills. Since 2026-11-17, Gems in personal accounts are read-only.
+Google removes them on 2026-12-17 and recreates each one as a skill. Work and school accounts
+follow in 2027.
 
 If you built a slop-check Gem before, its converted copy is a second slop-check skill. Install the
 package as described below and keep the converted skill inactive. To deactivate it, open it on

@@ -12,6 +12,7 @@ lang: en
 repository_url: https://github.com/nullthrone/slop-check
 download_zip: https://github.com/nullthrone/slop-check/releases/latest/download/slop-check.zip
 download_prompt: https://github.com/nullthrone/slop-check/releases/latest/download/system-prompt.md
+knowledge_url: https://github.com/nullthrone/slop-check/blob/dist/exports/knowledge.md
 releases_url: https://github.com/nullthrone/slop-check/releases
 kofi_url: https://ko-fi.com/tsprock
 

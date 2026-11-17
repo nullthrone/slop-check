@@ -7,11 +7,18 @@ description: How to contribute patterns to slop-check and how measurement decide
 
 ## Where to start
 
-[CONTRIBUTING.md]({{ site.repository_url }}/blob/main/CONTRIBUTING.md) in the repository describes
-the workflow: one YAML file per pattern under `patterns/`, one file per source under `sources/`,
-and the checks a pull request has to pass. It also points to the research-prompt template, which
-lets you run a pattern search with your own assistant and turn the result into a pattern file for a
-pull request.
+[CONTRIBUTING.md]({{ site.repository_url }}/blob/main/CONTRIBUTING.md) in the repository is the
+entry point. A pattern is one YAML file under `patterns/`, and every source it cites has its own
+file under `sources/`. The step-by-step guide is
+[docs/contributing-patterns.md]({{ site.repository_url }}/blob/main/docs/contributing-patterns.md).
+To propose a pattern without writing YAML, open an issue with one of the
+[issue forms]({{ site.repository_url }}/issues/new/choose).
+
+Most patterns start as research. The
+[research-prompt template]({{ site.repository_url }}/blob/main/CONTRIBUTING.md#researching-patterns-with-an-ai-assistant)
+in CONTRIBUTING.md turns a search with your own assistant into pattern and source files that the
+checks can evaluate. Fill in the parameters (language, register, goal) and paste it into any model
+that can search the web.
 
 To add a language, add realizations for it to existing patterns. English and German ship today;
 patterns marked for any language apply to every text.
@@ -39,6 +46,8 @@ The patterns in the initial core carry provisional weights until the first measu
 That measurement either replaces the provisional weight or moves the pattern to `fading`.
 
 ## Governance in brief
+
+The full rules are in [docs/governance.md]({{ site.repository_url }}/blob/main/docs/governance.md).
 
 - Content pull requests merge automatically once every check passes. There is no routine review
   queue.

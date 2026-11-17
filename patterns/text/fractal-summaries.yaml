@@ -59,16 +59,16 @@ prevention: >
   the place where it belongs.
 notes: >
   Observation: tropes-fyi and the Wikipedia guide, which tropes.fyi names as a reference, are
-  treated as one lineage; no independent second source was found on 2026-11-17 (other guides
-  describe only a recap at the end of the whole text, see compulsive-summary). The detector
-  catches preview and recap phrases; the full pattern (the same point restated at every structural
-  level) needs a reader's judgement. Threshold chosen at migration: three preview or recap phrases
-  per text. Expected false positives in academic papers and manuals, where "In this section, we
+  treated as one lineage; no independent second source is known (other guides describe only a
+  recap at the end of the whole text, see compulsive-summary). The detector catches preview and
+  recap phrases; the full pattern (the same point restated at every structural level) needs a
+  reader's judgement. Threshold: three preview or recap phrases per text, not yet calibrated
+  against the reference corpora. Expected false positives in academic papers and manuals, where "In this section, we
   ..." is conventional.
 sources:
   - source: tropes-fyi
     locator: "entry 'Fractal Summaries', category Composition, status rising"
-    note: "Example recorded at migration: \"In this section, we'll explore...\"."
+    note: "Example: \"In this section, we'll explore...\"."
   - source: wikipedia-signs-of-ai-writing
     locator: "section 'Section summaries' (WP:CONCLUSION, historical indicators); example in 'Collaborative communication'"
     note: >

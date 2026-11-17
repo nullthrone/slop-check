@@ -97,7 +97,7 @@ weight.
 <article class="card">
 <p class="eyebrow">Single file</p>
 <h3 class="card__title"><code class="tag">system-prompt.md</code></h3>
-<p>The same instructions and references in one Markdown file, for assistants that accept a system prompt or custom instructions but no skills.</p>
+<p>The skill instructions, the report format and a condensed catalog in one Markdown file, sized for the custom instructions of assistants without skills.</p>
 <div class="card__actions"><a class="btn btn--outline" href="{{ site.download_prompt }}">Download system-prompt.md</a></div>
 </article>
 </div>

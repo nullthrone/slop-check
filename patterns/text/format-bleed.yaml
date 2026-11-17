@@ -61,9 +61,9 @@ notes: >
   Independent sources: vrid-ai-signs, pangram-signs-of-ai-writing and the Wikipedia guide
   (aismells repeats the latter and names it as its parent source). Detector kind llm because only
   the target medium decides whether markup is an artifact; the engine cannot know whether a text
-  will be rendered. The legacy knowledge base noted that this may be a rendering indicator more
-  than a style pattern, and kept it separate from the markdown-bleed aspect of
-  markdown-emphasis-inflation (candidate T2.26). Threshold chosen at migration.
+  will be rendered. The pattern may be a rendering indicator more than a style pattern; it is
+  kept separate from the markdown-bleed aspect of markdown-emphasis-inflation, which measures
+  emphasis density in raw markup. Threshold not yet calibrated against the reference corpora.
 sources:
   - source: vrid-ai-signs
     locator: "entry 'Format Bleed'"

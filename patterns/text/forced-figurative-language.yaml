@@ -59,15 +59,15 @@ notes: >
   Independent sources: tropes-fyi, good-graf-machine-made-prose (stock metaphors),
   insidehighered-anatomy-ai-essay (awkward metaphors in generated essays) and
   authoritea-current-ai-tells (weighty metaphors that do not hold up). ignorance.ai lists "Awkward
-  Analogies" (generic metaphors that sound plausible but lack specificity); the legacy knowledge
-  base noted it as a weaker, broader match and did not count it. Threshold chosen at migration.
+  Analogies" (generic metaphors that sound plausible but lack specificity), a weaker and broader
+  match that is not counted. Threshold not yet calibrated against the reference corpora.
 sources:
   - source: tropes-fyi
     locator: "entry 'Forced Figurative Language', category Tone, status new"
-    note: "Example recorded by the legacy knowledge base: \"Like tracking weight loss with a scale you control.\""
+    note: "Example: \"Like tracking weight loss with a scale you control.\""
   - source: ignorance-ai
     locator: "entry 'Awkward Analogies'"
-    note: "Broader and weaker match; not counted by the legacy knowledge base."
+    note: "Broader and weaker match; not counted."
   - source: good-graf-machine-made-prose
     note: >
       "Metaphors involving symphonies, tapestries, or 'complex dances'" listed as a tell (stock

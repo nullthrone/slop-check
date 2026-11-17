@@ -63,12 +63,12 @@ notes: >
   triggers it; separation from AI-generated text is not yet measured. Encyclopedic and web prose
   often contains several real three-item enumerations: with a fixed count of 3 triads per text 18 %
   (de) and 21 % (en) of the human texts triggered. Texts above short_text_max_words therefore use
-  a density, 6.5 or more triads per 500 words (3 triads in 230 words, 7 in 540 words); the densest
-  human texts reach 13 to 14 per 500 words. A fixed count would have to be 7 per text to meet the
-  limit, which misses short and medium texts and lets long ones accumulate freely. Short texts use
-  a paragraph count instead (2 or more triads in one paragraph), because a single triad in a few
-  dozen words would already exceed the density. "From X to Y to Z" belongs to false-range; the
-  triad metric does not count it.
+  a density, 6.5 or more triads per 500 words (3 triads in a text of up to 230 words, 13 in 1,000
+  words); the densest human texts reach 12.5 to 14 per 500 words. A fixed count would have to be 7
+  per text to meet the limit, which misses short and medium texts and lets long ones accumulate
+  freely. Short texts use a paragraph count instead (2 or more triads in one paragraph), because a
+  single triad in a few dozen words would already exceed the density. "From X to Y to Z" belongs
+  to false-range; the triad metric does not count it.
 sources:
   - source: maintainer-observation
   - source: pangram-signs-of-ai-writing

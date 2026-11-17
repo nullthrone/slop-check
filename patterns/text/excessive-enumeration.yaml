@@ -59,13 +59,14 @@ prevention: >
   items, or link paragraphs by their content.
 notes: >
   Independent sources: tropes-fyi and an Inside Higher Ed classroom comparison of more than 50
-  generated essays per tool. Threshold chosen at migration: three enumerated paragraph openers in
-  one text, matching the "first, second, third" shape the source describes. "The first step is"
+  generated essays per tool. Threshold: three enumerated paragraph openers in one text, matching
+  the "first, second, third" shape the source describes; not yet calibrated against the reference
+  corpora. "The first step is"
   is left out because instructions use it legitimately.
 sources:
   - source: tropes-fyi
     locator: "entry 'Excessive Enumeration', category Paragraph Structure, status rising"
-    note: "Examples recorded at migration: \"The first wall is the absence of a free, scoped API...\", \"The second takeaway is that... The third takeaway is that...\"."
+    note: "Examples: \"The first wall is the absence of a free, scoped API...\", \"The second takeaway is that... The third takeaway is that...\"."
   - source: insidehighered-anatomy-ai-essay
     note: >
       Paragraphs of generated essays "often begin with formulaic transitional phrases" (one essay
