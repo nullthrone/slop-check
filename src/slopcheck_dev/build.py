@@ -2,7 +2,7 @@
 
 Output below ``--out`` (default ``dist``)::
 
-    slop-check/SKILL.md                          copied from skill/SKILL.md
+    slop-check/SKILL.md                          skill/SKILL.md with the core catalog injected
     slop-check/references/*.md                   copied from skill/references/*.md
     slop-check/references/text-patterns.md       generated
     slop-check/references/image-patterns.md      generated
@@ -16,6 +16,14 @@ Output below ``--out`` (default ``dist``)::
     exports/system-prompt.md                     SKILL.md body, report format, condensed catalog
     exports/knowledge.md                         SKILL.md body plus every reference
 
+The region of ``SKILL.md`` between ``<!-- slopcheck:core-catalog -->`` and
+``<!-- /slopcheck:core-catalog -->`` is replaced by a compact list of the scored core patterns,
+the verdict thresholds and the candidate IDs, so that ``SKILL.md`` alone suffices for a correct
+audit in runtimes that neither run scripts nor open ``references/`` (section 7). The packaged
+``SKILL.md`` must stay within the Agent Skills size guidance (``MAX_SKILL_LINES``,
+``MAX_SKILL_TOKENS``); the build shows fewer typical hits per pattern when the full list does
+not fit, and fails when even the list without typical hits does not fit.
+
 The package is checked against section 7 before the zips are written. Generated Markdown is
 deterministic for the same inputs: patterns are ordered by fixed keys and no timestamps
 appear in it (``catalog.json`` carries ``generated_at``; set ``SOURCE_DATE_EPOCH`` for a
@@ -27,6 +35,7 @@ from __future__ import annotations
 import copy
 import datetime as _dt
 import json
+import math
 import os
 import re
 import shutil
@@ -528,6 +537,277 @@ def formatting_problems(markdown: str) -> list[str]:
 
 
 # ---------------------------------------------------------------------------
+# core catalog inside SKILL.md (section 7: the packaged SKILL.md suffices on its own)
+
+CORE_CATALOG_START = "<!-- slopcheck:core-catalog -->"
+CORE_CATALOG_END = "<!-- /slopcheck:core-catalog -->"
+#: Agent Skills guidance for SKILL.md: under about 500 lines and about 5,000 tokens.
+MAX_SKILL_LINES = 500
+MAX_SKILL_TOKENS = 5000
+#: Typical hits per language in the core catalog, richest first; the build takes the first
+#: level that keeps SKILL.md within the limits above.
+CORE_EXAMPLE_LEVELS = (2, 1, 0)
+CORE_EXAMPLE_MAX_CHARS = 64
+CORE_TERMS_PER_EXAMPLE = 3  # word-list terms shown per typical-hit slot
+POSITION_SHORT = {
+    "any": "",
+    "text_start": " at the start of the text",
+    "paragraph_start": " at the start of a paragraph or list item",
+    "paragraph_end": " at the end of a paragraph",
+    "last_paragraph": " in the last paragraph",
+    "sentence_start": " at the start of a sentence",
+}
+METRIC_SHORT = {
+    "em_dash_density": "em dashes (and spaced en dashes) per {per_words} words",
+    "curly_quotes": "curly quotation marks in a language whose plain text uses straight ones",
+    "sentence_length_cv": (
+        "variation of sentence length (standard deviation / mean), lowest over {run} consecutive paragraphs"
+    ),
+    "emoji_decoration": "emoji or symbols used as list or heading prefixes",
+    "markdown_emphasis_density": "bold, italic and heading markers per 100 words",
+    "paragraph_start_ratio": "share of paragraphs that open with a listed word",
+    "nominalization_density": "nouns of {min_word_length}+ letters ending in {suffixes} (plurals count) per {per_words} words",
+    "bullet_bold_lead": "longest run of list items that open with a bold lead and a colon",
+    "triad": 'lists of exactly three short items ("A, B and C", each up to three words)',
+    "comma_density": "commas per sentence",
+    "hyphenated_premodifier_density": "hyphenated modifiers in front of a noun per 100 words",
+}
+COMPACT_CORE_POINTER = (
+    "In this single-file export, the scored patterns, the verdict thresholds and the candidates are "
+    'listed in the section "File: references/text-patterns.md (condensed)" at the end.'
+)
+
+
+def estimate_tokens(text: str) -> int:
+    """Rough token count: one token per four characters (the usual rule of thumb)."""
+    return math.ceil(len(text) / 4)
+
+
+def skill_size(text: str) -> dict:
+    """Lines, characters and estimated tokens of a SKILL.md text."""
+    return {"lines": len(text.splitlines()), "chars": len(text), "tokens": estimate_tokens(text)}
+
+
+def _report_num(x: float) -> str:
+    """A number as the report writes it: at least one decimal (2.0, 2.5, 0.375)."""
+    x = float(x)
+    return f"{x:.1f}" if float(round(x, 1)) == x else _num(x)
+
+
+def _strip_parens(text: str) -> str:
+    previous = None
+    while previous != text:
+        previous = text
+        text = re.sub(r"\s*\([^()]*\)", "", text)
+    return _clean(text)
+
+
+def _gist(pattern: dict) -> str:
+    """First sentence of the summary without parenthetical examples, lower-cased start."""
+    gist = _first_sentence(_strip_parens(_clean(pattern.get("summary"))), 200).rstrip(".")
+    if gist[:2] and not gist[:2].isupper():
+        gist = gist[0].lower() + gist[1:]
+    return gist
+
+
+def _core_rule(pattern: dict) -> str:
+    """How to find hits, in a few words."""
+    detector = pattern.get("detector") or {}
+    kind = detector.get("kind")
+    where = POSITION_SHORT.get(detector.get("position") or "any", "")
+    if kind == "regex":
+        return f"Phrase{where}"
+    if kind == "lexicon":
+        return f"Listed words{where}"
+    if kind == "metric":
+        name = detector.get("metric") or ""
+        params = detector.get("params") or {}
+        suffixes = params.get("suffixes") or {}
+        values = {
+            "per_words": params.get("per_words", 100),
+            "run": params.get("run", 3),
+            "min_word_length": params.get("min_word_length", 6),
+            "suffixes": "; ".join(
+                f"{lang} " + " ".join(f"-{s}" for s in suffixes[lang]) for lang in sorted(suffixes)
+            )
+            or "a nominal suffix",
+        }
+        text = "Measured: " + METRIC_SHORT.get(name, name.replace("_", " ")).format(**values)
+        min_sentences = params.get("min_sentences_per_paragraph")
+        if name == "sentence_length_cv" and isinstance(min_sentences, int) and min_sentences > 1:
+            text += f" of {min_sentences}+ sentences"
+        return text
+    if kind == "llm":
+        rule = (pattern.get("threshold") or {}).get("value")
+        unit = _metric_unit(pattern)
+        if rule:
+            return f"Judgment per {unit[:-1]}: {_gist(pattern)}; value = share of such {unit}"
+        return f"Judgment: {_gist(pattern)}"  # the summary already says where to look
+    return "Judgment: " + _gist(pattern)
+
+
+def _core_threshold(pattern: dict) -> str:
+    """Base rule (with dependency), then short-text and context variants, as the report writes them."""
+    from slopcheck.thresholds import describe_rule, effective_rule
+
+    threshold = pattern.get("threshold") or {}
+    unit = _metric_unit(pattern)
+    text = describe_rule(effective_rule(threshold, False, "default"), pattern.get("requires"), unit)
+    variants = []
+    if threshold.get("short_text"):
+        variants.append("short texts: " + describe_rule(effective_rule(threshold, True, "default"), None, unit))
+    for ctx in sorted((threshold.get("context_overrides") or {}).keys()):
+        if ctx != "default":
+            variants.append(f"{ctx}: " + describe_rule(effective_rule(threshold, False, ctx), None, unit))
+    return text + (f" ({'; '.join(variants)})" if variants else "")
+
+
+def _distinct_terms(terms: list[str], limit: int) -> list[str]:
+    """The first ``limit`` terms, skipping inflections of a term already picked."""
+    picked: list[str] = []
+    for term in terms:
+        if len(picked) >= limit:
+            break
+        stems = [p.rstrip("*").lower() for p in picked]
+        if any(term.lower().startswith(stem) for stem in stems if stem):
+            continue
+        picked.append(term)
+    return picked
+
+
+def _typical_phrase(example: str, regexes: tuple) -> str:
+    """The part of a positive example that a phrase pattern matches, else the whole example."""
+    for rx in regexes:
+        m = rx.search(example)
+        if m and m.end() > m.start():
+            phrase = m.group(0).strip().lstrip(",;").strip().rstrip(" -–—")
+            if phrase:
+                return phrase
+    return example
+
+
+def _core_examples(pattern: dict, per_language: int) -> str:
+    """Typical hits per language: word-list terms, the matched part of the positive examples of
+    a phrase pattern, or short single-line positive examples of other patterns."""
+    from slopcheck.detectors import compile_regexes
+
+    if per_language <= 0:
+        return ""
+    parts = []
+    phrase_kind = (pattern.get("detector") or {}).get("kind") == "regex"
+    realizations = pattern.get("realizations") or {}
+    for lang in sorted(realizations, key=lambda k: (k == "*", k)):
+        body = realizations[lang] or {}
+        terms = [t for t in body.get("terms") or [] if isinstance(t, str)]
+        if terms:
+            shown = _distinct_terms(terms, per_language * CORE_TERMS_PER_EXAMPLE)
+        else:
+            regexes: tuple = ()
+            if phrase_kind:
+                try:
+                    regexes = compile_regexes(f"{pattern['id']}/{lang}", tuple(body.get("patterns") or ()))
+                except ValueError:
+                    regexes = ()
+            positives = [e for e in ((body.get("examples") or {}).get("positive")) or [] if isinstance(e, str)]
+            candidates = [_clean(_typical_phrase(e.strip(), regexes)) for e in positives if "\n" not in e.strip()]
+            shown = [c for c in candidates if c and len(c) <= CORE_EXAMPLE_MAX_CHARS][:per_language]
+        if shown:
+            label = "any language" if lang == "*" else lang
+            parts.append(f"{label}: " + ", ".join(_code(s) for s in shown) + ".")
+    return " ".join(parts)
+
+
+def render_core_catalog(catalog: dict, examples: int = CORE_EXAMPLE_LEVELS[0]) -> str:
+    """The region between the core-catalog markers of the packaged SKILL.md.
+
+    One line per scored (core) text pattern: ID, name, weight, how to find hits, threshold and
+    ``examples`` typical hits per language; then the verdict thresholds' source and one line
+    of candidate (and fading) IDs.
+    """
+    core, candidates, fading = _groups(catalog, "text")
+    vt = catalog.get("verdict_thresholds") or {}
+    yellow, red = _report_num(vt.get("yellow", 2.0)), _report_num(vt.get("red", 5.0))
+    lines = [
+        f"Catalog {catalog.get('catalog_version')}. Verdict: a score below {yellow} is GREEN, from {yellow} "
+        f"YELLOW, from {red} RED ({vt.get('source', 'provisional')} thresholds). A short text has at most "
+        f"{catalog.get('short_text_max_words', 150)} words.",
+    ]
+    if any(p.get("weight_source") == "provisional" for p in core):
+        lines.append("The weights are provisional, so every report carries the provisional-weights note.")
+    elif core:
+        lines.append("All weights are measured, so reports carry no provisional-weights note.")
+    lines.append("")
+    if core:
+        lines.append(
+            "Each line: ID, name, weight, how to find hits, threshold as the report writes it, typical hits "
+            "per language."
+        )
+        lines.append("")
+    else:
+        lines.append("No scored patterns yet: every text audit is GREEN.")
+    for p in core:
+        line = (
+            f"- `{p['id']}` {_clean(p.get('name'))}, weight {_report_num(p.get('weight') or 0)}. "
+            f"{_core_rule(p)}; threshold {_core_threshold(p)}."
+        )
+        typical = _core_examples(p, examples)
+        lines.append(line + (f" {typical}" if typical else ""))
+    observed = [("Candidates", candidates), ("Fading", fading)]
+    tail = [
+        f"{label} (weight 0, observations only): " + ", ".join(f"`{p['id']}`" for p in pats) + "."
+        for label, pats in observed
+        if pats
+    ]
+    if tail:
+        lines.append("")
+        lines.extend(tail)
+    return "\n".join(lines) + "\n"
+
+
+def replace_marked_region(
+    text: str, content: str, start: str = CORE_CATALOG_START, end: str = CORE_CATALOG_END
+) -> str:
+    """Replace the lines between the marker lines ``start`` and ``end`` (kept) with ``content``."""
+    lines = text.split("\n")
+    starts = [i for i, line in enumerate(lines) if line.strip() == start]
+    ends = [i for i, line in enumerate(lines) if line.strip() == end]
+    if len(starts) != 1 or len(ends) != 1 or ends[0] < starts[0]:
+        raise BuildError(
+            f"skill/SKILL.md needs exactly one line '{start}' followed by exactly one line '{end}'; the build "
+            "fills the region between them (section 7)"
+        )
+    body = content.strip("\n").split("\n") if content.strip("\n") else []
+    return "\n".join(lines[: starts[0] + 1] + body + lines[ends[0] :])
+
+
+def package_skill_md(skill_text: str, catalog: dict) -> tuple[str, dict, list[str]]:
+    """Packaged SKILL.md text, its size (:func:`skill_size`) and warnings.
+
+    Takes the richest level of ``CORE_EXAMPLE_LEVELS`` whose result stays within
+    ``MAX_SKILL_LINES`` and ``MAX_SKILL_TOKENS`` (a warning names a reduced level). Raises
+    :class:`BuildError` when even the catalog without typical hits does not fit.
+    """
+    size: dict = {}
+    for level in CORE_EXAMPLE_LEVELS:
+        text = replace_marked_region(skill_text, render_core_catalog(catalog, level))
+        size = skill_size(text)
+        if size["lines"] <= MAX_SKILL_LINES and size["tokens"] <= MAX_SKILL_TOKENS:
+            warnings = []
+            if level != CORE_EXAMPLE_LEVELS[0]:
+                warnings.append(
+                    f"SKILL.md: the core catalog shows {level} typical hits per language instead of "
+                    f"{CORE_EXAMPLE_LEVELS[0]} to stay within {MAX_SKILL_LINES} lines and about "
+                    f"{MAX_SKILL_TOKENS} tokens"
+                )
+            return text, size, warnings
+    raise BuildError(
+        f"packaged SKILL.md has {size['lines']} lines and about {size['tokens']} tokens with the smallest "
+        f"core catalog; the limits are {MAX_SKILL_LINES} lines and about {MAX_SKILL_TOKENS} tokens "
+        "(section 7). Shorten the hand-written text of skill/SKILL.md."
+    )
+
+
+# ---------------------------------------------------------------------------
 # package checks (section 7)
 
 
@@ -645,6 +925,7 @@ class BuildResult:
     catalog: dict
     warnings: list[str] = field(default_factory=list)
     flat_zip_path: Path | None = None
+    skill_size: dict | None = None  # lines, chars, tokens of the packaged SKILL.md (skill_size())
 
 
 def _copy_engine(src: Path, dest: Path) -> list[str]:
@@ -770,6 +1051,10 @@ def render_compact_catalog(catalog: dict) -> str:
 
 
 def render_compact_export(skill_body: str, report_format: str | None, catalog: dict) -> str:
+    """``exports/system-prompt.md``. The condensed catalog at the end is the export's only pattern
+    list: the core-catalog region of the SKILL.md body, if present, becomes a pointer to it."""
+    if CORE_CATALOG_START in skill_body:
+        skill_body = replace_marked_region(skill_body, COMPACT_CORE_POINTER)
     parts = [COMPACT_INTRO.rstrip("\n"), "", skill_body.strip("\n"), ""]
     if report_format:
         parts.extend(["---", "", "# File: references/report-format.md", "", report_format.strip("\n"), ""])
@@ -832,7 +1117,9 @@ def build(
         shutil.rmtree(pkg)
     refs_dir = pkg / "references"
     refs_dir.mkdir(parents=True)
-    shutil.copyfile(skill_src, pkg / "SKILL.md")
+    skill_text, size, skill_warnings = package_skill_md(skill_src.read_text(encoding="utf-8"), catalog)
+    _write(pkg / "SKILL.md", skill_text)
+    warnings.extend(skill_warnings)
 
     ref_src = root / "skill" / "references"
     handwritten: list[str] = []
@@ -878,7 +1165,7 @@ def build(
     report_format = dict(references).get("report-format.md")
     export_path = out / "exports" / "system-prompt.md"
     _write(export_path, render_compact_export(body, report_format, catalog))
-    return BuildResult(pkg, zip_path, export_path, catalog, warnings, flat_zip_path)
+    return BuildResult(pkg, zip_path, export_path, catalog, warnings, flat_zip_path, size)
 
 
 def run(args) -> int:
@@ -896,6 +1183,12 @@ def run(args) -> int:
         counts[p["effective_status"]] = counts.get(p["effective_status"], 0) + 1
     summary = ", ".join(f"{k} {v}" for k, v in sorted(counts.items()))
     print(f"build: catalog {result.catalog['catalog_version']} ({summary})")
+    if result.skill_size:
+        size = result.skill_size
+        print(
+            f"build: SKILL.md {size['lines']} lines, {size['chars']} characters, about {size['tokens']} "
+            f"tokens (limits {MAX_SKILL_LINES} lines, about {MAX_SKILL_TOKENS} tokens)"
+        )
     print(
         f"build: wrote {result.package_dir}, {result.zip_path}, {result.flat_zip_path}, {result.export_path}"
     )

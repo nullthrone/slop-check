@@ -12,17 +12,25 @@ import zipfile
 from pathlib import Path
 
 import pytest
-from dev_helpers import make_pattern
+from dev_helpers import REPO, make_pattern
 
 from slopcheck_dev import build as build_mod
 from slopcheck_dev.build import (
+    CORE_CATALOG_END,
+    CORE_CATALOG_START,
+    MAX_DESCRIPTION_CHARS,
     BuildError,
     build,
     check_package,
     compile_catalog,
     formatting_problems,
+    package_skill_md,
+    parse_frontmatter,
+    render_core_catalog,
     render_patterns_markdown,
     render_prevention_markdown,
+    replace_marked_region,
+    skill_size,
 )
 from slopcheck_dev.cli import main
 from slopcheck_dev.status import pattern_hash
@@ -348,7 +356,10 @@ def test_build_writes_package_zip_and_export(skill_repo, tmp_path):
         package_files(pkg)
         == {"SKILL.md", "scripts/catalog.json", "scripts/slopcheck.py"} | references | engine
     )
-    assert (pkg / "SKILL.md").read_bytes() == (skill_repo.root / "skill" / "SKILL.md").read_bytes()
+    source = (skill_repo.root / "skill" / "SKILL.md").read_text(encoding="utf-8")
+    packaged = (pkg / "SKILL.md").read_text(encoding="utf-8")
+    assert packaged == replace_marked_region(source, render_core_catalog(result.catalog))
+    assert result.skill_size == skill_size(packaged)
     assert result.warnings == []
 
     from slopcheck.catalog import load_catalog
