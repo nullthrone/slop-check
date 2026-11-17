@@ -1,0 +1,72 @@
+id: antithesis-template
+modality: text
+name: Antithesis template
+summary: >
+  Negative parallelism that simulates depth by first denying a claim nobody made and then
+  asserting the "real" point ("It's not just X, it's Y"). Used once as a deliberate contrast it
+  is ordinary rhetoric; produced reflexively it signals template writing.
+category: rhetoric
+status: core
+provisional: true
+legacy_id: T1.1
+legacy_tier: 1
+detector:
+  kind: regex
+  position: any
+threshold:
+  min_count: 1
+  comparison: gte
+  scope: text
+requires: null
+realizations:
+  en:
+    patterns:
+      - '(?i)\b(?:it[’'']?s|it is|this is|that[’'']?s|that is)\s+not\s+(?:just|only|merely|simply)\b[^.!?\n]{1,80}?[,;:—–-]\s*(?:it[’'']?s|it is|but)\b'
+      - '(?i)\bnot\s+only\s+(?:does|do|did|is|are|was|were|can|will)\b[^.!?\n]{1,80}?[;,]\s*(?:it|they|this)\b'
+      - '(?i)\b(?:isn[’'']?t|is not|aren[’'']?t|are not)\s+(?:just\s+|merely\s+|simply\s+)?about\s+[^.!?\n]{1,60}?[.;,—–-]\s*(?:it[’'']?s|it is|they[’'']?re|they are|this is)\s+about\b'
+      - '(?i)\bnot\s+because\b[^.!?\n]{1,80}?,\s*but\s+because\b'
+    examples:
+      positive:
+        - "It's not just a tool — it's a movement."
+        - "This isn't about technology. It's about trust."
+        - "Not only does it cut costs; it reshapes how teams work."
+      negative:
+        - "The fix is not in the parser but in the tokenizer, see issue #12."
+        - "Not only the CPU but also the GPU was throttled during the test."
+        - "It is not clear whether the patch landed before the freeze."
+  de:
+    patterns:
+      - '(?i)\b(?:es|das|dies)\s+ist\s+(?:nicht\s+(?:nur|bloß|einfach)|kein(?:e|en)?)\s+[^.!?\n]{1,80}?[,;:—–-]\s*(?:es|das|dies)\s+ist\b'
+      - '(?:^|[.!?]\s+)Nicht\s+[^.!?,\n]{1,60},\s*sondern\b'
+      - '(?i)\bweniger\s+(?:aus|um)\b[^.!?\n]{1,60}?\bals\s+(?:vielmehr\s+)?(?:aus|um)\b'
+    examples:
+      positive:
+        - "Das ist kein Werkzeug, das ist eine Haltung."
+        - "Nicht die Technik entscheidet, sondern die Kultur."
+        - "Es ist nicht nur ein Update – es ist ein Neuanfang."
+      negative:
+        - "Das Problem liegt nicht am Parser, sondern am Tokenizer."
+        - "Die Messung zeigt keine Regression; der Durchsatz bleibt bei 4,2 GB/s."
+        - "Es ist nicht nötig, den Dienst neu zu starten."
+legitimate_use: >
+  A single, substantive correction of a misconception the reader actually holds ("The outage was
+  not caused by the update but by an expired certificate") is not slop. Flag the reflexive form:
+  the denied claim is a strawman and the sentence would lose nothing if it only stated the second half.
+fix: >
+  State the claim directly without the negation. If a real misconception exists, name it and
+  give the evidence that refutes it.
+prevention: >
+  Do not build sentences of the form "not X, but Y" or "it's not just X, it's Y" unless you are
+  correcting a misconception the reader demonstrably holds. State the point directly.
+sources:
+  - source: legacy-knowledge-base
+    locator: "T1.1, base taxonomy 2026-07-30"
+  - source: pangram-signs-of-ai-writing
+    locator: "'not just X but Y' construction"
+    note: "Reported at 3x the human baseline (commercial corpus, methodology not disclosed)."
+related:
+  - {id: german-stock-phrases, relation: overlaps}
+history:
+  - {date: 2026-07-30, change: "Added to legacy knowledge base core as T1.1 (tier 1, single hit flags)."}
+  - {date: 2026-11-15, change: "Pangram corpus data confirms over-representation (3x)."}
+  - {date: 2026-11-17, change: "Migrated to slop-check repository as grandfathered core (provisional)."}
