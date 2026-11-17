@@ -3,6 +3,7 @@ title: "better-ai-writing-skills (fork of an agent writing skill, '2026-07 resea
 published: null
 accessed: 2026-09-20
 type: practitioner-skill
+derived_from: [sun-icml-2025-fingerprints, yakura-sycophancy]
 access_note: >
   Public GitHub repository (a fork). URL not verified; only owner and repository name are known.
 notes: >
