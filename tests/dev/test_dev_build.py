@@ -391,6 +391,27 @@ def test_build_writes_package_zip_and_export(skill_repo, tmp_path):
     ]
 
 
+def test_build_writes_flat_zip_with_skill_md_at_the_root(skill_repo, tmp_path):
+    result = build(tmp_path / "out", root=skill_repo.root)
+    pkg = result.package_dir
+    assert result.flat_zip_path == tmp_path / "out" / "slop-check-flat.zip"
+    with zipfile.ZipFile(result.flat_zip_path) as zf:
+        names = zf.namelist()
+        assert zf.read("SKILL.md") == (pkg / "SKILL.md").read_bytes()
+        assert zf.read("scripts/catalog.json") == (pkg / "scripts" / "catalog.json").read_bytes()
+    assert "SKILL.md" in names
+    assert not any(n.startswith("slop-check/") for n in names)
+    assert {n for n in names if not n.endswith("/")} == package_files(pkg)
+    assert not any("__pycache__" in n or n.endswith(".pyc") for n in names)
+
+
+def test_flat_zip_is_deterministic(skill_repo, tmp_path, monkeypatch):
+    monkeypatch.setenv("SOURCE_DATE_EPOCH", EPOCH)
+    a = build(tmp_path / "a", root=skill_repo.root)
+    b = build(tmp_path / "b", root=skill_repo.root)
+    assert a.flat_zip_path.read_bytes() == b.flat_zip_path.read_bytes()
+
+
 def test_bundled_shim_runs_offline_without_the_repository(skill_repo, tmp_path):
     result = build(tmp_path / "out", root=skill_repo.root)
     sample = tmp_path / "sample.txt"
@@ -462,6 +483,25 @@ def test_build_checks_skill_frontmatter(repo, tmp_path, frontmatter, message):
     repo.add_skill(frontmatter=frontmatter)
     with pytest.raises(BuildError, match=re.escape(message)):
         build(tmp_path / "out", root=repo.root)
+
+
+def test_build_rejects_skill_description_over_200_characters(repo, tmp_path, capsys):
+    repo.add_engine()
+    repo.add_skill(frontmatter=f"---\nname: slop-check\ndescription: {'x' * 201}\n---\n")
+    with pytest.raises(BuildError, match="description has 201 characters, at most 200 are allowed"):
+        build(tmp_path / "out", root=repo.root)
+    assert main(["build", "--root", str(repo.root), "--out", str(tmp_path / "out")]) == 1
+    assert "at most 200" in capsys.readouterr().err
+    assert not (tmp_path / "out" / "slop-check.zip").exists()
+    assert not (tmp_path / "out" / "slop-check-flat.zip").exists()
+
+
+def test_build_accepts_skill_description_of_exactly_200_characters(repo, tmp_path):
+    repo.add_engine()
+    # a folded block scalar ends with a newline that is not part of the description's length
+    repo.add_skill(frontmatter=f"---\nname: slop-check\ndescription: >\n  {'y' * 200}\n---\n")
+    result = build(tmp_path / "out", root=repo.root)
+    assert result.flat_zip_path.is_file()
 
 
 def test_build_rejects_handwritten_file_with_generated_name(skill_repo, tmp_path):
@@ -553,6 +593,7 @@ def test_cli_build(skill_repo, tmp_path, capsys):
     stdout = capsys.readouterr().out
     assert "build: catalog 2026.12.01 (candidate 2, core 3, observation 1)" in stdout
     assert (out / "slop-check.zip").is_file() and (out / "exports" / "system-prompt.md").is_file()
+    assert (out / "slop-check-flat.zip").is_file()
 
 
 # ---------------------------------------------------------------------------
@@ -574,6 +615,15 @@ def test_check_package_accepts_minimal_package(tmp_path):
     for name in ("x.py", "x.json", "x.yaml", "x.txt"):
         (pkg / name).write_text("{}\n", encoding="utf-8")
     assert check_package(pkg) == ([], [])
+
+
+def test_check_package_description_length(tmp_path):
+    pkg = make_pkg(tmp_path)
+    (pkg / "SKILL.md").write_text(
+        f"---\nname: slop-check\ndescription: {'d' * 250}\n---\n# Body\n", encoding="utf-8"
+    )
+    errors, _ = check_package(pkg)
+    assert errors == ["SKILL.md: frontmatter description has 250 characters, at most 200 are allowed"]
 
 
 def test_check_package_folder_name(tmp_path):

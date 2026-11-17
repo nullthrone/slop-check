@@ -1,6 +1,6 @@
 ---
 name: slop-check
-description: Use this skill when a German or English text must not read like generic AI output ("AI slop") and when an image must not have the default AI look. Apply it to requests to check whether a text, document, post, email or chat reply sounds machine-made or formulaic, or is padded with buzzwords; to clean up or rewrite such a text so it sounds specific and human; to write or draft a text that should not sound like a chatbot; and to generate or art-direct images and image prompts that avoid stock clichés and the glossy AI aesthetic. It also covers German requests such as "klingt das nach KI?", "KI-Floskeln entfernen" or "Text ohne KI-Sound schreiben". The skill reports matched style patterns with exact quotes and a weighted traffic-light verdict; it never claims to know who or what wrote a text.
+description: Use to check, rewrite or write German or English text so it does not read like generic AI output (AI slop), and to art-direct images away from the default AI look. Reports style, never authorship.
 license: MIT
 ---
 
@@ -14,6 +14,20 @@ generators and gives rules for prompts that avoid it.
 Every finding names a pattern from the bundled catalog, quotes the passage verbatim, counts
 hits against the pattern's threshold and adds the pattern's weight to a score. The score maps
 to a traffic-light verdict from GREEN to RED.
+
+## When to use
+
+Apply the skill when a German or English text must not read like generic AI output ("AI
+slop"), or when an image must not have the default AI look. Typical requests:
+
+- check whether a text, document, post, email or chat reply sounds machine-made or formulaic,
+  or is padded with buzzwords
+- clean up or rewrite such a text so it sounds specific and human
+- write or draft a text that should not sound like a chatbot
+- generate or art-direct images and image prompts that avoid stock clichés and the glossy
+  AI aesthetic
+- German requests such as "klingt das nach KI?", "KI-Floskeln entfernen" or "Text ohne
+  KI-Sound schreiben"
 
 ## Ground rules
 

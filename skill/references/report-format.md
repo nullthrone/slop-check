@@ -68,8 +68,9 @@ Gesamtbefund: <BEFUND> (Score <score>; Gelb ab <gelb>, Rot ab <rot>) | <wörter>
    is the language code of the text: `de`, `en`, or `und` when the language is not German or
    English.
 3. Rationale. Name up to three findings in report order with their weights:
-   `Heaviest findings: Antithesis template (2.5), Triad (1.0).` With German labels:
-   `Schwerste Befunde: Antithesis template (2,5), Triad (1,0).` When nothing triggered, write
+   `Heaviest findings: Antithesis template (2.5), Triad (rule of three) (1.0).` With German
+   labels: `Schwerste Befunde: Antithesis template (2,5), Triad (rule of three) (1,0).` When
+   nothing triggered, write
    `No scored pattern reached its threshold.` or `Kein gewertetes Muster hat seine Schwelle
    erreicht.`
 4. Findings. Always present. With zero findings, the next line repeats the sentence from the
@@ -93,9 +94,9 @@ Gesamtbefund: <BEFUND> (Score <score>; Gelb ab <gelb>, Rot ab <rot>) | <wörter>
    `requires a language model` (`benötigt ein Sprachmodell`) when a script result is passed on
    without your judgment, or a short reason of your own such as `no prompt available`.
 10. Notes. Always present, as a list, in this order where they apply:
-    - provisional weights: `Weights are provisional: they apply until the first measurement
-      on the reference corpora.` German: `Die Gewichte sind vorläufig: Sie gelten bis zur
-      ersten Messung an den Referenzkorpora.`
+    - provisional weights: `Some weights are provisional: they apply until the first
+      measurement replaces them with measured values.` German: `Einige Gewichte sind
+      vorläufig: Sie gelten, bis die erste Messung sie durch gemessene Werte ersetzt.`
     - short text: `Short text (<n> words): short-text thresholds apply.` German:
       `Kurzer Text (<n> Wörter): Es gelten die Schwellen für kurze Texte.`
     - language not detected: `Language not detected: only language-independent patterns ran.`
@@ -116,6 +117,7 @@ them word for word:
 | `min 1 per text` | `mind. 1 pro Text` |
 | `min 2 per paragraph` | `mind. 2 pro Absatz` |
 | `more than 3 per 500 words` | `mehr als 3 pro 500 Wörter` |
+| `min 6.5 per 500 words` | `mind. 6,5 pro 500 Wörter` |
 | `min 4 per 1000 words in one paragraph` | `mind. 4 pro 1000 Wörter in einem Absatz` |
 | `value > 0.5` | `Wert > 0,5` |
 | `value ≥ 2 in one paragraph` | `Wert ≥ 2 in einem Absatz` |
@@ -129,13 +131,13 @@ them word for word:
 # Slop-Check: launch-post.md
 
 Verdict: YELLOW (score 3.5; yellow from 2.0, red from 5.0) | 212 words | language: en
-Heaviest findings: Antithesis template (2.5), Triad (1.0).
+Heaviest findings: Antithesis template (2.5), Triad (rule of three) (1.0).
 
 ## Findings (2)
 1. Antithesis template (`antithesis-template`, weight 2.5): 1 hit, threshold min 1 per text
    > "It's not just a tool — it's a movement" (paragraph 1)
    Suggestion: State the claim directly, for example "The tool syncs drafts across devices."
-2. Triad (`triad`, weight 1.0): 3 hits, value 3, threshold value ≥ 3
+2. Triad (rule of three) (`triad`, weight 1.0): 3 hits, value 3, threshold min 6.5 per 500 words
    > "fast, secure, and scalable" (paragraph 2)
    > "plan, build and ship" (paragraph 3)
    > "faster, simpler and cheaper" (paragraph 4)
@@ -146,7 +148,7 @@ Heaviest findings: Antithesis template (2.5), Triad (1.0).
    > "The result? Happier teams." (paragraph 4)
 
 ## Notes
-- Weights are provisional: they apply until the first measurement on the reference corpora.
+- Some weights are provisional: they apply until the first measurement replaces them with measured values.
 - Findings describe style patterns. They do not show who or what wrote the text.
 ```
 
@@ -156,13 +158,13 @@ The same report with German labels:
 # Slop-Check: launch-post.md
 
 Gesamtbefund: GELB (Score 3,5; Gelb ab 2,0, Rot ab 5,0) | 212 Wörter | Sprache: en
-Schwerste Befunde: Antithesis template (2,5), Triad (1,0).
+Schwerste Befunde: Antithesis template (2,5), Triad (rule of three) (1,0).
 
 ## Befunde (2)
 1. Antithesis template (`antithesis-template`, Gewicht 2,5): 1 Treffer, Schwelle mind. 1 pro Text
    > "It's not just a tool — it's a movement" (Absatz 1)
    Vorschlag: Die Aussage direkt treffen, etwa "The tool syncs drafts across devices."
-2. Triad (`triad`, Gewicht 1,0): 3 Treffer, Wert 3, Schwelle Wert ≥ 3
+2. Triad (rule of three) (`triad`, Gewicht 1,0): 3 Treffer, Wert 3, Schwelle mind. 6,5 pro 500 Wörter
    > "fast, secure, and scalable" (Absatz 2)
    > "plan, build and ship" (Absatz 3)
    > "faster, simpler and cheaper" (Absatz 4)
@@ -173,7 +175,7 @@ Schwerste Befunde: Antithesis template (2,5), Triad (1,0).
    > "The result? Happier teams." (Absatz 4)
 
 ## Hinweise
-- Die Gewichte sind vorläufig: Sie gelten bis zur ersten Messung an den Referenzkorpora.
+- Einige Gewichte sind vorläufig: Sie gelten, bis die erste Messung sie durch gemessene Werte ersetzt.
 - Die Befunde beschreiben Stilmuster. Sie zeigen nicht, wer oder was den Text geschrieben hat.
 ```
 

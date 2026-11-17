@@ -12,10 +12,11 @@ Output below ``--out`` (default ``dist``)::
     slop-check/scripts/slopcheck/                copy of src/slopcheck
     slop-check/scripts/slopcheck.py              shim: python scripts/slopcheck.py audit ...
     slop-check.zip                               folder slop-check/ at the zip root
+    slop-check-flat.zip                          SKILL.md and the package files at the zip root
     exports/system-prompt.md                     SKILL.md body, report format, condensed catalog
     exports/knowledge.md                         SKILL.md body plus every reference
 
-The package is checked against section 7 before the zip is written. Generated Markdown is
+The package is checked against section 7 before the zips are written. Generated Markdown is
 deterministic for the same inputs: patterns are ordered by fixed keys and no timestamps
 appear in it (``catalog.json`` carries ``generated_at``; set ``SOURCE_DATE_EPOCH`` for a
 reproducible value).
@@ -38,6 +39,7 @@ from .patterns import LoadError, load_patterns, load_thresholds, repo_root
 from .status import derive, measurement_for
 
 SKILL_NAME = "slop-check"
+MAX_DESCRIPTION_CHARS = 200  # claude.ai's limit, the strictest known runtime (section 7)
 ALLOWED_EXTENSIONS = (".md", ".py", ".json", ".yaml", ".txt")
 ARCHIVE_EXTENSIONS = (".zip", ".tar", ".gz", ".tgz", ".bz2", ".xz", ".7z", ".rar", ".jar", ".whl", ".egg")
 WARN_BYTES = 5 * 1024 * 1024
@@ -590,6 +592,11 @@ def check_package(pkg_dir: str | Path) -> tuple[list[str], list[str]]:
             description = meta.get("description")
             if not isinstance(description, str) or not description.strip():
                 errors.append("SKILL.md: frontmatter description missing or empty")
+            elif len(description.strip()) > MAX_DESCRIPTION_CHARS:
+                errors.append(
+                    f"SKILL.md: frontmatter description has {len(description.strip())} characters, "
+                    f"at most {MAX_DESCRIPTION_CHARS} are allowed"
+                )
     total = 0
     for path in sorted(pkg.rglob("*"), key=lambda p: p.as_posix()):
         rel = path.relative_to(pkg).as_posix()
@@ -633,6 +640,7 @@ class BuildResult:
     export_path: Path
     catalog: dict
     warnings: list[str] = field(default_factory=list)
+    flat_zip_path: Path | None = None
 
 
 def _copy_engine(src: Path, dest: Path) -> list[str]:
@@ -658,16 +666,22 @@ def _write(path: Path, text: str) -> None:
     path.write_text(text, encoding="utf-8", newline="\n")
 
 
-def write_zip(pkg_dir: Path, zip_path: Path) -> None:
-    """Deterministic zip with ``slop-check/`` at the root (fixed timestamps, sorted entries)."""
+def write_zip(pkg_dir: Path, zip_path: Path, *, flat: bool = False) -> None:
+    """Deterministic zip (fixed timestamps, sorted entries).
+
+    By default the folder ``slop-check/`` is at the zip root; with ``flat`` the package files
+    themselves are (``SKILL.md`` at the root), for runtimes that expect that layout.
+    """
     zip_path.parent.mkdir(parents=True, exist_ok=True)
     entries = sorted(pkg_dir.rglob("*"), key=lambda p: p.relative_to(pkg_dir).as_posix())
+    prefix = "" if flat else f"{pkg_dir.name}/"
     with zipfile.ZipFile(zip_path, "w", compression=zipfile.ZIP_DEFLATED) as zf:
-        root_info = zipfile.ZipInfo(f"{pkg_dir.name}/", date_time=(1980, 1, 1, 0, 0, 0))
-        root_info.external_attr = (0o40755 << 16) | 0x10
-        zf.writestr(root_info, b"")
+        if prefix:
+            root_info = zipfile.ZipInfo(prefix, date_time=(1980, 1, 1, 0, 0, 0))
+            root_info.external_attr = (0o40755 << 16) | 0x10
+            zf.writestr(root_info, b"")
         for path in entries:
-            arc = f"{pkg_dir.name}/{path.relative_to(pkg_dir).as_posix()}"
+            arc = f"{prefix}{path.relative_to(pkg_dir).as_posix()}"
             if path.is_dir():
                 info = zipfile.ZipInfo(arc + "/", date_time=(1980, 1, 1, 0, 0, 0))
                 info.external_attr = (0o40755 << 16) | 0x10
@@ -850,6 +864,8 @@ def build(
 
     zip_path = out / f"{SKILL_NAME}.zip"
     write_zip(pkg, zip_path)
+    flat_zip_path = out / f"{SKILL_NAME}-flat.zip"
+    write_zip(pkg, flat_zip_path, flat=True)
 
     _meta, body = parse_frontmatter((pkg / "SKILL.md").read_text(encoding="utf-8"))
     names = _reference_order(sorted(p.name for p in refs_dir.glob("*.md")))
@@ -858,7 +874,7 @@ def build(
     report_format = dict(references).get("report-format.md")
     export_path = out / "exports" / "system-prompt.md"
     _write(export_path, render_compact_export(body, report_format, catalog))
-    return BuildResult(pkg, zip_path, export_path, catalog, warnings)
+    return BuildResult(pkg, zip_path, export_path, catalog, warnings, flat_zip_path)
 
 
 def run(args) -> int:
@@ -876,5 +892,7 @@ def run(args) -> int:
         counts[p["effective_status"]] = counts.get(p["effective_status"], 0) + 1
     summary = ", ".join(f"{k} {v}" for k, v in sorted(counts.items()))
     print(f"build: catalog {result.catalog['catalog_version']} ({summary})")
-    print(f"build: wrote {result.package_dir}, {result.zip_path}, {result.export_path}")
+    print(
+        f"build: wrote {result.package_dir}, {result.zip_path}, {result.flat_zip_path}, {result.export_path}"
+    )
     return 0

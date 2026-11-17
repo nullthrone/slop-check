@@ -50,8 +50,8 @@ when neither fits, leave the passage as it is.
   flagged spans, keep the author's sentence habits.
 - Structure: keep headings and paragraph order, and keep lists as lists, unless a finding
   concerns them (for example bold-lead bullets or decorative emoji).
-- Typography: German texts keep their German quotation marks (shown below). English texts
-  keep their quote style, unless curly quotes are a finding; then use straight quotes.
+- Typography: keep the quotation marks and apostrophes the text uses, straight or curly.
+  German texts keep their German quotation marks (shown below).
 
   ```
   „Zitat“  ‚inneres Zitat‘

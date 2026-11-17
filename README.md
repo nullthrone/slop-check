@@ -17,9 +17,8 @@ Claude Code: unzip the package into `~/.claude/skills/` for all your projects, o
 `~/.claude/skills/slop-check/SKILL.md` (or the project equivalent).
 
 claude.ai: turn on code execution ("Create and edit files" under Settings > Capabilities; on
-Team and Enterprise plans an admin enables skills for the organization). Then open
-Customize > Skills, click "+", choose "Create skill", then "Upload a skill", and upload
-`slop-check.zip` as it is.
+Enterprise plans an owner enables skills for the organization). Then open Customize > Skills,
+click "+", choose "Create skill", then "Upload a skill", and upload `slop-check.zip` as it is.
 
 Gemini app: unzip the package. On gemini.google.com open Customize in the sidebar (under More
 if you do not see it), then Skills, Create, Upload, and select the `slop-check` folder. Gemini
@@ -33,12 +32,17 @@ directories work as aliases. Gemini CLI asks for consent before it activates a s
 
 Other Agent Skills runtimes: many clients scan `.agents/skills/` in the project and
 `~/.agents/skills/` in your home directory. Unzip the package there, or wherever your client's
-documentation says.
+documentation says. The setup guides also cover ChatGPT, Codex, GitHub Copilot, Microsoft 365
+Copilot, Mistral, Cursor and other clients.
 
 Runtimes without skill support: download
 [system-prompt.md](https://github.com/nullthrone/slop-check/releases/latest/download/system-prompt.md)
-and paste it as the system prompt or custom instructions. It holds the skill instructions and
-every reference in one file, so it works without file access or scripts.
+and paste it as the system prompt or custom instructions. It is a compact file with the skill
+instructions, the report format and a condensed pattern catalog, and it works without file
+access or scripts. Where the runtime accepts knowledge files, attach
+[knowledge.md](https://github.com/nullthrone/slop-check/blob/dist/exports/knowledge.md) as well:
+the full single-file export with every reference and the complete catalog, including all example
+phrases, word lists and rubrics.
 
 ## What it checks
 
@@ -79,9 +83,10 @@ when it runs inside a model.
 
 ## Releases and the dist branch
 
-Each GitHub release carries `slop-check.zip` and `system-prompt.md`. The `dist` branch holds the
-unpacked package built from the latest `main` and the latest measurement, with `slop-check/` and
-`exports/system-prompt.md` at its root. Nothing generated is committed to `main`.
+Each GitHub release carries `slop-check.zip`, `system-prompt.md` and `knowledge.md`. The `dist`
+branch holds the unpacked package built from the latest `main` and the latest measurement:
+`slop-check/` and `exports/` with `system-prompt.md` and `knowledge.md`. Nothing generated is
+committed to `main`.
 
 ## How measurement works
 
@@ -95,9 +100,8 @@ of the corpora before they merge. Details: [docs/governance.md](docs/governance.
 
 ## Contributing
 
-Pull requests that add patterns or sources merge automatically once the checks pass, and so do
-new language realizations.
-Start with [CONTRIBUTING.md](CONTRIBUTING.md). Questions and false positives go to the
+Pull requests that add patterns, sources or language realizations merge automatically once the
+checks pass. Start with [CONTRIBUTING.md](CONTRIBUTING.md). Questions and false positives go to the
 [issue tracker](https://github.com/nullthrone/slop-check/issues). Security reports: [SECURITY.md](SECURITY.md).
 
 ## License
