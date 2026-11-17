@@ -65,12 +65,26 @@ def test_reserve_settle_release_and_persistence(thresholds, tmp_path):
     r = b.reserve(0.1)
     with pytest.raises(B.BudgetExceeded):
         B.Budget(b.ledger, B.load_caps(thresholds, "scheduled"), "run-1").check(20)
-    b.settle(r, 0.03, role="generators", model="acme/a", prompt_tokens=100, completion_tokens=900,
-             canonical_slug="acme/a-1")
+    b.settle(
+        r,
+        0.03,
+        role="generators",
+        model="acme/a",
+        prompt_tokens=100,
+        completion_tokens=900,
+        canonical_slug="acme/a-1",
+    )
     r2 = b.reserve(0.1)
     b.release(r2)
-    b.settle(b.reserve(0.1), 0.02, role="generators", model="acme/a", prompt_tokens=50, completion_tokens=50,
-             estimated=True)
+    b.settle(
+        b.reserve(0.1),
+        0.02,
+        role="generators",
+        model="acme/a",
+        prompt_tokens=50,
+        completion_tokens=50,
+        estimated=True,
+    )
     data = json.loads((tmp_path / "ledger.json").read_text())
     assert len(data["entries"]) == 1  # aggregated per month, run, role, model
     e = data["entries"][0]

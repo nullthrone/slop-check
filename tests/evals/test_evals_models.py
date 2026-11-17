@@ -23,8 +23,17 @@ def pick(lock, role, i=0):
 
 
 def test_picks_newest_created_among_matches(model_list):
-    cfg = config(generators=[{"family": "acme", "match": r"^acme/chat-[0-9.]+$", "tier": "cheap",
-                              "max_completion_usd_per_mtok": 6, "docs_per_language": 10}])
+    cfg = config(
+        generators=[
+            {
+                "family": "acme",
+                "match": r"^acme/chat-[0-9.]+$",
+                "tier": "cheap",
+                "max_completion_usd_per_mtok": 6,
+                "docs_per_language": 10,
+            }
+        ]
+    )
     lock = models.resolve(cfg, model_list, now=NOW)
     entry = lock["roles"]["generators"][0]
     # chat-2.0 is newer but too expensive, chat-1.4 expires within the grace period
@@ -65,8 +74,16 @@ def test_vision_role_requires_image_input(model_list):
 
 
 def test_explicit_input_modalities(model_list):
-    cfg = config(conformance=[{"family": "acme", "match": r"^acme/", "require_input_modalities": ["image"],
-                               "max_completion_usd_per_mtok": 100}])
+    cfg = config(
+        conformance=[
+            {
+                "family": "acme",
+                "match": r"^acme/",
+                "require_input_modalities": ["image"],
+                "max_completion_usd_per_mtok": 100,
+            }
+        ]
+    )
     lock = models.resolve(cfg, model_list, now=NOW)
     assert pick(lock, "conformance") == "acme/chat-1.1"
 
@@ -83,13 +100,23 @@ def test_expiration_grace(model_list):
     sel = {"family": "acme", "match": r"^acme/chat-1\.4$"}
     early = models.resolve(config(judges=[sel]), model_list, now=NOW)
     assert early["roles"]["judges"] == []
-    late = models.resolve(config(judges=[sel]), model_list, now=dt.datetime(2025, 11, 1, tzinfo=dt.timezone.utc))
+    late = models.resolve(
+        config(judges=[sel]), model_list, now=dt.datetime(2025, 11, 1, tzinfo=dt.timezone.utc)
+    )
     assert pick(late, "judges") == "acme/chat-1.4"
 
 
 def test_fallback_match(model_list):
-    cfg = config(generators=[{"family": "other", "match": r"^acme/none$", "fallback_match": r"^other/small-mini$",
-                              "max_completion_usd_per_mtok": 6}])
+    cfg = config(
+        generators=[
+            {
+                "family": "other",
+                "match": r"^acme/none$",
+                "fallback_match": r"^other/small-mini$",
+                "max_completion_usd_per_mtok": 6,
+            }
+        ]
+    )
     lock = models.resolve(cfg, model_list, now=NOW)
     entry = lock["roles"]["generators"][0]
     assert entry["id"] == "other/small-mini"
@@ -98,8 +125,12 @@ def test_fallback_match(model_list):
 
 
 def test_unmatched_selector_is_reported_not_raised(model_list):
-    cfg = config(generators=[{"family": "zzz", "match": r"^zzz/", "fallback_match": r"^yyy/"},
-                             {"family": "acme", "match": r"^acme/chat-1\.0$"}])
+    cfg = config(
+        generators=[
+            {"family": "zzz", "match": r"^zzz/", "fallback_match": r"^yyy/"},
+            {"family": "acme", "match": r"^acme/chat-1\.0$"},
+        ]
+    )
     lock = models.resolve(cfg, model_list, now=NOW)
     assert [e["id"] for e in lock["roles"]["generators"]] == ["acme/chat-1.0"]
     assert len(lock["errors"]) == 1 and "zzz" in lock["errors"][0]
@@ -108,12 +139,23 @@ def test_unmatched_selector_is_reported_not_raised(model_list):
 def test_duplicate_keys_get_suffix(model_list):
     sel = {"family": "acme", "match": r"^acme/chat-1\.0$", "tier": "cheap"}
     lock = models.resolve(config(generators=[sel, dict(sel)]), model_list, now=NOW)
-    assert [e["key"] for e in lock["roles"]["generators"]] == ["generators/acme/cheap", "generators/acme/cheap#2"]
+    assert [e["key"] for e in lock["roles"]["generators"]] == [
+        "generators/acme/cheap",
+        "generators/acme/cheap#2",
+    ]
 
 
 def test_diff_locks_reports_renames_snapshots_and_prices(model_list):
-    cfg = config(generators=[{"family": "acme", "match": r"^acme/chat-[0-9.]+$", "tier": "cheap",
-                              "max_completion_usd_per_mtok": 6}])
+    cfg = config(
+        generators=[
+            {
+                "family": "acme",
+                "match": r"^acme/chat-[0-9.]+$",
+                "tier": "cheap",
+                "max_completion_usd_per_mtok": 6,
+            }
+        ]
+    )
     current = models.resolve(cfg, model_list, now=NOW)
     prev = json.loads(json.dumps(current))
     prev["roles"]["generators"][0]["id"] = "acme/chat-0.9"
@@ -124,8 +166,10 @@ def test_diff_locks_reports_renames_snapshots_and_prices(model_list):
 
     prev2 = json.loads(json.dumps(current))
     prev2["roles"]["generators"][0]["canonical_slug"] = "acme/chat-1.1-20250101"
-    assert any("snapshot acme/chat-1.1-20250101 -> acme/chat-1.1-20250601" in c
-               for c in models.diff_locks(prev2, current))
+    assert any(
+        "snapshot acme/chat-1.1-20250101 -> acme/chat-1.1-20250601" in c
+        for c in models.diff_locks(prev2, current)
+    )
 
     prev3 = json.loads(json.dumps(current))
     prev3["roles"]["generators"][0]["pricing"] = {"prompt": 1e-07, "completion": 4e-07}
@@ -135,12 +179,22 @@ def test_diff_locks_reports_renames_snapshots_and_prices(model_list):
 
 
 def test_resolve_with_previous_fills_changes(model_list):
-    cfg = config(generators=[{"family": "acme", "match": r"^acme/chat-[0-9.]+$", "tier": "cheap",
-                              "max_completion_usd_per_mtok": 6}])
+    cfg = config(
+        generators=[
+            {
+                "family": "acme",
+                "match": r"^acme/chat-[0-9.]+$",
+                "tier": "cheap",
+                "max_completion_usd_per_mtok": 6,
+            }
+        ]
+    )
     first = models.resolve(cfg, [m for m in model_list if m["id"] != "acme/chat-1.1"], now=NOW)
     assert pick(first, "generators") == "acme/chat-1.0"
     second = models.resolve(cfg, model_list, now=NOW, previous=first)
-    assert second["changes"] == ["generators/acme/cheap: acme/chat-1.0 -> acme/chat-1.1 [acme/chat-1.1-20250601]"]
+    assert second["changes"] == [
+        "generators/acme/cheap: acme/chat-1.0 -> acme/chat-1.1 [acme/chat-1.1-20250601]"
+    ]
 
 
 def test_repository_models_yaml_parses_and_resolves(model_list):
@@ -175,7 +229,9 @@ def test_load_lock_stale_or_missing_resolves_live(tmp_path, model_list):
     assert any("re-resolving" in n for n in notices)
     assert any("model change" in n for n in notices)
 
-    got2, notices2 = models.load_lock(tmp_path / "missing.json", config=cfg, fetch=lambda: model_list, now=NOW)
+    got2, notices2 = models.load_lock(
+        tmp_path / "missing.json", config=cfg, fetch=lambda: model_list, now=NOW
+    )
     assert pick(got2, "judges") == "acme/chat-1.1"
     assert any("resolving live" in n for n in notices2)
 
@@ -199,19 +255,35 @@ def test_refresh_entry_skips_failed_model(model_list):
     cfg = config(generators=[{"family": "acme", "match": r"^acme/chat-1\.[01]$", "tier": "cheap"}])
     lock = models.resolve(cfg, model_list, now=NOW)
     assert pick(lock, "generators") == "acme/chat-1.1"
-    entry = models.refresh_entry(lock, "generators/acme/cheap", exclude_ids={"acme/chat-1.1"},
-                                 config=cfg, fetch=lambda: model_list, now=NOW)
+    entry = models.refresh_entry(
+        lock,
+        "generators/acme/cheap",
+        exclude_ids={"acme/chat-1.1"},
+        config=cfg,
+        fetch=lambda: model_list,
+        now=NOW,
+    )
     assert entry["id"] == "acme/chat-1.0"
     assert pick(lock, "generators") == "acme/chat-1.0"
     assert any("refreshed mid-run" in c for c in lock["changes"])
-    none = models.refresh_entry(lock, "generators/acme/cheap", exclude_ids={"acme/chat-1.1", "acme/chat-1.0"},
-                                config=cfg, fetch=lambda: model_list, now=NOW)
+    none = models.refresh_entry(
+        lock,
+        "generators/acme/cheap",
+        exclude_ids={"acme/chat-1.1", "acme/chat-1.0"},
+        config=cfg,
+        fetch=lambda: model_list,
+        now=NOW,
+    )
     assert none is None and lock["roles"]["generators"] == []
 
 
 def test_role_entries_filter(model_list):
-    cfg = config(generators=[{"family": "acme", "match": r"^acme/chat-1\.0$", "tier": "a"},
-                             {"family": "other", "match": r"^other/small-mini$", "tier": "b"}])
+    cfg = config(
+        generators=[
+            {"family": "acme", "match": r"^acme/chat-1\.0$", "tier": "a"},
+            {"family": "other", "match": r"^other/small-mini$", "tier": "b"},
+        ]
+    )
     lock = models.resolve(cfg, model_list, now=NOW)
     assert [e["id"] for e in models.role_entries(lock, "generators", ["other"])] == ["other/small-mini"]
     assert [e["id"] for e in models.role_entries(lock, "generators", ["acme/chat-1.0"])] == ["acme/chat-1.0"]
@@ -234,7 +306,9 @@ def test_fetch_models_from_file():
 
 
 def test_lock_summary_text(model_list):
-    cfg = config(generators=[{"family": "acme", "match": r"^acme/chat-1\.0$", "tier": "cheap"}],
-                 judges=[{"family": "zzz", "match": r"^zzz/"}])
+    cfg = config(
+        generators=[{"family": "acme", "match": r"^acme/chat-1\.0$", "tier": "cheap"}],
+        judges=[{"family": "zzz", "match": r"^zzz/"}],
+    )
     text = models.format_lock_summary(models.resolve(cfg, model_list, now=NOW))
     assert "acme/chat-1.0" in text and "ERROR" in text

@@ -56,14 +56,21 @@ def fake_analyze(text, catalog, lang=None, context="default", modality="text", l
 
 def make_judge(marker):
     def judge(text, patterns, lang):
-        return {p["id"]: ([{"quote": "x"}] if ("[gamma]" in text or marker in text) else []) for p in patterns}
+        return {
+            p["id"]: ([{"quote": "x"}] if ("[gamma]" in text or marker in text) else []) for p in patterns
+        }
 
     return judge
 
 
 def doc(i, kind, lang="en", tags=(), family=None):
-    d = {"doc_id": f"{kind}-{lang}-{i}", "language": lang, "text": "text " + " ".join(f"[{t}]" for t in tags),
-         "split": "dev", "source_kind": kind}
+    d = {
+        "doc_id": f"{kind}-{lang}-{i}",
+        "language": lang,
+        "text": "text " + " ".join(f"[{t}]" for t in tags),
+        "split": "dev",
+        "source_kind": kind,
+    }
     if kind == "ai":
         d.update({"family": family, "canonical_slug": f"{family}/m-1"})
     return d
@@ -77,8 +84,17 @@ def corpus():
 
 
 def run(human, ai, thresholds, **kw):
-    return M.measure(human, ai, PATTERNS, thresholds, split="dev", analyze_fn=fake_analyze,
-                     derive_fn=standin_derive, compile_fn=standin_compile, **kw)
+    return M.measure(
+        human,
+        ai,
+        PATTERNS,
+        thresholds,
+        split="dev",
+        analyze_fn=fake_analyze,
+        derive_fn=standin_derive,
+        compile_fn=standin_compile,
+        **kw,
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -122,8 +138,9 @@ def test_fpr_hit_lift_per_language_and_family(thresholds):
     a = out["patterns"]["alpha"]
     assert a["fpr_human"] == 0.1 and a["hit_ai"] == 0.35
     assert a["lift"] == pytest.approx(round(0.4 / 0.15, 3))
-    assert a["per_language"] == {"en": {"fpr_human": 0.1, "hit_ai": 0.35, "lift": round(0.4 / 0.15, 3),
-                                        "n_human": 10, "n_ai": 40}}
+    assert a["per_language"] == {
+        "en": {"fpr_human": 0.1, "hit_ai": 0.35, "lift": round(0.4 / 0.15, 3), "n_human": 10, "n_ai": 40}
+    }
     assert a["per_family"]["fa"] == {"hit_ai": 0.5, "lift": round(0.55 / 0.15, 3)}
     assert a["per_family"]["fb"] == {"hit_ai": 0.2, "lift": round(0.25 / 0.15, 3)}
     assert a["weight"] == pytest.approx(round(math.log(0.4 / 0.15), 3))
@@ -138,8 +155,17 @@ def test_measurements_json_shape(thresholds):
     assert out["corpus"] == {"human_docs": {"en": 10}, "ai_docs": {"en": 40}, "split": "dev"}
     assert set(out["verdict_thresholds"]) >= {"yellow", "red"}
     for entry in out["patterns"].values():
-        assert set(entry) == {"pattern_hash", "per_language", "per_family", "fpr_human", "hit_ai", "lift",
-                              "meets_core", "meets_fading", "weight"}
+        assert set(entry) == {
+            "pattern_hash",
+            "per_language",
+            "per_family",
+            "fpr_human",
+            "hit_ai",
+            "lift",
+            "meets_core",
+            "meets_fading",
+            "weight",
+        }
         for pl in entry["per_language"].values():
             assert set(pl) == {"fpr_human", "hit_ai", "lift", "n_human", "n_ai"}
         for pf in entry["per_family"].values():
@@ -151,13 +177,24 @@ def test_measurements_json_shape(thresholds):
 
 def test_split_selection(thresholds):
     human = [{"doc_id": f"h{i}", "language": "en", "text": "[alpha]" if i % 2 else "x"} for i in range(40)]
-    ai = [{"doc_id": f"a{i}", "language": "en", "text": "[alpha]", "family": "f", "canonical_slug": "f/m"}
-          for i in range(40)]
+    ai = [
+        {"doc_id": f"a{i}", "language": "en", "text": "[alpha]", "family": "f", "canonical_slug": "f/m"}
+        for i in range(40)
+    ]
     dev = run(human, ai, thresholds, pattern_ids=["alpha"])
     n_dev = sum(1 for i in range(40) if split_of(f"h{i}") == "dev")
     assert dev["corpus"]["human_docs"] == {"en": n_dev}
-    hold = M.measure(human, ai, PATTERNS, thresholds, split="holdout", pattern_ids=["alpha"],
-                     analyze_fn=fake_analyze, derive_fn=standin_derive, compile_fn=standin_compile)
+    hold = M.measure(
+        human,
+        ai,
+        PATTERNS,
+        thresholds,
+        split="holdout",
+        pattern_ids=["alpha"],
+        analyze_fn=fake_analyze,
+        derive_fn=standin_derive,
+        compile_fn=standin_compile,
+    )
     assert hold["corpus"]["human_docs"] == {"en": 40 - n_dev}
     with pytest.raises(ValueError):
         M.select_split(human, "train")
@@ -174,10 +211,22 @@ def test_unknown_pattern_ids(thresholds):
 
 
 def entry_for(fpr, lift, n_human=120, fams=(3.0, 2.0), lang_fpr=None):
-    langs = {"en": {"fpr_human": fpr if lang_fpr is None else lang_fpr, "hit_ai": 0.3, "lift": lift,
-                    "n_human": n_human, "n_ai": 500}}
-    return {"per_language": langs, "per_family": {f"f{i}": {"hit_ai": 0.3, "lift": v} for i, v in enumerate(fams)},
-            "fpr_human": fpr, "hit_ai": 0.3, "lift": lift}
+    langs = {
+        "en": {
+            "fpr_human": fpr if lang_fpr is None else lang_fpr,
+            "hit_ai": 0.3,
+            "lift": lift,
+            "n_human": n_human,
+            "n_ai": 500,
+        }
+    }
+    return {
+        "per_language": langs,
+        "per_family": {f"f{i}": {"hit_ai": 0.3, "lift": v} for i, v in enumerate(fams)},
+        "fpr_human": fpr,
+        "hit_ai": 0.3,
+        "lift": lift,
+    }
 
 
 def test_admission_core(thresholds):
@@ -216,9 +265,15 @@ def test_admission_in_measure(thresholds):
 
 def test_llm_patterns_need_both_judges(thresholds):
     human = [doc(0, "human", tags=("gammaA",)), doc(1, "human", tags=("gamma",)), doc(2, "human")]
-    ai = [doc(0, "ai", tags=("gamma",), family="fa"), doc(1, "ai", tags=("gammaB",), family="fa"),
-          doc(2, "ai", tags=("gamma",), family="fb"), doc(3, "ai", family="fb")]
-    out = run(human, ai, thresholds, pattern_ids=["gamma"], judges=[make_judge("[gammaA]"), make_judge("[gammaB]")])
+    ai = [
+        doc(0, "ai", tags=("gamma",), family="fa"),
+        doc(1, "ai", tags=("gammaB",), family="fa"),
+        doc(2, "ai", tags=("gamma",), family="fb"),
+        doc(3, "ai", family="fb"),
+    ]
+    out = run(
+        human, ai, thresholds, pattern_ids=["gamma"], judges=[make_judge("[gammaA]"), make_judge("[gammaB]")]
+    )
     g = out["patterns"]["gamma"]
     assert g["fpr_human"] == pytest.approx(round(1 / 3, 4))  # only the doc both judges flag
     assert g["hit_ai"] == 0.5
@@ -264,8 +319,18 @@ def test_llm_budget_stop_drops_pattern(thresholds):
         return fake_analyze(text, catalog, lang, context, modality, None)
 
     human, ai = corpus()
-    out = M.measure(human, ai, PATTERNS, thresholds, split="dev", pattern_ids=["alpha", "gamma"],
-                    analyze_fn=analyze, derive_fn=standin_derive, compile_fn=standin_compile, judges=[judge, judge])
+    out = M.measure(
+        human,
+        ai,
+        PATTERNS,
+        thresholds,
+        split="dev",
+        pattern_ids=["alpha", "gamma"],
+        analyze_fn=analyze,
+        derive_fn=standin_derive,
+        compile_fn=standin_compile,
+        judges=[judge, judge],
+    )
     assert "gamma" not in out["patterns"] and "alpha" in out["patterns"]
     assert any("budget cap" in n for n in out["notices"])
 
@@ -280,7 +345,11 @@ def test_verdict_thresholds():
     vt = M.verdict_thresholds(human, ai, 0.5)
     # P90 is 1.0 but 15 % of human texts score >= 1.0, so yellow moves to the next score
     assert vt == {"yellow": 3.0, "red": 4.0}
-    assert M.verdict_thresholds([0.0] * 10, [0.0, 0.5], 0.5) == {"yellow": 0.5, "red": 1.0, "red_adjusted": True}
+    assert M.verdict_thresholds([0.0] * 10, [0.0, 0.5], 0.5) == {
+        "yellow": 0.5,
+        "red": 1.0,
+        "red_adjusted": True,
+    }
     assert M.verdict_thresholds([], [1.0], 0.5) is None
 
 
@@ -334,10 +403,27 @@ def test_with_real_engine(thresholds):
     plain = "The bridge opened in 1932. Trams used it until 1961, when the line closed for good. " * 3
     slop = "In today's fast-paced world, this is not just a bridge, it's a movement. " + plain
     human = [{"doc_id": f"h{i}", "language": "en", "text": plain, "split": "dev"} for i in range(4)]
-    ai = [{"doc_id": f"a{i}", "language": "en", "text": slop, "split": "dev", "family": "f",
-           "canonical_slug": "f/m"} for i in range(4)]
-    out = M.measure(human, ai, pats, thresholds, split="dev", analyze_fn=engine.analyze,
-                    derive_fn=standin_derive, compile_fn=standin_compile)
+    ai = [
+        {
+            "doc_id": f"a{i}",
+            "language": "en",
+            "text": slop,
+            "split": "dev",
+            "family": "f",
+            "canonical_slug": "f/m",
+        }
+        for i in range(4)
+    ]
+    out = M.measure(
+        human,
+        ai,
+        pats,
+        thresholds,
+        split="dev",
+        analyze_fn=engine.analyze,
+        derive_fn=standin_derive,
+        compile_fn=standin_compile,
+    )
     for pid in ("antithesis-template", "generic-opening"):
         assert out["patterns"][pid]["fpr_human"] == 0.0
         assert out["patterns"][pid]["hit_ai"] == 1.0

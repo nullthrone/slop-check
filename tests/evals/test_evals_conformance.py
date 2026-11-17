@@ -23,26 +23,55 @@ def make_skill(tmp_path):
 
 
 def reply(findings, verdict="RED", observations=(), prose="Report text."):
-    block = {"verdict": verdict, "score": 3.5,
-             "findings": [{"pattern_id": p, "weight": 1.0} for p in findings],
-             "observations": [{"pattern_id": p} for p in observations]}
+    block = {
+        "verdict": verdict,
+        "score": 3.5,
+        "findings": [{"pattern_id": p, "weight": 1.0} for p in findings],
+        "observations": [{"pattern_id": p} for p in observations],
+    }
     return f"{prose}\n\n```json\n{json.dumps(block)}\n```\n"
 
 
-AUDIT = {"id": "a1", "language": "en", "mode": "audit", "text": "x", "must_find": ["p1", "p2"],
-         "must_not_find": ["n1"], "expect_verdict": ["RED"]}
-CLEAN = {"id": "c1", "language": "de", "mode": "audit", "text": "x", "must_find": [], "must_not_find": ["n1"],
-         "expect_verdict": ["GREEN"], "max_findings": 0}
-REWRITE = {"id": "r1", "language": "en", "mode": "rewrite", "text": "In conclusion, it opens at 9 am on Monday.",
-           "must_find": [], "must_not_find": [], "must_remove": ["In conclusion"], "must_keep": ["9 am", "Monday"],
-           "expect_verdict": []}
+AUDIT = {
+    "id": "a1",
+    "language": "en",
+    "mode": "audit",
+    "text": "x",
+    "must_find": ["p1", "p2"],
+    "must_not_find": ["n1"],
+    "expect_verdict": ["RED"],
+}
+CLEAN = {
+    "id": "c1",
+    "language": "de",
+    "mode": "audit",
+    "text": "x",
+    "must_find": [],
+    "must_not_find": ["n1"],
+    "expect_verdict": ["GREEN"],
+    "max_findings": 0,
+}
+REWRITE = {
+    "id": "r1",
+    "language": "en",
+    "mode": "rewrite",
+    "text": "In conclusion, it opens at 9 am on Monday.",
+    "must_find": [],
+    "must_not_find": [],
+    "must_remove": ["In conclusion"],
+    "must_keep": ["9 am", "Monday"],
+    "expect_verdict": [],
+}
 
 
 def test_load_skill_ignores_scripts(tmp_path):
     skill = K.load_skill(make_skill(tmp_path))
     assert skill["name"] == "slop-check"
-    assert [p for p, _ in skill["files"]] == ["SKILL.md", "references/audit-procedure.md",
-                                              "references/report-format.md"]
+    assert [p for p, _ in skill["files"]] == [
+        "SKILL.md",
+        "references/audit-procedure.md",
+        "references/report-format.md",
+    ]
     prompt = K.skill_system_prompt(skill)
     assert '<file path="references/report-format.md">' in prompt and "never loaded" not in prompt
     with pytest.raises(FileNotFoundError):
@@ -57,7 +86,9 @@ def test_extract_json_block_variants():
     assert K.extract_json_block(two)["findings"][0]["pattern_id"] == "new"
     assert K.extract_json_block("no json here") is None
     assert K.extract_json_block('```json\n{"other": 1}\n```') is None
-    f, o = K.result_ids({"findings": [{"id": "a"}, "b", {"pattern": "c"}], "observations": [{"pattern_id": "d"}]})
+    f, o = K.result_ids(
+        {"findings": [{"id": "a"}, "b", {"pattern": "c"}], "observations": [{"pattern_id": "d"}]}
+    )
     assert f == ["a", "b", "c"] and o == ["d"]
 
 
@@ -85,8 +116,10 @@ def test_score_rewrite():
     assert K.score_rewrite(REWRITE, kept_phrase).unexpected == ["In conclusion"]
     lost = K.score_rewrite(REWRITE, "```rewrite\nIt opens on Monday.\n```")
     assert lost.missing == ["9 am"] and not lost.passed
-    via_json = K.score_rewrite(REWRITE, '```json\n{"verdict": "GREEN", "findings": [], '
-                                        '"rewritten_text": "It opens at 9 am on Monday."}\n```')
+    via_json = K.score_rewrite(
+        REWRITE,
+        '```json\n{"verdict": "GREEN", "findings": [], "rewritten_text": "It opens at 9 am on Monday."}\n```',
+    )
     assert via_json.passed and via_json.checks["extraction"] == "json"
     too_long = K.score_rewrite(REWRITE, "```rewrite\n" + "It opens at 9 am on Monday. " * 5 + "\n```")
     assert not too_long.checks["length_ok"]
@@ -94,8 +127,11 @@ def test_score_rewrite():
 
 def test_summarize():
     cases = [AUDIT, CLEAN, REWRITE]
-    results = [K.score_audit(AUDIT, reply(["p1", "n1"])), K.score_audit(CLEAN, reply(["p9"], verdict="GREEN")),
-               K.score_rewrite(REWRITE, "```rewrite\nIt opens at 9 am on Monday.\n```")]
+    results = [
+        K.score_audit(AUDIT, reply(["p1", "n1"])),
+        K.score_audit(CLEAN, reply(["p9"], verdict="GREEN")),
+        K.score_rewrite(REWRITE, "```rewrite\nIt opens at 9 am on Monday.\n```"),
+    ]
     s = K.summarize(cases, results)
     assert s["true_positives"] == 1 and s["false_negatives"] == 1 and s["false_positives"] == 2
     assert s["recall"] == 0.5 and s["precision"] == pytest.approx(round(1 / 3, 4))
@@ -121,11 +157,18 @@ class FakeClient:
 
 
 def test_run_conformance(tmp_path):
-    cases = [dict(AUDIT, text="AUDITTEXT"), dict(REWRITE, text="In conclusion, REWRITETEXT at 9 am on Monday.")]
-    replies = {"AUDITTEXT": reply(["p1", "p2"]),
-               "REWRITETEXT": "```rewrite\nREWRITETEXT at 9 am on Monday.\n```"}
-    models = [{"key": "conformance/a/x", "family": "a", "id": "a/m", "canonical_slug": "a/m-1"},
-              {"key": "conformance/b/x", "family": "b", "id": "b/m", "canonical_slug": "b/m-1"}]
+    cases = [
+        dict(AUDIT, text="AUDITTEXT"),
+        dict(REWRITE, text="In conclusion, REWRITETEXT at 9 am on Monday."),
+    ]
+    replies = {
+        "AUDITTEXT": reply(["p1", "p2"]),
+        "REWRITETEXT": "```rewrite\nREWRITETEXT at 9 am on Monday.\n```",
+    }
+    models = [
+        {"key": "conformance/a/x", "family": "a", "id": "a/m", "canonical_slug": "a/m-1"},
+        {"key": "conformance/b/x", "family": "b", "id": "b/m", "canonical_slug": "b/m-1"},
+    ]
     fc = FakeClient(replies)
     out = K.run_conformance(make_skill(tmp_path), models, fc, cases=cases, workers=2)
     assert [m["id"] for m in out["models"]] == ["a/m", "b/m"]
@@ -142,11 +185,22 @@ def test_run_conformance_unavailable_and_budget(tmp_path):
     cases = [dict(AUDIT, text="AUDITTEXT")]
     models = [{"key": "k", "family": "a", "id": "a/old"}]
     repl = {"key": "k", "family": "a", "id": "a/new"}
-    out = K.run_conformance(make_skill(tmp_path), models, FakeClient({"AUDITTEXT": reply(["p1", "p2"])},
-                            unavailable={"a/old"}), cases=cases, workers=1, refresh=lambda e, f: repl)
+    out = K.run_conformance(
+        make_skill(tmp_path),
+        models,
+        FakeClient({"AUDITTEXT": reply(["p1", "p2"])}, unavailable={"a/old"}),
+        cases=cases,
+        workers=1,
+        refresh=lambda e, f: repl,
+    )
     assert out["models"][0]["id"] == "a/new" and any("now a/new" in n for n in out["notices"])
-    out2 = K.run_conformance(make_skill(tmp_path), models + [dict(repl, key="k2")],
-                             FakeClient({"AUDITTEXT": reply([])}, budget_after=0), cases=cases, workers=1)
+    out2 = K.run_conformance(
+        make_skill(tmp_path),
+        models + [dict(repl, key="k2")],
+        FakeClient({"AUDITTEXT": reply([])}, budget_after=0),
+        cases=cases,
+        workers=1,
+    )
     assert out2["aborted"] and "budget" in out2["notices"][-1]
 
 

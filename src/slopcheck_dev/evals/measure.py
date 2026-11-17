@@ -30,13 +30,19 @@ LIFT_DIGITS = 3
 
 
 def pattern_hash(pattern: dict) -> str:
-    """sha256 of the canonical JSON of the pattern without ``history``.
+    """sha256 of the canonical JSON of the pattern without ``history`` (section 6.3).
 
-    Canonical JSON: keys sorted, separators (",", ":"), UTF-8 without ASCII escaping, dates
-    as ISO strings. Catalog-only fields (effective_status, weight, weight_source) must be
-    removed before hashing a catalog entry; :func:`source_pattern` does that.
+    Delegates to ``slopcheck_dev.status.pattern_hash`` so measurement and status derivation can
+    never disagree. The local fallback uses the same canonicalization: keys sorted, separators
+    (",", ":"), UTF-8 without ASCII escaping, dates as ISO strings, catalog-only fields dropped.
     """
-    body = {k: v for k, v in dates_to_str(pattern).items() if k != "history"}
+    try:
+        from slopcheck_dev.status import pattern_hash as status_hash
+    except ImportError:
+        status_hash = None
+    if status_hash is not None:
+        return status_hash(pattern)
+    body = {k: v for k, v in dates_to_str(source_pattern(pattern)).items() if k != "history"}
     return sha256_text(canonical_json(body))
 
 

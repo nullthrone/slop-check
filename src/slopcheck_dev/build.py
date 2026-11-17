@@ -95,7 +95,7 @@ POSITION_WORDS = {
 }
 METRIC_WORDS = {
     "em_dash_density": "Em dashes (and en dashes set between spaces as dashes) per {per_words} words.",
-    "curly_quotes": "Typographic quotation marks (“ ” ‘ ’) in languages that do not use them.",
+    "curly_quotes": "Typographic (curly) quotation marks in languages whose plain text does not use them.",
     "sentence_length_cv": (
         "Variation of sentence length (coefficient of variation), taken as the lowest value over "
         "any run of {run} consecutive paragraphs. Low values mean evenly sized sentences."
@@ -105,7 +105,7 @@ METRIC_WORDS = {
     "paragraph_start_ratio": "Share of paragraphs that open with a term from the word list.",
     "nominalization_density": "Nouns with nominal suffixes per {per_words} words.",
     "bullet_bold_lead": "Longest run of list items within one list that open with a bold lead and a colon.",
-    "triad": "Coordinations of exactly three short items (A, B and C; one to three words each).",
+    "triad": "Coordinations of exactly three short items joined by a final and/or, each one to three words long.",
     "comma_density": "Commas per sentence.",
     "hyphenated_premodifier_density": "Hyphenated compound modifiers in front of a noun, per 100 words.",
 }
@@ -271,9 +271,8 @@ def detection_words(pattern: dict) -> str:
         used = tuple(k for k in ("per_words", "run") if "{" + k + "}" in template)
         return text + _params_text(params, used)
     if kind == "llm":
-        return "Judgment call (the script evaluates it only with a language model): " + _clean(
-            detector.get("rubric")
-        )
+        rubric = _clean(detector.get("rubric"))
+        return f"Judgment call; the script evaluates it only with a language model. Rubric: {rubric}"
     if kind == "vision":
         return "Visual judgment: " + _clean(detector.get("rubric"))
     return "No detector: described for reference only."
@@ -281,7 +280,14 @@ def detection_words(pattern: dict) -> str:
 
 def threshold_words(pattern: dict) -> list[str]:
     """Threshold sentences: base rule, short-text rule, context rules, dependency."""
-    from slopcheck.thresholds import describe_rule, effective_rule
+    from slopcheck.thresholds import describe_rule as _describe
+    from slopcheck.thresholds import effective_rule
+
+    image = pattern.get("modality", "text") == "image"
+
+    def describe_rule(rule: dict, requires: dict | None, unit: str) -> str:
+        text = _describe(rule, requires, unit)
+        return text.replace("per text", "per image") if image else text
 
     threshold = pattern.get("threshold") or {}
     unit = _metric_unit(pattern)
@@ -390,8 +396,8 @@ check the legitimate use before you report a finding. Report in the structure of
 `references/report-format.md`. Findings describe style patterns; they never state who or what
 wrote a text.
 
-Scoring: the score is the sum of the weights of the triggered scored patterns. The verdict is
-GREEN below {yellow}, YELLOW from {yellow} and RED from {red} ({vt_source} thresholds). Candidate
+Scoring: the score is the sum of the weights of the triggered scored patterns. A score below
+{yellow} is GREEN. YELLOW starts at {yellow}, RED at {red} ({vt_source} thresholds). Candidate
 and fading patterns carry no weight; list triggered ones as observations.
 
 A text with at most {short_max} words counts as short. Some patterns use a separate threshold for

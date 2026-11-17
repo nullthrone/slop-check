@@ -23,9 +23,24 @@ DE_PARA = (
 )
 
 
-NOUNS = ["the bridge", "the town", "a farmer", "the river", "the council", "a teacher", "the mill", "the road"]
+NOUNS = [
+    "the bridge",
+    "the town",
+    "a farmer",
+    "the river",
+    "the council",
+    "a teacher",
+    "the mill",
+    "the road",
+]
 VERBS = ["built", "crossed", "repaired", "watched", "sold", "painted", "measured", "closed"]
-TAILS = ["in the spring of", "after the flood of", "before the war in", "during the winter of", "for the fair in"]
+TAILS = [
+    "in the spring of",
+    "after the flood of",
+    "before the war in",
+    "during the winter of",
+    "for the fair in",
+]
 
 
 def varied_en(n, seed):
@@ -64,16 +79,28 @@ def test_split_rule_matches_contract():
 
 
 def src(**kw):
-    base = {"id": "s", "language": "en", "register": "web", "dataset": "d", "config": "c", "split": "train",
-            "adapter": "fineweb", "rows": 100, "docs": 2}
+    base = {
+        "id": "s",
+        "language": "en",
+        "register": "web",
+        "dataset": "d",
+        "config": "c",
+        "split": "train",
+        "adapter": "fineweb",
+        "rows": 100,
+        "docs": 2,
+    }
     base.update(kw)
     return C.HumanSource.from_dict(base)
 
 
 def test_fineweb_adapter_date_and_paragraphs():
     s = src(max_date="2020-06-01")
-    row = {"text": "Title line\nFirst block.\n\nSecond block.", "date": "2019-04-19T15:22:30Z",
-           "url": "https://www.example.org/a"}
+    row = {
+        "text": "Title line\nFirst block.\n\nSecond block.",
+        "date": "2019-04-19T15:22:30Z",
+        "url": "https://www.example.org/a",
+    }
     out = C.adapt_fineweb(row, s)
     assert out["text"] == "Title line\n\nFirst block.\n\nSecond block."
     assert out["domain"] == "example.org" and out["date"] == "2019-04-19"
@@ -92,10 +119,18 @@ def test_wiki40b_adapter_decodes_bytes_literal_and_markers():
 
 def test_mqa_adapter_prefers_accepted_and_filters():
     s = src(adapter="mqa", max_bucket="2021.52")
-    row = {"name": "How do I X? ===", "bucket": "2020.16", "domain": "forum.example",
-           "answers": [{"text": "short", "is_accepted": False},
-                       {"text": "Accepted [link](http://x.y) ![img](data:image/gif;base64,AAAA) answer.",
-                        "is_accepted": True}]}
+    row = {
+        "name": "How do I X? ===",
+        "bucket": "2020.16",
+        "domain": "forum.example",
+        "answers": [
+            {"text": "short", "is_accepted": False},
+            {
+                "text": "Accepted [link](http://x.y) ![img](data:image/gif;base64,AAAA) answer.",
+                "is_accepted": True,
+            },
+        ],
+    }
     out = C.adapt_mqa(row, s)
     assert out["text"] == "Accepted link  answer."
     assert out["title"] == "How do I X? ==="
@@ -171,8 +206,13 @@ def test_sample_source_domain_cap_and_truncation():
     s = src(docs=7, batch=5, rows=60, max_per_domain=1)
     docs = C.sample_source(s, spec_with(s), rows_fn=fake_rows(rows))
     assert len({d["row_idx"] % 7 for d in docs}) == len(docs) == 7
-    long_rows = {i: {"text": "\n_START_ARTICLE_\nT\n" + "".join(
-        f"_START_PARAGRAPH_\n{p}\n" for p in varied_en(30, i).split("\n\n"))} for i in range(10)}
+    long_rows = {
+        i: {
+            "text": "\n_START_ARTICLE_\nT\n"
+            + "".join(f"_START_PARAGRAPH_\n{p}\n" for p in varied_en(30, i).split("\n\n"))
+        }
+        for i in range(10)
+    }
     w = src(adapter="wiki40b", docs=2, batch=2, rows=10, truncate=True)
     docs = C.sample_source(w, spec_with(w), rows_fn=fake_rows(long_rows))
     assert all(d["words"] <= 1200 for d in docs) and all(d["title"] == "T" for d in docs)
@@ -188,8 +228,14 @@ def test_fetch_human_writes_manifest_without_texts(tmp_path):
     rows = corpus_rows()
     s1 = src(id="web-en", docs=3, batch=3, rows=60, revision="abc")
     s2 = src(id="web-en-2", docs=2, batch=3, rows=60, revision="abc", register="qa")
-    spec = {"seed": 3, "min_words": 150, "max_words": 1200, "cutoff_date": "2022-11-01", "version": 1,
-            "sources": [s1, s2]}
+    spec = {
+        "seed": 3,
+        "min_words": 150,
+        "max_words": 1200,
+        "cutoff_date": "2022-11-01",
+        "version": 1,
+        "sources": [s1, s2],
+    }
     manifest = C.fetch_human(tmp_path, spec, rows_fn=fake_rows(rows), revision_fn=lambda d: "def")
     assert manifest["counts"] == {"en": {"web": 3, "qa": 2}}
     assert manifest["notices"] and "pinned abc" in manifest["notices"][0]
@@ -201,7 +247,9 @@ def test_fetch_human_writes_manifest_without_texts(tmp_path):
     docs = C.load_human_docs(tmp_path)
     assert len(docs) == 5 and len({d["sha256"] for d in docs}) == 5  # deduplicated across sources
     with pytest.raises(RuntimeError, match="pinned"):
-        C.fetch_human(tmp_path, spec, rows_fn=fake_rows(rows), revision_fn=lambda d: "def", strict_revision=True)
+        C.fetch_human(
+            tmp_path, spec, rows_fn=fake_rows(rows), revision_fn=lambda d: "def", strict_revision=True
+        )
 
 
 def test_load_human_docs_drops_tampered(tmp_path):
@@ -217,13 +265,23 @@ def test_load_human_docs_drops_tampered(tmp_path):
 
 
 def test_fetch_rows_builds_url_and_skips_truncated(fake_http):
-    payload = {"rows": [{"row_idx": 5, "row": {"text": "a"}, "truncated_cells": []},
-                        {"row_idx": 6, "row": {"text": "b"}, "truncated_cells": ["text"]}]}
+    payload = {
+        "rows": [
+            {"row_idx": 5, "row": {"text": "a"}, "truncated_cells": []},
+            {"row_idx": 6, "row": {"text": "b"}, "truncated_cells": ["text"]},
+        ]
+    }
     fake_http.add("datasets-server.huggingface.co/rows", payload)
     out = C.fetch_rows("org/name", "cfg", "test", 5, 2)
     assert out == [(5, {"text": "a"})]
     q = parse_qs(urlsplit(fake_http.requests[0].full_url).query)
-    assert q == {"dataset": ["org/name"], "config": ["cfg"], "split": ["test"], "offset": ["5"], "length": ["2"]}
+    assert q == {
+        "dataset": ["org/name"],
+        "config": ["cfg"],
+        "split": ["test"],
+        "offset": ["5"],
+        "length": ["2"],
+    }
 
 
 def test_dataset_revision(fake_http):
@@ -252,8 +310,12 @@ def test_derive_topic():
     assert C.derive_topic({"title": "Faversham Abbey", "text": EN_PARA}) == "Faversham Abbey"
     doc = {"title": None, "text": "Direktflug München - Rijeka ab 96 € | Billigflug finden\n\nText."}
     assert C.derive_topic(doc) == "Direktflug München - Rijeka ab 96 €"
-    long_first = {"text": ("The Northern Foundation opened its scholarship application cycle for the 2018-2019 "
-                           "academic year, and the director hopes this year will provide more funds. More text.")}
+    long_first = {
+        "text": (
+            "The Northern Foundation opened its scholarship application cycle for the 2018-2019 "
+            "academic year, and the director hopes this year will provide more funds. More text."
+        )
+    }
     topic = C.derive_topic(long_first)
     assert topic.startswith("The Northern Foundation opened") and len(topic.split()) <= 20
     noisy = {"title": "Visit https://example.com or mail info@example.com today ===", "text": EN_PARA}
@@ -302,21 +364,41 @@ class FakeClient:
         if self.fail_after is not None and len(self.calls) >= self.fail_after:
             raise BudgetExceeded("cap", cap="run", limit=1, would_be=2)
         self.calls.append((model["id"], messages, max_tokens))
-        return ChatResult(text=self.text, model=model["id"], canonical_slug=model.get("canonical_slug"),
-                          usd=0.001, finish_reason="stop")
+        return ChatResult(
+            text=self.text,
+            model=model["id"],
+            canonical_slug=model.get("canonical_slug"),
+            usd=0.001,
+            finish_reason="stop",
+        )
 
 
 def human_docs(n=6):
     docs = []
     for i in range(n):
         lang = "en" if i % 2 == 0 else "de"
-        docs.append({"doc_id": f"{lang}-web-s-{i}", "language": lang, "register": "web", "title": f"Topic {i}",
-                     "text": EN_PARA * 3, "words": 240, "split": split_of(f"{lang}-web-s-{i}")})
+        docs.append(
+            {
+                "doc_id": f"{lang}-web-s-{i}",
+                "language": lang,
+                "register": "web",
+                "title": f"Topic {i}",
+                "text": EN_PARA * 3,
+                "words": 240,
+                "split": split_of(f"{lang}-web-s-{i}"),
+            }
+        )
     return docs
 
 
-GEN = {"key": "generators/acme/cheap", "family": "acme", "tier": "cheap", "id": "acme/a",
-       "canonical_slug": "acme/a-1", "docs_per_language": 2}
+GEN = {
+    "key": "generators/acme/cheap",
+    "family": "acme",
+    "tier": "cheap",
+    "id": "acme/a",
+    "canonical_slug": "acme/a-1",
+    "docs_per_language": 2,
+}
 
 
 def test_generate_ai_writes_records_and_resumes(tmp_path):
@@ -363,8 +445,9 @@ def test_generate_ai_replaces_unavailable_model(tmp_path):
         seen.append(set(failed))
         return replacement
 
-    s = C.generate_ai(human_docs(), tmp_path, [GEN], FakeClient(unavailable={"acme/a"}), workers=1,
-                      refresh=refresh)
+    s = C.generate_ai(
+        human_docs(), tmp_path, [GEN], FakeClient(unavailable={"acme/a"}), workers=1, refresh=refresh
+    )
     assert seen and "acme/a" in seen[0]
     assert {d["canonical_slug"] for d in C.load_ai_docs(tmp_path)} == {"acme/c-1"}
     assert any("now acme/c" in n for n in s.notices)
