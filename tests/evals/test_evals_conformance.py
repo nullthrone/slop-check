@@ -8,7 +8,7 @@ from evals_helpers import standin_compile
 from slopcheck_dev.evals import conformance as K
 from slopcheck_dev.evals._common import load_patterns, load_thresholds
 from slopcheck_dev.evals.budget import BudgetExceeded
-from slopcheck_dev.evals.openrouter import ChatResult, ModelUnavailableError
+from slopcheck_dev.evals.openrouter import ChatResult, ModelUnavailableError, OpenRouterError
 
 
 def make_skill(tmp_path):
@@ -202,6 +202,28 @@ def test_run_conformance_unavailable_and_budget(tmp_path):
         workers=1,
     )
     assert out2["aborted"] and "budget" in out2["notices"][-1]
+
+
+class FailingClient:
+    def chat(self, model, messages, max_tokens=1024, role="x", params=None):
+        raise OpenRouterError("OpenRouter 500: upstream failed")
+
+
+def test_failed_audit_call_counts_as_missed_not_found(tmp_path):
+    """A case whose model call failed found nothing: its must_find are false negatives."""
+    out = K.run_conformance(
+        make_skill(tmp_path),
+        [{"key": "k", "family": "a", "id": "a/m"}],
+        FailingClient(),
+        cases=[AUDIT],
+        workers=1,
+    )
+    summary = out["models"][0]["summary"]
+    case = out["models"][0]["cases"][0]
+    assert "upstream failed" in case["error"] and not case["passed"]
+    assert case["missing"] == ["p1", "p2"]
+    assert summary["true_positives"] == 0 and summary["false_negatives"] == 2
+    assert summary["recall"] == 0.0 and summary["errors"] == 1
 
 
 def test_build_request_language():

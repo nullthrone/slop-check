@@ -58,8 +58,8 @@ sources:
       Stacked noun compounds are defined as "three or more nouns in a modifier relationship";
       compared with genre-matched human baselines, most of the nine frontier and near-frontier
       models tested "use longer dependencies, more stacked nouns, and more reduced object
-      relatives in conversation". The paper's opening example of model prose contains
-      "reader-patience budget". Figures from arXiv v1 (2026-10-21).
+      relatives in conversation". The paper's opening example sentence, written in the style of
+      model prose, contains "reader-patience budget". Figures from arXiv v1 (2026-10-21).
   - source: slhck-claudish
     locator: "level 2 of 'Claudish'"
     note: >

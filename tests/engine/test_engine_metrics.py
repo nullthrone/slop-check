@@ -153,6 +153,37 @@ def test_sentence_length_cv_skips_headings(pattern, catalog):
     assert evaluate(with_headings, p, catalog)[0]["triggered"]
 
 
+ONE_LINERS = "\n\n".join(
+    [
+        "Free shipping on all orders over fifty dollars.",
+        "Easy returns within thirty days of your purchase.",
+        "Secure payment with every major credit card.",
+        "Friendly support by phone and email every day.",
+    ]
+)
+
+
+def test_sentence_length_cv_one_line_paragraphs_form_a_run_by_default(pattern, catalog):
+    p = metric_pattern(pattern, "sentence_length_cv", {"op": "lt", "x": 0.2}, params={"run": 3})
+    entry, _ = evaluate(ONE_LINERS, p, catalog)
+    assert entry["triggered"] and entry["value"] < 0.2
+
+
+def test_sentence_length_cv_short_paragraphs_break_runs(pattern, catalog):
+    params = {"run": 3, "min_sentences_per_paragraph": 2}
+    p = metric_pattern(pattern, "sentence_length_cv", {"op": "lt", "x": 0.2}, params=params)
+    assert "value" not in evaluate(ONE_LINERS, p, catalog)[0]
+    assert evaluate(UNIFORM, p, catalog)[0]["triggered"]
+    # a one-line paragraph in the middle splits the run of three two-sentence paragraphs
+    parts = UNIFORM.split("\n\n")
+    broken = "\n\n".join([parts[0], "Short note here.", parts[1], parts[2]])
+    assert "value" not in evaluate(broken, p, catalog)[0]
+    # headings are skipped, they do not break a run
+    with_heading = "\n\n".join([parts[0], "## A heading", parts[1], parts[2]])
+    entry, result = evaluate(with_heading, p, catalog)
+    assert entry["triggered"] and len(hits_of(result, "sentence_length_cv")) == 3
+
+
 # --- emoji_decoration ----------------------------------------------------------------
 
 

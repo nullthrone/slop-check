@@ -180,7 +180,7 @@ slopcheck-dev gate --measure .eval-out/dev.json --patterns <id>
 ## 6. Open the pull request
 
 Fill in the pull request template. The `ci` run posts the empirical gate table in its job summary.
-For `llm` patterns the `llm-gate` status links to a run with the example results, and the pull
-request receives one comment that is updated on every push. When both required checks pass and
+For `llm` patterns the `llm-gate` status, posted once `ci` has passed, links to a run with the
+example results, and the pull request receives one comment that is updated on every push. When both required checks pass and
 the change touches only `patterns/`, `sources/` or `docs/` (except architecture.md, governance.md
 and maintainers.md), the pull request merges by itself.

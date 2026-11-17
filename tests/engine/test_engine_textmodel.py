@@ -98,6 +98,44 @@ def test_unclosed_fence_runs_to_end():
     assert model.word_count == 2
 
 
+def test_inline_triple_backtick_code_is_not_a_fence():
+    """A backtick fence's info string cannot contain backticks (CommonMark), so a line that
+    starts with ```code``` is inline code; it must not mask the rest of the text."""
+    text = "```npm install``` runs the installer.\n\nThe second paragraph has words."
+    assert mask_code(text) == text
+    model = build_text_model(text, "en")
+    assert unit_texts(model)[-1] == ("paragraph", "The second paragraph has words.")
+    assert model.word_count == 10
+
+
+def test_fence_indented_inside_a_list_item_is_masked():
+    text = "1. Step one:\n\n    ```\n    Code here. Code again.\n    ```\n\nAfter code."
+    masked = mask_code(text)
+    assert len(masked) == len(text) and "Code" not in masked
+    model = build_text_model(text, "en")
+    assert unit_texts(model) == [("list_item", "Step one:"), ("paragraph", "After code.")]
+
+
+def test_yaml_front_matter_is_masked():
+    text = "---\ntitle: Delve into it\ntags: [a, b]\n---\n\nBody text here."
+    masked = mask_code(text)
+    assert len(masked) == len(text) and masked.count("\n") == text.count("\n")
+    assert "Delve" not in masked and masked.endswith("Body text here.")
+    model = build_text_model(text, "en")
+    assert unit_texts(model) == [("paragraph", "Body text here.")]
+    crlf = "---\r\ntitle: x\r\n---\r\nBody."
+    assert unit_texts(build_text_model(crlf, "en")) == [("paragraph", "Body.")]
+
+
+def test_front_matter_needs_a_closing_line_within_100_lines():
+    unclosed = "---\ntitle: x\n\nProse stays."
+    assert unit_texts(build_text_model(unclosed, "en"))[-1] == ("paragraph", "Prose stays.")
+    late = "---\n" + "key: value\n" * 100 + "---\nProse."
+    assert "key" in mask_code(late)
+    not_at_start = "Intro.\n\n---\nkey: v\n---\n"
+    assert mask_code(not_at_start) == not_at_start
+
+
 # --- sentences -------------------------------------------------------------------------
 
 
@@ -132,6 +170,16 @@ def test_initials_do_not_end_sentences():
 
 def test_sentence_after_closing_quote():
     assert sentences('He said "stop." Then he left.', "en") == ['He said "stop."', "Then he left."]
+
+
+def test_blockquote_lines_do_not_hide_sentence_ends():
+    model = build_text_model("> First sentence here.\n> Second sentence here. Third one.", "en")
+    unit = model.units[0]
+    assert [model.text[s.start : s.end] for s in unit.sentences] == [
+        "First sentence here.",
+        "Second sentence here.",
+        "Third one.",
+    ]
 
 
 def test_unit_sentences_have_word_counts():

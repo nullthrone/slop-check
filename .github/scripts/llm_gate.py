@@ -18,7 +18,9 @@ Subcommands (run in this order by the workflow):
 
 Admission rules: ``governance/thresholds.yaml`` (``admission.candidate.pr_gate`` for
 candidates, ``meets_core`` for patterns that are effective core). Missing key or exhausted
-budget (section 6.5): candidates pass with a notice, effective-core llm patterns fail.
+monthly budget (section 6.5): candidates pass with a notice, effective-core llm patterns fail.
+Everything else that leaves a pattern unchecked fails it, including a run that uses up its
+own per-pull-request cap, so a pull request cannot buy a notice with an oversized rubric.
 
 Environment: GITHUB_TOKEN or GH_TOKEN, GITHUB_REPOSITORY, GITHUB_API_URL, HEAD_SHA,
 HEAD_REPO, RUN_URL, OPENROUTER_API_KEY (examples only), GITHUB_STEP_SUMMARY, GITHUB_OUTPUT.
@@ -44,6 +46,11 @@ MARKER = "<!-- slop-check:llm-gate -->"
 MAX_FILE_BYTES = 256 * 1024
 MAX_DATA_FILES = 200
 MAX_PAGES = 30
+#: The pull request files endpoint lists at most 3000 files; a longer list is cut off.
+MAX_PR_FILES = 3000
+#: Budget caps that the pull request's own size can exhaust (per run and per call), as
+#: opposed to the monthly cap that other runs exhaust.
+OWN_CAPS = ("run", "call")
 DATA_PATH = re.compile(
     r"^(?:patterns/(?:text|image|code|audio|video)/[a-z0-9]+(?:-[a-z0-9]+)*\.yaml"
     r"|sources/[a-z0-9]+(?:-[a-z0-9]+)*\.yaml)$"
@@ -195,6 +202,14 @@ def cmd_prepare(args: argparse.Namespace) -> int:
     write_output("pr", str(pr["number"]))  # early, so a later failure can still be reported
 
     files = paged(f"/repos/{repo}/pulls/{pr['number']}/files")
+    # The file list belongs to the pull request as it is now, the status to ``sha``. If the
+    # head moved in between, the list may not describe ``sha`` (a force-push back to ``sha``
+    # would then reuse a status computed from another commit's files): fail instead.
+    head_now = ((api(f"/repos/{repo}/pulls/{pr['number']}") or {}).get("head") or {}).get("sha")
+    if head_now != sha:
+        result["errors"].append("the pull request head moved while its files were read; push again")
+    if len(files) >= MAX_PR_FILES:
+        result["errors"].append(f"{len(files)} changed files; GitHub lists at most {MAX_PR_FILES}, split it")
     candidate = Path(args.candidate)
     if candidate.exists():
         shutil.rmtree(candidate)
@@ -258,6 +273,8 @@ def cmd_prepare(args: argparse.Namespace) -> int:
             result["skipped"][pid] = "observation (not scored, no gate)"
             continue
         result["llm_ids"].append(pid)
+    if result["errors"]:
+        result["llm_ids"] = []  # the gate fails on these errors; spend no budget on judging
 
     (out / "prepare.json").write_text(json.dumps(result, indent=2), encoding="utf-8")
     write_output("data_files", str(touched))
@@ -369,6 +386,7 @@ def cmd_examples(args: argparse.Namespace) -> int:
     except BudgetExceeded as exc:
         result["available"] = False
         result["reason"] = f"budget cap reached during the example checks ({exc})"
+        result["budget_cap"] = exc.cap
     result["all_pass"] = all_pass
     result["budget"] = budget.status()
     return finish()
@@ -391,6 +409,26 @@ def _fpr_reasons(entry: dict, max_fpr: float) -> list[str]:
     return reasons
 
 
+def _own_budget_exhausted(examples: dict | None, measure: dict | None, measure_state: str) -> bool:
+    """True if this run stopped at its own per-run or per-call cap rather than the monthly cap.
+
+    Candidates pass without a check only when the key is missing or the monthly budget is used
+    up (section 6.5). A pull request whose rubric or examples are large enough to use up its
+    own cap must not pass that way.
+    """
+    if (examples or {}).get("budget_cap") in OWN_CAPS:
+        return True
+    if measure_state != "budget":
+        return False
+    b = (measure or {}).get("budget") or {}
+    try:
+        run_left = float(b["run_cap_usd"]) - float(b["run_total_usd"])
+        month_left = float(b["monthly_cap_usd"]) - float(b["month_total_usd"])
+    except (KeyError, TypeError, ValueError):
+        return True  # cannot tell which cap stopped the run, so it earns no notice
+    return run_left < month_left
+
+
 def evaluate(
     prepare: dict,
     validate_ok: bool,
@@ -410,6 +448,7 @@ def evaluate(
     ids = list(prepare.get("llm_ids") or [])
     pr_gate = ((thresholds.get("admission") or {}).get("candidate") or {}).get("pr_gate") or {}
     max_fpr = float(pr_gate.get("max_fpr_human", 0.15))
+    own_budget = _own_budget_exhausted(examples, measure, measure_state)
     rows: list[dict] = []
     for pid in ids:
         pattern = patterns[pid]
@@ -419,17 +458,23 @@ def evaluate(
         row["notices"] = []
         rows.append(row)
 
-        def unavailable(reason: str, row: dict = row, core_rule: bool = core_rule) -> None:
+        def unavailable(reason: str, row: dict = row, core_rule: bool = core_rule, own: bool = False) -> None:
             if core_rule:
                 row["result"] = "fail"
                 row["reasons"].append(f"{reason}; effective-core llm patterns cannot pass without a check")
+            elif own:
+                row["result"] = "fail"
+                row["reasons"].append(
+                    f"{reason}; candidates pass without a check only when the key is missing or the "
+                    "monthly budget is used up (shorten the rubric and examples if the run cap stopped it)"
+                )
             else:
                 row["notices"].append(f"{reason}; candidates pass with this notice (weight 0)")
 
         ex = (examples or {}).get("patterns", {}).get(pid)
         if not examples or not examples.get("available") or ex is None:
             reason = (examples or {}).get("reason") or "example checks did not run"
-            unavailable(reason)
+            unavailable(reason, own=(examples or {}).get("budget_cap") in OWN_CAPS)
             continue
         row["recall"], row["negative_rate"] = ex.get("recall"), ex.get("negative_rate")
         if ex.get("errors"):
@@ -452,7 +497,10 @@ def evaluate(
         entry = measurement_for(measure, pid)
         if entry is None:
             measure_notes = "; ".join((measure or {}).get("notices") or []) or measure_state
-            unavailable(f"dev-split measurement missing ({measure_notes})")
+            # judges answered the examples, so only an exhausted monthly budget earns a notice;
+            # errors, failed judge calls on the corpus and the run's own cap fail the pattern
+            own = measure_state != "budget" or own_budget
+            unavailable(f"dev-split measurement missing ({measure_notes})", own=own)
             continue
         row["fpr_human"], row["lift"] = entry.get("fpr_human"), entry.get("lift")
         if core_rule:

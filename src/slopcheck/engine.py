@@ -163,7 +163,8 @@ def locate_quotes(model: TextModel, quotes: list) -> list[dict]:
     """Turn judge quotes into hits. Quotes that are not verbatim substrings are dropped.
 
     A quote may be a string or a dict with ``quote``. Repeated quotes map to successive
-    occurrences in the text.
+    occurrences in the text. Occurrences outside the analyzed text (fenced code, front
+    matter) are skipped, so the quote maps to its first occurrence in the prose.
     """
     hits = []
     used: set[tuple[int, int]] = set()
@@ -176,16 +177,21 @@ def locate_quotes(model: TextModel, quotes: list) -> list[dict]:
             if not candidate:
                 continue
             pos = model.text.find(candidate)
-            while pos != -1 and (pos, pos + len(candidate)) in used:
+            while pos != -1:
+                span = (pos, pos + len(candidate))
+                if span not in used:
+                    hit = make_hit(model, *span)
+                    if hit is not None:
+                        found = (span, hit)
+                        break
                 pos = model.text.find(candidate, pos + 1)
-            if pos != -1:
-                found = (pos, pos + len(candidate))
+            if found is not None:
                 break
         if found is None:
             continue
-        used.add(found)
-        hit = make_hit(model, *found)
-        if hit is not None and all(h["start"] != hit["start"] or h["end"] != hit["end"] for h in hits):
+        span, hit = found
+        used.add(span)
+        if all(h["start"] != hit["start"] or h["end"] != hit["end"] for h in hits):
             hits.append(hit)
     return sorted(hits, key=lambda h: h["start"])
 

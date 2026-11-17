@@ -71,6 +71,8 @@ notes: >
   Independence: skill-better-ai-writing and sej-ai-fingerprints both relay the same study
   (sun-icml-2025-fingerprints), so they count as one line of evidence with it, not as two
   independent sources. With vrid.ai the pattern keeps at least two independent clusters.
+  Demarcation: sycophant-residue covers politeness formulas in general; this pattern identifies a
+  model through position-bound opening words.
 sources:
   - source: maintainer-observation
   - source: vrid-ai-signs
@@ -105,6 +107,6 @@ sources:
     locator: "tell 'The compulsory warm-up lap'"
     note: "\"Certainly.\", \"That's a great question.\", \"Here's a structured way to think about it.\" before the content. No data."
 related:
-  - {id: sycophant-residue, relation: overlaps}
+  - {id: sycophant-residue, relation: distinct-from}
   - {id: generic-opening, relation: overlaps}
   - {id: announce-then-answer, relation: overlaps}

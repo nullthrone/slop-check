@@ -50,8 +50,10 @@ prevention: >
 notes: >
   No source gives a per-text threshold (Pangram reports frequency multiples). The value of more
   than 2 emphasis markers per 100 words, with more than 5 in technical context, is not yet
-  calibrated against the reference corpora. The metric reads raw markup, so it also catches markdown bleed;
-  whether a text will be rendered is unknown to the engine.
+  calibrated against the reference corpora. The metric reads raw markup, so it also catches
+  markdown bleed; whether a text will be rendered is unknown to the engine. Demarcation:
+  bullet-bold-lead covers the bold-keyword structure of list items; this pattern covers emphasis
+  density regardless of list structure or rendering.
 sources:
   - source: maintainer-observation
   - source: pangram-signs-of-ai-writing

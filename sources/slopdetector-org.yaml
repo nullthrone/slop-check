@@ -13,4 +13,9 @@ notes: >
   0.6 to 1.2), em dash density (more than 20 per 1,000 words in short modern prose; human baseline
   3.7 to 10 per 1,000). Also published under the title "12 Signs of AI Writing: Patterns and
   Thresholds". A separate em dash article by the same publisher ("Is the Em Dash an AI Tell?",
-  2026-07-31) is cited on em-dash-inflation.
+  2026-07-31) is cited on em-dash-inflation. Neither page carries a byline. Both credit E. M.
+  Freeburg's study (arxiv-2603-27006) for the controlled em dash measurement: this article in its
+  source list for GPT-4.1 at 10.62 em dashes per 1,000 words against a human control of 3.23, the
+  em dash article for all of its model figures (GPT-4.1, Claude, DeepSeek, Gemini, Llama) and the
+  3.23 baseline. The em dash article's own measurement is a human baseline of 4.76 per 1,000 words
+  in 702,939 words of public-domain literature.

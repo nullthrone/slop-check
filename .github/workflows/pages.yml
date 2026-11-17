@@ -10,10 +10,7 @@ on:
       - "site/**"
   workflow_dispatch:
 
-permissions:
-  contents: read
-  pages: write
-  id-token: write
+permissions: {}
 
 concurrency:
   group: pages
@@ -24,6 +21,10 @@ jobs:
     # Forks do not deploy the project site.
     if: github.repository == 'nullthrone/slop-check'
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      pages: read # configure-pages reads the site settings
     steps:
       - name: Check out
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -48,6 +49,11 @@ jobs:
     if: github.repository == 'nullthrone/slop-check'
     needs: build
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+    # Only the deploy job may publish the site and request the OIDC token deploy-pages needs.
+    permissions:
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}

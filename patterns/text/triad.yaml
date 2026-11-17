@@ -67,8 +67,9 @@ notes: >
   words); the densest human texts reach 12.5 to 14 per 500 words. A fixed count would have to be 7
   per text to meet the limit, which misses short and medium texts and lets long ones accumulate
   freely. Short texts use a paragraph count instead (2 or more triads in one paragraph), because a
-  single triad in a few dozen words would already exceed the density. "From X to Y to Z" belongs
-  to false-range; the triad metric does not count it.
+  single triad in a few dozen words would already exceed the density. A "from X to Y to Z" chain
+  is a triad in the sense of this pattern, but the triad metric does not count it, so the host
+  model should count it; false-range covers only two-endpoint ranges with closed vocabularies.
 sources:
   - source: maintainer-observation
   - source: pangram-signs-of-ai-writing

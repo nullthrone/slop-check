@@ -13,8 +13,9 @@ detector:
   metric: sentence_length_cv
   params:
     run: 4
+    min_sentences_per_paragraph: 3
 threshold:
-  value: {op: lt, x: 0.1}
+  value: {op: lt, x: 0.38}
   min_units: 3
 requires: null
 realizations:
@@ -93,11 +94,13 @@ notes: >
   Threshold set so that at most 4 % of the human reference corpus (pre-2022 texts, de and en)
   triggers it; separation from AI-generated text is not yet measured. The metric is the
   coefficient of variation (CV) of sentence length pooled over a run of consecutive paragraphs; a
-  standard deviation below about 3 words at 15 to 20 words per sentence corresponds to a CV of
-  0.15 to 0.2. With runs of three paragraphs and CV below 0.2, 16 % (de) and 19 % (en) of the
-  human texts triggered, and only a CV below 0.03 would have kept the rate at 4 %: web pages
-  contain runs of one-line paragraphs (menu labels, product features, hard-wrapped lines) whose
-  few sentences have nearly equal length. A run of four paragraphs with CV below 0.1 meets the
-  limit (3.5 % in both languages). The remaining human triggers are still such one-line runs; the
-  metric has no parameter for a minimum number of sentences per paragraph, which would separate
-  them from prose. The constant number of sentences per paragraph is left to the host model.
+  CV of 0.38 corresponds to a standard deviation of about 6 to 7 words at 17 words per sentence.
+  Paragraphs with fewer than three sentences break a run. Without that rule, runs of one-line
+  paragraphs on web pages (menu labels, product features, hard-wrapped lines) made up the human
+  triggers, and runs of four paragraphs needed a CV below 0.1 to stay within the limit. With at
+  least three sentences per paragraph, runs of four paragraphs and a CV below 0.38, 3.5 % (de) and
+  2.3 % (en) of the 520 human texts trigger; 11.5 % (de) and 7.3 % (en) contain such a run at all.
+  The remaining human triggers are running prose (encyclopedia articles, reviews, news digests).
+  Shorter runs or shorter paragraphs need a stricter limit at the same rate: runs of three
+  paragraphs allow a CV below 0.31 with at least three sentences and below 0.26 with at least two.
+  The constant number of sentences per paragraph is left to the host model.

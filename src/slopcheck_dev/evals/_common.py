@@ -195,11 +195,22 @@ def write_jsonl(path: str | Path, records: Iterable[dict]) -> int:
 class HttpError(Exception):
     """HTTP failure with status code and a short body excerpt (never request headers)."""
 
-    def __init__(self, status: int | None, message: str, body: str = "", url: str = ""):
+    def __init__(
+        self,
+        status: int | None,
+        message: str,
+        body: str = "",
+        url: str = "",
+        *,
+        retry_after: float | None = None,
+        network: bool = False,
+    ):
         super().__init__(f"HTTP {status}: {message}" if status else message)
         self.status = status
         self.body = body[:2000]
         self.url = url
+        self.retry_after = retry_after
+        self.network = network  # no HTTP response (timeout, refused or dropped connection)
 
 
 def _retry_after(headers: Any) -> float | None:
@@ -261,7 +272,11 @@ def http_request(
                 attempt += 1
                 continue
             raise HttpError(
-                status, exc.reason if isinstance(exc.reason, str) else "error", err_body, url
+                status,
+                exc.reason if isinstance(exc.reason, str) else "error",
+                err_body,
+                url,
+                retry_after=_retry_after(exc.headers),
             ) from None
         except (urllib.error.URLError, TimeoutError, ConnectionError) as exc:
             if attempt < retries:
@@ -269,7 +284,7 @@ def http_request(
                 attempt += 1
                 continue
             reason = getattr(exc, "reason", exc)
-            raise HttpError(None, f"network error: {reason}", "", url) from None
+            raise HttpError(None, f"network error: {reason}", "", url, network=True) from None
         except json.JSONDecodeError as exc:
             raise HttpError(None, f"invalid JSON from {url}: {exc}", "", url) from None
 

@@ -181,7 +181,7 @@ Metric registry (`slopcheck.metrics`), all language-aware where noted:
 |--------|-------|
 | `em_dash_density` | em dashes (U+2014, and U+2013 used as dash between spaces) per `params.per_words` words |
 | `curly_quotes` | count of U+201C/U+201D/U+2018/U+2019 outside languages listed in `params.exempt_languages` (de uses „“ legitimately) |
-| `sentence_length_cv` | minimum, over runs of `params.run` consecutive paragraphs, of the coefficient of variation of sentence length |
+| `sentence_length_cv` | minimum, over runs of `params.run` consecutive paragraphs, of the coefficient of variation of sentence length; a paragraph with fewer than `params.min_sentences_per_paragraph` sentences (default 1) breaks a run |
 | `emoji_decoration` | count of emoji or decorative symbols used as line prefix (bullets, headings) |
 | `markdown_emphasis_density` | bold + italic + heading markers per 100 words |
 | `paragraph_start_ratio` | share of paragraphs starting with a term from `realizations.<lang>.terms` |
@@ -429,8 +429,8 @@ The package must satisfy the strictest known runtime (Gemini app, Nov 2026):
 | File | Trigger | Privileges | Purpose |
 |------|---------|------------|---------|
 | `ci.yml` | `pull_request`, `push` to main | read-only, no secrets | lint, tests, validate, fixtures, deterministic empirical gate (dev split), build check, dogfood; final job `ci-gate` |
-| `llm-eval.yml` | `workflow_run` of ci (completed) | secrets, trusted code from main only | LLM gate for changed `llm` patterns; fetches PR files via API at the head SHA, treats them as data; posts commit status `llm-gate` |
-| `automerge.yml` | `pull_request_target` | `contents: write`, `pull-requests: write`; never checks out PR code | enables auto-merge (squash); labels PRs touching protected paths `needs-owner` |
+| `llm-eval.yml` | `workflow_run` of ci (completed with success) | secrets, trusted code from main only | LLM gate for changed `llm` patterns; fetches PR files via API at the head SHA, treats them as data; posts commit status `llm-gate` |
+| `automerge.yml` | `pull_request_target` | `contents: write`, `pull-requests: write`; never checks out PR code | enables auto-merge (squash) only for content-only PRs into `main`; labels PRs touching protected paths `needs-owner` and withholds auto-merge from them |
 | `measure.yml` | monthly schedule, dispatch | secrets, write to `data` | corpus refresh, full holdout measurement, report, issue |
 | `conformance.yml` | monthly schedule, dispatch, push to main touching `skill/` | secrets, write to `data` | skill conformance across model families |
 | `release.yml` | push to main, dispatch, tags `v*` | write to `dist`, releases | build package with current measurements, publish |

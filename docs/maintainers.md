@@ -26,7 +26,8 @@ to Active.
 - Block force pushes.
 - Require linear history.
 - Require a pull request before merging, with 0 required approvals and "Require review from Code
-  Owners" selected. Allowed merge method: squash.
+  Owners" selected. Also select "Dismiss stale pull request approvals when new commits are
+  pushed", so an approval covers only the commits you reviewed. Allowed merge method: squash.
 - Require status checks to pass, with the checks `ci-gate` and `llm-gate`. `ci-gate` is a job of
   the ci workflow; `llm-gate` is a commit status that llm-eval.yml posts, so leave its source on
   "any source". Leave "Require branches to be up to date" off, otherwise every merge forces the
@@ -49,7 +50,9 @@ Settings > Actions > General:
 - "Allow GitHub Actions to create and approve pull requests": leave it off. No workflow creates
   or approves pull requests.
 - Approval for running fork pull request workflows from contributors: "Require approval for
-  first-time contributors who are new to GitHub".
+  first-time contributors". Every passing ci run of a pull request that changes an `llm` pattern
+  starts llm-eval, which spends up to the per-pull-request cap, so the weaker setting lets any
+  account older than a few days drain the monthly budget with repeated pushes.
 
 ## 4. Secret and budget
 
@@ -126,7 +129,40 @@ workflow resolves them. Change a rule there when a model family should be added 
 
 - Dependabot opens weekly pull requests for actions and Python dependencies. They touch protected
   paths and wait for your review.
-- Pull requests labeled `needs-owner` wait for you. Everything else either merges by itself or
-  fails a check that the contributor can see in the run.
+- Pull requests labeled `needs-owner` wait for you. The automerge workflow never enables
+  auto-merge on them (and turns it off when a push adds a protected path), so after your review
+  you merge them yourself. Everything else either merges by itself or fails a check that the
+  contributor can see in the run.
 - Read the monthly measurement issue. It shows which patterns were promoted or demoted, and
   which ones could not be measured.
+
+## 10. Verify after setup
+
+GitHub behaviour the workflows rely on but that cannot be tested outside the repository. Check each
+point once with a test pull request from a fork, or in the run logs.
+
+- Code-owner review with 0 required approvals (section 2): a fork pull request that touches
+  `.github/` must stay blocked until you approve it.
+- Auto-merge off after a fork push: enable auto-merge on a content-only fork pull request, then
+  push a commit that touches `.github/` from the fork. The pull request must get `needs-owner` and
+  show auto-merge disabled. GitHub documents that a push or base-branch change by a user without
+  write access disables auto-merge; the workflow re-checks on both.
+- Other base branches: open a fork pull request against `data` or `dist`. The automerge run must
+  withhold auto-merge, and nobody without write access may merge it. If `gh pr merge --auto`
+  merges at once when a pull request already meets all requirements (as on a branch without
+  rules), only the base-branch check stands between such a pull request and the branch, so
+  consider a ruleset for `data` and `dist` that blocks force pushes and deletion.
+- Budget cap under load: every llm-eval run checks the ledger as it was when the run started, so
+  runs in parallel can together exceed the monthly cap by up to their number times the
+  per-pull-request cap, and the per-pull-request cap applies per run (each push is a new run).
+  Keep the OpenRouter key limit (section 4) at the cap; it is the hard stop.
+- A cancelled llm-eval run (a newer push to the same commit cancels it) still records its spend:
+  `record-spend` runs with `always()`; look for the run's entry in `budget/ledger.json`.
+- workflow_run matches workflows by name: a fork pull request that adds a workflow named `ci`
+  starts llm-eval when that workflow passes. Such a pull request touches `.github/` and cannot
+  merge without you; the cost is budget, which the approval setting in section 3 limits.
+- Pages: the build job has `pages: read` only (configure-pages reads the site settings) and the
+  deploy job `pages: write` and `id-token: write`. Confirm the first pages run deploys.
+- Community health files: GitHub also reads `SUPPORT.md` and `CODE_OF_CONDUCT.md` from `docs/`,
+  which content pull requests may change. ci admits only lowercase file names in `docs/`; confirm
+  that GitHub does not pick up a lowercase `docs/support.md`.

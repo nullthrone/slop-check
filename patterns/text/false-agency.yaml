@@ -79,11 +79,15 @@ sources:
   - source: ananas-ai-pattern-detector
     locator: "'Signature constructions', item 'false agency'"
   - source: arxiv-2610-29162
-    locator: "feature 'inanimate subjects with animate verbs'"
+    locator: "abstract; section 3.1 'Linguistic features of interest', paragraph 'Inanimate subjects'"
     note: >
-      Same mechanism under a linguistic definition, with code-register examples. Known only from
-      three concordant tertiary summaries; the preprint itself was not read. Supporting academic
-      evidence.
+      Same mechanism under a linguistic definition: inanimate subjects used with active verbs that
+      typically take only animate subjects, read as personification that violates a selectional
+      restriction. Compared with human writing, all nine frontier and near-frontier models tested
+      use more of them; the human comparison for this feature rests on student essays. The
+      paper's examples come partly from the code register ("is_file() swallows that and returns
+      False"), which this pattern's legitimate_use exempts when it describes what a program does.
+      Read from arXiv v1. Supporting academic evidence.
 related:
   - {id: inflated-importance, relation: distinct-from}
 notes: >

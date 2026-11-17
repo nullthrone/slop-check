@@ -50,6 +50,33 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+      # Content pull requests merge without review (D10), so the content paths may hold only
+      # regular files of the shapes the tooling reads, at most 256 KiB each. Symlinks are
+      # refused: a pattern file linked into docs/ would let later docs/ edits change the
+      # pattern while no pattern file shows up as changed for the empirical gate.
+      - name: Content paths hold only data files
+        run: |
+          bad=0
+          while IFS= read -r -d '' entry; do
+            path=${entry#*$'\t'}
+            read -r mode object _ <<< "${entry%%$'\t'*}"
+            reason=
+            if [ "$mode" != 100644 ]; then
+              reason="mode $mode (symlink, submodule or executable)"
+            elif ! [[ $path =~ ^(patterns/(text|image|code|audio|video)/[a-z0-9]+(-[a-z0-9]+)*\.yaml|sources/[a-z0-9]+(-[a-z0-9]+)*\.yaml|docs/[a-z0-9]+(-[a-z0-9]+)*\.md)$ ]]; then
+              reason="not patterns/<modality>/<id>.yaml, sources/<id>.yaml or docs/<name>.md"
+            elif [ "$(git cat-file -s "$object")" -gt 262144 ]; then
+              reason="larger than 256 KiB"
+            fi
+            if [ -n "$reason" ]; then
+              printf '%q: %s\n' "$path" "$reason"
+              bad=1
+            fi
+          done < <(git ls-files -s -z -- patterns sources docs)
+          if [ "$bad" -ne 0 ]; then
+            echo "::error title=Content paths::patterns/, sources/ and docs/ hold files they must not hold (listed above)."
+            exit 1
+          fi
       - uses: ./.github/actions/setup
       - run: slopcheck-dev validate
 
@@ -67,7 +94,8 @@ jobs:
 
   # Deterministic empirical gate on the dev split for the text patterns this change touches.
   # Corpus data comes from branch "data"; while it does not exist yet the gate is skipped
-  # with a notice, so the repository works before the first measurement.
+  # with a notice for candidates, so the repository works before the first measurement, and
+  # fails pull requests that change a pattern declaring status core.
   empirical:
     runs-on: ubuntu-latest
     timeout-minutes: 45
@@ -84,11 +112,13 @@ jobs:
           EVENT: ${{ github.event_name }}
           BEFORE: ${{ github.event.before }}
         run: |
+          set -o pipefail  # a failing git diff must not read as "no pattern changed"
           base=HEAD^1  # pull_request: parent 1 of the merge commit is the base branch tip
           if [ "$EVENT" = push ] && [ -n "$BEFORE" ] && [ "$BEFORE" != 0000000000000000000000000000000000000000 ]; then
             if git fetch --no-tags --depth=1 origin "$BEFORE"; then base=$BEFORE; fi
           fi
-          ids=$(git diff --name-only --diff-filter=ACMR "$base" HEAD -- patterns/text/ \
+          # T (type change, e.g. file to symlink) counts as a change too
+          ids=$(git diff --name-only --diff-filter=ACMRT "$base" HEAD -- patterns/text/ \
             | sed -n -E 's#^patterns/text/([a-z0-9]+(-[a-z0-9]+)*)\.yaml$#\1#p' | sort -u | tr '\n' ' ')
           ids=${ids% }
           echo "ids=$ids" >> "$GITHUB_OUTPUT"
@@ -102,6 +132,9 @@ jobs:
       - name: Read branch data
         id: data
         if: steps.changed.outputs.ids != ''
+        env:
+          EVENT: ${{ github.event_name }}
+          IDS: ${{ steps.changed.outputs.ids }}
         run: |
           echo "DATA=$RUNNER_TEMP/data" >> "$GITHUB_ENV"
           DATA=$RUNNER_TEMP/data
@@ -110,6 +143,14 @@ jobs:
             echo "corpus=true" >> "$GITHUB_OUTPUT"
           else
             echo "corpus=false" >> "$GITHUB_OUTPUT"
+            # Candidates carry no weight and may pass unmeasured; a pattern that declares status
+            # core is scored at once, so a pull request must not change it unmeasured.
+            # shellcheck disable=SC2086  # IDS holds kebab-case ids separated by spaces
+            core=$(python -c 'import sys; from slopcheck_dev.patterns import load_yaml; print(" ".join(i for i in sys.argv[1:] if (load_yaml(f"patterns/text/{i}.yaml") or {}).get("status") == "core"))' $IDS)
+            if [ "$EVENT" = pull_request ] && [ -n "$core" ]; then
+              echo "::error title=Empirical gate::Branch data has no corpus yet, so changes to these scored core patterns cannot be measured: $core"
+              exit 1
+            fi
             echo "::notice title=Empirical gate skipped::Branch data has no corpus yet. The first measurement creates it."
           fi
       - uses: ./.github/actions/human-corpus

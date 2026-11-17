@@ -70,6 +70,7 @@ related:
   - {id: triad, relation: overlaps}
 notes: >
   The "whether ... or ..." and "egal ob ... oder ..." regexes cover a variant that German-language
-  guides to AI writing describe; those guides are not registered as sources. Chains of three
-  ("from X to Y to Z") also count toward triad. Endpoint lists are closed vocabularies for
-  precision; unusual endpoints need host-model review.
+  guides to AI writing describe; those guides are not registered as sources. This pattern covers
+  two-endpoint ranges with closed endpoint vocabularies; unusual endpoints need host-model review.
+  A chain of three ("from X to Y to Z") is a triad in the sense of the triad pattern; the triad
+  metric does not count it, so the host model should count it.

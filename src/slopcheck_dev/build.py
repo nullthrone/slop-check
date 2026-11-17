@@ -274,6 +274,10 @@ def detection_words(pattern: dict) -> str:
         values = {"per_words": params.get("per_words", 100), "run": params.get("run", 3)}
         text = f"Measured value ({name}): " + template.format(**values)
         used = tuple(k for k in ("per_words", "run") if "{" + k + "}" in template)
+        min_sentences = params.get("min_sentences_per_paragraph")
+        if name == "sentence_length_cv" and isinstance(min_sentences, int) and min_sentences > 1:
+            text += f" Paragraphs with fewer than {min_sentences} sentences break a run."
+            used += ("min_sentences_per_paragraph",)
         return text + _params_text(params, used)
     if kind == "llm":
         rubric = _clean(detector.get("rubric"))

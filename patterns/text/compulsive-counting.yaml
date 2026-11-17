@@ -60,9 +60,10 @@ prevention: >
   points; let the reader count if it matters.
 notes: >
   tropes-fyi and skill-avoid-ai-writing (registered as derived from it) form one independence
-  cluster under docs/architecture.md section 5.2; popularai-ai-tells-2026 is a second,
-  independent cluster. Counts below three are left out of the detector because "two
-  ways" or "two options" is usually informative. No source gives a quantified threshold.
+  cluster under docs/architecture.md section 5.2; popularai-ai-tells-2026 is a second, independent
+  cluster. Counts below three are left out of the detector because "two ways" or "two options" is
+  usually informative. No source gives a quantified threshold. Demarcation: triad is the three-part
+  figure itself; this pattern announces a count of any size in advance.
 sources:
   - source: maintainer-observation
   - source: tropes-fyi

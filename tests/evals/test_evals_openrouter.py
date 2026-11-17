@@ -106,6 +106,70 @@ def test_failed_call_releases_reservation(tmp_path, fake_http, thresholds):
     assert b._reserved == 0.0 and b.ledger.entries == []
 
 
+def _timeout_then(result):
+    calls = {"n": 0}
+
+    def handler(req):
+        calls["n"] += 1
+        return TimeoutError("timed out") if calls["n"] == 1 else result
+
+    return handler
+
+
+def test_timed_out_attempt_is_booked_before_the_retry(tmp_path, fake_http, thresholds):
+    """A request that timed out may still have been billed upstream. Its reservation is booked
+    as estimated spend, and the retry needs a fresh reservation (caps checked again)."""
+    fake_http.add("/chat/completions", _timeout_then(completion(cost=0.004)))
+    b = B.Budget(B.Ledger(None), B.load_caps(thresholds, "scheduled"), "r")
+    estimate = O.estimate_max_cost(MODEL, MESSAGES, 100)
+    r = client(tmp_path, b).chat(MODEL, MESSAGES, max_tokens=100, role="judges")
+    assert r.usd == pytest.approx(0.004)
+    assert len(fake_http.requests) == 2
+    assert b._reserved == 0.0
+    assert b.status()["run_total_usd"] == pytest.approx(estimate + 0.004)
+    entry = b.ledger.entries[0]
+    assert entry["calls"] == 2 and entry["estimated_usd"] == pytest.approx(estimate)
+
+
+def test_retry_stops_when_the_booked_attempt_exhausts_the_run_cap(tmp_path, fake_http):
+    fake_http.add("/chat/completions", _timeout_then(completion(cost=0.004)))
+    estimate = O.estimate_max_cost(MODEL, MESSAGES, 100)
+    caps = B.Caps(monthly_usd=26, run_usd=estimate * 1.5, call_usd=1.0, run_kind="pull_request")
+    b = B.Budget(B.Ledger(None), caps, "r")
+    with pytest.raises(B.BudgetExceeded):
+        client(tmp_path, b).chat(MODEL, MESSAGES, max_tokens=100)
+    assert len(fake_http.requests) == 1
+    assert b.status()["run_total_usd"] == pytest.approx(estimate)
+    assert b.status()["run_total_usd"] <= caps.run_usd
+
+
+def test_rejected_attempts_are_not_booked(tmp_path, fake_http, thresholds):
+    calls = {"n": 0}
+
+    def flaky(req):
+        calls["n"] += 1
+        return http_error(req.full_url, 429) if calls["n"] == 1 else completion(cost=0.002)
+
+    fake_http.add("/chat/completions", flaky)
+    b = B.Budget(B.Ledger(None), B.load_caps(thresholds, "scheduled"), "r")
+    client(tmp_path, b).chat(MODEL, MESSAGES, max_tokens=100)
+    assert calls["n"] == 2
+    assert b.status()["run_total_usd"] == pytest.approx(0.002)
+    assert b._reserved == 0.0
+
+
+def test_unusable_response_with_usage_is_still_booked(tmp_path, fake_http, thresholds):
+    fake_http.add(
+        "/chat/completions",
+        {"choices": [], "usage": {"prompt_tokens": 10, "completion_tokens": 900, "cost": 0.003}},
+    )
+    b = B.Budget(B.Ledger(None), B.load_caps(thresholds, "scheduled"), "r")
+    with pytest.raises(O.OpenRouterError, match="no choices"):
+        client(tmp_path, b).chat(MODEL, MESSAGES, max_tokens=1000)
+    assert b._reserved == 0.0
+    assert b.status()["run_total_usd"] == pytest.approx(0.003)
+
+
 def test_retries_with_backoff(tmp_path, fake_http):
     calls = {"n": 0}
 

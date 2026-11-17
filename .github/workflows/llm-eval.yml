@@ -1,4 +1,8 @@
-# LLM gate for kind: llm patterns. Triggered when the ci workflow completes for a pull request.
+# LLM gate for kind: llm patterns. Triggered when the ci workflow completes for a pull request;
+# runs only when ci passed, because a pull request with a failing ci cannot merge and judging it
+# would only spend budget. Note that workflow_run matches by workflow name, so a fork pull request
+# that adds or edits a workflow named "ci" can trigger this run (it still cannot merge such a
+# change without code-owner review; the cost is budget, which the caps bound).
 # Runs only trusted code: the checkout is the default branch, never the pull request head.
 # Pull request files are fetched through the REST API at the head commit and treated as data
 # (.github/scripts/llm_gate.py). Values from github.event.workflow_run reach shell steps only
@@ -21,8 +25,7 @@ jobs:
     if: >-
       github.repository == 'nullthrone/slop-check' &&
       github.event.workflow_run.event == 'pull_request' &&
-      github.event.workflow_run.conclusion != 'cancelled' &&
-      github.event.workflow_run.conclusion != 'skipped'
+      github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 60
     permissions:

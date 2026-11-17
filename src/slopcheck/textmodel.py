@@ -1,8 +1,8 @@
 """Text model: paragraph units, sentences, words and language (architecture section 4.2).
 
-All offsets refer to the original text. Fenced code blocks are replaced by spaces in an
-analysis copy (``TextModel.masked``) of the same length, so every offset found in the
-masked copy is also valid in the original text.
+All offsets refer to the original text. YAML front matter and fenced code blocks are
+replaced by spaces in an analysis copy (``TextModel.masked``) of the same length, so every
+offset found in the masked copy is also valid in the original text.
 
 Paragraph units:
 
@@ -25,9 +25,14 @@ WORD_RE = re.compile(r"[^\W_]+(?:['’][^\W_]+)*")
 
 PROSE_KINDS = ("paragraph", "list_item")
 
-_FENCE_OPEN_RE = re.compile(r"[ ]{0,3}(`{3,}|~{3,})")
-_FENCE_CLOSE_RE = re.compile(r"[ ]{0,3}(`{3,}|~{3,})[ \t\r]*$")
+# Fences may be indented further than CommonMark's three spaces: inside list items (nested
+# lists in particular) a fence is indented by the item's content offset. An indented code
+# block whose content is a fence line is code as well, so masking it loses no prose.
+_FENCE_OPEN_RE = re.compile(r"[ \t]*(`{3,}|~{3,})")
+_FENCE_CLOSE_RE = re.compile(r"[ \t]*(`{3,}|~{3,})[ \t\r]*$")
+_FRONT_MATTER_MAX_LINES = 100
 _QUOTE_PREFIX_RE = re.compile(r"[ \t]*(?:>[ \t]?)+")
+_QUOTE_MARKERS_RE = re.compile(r"(?:>[ \t]*)+")
 _HEADING_RE = re.compile(r"[ ]{0,3}#{1,6}(?:[ \t]+|$)")
 _LIST_RE = re.compile(r"[ \t]*(?:[-*+•◦▪‣]|\d{1,9}[.)])[ \t]+")
 _TABLE_RE = re.compile(r"[ \t]*\|")
@@ -430,18 +435,39 @@ def _line_spans(text: str) -> list[tuple[int, int]]:
     return spans
 
 
-def mask_code(text: str) -> str:
-    """Replace fenced code blocks (fence lines included) by spaces, keeping newlines.
+def _front_matter_end(text: str, spans: list[tuple[int, int]]) -> int | None:
+    """Index of the line that closes YAML front matter, or None.
 
-    An unclosed fence runs to the end of the text, as in CommonMark.
+    Front matter starts with a ``---`` line at the very start of the text and ends at the next
+    ``---`` line within the first 100 lines.
     """
+    if not spans or text[spans[0][0] : spans[0][1]].rstrip("\r") != "---":
+        return None
+    for i in range(1, min(len(spans), _FRONT_MATTER_MAX_LINES)):
+        if text[spans[i][0] : spans[i][1]].rstrip() == "---":
+            return i
+    return None
+
+
+def mask_code(text: str) -> str:
+    """Replace YAML front matter and fenced code blocks (fence lines included) by spaces,
+    keeping newlines.
+
+    An unclosed fence runs to the end of the text, as in CommonMark. A backtick line whose
+    info string contains a backtick (```` ```code``` ````) is inline code, not a fence.
+    """
+    spans = _line_spans(text)
     ranges = []
+    front_end = _front_matter_end(text, spans)
+    if front_end is not None:
+        ranges.extend(spans[: front_end + 1])
+        spans = spans[front_end + 1 :]
     fence: tuple[str, int] | None = None
-    for start, end in _line_spans(text):
+    for start, end in spans:
         line = text[start:end]
         if fence is None:
             m = _FENCE_OPEN_RE.match(line)
-            if m:
+            if m and not (m.group(1)[0] == "`" and "`" in line[m.end() :]):
                 fence = (m.group(1)[0], len(m.group(1)))
                 ranges.append((start, end))
             continue
@@ -557,7 +583,8 @@ def split_sentences(text: str, start: int, end: int, lang: str) -> list[tuple[in
 
     A sentence ends at ``.``, ``!``, ``?`` or ``…`` (optionally followed by closing quotes
     or brackets) when whitespace and an uppercase letter, digit or opening quote follow,
-    unless the period closes an abbreviation of ``lang`` (both lists for ``und``).
+    unless the period closes an abbreviation of ``lang`` (both lists for ``und``). After a
+    line break, blockquote markers (``>``) are skipped before that check.
     """
     spans = []
     cur = start
@@ -565,6 +592,10 @@ def split_sentences(text: str, start: int, end: int, lang: str) -> list[tuple[in
         j = m.end()
         while j < end and text[j].isspace():
             j += 1
+        if "\n" in text[m.end() : j]:
+            q = _QUOTE_MARKERS_RE.match(text, j, end)
+            if q:
+                j = q.end()
         if j >= end:
             break
         nxt = text[j]

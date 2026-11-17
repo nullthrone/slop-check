@@ -190,27 +190,37 @@ def sentence_length_cv(inp: MetricInput) -> MetricResult:
     over the sentences of the run.
 
     params: ``run`` (default 3), ``unit_kinds`` (default ["paragraph"]; headings, list
-    items and table rows are skipped). Value None with fewer than ``run`` paragraphs.
-    Evidence: the paragraphs of the run with the lowest value.
+    items and table rows are skipped), ``min_sentences_per_paragraph`` (default 1): a
+    paragraph with fewer sentences breaks a run, so one-line units (menu labels, list-like
+    lines, hard-wrapped lines) cannot form a uniform run. Value None without a run of ``run``
+    qualifying paragraphs. Evidence: the paragraphs of the run with the lowest value.
     """
     run = int(inp.params.get("run") or 3)
+    min_sentences = int(inp.params.get("min_sentences_per_paragraph") or 1)
     kinds = _kinds(inp.params, ("paragraph",))
     paragraphs = [u for u in inp.units if u.kind in kinds]
     units = _sentences(paragraphs, kinds)
-    best: tuple[float, int] | None = None
-    for i in range(len(paragraphs) - run + 1):
-        lengths = [s.words for u in paragraphs[i : i + run] for s in u.sentences]
-        if len(lengths) < 2:
-            continue
-        mean = sum(lengths) / len(lengths)
-        cv = statistics.pstdev(lengths) / mean
-        if best is None or cv < best[0]:
-            best = (cv, i)
+    # consecutive qualifying paragraphs; a paragraph with too few sentences starts a new segment
+    segments: list[list[Unit]] = [[]]
+    for u in paragraphs:
+        if len(u.sentences) < min_sentences:
+            segments.append([])
+        else:
+            segments[-1].append(u)
+    best: tuple[float, list[Unit]] | None = None
+    for segment in segments:
+        for i in range(len(segment) - run + 1):
+            window = segment[i : i + run]
+            lengths = [s.words for u in window for s in u.sentences]
+            if len(lengths) < 2:
+                continue
+            mean = sum(lengths) / len(lengths)
+            cv = statistics.pstdev(lengths) / mean
+            if best is None or cv < best[0]:
+                best = (cv, window)
     if best is None:
         return MetricResult(None, [], units)
-    hits = [
-        h for u in paragraphs[best[1] : best[1] + run] if (h := _span_hit(inp.model, u.body_start, u.end))
-    ]
+    hits = [h for u in best[1] if (h := _span_hit(inp.model, u.body_start, u.end))]
     return MetricResult(best[0], hits, units)
 
 

@@ -1,13 +1,19 @@
-# Enables auto-merge (squash) for every non-draft pull request and labels pull requests that
-# touch paths outside the content area with "needs-owner". Branch protection decides the rest:
-# ci-gate, llm-gate and, for protected paths, a code-owner review (.github/CODEOWNERS).
+# Enables auto-merge (squash) for non-draft pull requests into the default branch that touch only
+# the content area, and labels every other pull request into it "needs-owner". Branch protection
+# decides the rest: ci-gate, llm-gate and, for protected paths, a code-owner review
+# (.github/CODEOWNERS).
+# A pull request that touches a protected path never gets auto-merge from this workflow, and loses
+# it when a later push adds such a path: otherwise a fork could push new commits after an owner's
+# approval (GitHub turns auto-merge off on such a push, and this workflow would turn it back on),
+# and the gate would rest on the code-owner rule alone. The owner merges those by hand.
+# Pull requests into any other branch (data, dist, feature branches) never get auto-merge.
 # pull_request_target runs in the context of the base repository. This workflow never checks
 # out or runs pull request code; it only calls the REST API with the pull request number.
 name: automerge
 
 on:
   pull_request_target:
-    types: [opened, reopened, synchronize, ready_for_review]
+    types: [opened, reopened, synchronize, ready_for_review, edited]
 
 permissions: {}
 
@@ -17,7 +23,10 @@ concurrency:
 
 jobs:
   automerge:
-    if: github.repository == 'nullthrone/slop-check'
+    # "edited" matters only when the base branch changed (title or body edits are ignored)
+    if: >-
+      github.repository == 'nullthrone/slop-check' &&
+      (github.event.action != 'edited' || github.event.changes.base != null)
     runs-on: ubuntu-latest
     timeout-minutes: 5
     permissions:
@@ -29,11 +38,17 @@ jobs:
       PR: ${{ github.event.pull_request.number }}
     steps:
       - name: Label pull requests that touch protected paths
+        id: classify
+        if: github.event.pull_request.base.ref == github.event.repository.default_branch
+        env:
+          CHANGED_FILES: ${{ github.event.pull_request.changed_files }}
         run: |
           # Content paths merge on green checks: patterns/, sources/ and docs/ except the
           # documents that define the gate. Everything else needs the code owner.
           files=$(gh api --paginate "repos/$GH_REPO/pulls/$PR/files" --jq '.[] | .filename, (.previous_filename // empty)')
           protected=0
+          # The files endpoint lists at most 3000 files; files beyond that cannot be checked.
+          if [ "${CHANGED_FILES:-0}" -ge 3000 ]; then protected=$CHANGED_FILES; fi
           while IFS= read -r f; do
             [ -z "$f" ] && continue
             case "$f" in
@@ -42,6 +57,7 @@ jobs:
               *) protected=$((protected + 1)) ;;
             esac
           done <<< "$files"
+          echo "protected=$protected" >> "$GITHUB_OUTPUT"
           if [ "$protected" -gt 0 ]; then
             echo "$protected changed file(s) outside the content paths; adding label needs-owner"
             gh api -X POST "repos/$GH_REPO/labels" -f name=needs-owner -f color=d93f0b \
@@ -53,5 +69,12 @@ jobs:
           fi
 
       - name: Enable auto-merge
-        if: github.event.pull_request.draft == false
+        if: steps.classify.outputs.protected == '0' && github.event.pull_request.draft == false
         run: gh pr merge "$PR" --auto --squash
+
+      # Also runs when the classify step was skipped (base is not the default branch).
+      - name: Withhold auto-merge
+        if: steps.classify.outputs.protected != '0'
+        run: |
+          echo "Not a content-only pull request into the default branch; auto-merge stays off."
+          gh pr merge "$PR" --disable-auto > /dev/null 2>&1 || true

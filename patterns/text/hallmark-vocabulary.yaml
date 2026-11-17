@@ -117,9 +117,10 @@ realizations:
 legitimate_use: >
   Literal and technical senses are fine: "landscape" in geography or as screen orientation,
   "underscore" as the character, "harness" as equipment or a test harness, "robust" as a statistical
-  term, "sauber" meaning physically clean, "präzise" for a measurement. Isolated occurrences below
-  the threshold are never reported. Judge each hit by whether a more specific verb or noun would say
-  what actually happens.
+  term, "sauber" meaning physically clean, "präzise" for a measurement. Below the threshold, hits
+  never count as a finding. When the text already shows a strong accumulation of other findings,
+  they may be listed as a supplementary note without weight. Judge each hit by whether a more
+  specific verb or noun would say what actually happens.
 fix: >
   Replace each word with a verb or noun that names the actual process or object ("delve into the
   data" becomes "compare the March and April logs").
@@ -130,16 +131,18 @@ prevention: >
   sauber, umfassend, zukunftssicher, robust, gezielt, entscheidend, prägend). Use the specific word
   for what happens.
 notes: >
-  Isolated sub-threshold hits are not reported. Vaguer verbs that newer models are said to prefer
-  (quietly, shape, land, earn, hold, pull, signal, compound, real, actually, built different) are
-  not in the list because the Graphite study finds new vocabulary to be model- and
-  version-specific, with no convergence across models. Pebblous reports that a composite of eight
-  classic LLM words now falls below the human level for three newer models, so hit rates on recent
-  models are expected to decline. The multi-word terms ("quiet confidence" and similar) encode the
-  rule that "quiet" counts only as a generic intensifier; they assume the lexicon detector matches
-  phrases as whole words. The threshold is an absolute count independent of text length, so long
-  documents reach it more easily; a scan of about two million words of pre-2022 technical
-  documentation found mostly technical senses (underscore, landscape orientation) in long files.
+  Below the threshold, hits never count as a finding. When the text already shows a strong
+  accumulation of other findings, they may be listed as a supplementary note without weight. Vaguer
+  verbs that newer models are said to prefer (quietly, shape, land, earn, hold, pull, signal,
+  compound, real, actually, built different) are not in the list because the Graphite study finds
+  new vocabulary to be model- and version-specific, with no convergence across models. Pebblous
+  reports that a composite of eight classic LLM words now falls below the human level for three
+  newer models, so hit rates on recent models are expected to decline. The multi-word terms ("quiet
+  confidence" and similar) encode the rule that "quiet" counts only as a generic intensifier; they
+  assume the lexicon detector matches phrases as whole words. The threshold is an absolute count
+  independent of text length, so long documents reach it more easily; a scan of about two million
+  words of pre-2022 technical documentation found mostly technical senses (underscore, landscape
+  orientation) in long files.
 sources:
   - source: maintainer-observation
   - source: kobak-excess-vocabulary

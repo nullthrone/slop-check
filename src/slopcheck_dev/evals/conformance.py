@@ -406,8 +406,13 @@ def _run_model(
             log(f"{entry['id']}: unavailable ({exc})")
             return None
         except OpenRouterError as exc:
+            # nothing was found: the expected patterns count as missed, not as found
             return CaseResult(
-                id=case["id"], mode=case["mode"], language=case["language"], error=str(exc)[:300]
+                id=case["id"],
+                mode=case["mode"],
+                language=case["language"],
+                error=str(exc)[:300],
+                missing=list(case["must_find"]),
             )
         scored = score_case(case, res.text or "")
         scored.usd = res.usd

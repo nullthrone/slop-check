@@ -4,6 +4,12 @@ Features: retries with backoff, an on-disk response cache keyed by sha256 of
 (model, messages, params), usage accounting (OpenRouter ``usage.cost``, else token counts
 times lockfile pricing) and hard budget checks through :mod:`budget` before every paid call.
 
+Every attempt of a call (the first request and each retry) holds its own budget reservation,
+so the caps are checked again before a retry. An attempt whose outcome is unknown (timeout,
+dropped connection, gateway timeout) may have been billed upstream: its reservation is booked
+as estimated spend instead of being released. A response that arrives but cannot be used is
+booked with the usage it reports.
+
 The API key is read from ``OPENROUTER_API_KEY``. It is kept in a private attribute, never
 printed, never written to the cache and scrubbed from error messages.
 
@@ -17,19 +23,30 @@ from __future__ import annotations
 import json
 import math
 import os
+import random
 import time
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, NoReturn
 
-from ._common import HttpError, atomic_write_text, canonical_json, http_request, sha256_text
+from ._common import (
+    RETRY_STATUS,
+    HttpError,
+    atomic_write_text,
+    canonical_json,
+    http_request,
+    sha256_text,
+)
 from .budget import Budget
 
 API_BASE = "https://openrouter.ai/api/v1"
 ENV_KEY = "OPENROUTER_API_KEY"
 CHARS_PER_TOKEN_ESTIMATE = 3.0  # conservative (real ratio is ~4 for en, ~3.3 for de)
 PER_MESSAGE_OVERHEAD_TOKENS = 8
+# HTTP statuses after which the upstream model may have run (and billed) although no usable
+# response arrived: request and gateway timeouts.
+MAYBE_BILLED_STATUS = frozenset({408, 504, 520, 524})
 # Reasoning effort used when a model reasons by default; the lowest level the model accepts wins.
 EFFORT_ORDER = ("none", "minimal", "low", "medium", "high", "xhigh", "max")
 
@@ -283,57 +300,106 @@ class OpenRouterClient:
         if not self.has_key:
             raise MissingApiKeyError(f"{ENV_KEY} is not set")
 
-        reserved = 0.0
+        estimate = 0.0
         if self.budget is not None:
-            estimate = estimate_max_cost(model, messages, max_tokens)
-            if estimate is None:
+            cost = estimate_max_cost(model, messages, max_tokens)
+            if cost is None:
                 raise OpenRouterError(f"no pricing for {mid}; cannot enforce the budget")
-            reserved = self.budget.reserve(estimate)
+            estimate = cost
+        book = {"role": role, "model": mid, "canonical_slug": slug}
+        attempt = 0
+        while True:
+            reserved = self.budget.reserve(estimate) if self.budget is not None else 0.0
+            try:
+                response = self._send("/chat/completions", body)
+            except HttpError as exc:
+                retry = exc.network if exc.status is None else exc.status in RETRY_STATUS
+                maybe_billed = exc.status is None or exc.status in MAYBE_BILLED_STATUS
+                self._book_failure(reserved, reserved if maybe_billed else None, **book)
+                if retry and attempt < self.max_retries:
+                    wait = exc.retry_after if exc.retry_after is not None else self.backoff * (2**attempt)
+                    self.sleep(min(wait, 60.0) + random.random() * 0.25)  # noqa: S311 - jitter only
+                    attempt += 1
+                    continue
+                self._raise_http(exc)
+            except BaseException:
+                self._book_failure(reserved, None, **book)
+                raise
+            break
         try:
-            response = self._post("/chat/completions", body)
+            self._check_body(response)
             result = self._result(response, mid, slug, pricing, cached=False)
         except BaseException:
-            if self.budget is not None:
-                self.budget.release(reserved)
+            # the request went through: book whatever usage the response reports
+            usage = response.get("usage") if isinstance(response, dict) else None
+            usd = cost_from_usage(usage, pricing) if isinstance(usage, dict) and usage else None
+            self._book_failure(
+                reserved, None if usd is None else usd[0], estimated=bool(usd and usd[1]), **book
+            )
             raise
         if self.budget is not None:
             self.budget.settle(
                 reserved,
                 result.usd,
-                role=role,
-                model=mid,
                 prompt_tokens=result.prompt_tokens,
                 completion_tokens=result.completion_tokens,
-                canonical_slug=slug,
                 estimated=result.estimated,
+                **book,
             )
         self.calls += 1
         self._cache_put(key, slug or mid, response)
         return result
 
-    def _post(self, path: str, body: dict) -> dict:
-        headers = {"Authorization": f"Bearer {self.__key}"}
-        try:
-            response = http_request(
-                "POST",
-                self.base_url + path,
-                body=body,
-                headers=headers,
-                timeout=self.timeout,
-                retries=self.max_retries,
-                backoff=self.backoff,
-                sleep=self.sleep,
+    def _book_failure(
+        self,
+        reserved: float,
+        usd: float | None,
+        *,
+        role: str,
+        model: str,
+        canonical_slug: str | None,
+        estimated: bool = True,
+    ) -> None:
+        """Close a reservation of a failed attempt: book ``usd`` (possibly billed) or release it."""
+        if self.budget is None:
+            return
+        if usd is None:
+            self.budget.release(reserved)
+        else:
+            self.budget.settle(
+                reserved, usd, role=role, model=model, canonical_slug=canonical_slug, estimated=estimated
             )
-        except HttpError as exc:
-            message = exc.body or str(exc)
-            code = None
-            try:
-                err = json.loads(exc.body).get("error") or {}
-                message = str(err.get("message") or message)
-                code = err.get("code")
-            except (ValueError, AttributeError):
-                pass
-            self._raise_for(exc.status, f"OpenRouter {exc.status}: {message}"[:600], code)
+
+    def _send(self, path: str, body: dict) -> Any:
+        """One POST without retries (retries and their budget checks are done by :meth:`chat`).
+
+        Raises :class:`HttpError`; :meth:`_raise_http` turns it into an :class:`OpenRouterError`
+        with the key scrubbed from the message.
+        """
+        headers = {"Authorization": f"Bearer {self.__key}"}
+        return http_request(
+            "POST",
+            self.base_url + path,
+            body=body,
+            headers=headers,
+            timeout=self.timeout,
+            retries=0,
+            backoff=self.backoff,
+            sleep=self.sleep,
+        )
+
+    def _raise_http(self, exc: HttpError) -> NoReturn:
+        message = exc.body or str(exc)
+        code = None
+        try:
+            err = json.loads(exc.body).get("error") or {}
+            message = str(err.get("message") or message)
+            code = err.get("code")
+        except (ValueError, AttributeError):
+            pass
+        self._raise_for(exc.status, f"OpenRouter {exc.status}: {message}"[:600], code)
+
+    def _check_body(self, response: Any) -> None:
         if not isinstance(response, dict):
             raise OpenRouterError("unexpected response shape from OpenRouter")
         if response.get("error"):
@@ -345,7 +411,6 @@ class OpenRouterClient:
             code = err.get("code")
             status = code if isinstance(code, int) else None
             self._raise_for(status, f"OpenRouter error: {err.get('message', 'unknown')}"[:600], code)
-        return response
 
     def _result(
         self, response: dict, mid: str, slug: str | None, pricing: dict, *, cached: bool

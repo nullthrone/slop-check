@@ -63,10 +63,11 @@ sources:
     note: >
       Threshold: more than 20 em dashes per 1,000 words in short modern prose is conspicuous, human
       baseline 3.7 to 10 per 1,000. The em dash article measures a human baseline of 4.76 per 1,000
-      words (702,939 words of public-domain literature, single texts 0.00 to 10.13) against a
-      controlled model study: GPT-4.1 10.62, Claude Opus 4.6 9.09, DeepSeek V3 6.95, Gemini 2.5 Pro
-      3.53 (indistinguishable from human), Llama 3.1 8B 0.00. Contradicts the Economist ranking for
-      GPT; calls the dash "a weak signal, not a fingerprint".
+      words (702,939 words of public-domain literature, single texts 0.00 to 10.13) against E. M.
+      Freeburg's controlled model study (arxiv-2603-27006, credited by the article): GPT-4.1
+      10.62, Claude Opus 4.6 9.09, DeepSeek V3 6.95, Gemini 2.5 Pro 3.53 (indistinguishable from
+      human), Llama 3.1 8B 0.00. Contradicts the Economist ranking for GPT; calls the dash "a weak
+      signal, not a fingerprint".
   - source: graphite-ai-writing-study
     note: >
       Claude Opus 5.5 uses 0.015 em dashes per 1,000 words against 2.92 for Opus 5 (minus 99 %).

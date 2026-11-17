@@ -686,3 +686,13 @@ def test_check_package_requires_skill_md(tmp_path):
     (pkg / "SKILL.md").unlink()
     errors, _ = check_package(pkg)
     assert errors == ["SKILL.md missing in the package root"]
+
+
+def test_detection_words_describe_min_sentences_per_paragraph():
+    detector = {"kind": "metric", "metric": "sentence_length_cv", "params": {"run": 4}}
+    plain = build_mod.detection_words({"detector": detector})
+    assert "any run of 4 consecutive paragraphs" in plain and "break a run" not in plain
+    detector["params"]["min_sentences_per_paragraph"] = 2
+    text = build_mod.detection_words({"detector": detector})
+    assert "Paragraphs with fewer than 2 sentences break a run." in text
+    assert "Parameters" not in text

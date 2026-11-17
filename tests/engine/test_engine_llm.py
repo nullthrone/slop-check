@@ -116,6 +116,14 @@ def test_locate_quotes_ignores_code_blocks():
     assert locate_quotes(model, ["secret code"]) == []
 
 
+def test_locate_quotes_skips_an_occurrence_inside_code():
+    text = "```\nlet us delve deeper\n```\n\nIn this essay we delve deeper."
+    model = build_text_model(text, "en")
+    hits = locate_quotes(model, ["delve deeper"])
+    assert [(h["quote"], h["paragraph"]) for h in hits] == [("delve deeper", 1)]
+    assert hits[0]["start"] == text.rindex("delve deeper")
+
+
 # --- client helpers ------------------------------------------------------------------
 
 
