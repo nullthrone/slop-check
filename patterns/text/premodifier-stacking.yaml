@@ -9,7 +9,6 @@ summary: >
   makes the reader unpack them.
 category: lexical
 status: candidate
-legacy_id: T2.24
 detector:
   kind: metric
   position: any
@@ -76,9 +75,3 @@ related:
   - {id: nominalization-density, relation: distinct-from}
   - {id: stacked-nouns, relation: distinct-from}
   - {id: function-word-shift, relation: overlaps}
-history:
-  - {date: 2026-09-20, change: "Attributive-adjective stacking recorded as a single-source observation (better-ai-writing-skills fork)."}
-  - {date: 2026-11-01, change: "Opened as legacy candidate T2.24 with arXiv:2609.23090 (function-word decline) as second source."}
-  - {date: 2026-11-08, change: "arXiv:2605.06030 (nominal head + preceding adjunct) added as third source."}
-  - {date: 2026-11-15, change: "arXiv:2610.29162 checked and not counted (noun-noun compounds, see stacked-nouns); a TMLR 2026 study on adjectives as a prompt-steering mechanism rejected as unrelated."}
-  - {date: 2026-11-17, change: "Migrated to slop-check repository as candidate premodifier-stacking; metric threshold chosen at migration."}

@@ -76,8 +76,3 @@ related:
   - {id: compulsive-counting, relation: overlaps}
   - {id: transition-stacking, relation: overlaps}
   - {id: bullet-bold-lead, relation: distinct-from}
-history:
-  - {date: 2026-09-06, change: "Recorded in the legacy knowledge base as a single-source observation (tropes.fyi, status new): lists disguised as prose through 'The first... The second...' constructions."}
-  - {date: 2026-09-13, change: "tropes.fyi status changed from new to rising; directory-internal change, not counted as confirmation."}
-  - {date: 2026-11-15, change: "Still single-source."}
-  - {date: 2026-11-17, change: "Migrated to slop-check repository as observation excessive-enumeration."}

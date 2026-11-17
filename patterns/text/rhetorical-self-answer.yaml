@@ -7,7 +7,6 @@ summary: >
   information; it stages suspense for a point that a plain sentence would state faster.
 category: rhetoric
 status: candidate
-legacy_id: T2.12
 detector:
   kind: regex
   position: any
@@ -98,11 +97,3 @@ sources:
 related:
   - {id: payoff-announcement, relation: distinct-from}
   - {id: fragment-pathos, relation: distinct-from}
-history:
-  - {date: 2026-08-02, change: "Opened as legacy candidate T2.12 (tropes.fyi, lizontheweb.com); provisional threshold proposal: at least 2 occurrences per text."}
-  - {date: 2026-08-23, change: "fireprompts.io ('Fake rhetorical questions') recorded as an unconfirmed additional find."}
-  - {date: 2026-08-30, change: "tropes.fyi restructured into 49 entries with status labels; entry now 'The X? A Y.', status fading."}
-  - {date: 2026-09-20, change: "ignorance.ai ('Mid-Sentence Questions') added as fourth source and avoid-ai-writing ('Self-QA volleys') as a weaker partial match; not promoted because of the fading trend label."}
-  - {date: 2026-09-27, change: "ai-pattern-detector ('self-answered questions') added; four precise sources, still deliberately not promoted."}
-  - {date: 2026-11-15, change: "No new source; status unchanged."}
-  - {date: 2026-11-17, change: "Migrated to slop-check repository as candidate rhetorical-self-answer."}

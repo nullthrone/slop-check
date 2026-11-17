@@ -6,9 +6,9 @@ published: 2025-02-17
 accessed: 2026-11-17
 type: peer-reviewed
 notes: >
-  The legacy knowledge base knew this study only through skill-better-ai-writing ("Sun et al.,
-  ICML 2025", 97.1 % accuracy). Identified at migration by venue, first-author surname and that
-  figure; arXiv v1 dated 2025-02-17, published at ICML 2025. Five-way classification of ChatGPT,
-  Claude, Grok, Gemini and DeepSeek output reaches 97.1 % on held-out data; the first token alone
-  gives roughly 50 % (chance 20 %). The paper reports that ChatGPT begins responses with
-  "certainly" and "below is" and traces the idiosyncrasies to word-level distributions.
+  skill-better-ai-writing cites it as "Sun et al., ICML 2025" with 97.1 % accuracy; identified by
+  venue, first-author surname and that figure. arXiv v1 dated 2025-02-17, published at ICML 2025.
+  Five-way classification of ChatGPT, Claude, Grok, Gemini and DeepSeek output reaches 97.1 % on
+  held-out data; the first token alone gives roughly 50 % (chance 20 %). The paper reports that
+  ChatGPT begins responses with "certainly" and "below is" and traces the idiosyncrasies to
+  word-level distributions.

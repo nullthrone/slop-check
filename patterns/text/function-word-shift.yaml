@@ -62,7 +62,3 @@ sources:
       Corroborates "across" only; same publisher cluster as arxiv-2609-23090. Read on 2026-11-17.
 related:
   - {id: premodifier-stacking, relation: overlaps}
-history:
-  - {date: 2026-11-01, change: "Recorded in the legacy knowledge base as a single-source observation (arXiv:2609.23090)."}
-  - {date: 2026-11-15, change: "Still single-source; no second source with example sentences."}
-  - {date: 2026-11-17, change: "Migrated to slop-check repository as observation function-word-shift."}

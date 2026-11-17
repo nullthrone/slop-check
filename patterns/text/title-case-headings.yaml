@@ -89,9 +89,3 @@ sources:
       choices". Does not say whether headings or titles are meant. No data.
 related:
   - {id: where-what-why-headers, relation: overlaps}
-history:
-  - {date: 2026-08-30, change: "Recorded in the legacy knowledge base as a single-source observation (tropes.fyi), with weak thematic matches at fireprompts.io and in a 2025 essay."}
-  - {date: 2026-09-06, change: "tropes.fyi status now consistent; no second source."}
-  - {date: 2026-09-20, change: "Appears as a single item in several overview articles without own specificity; not counted as a second source."}
-  - {date: 2026-11-15, change: "No second source found; still an observation."}
-  - {date: 2026-11-17, change: "Migrated to slop-check repository as observation title-case-headings."}

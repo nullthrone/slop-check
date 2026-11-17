@@ -53,5 +53,3 @@ sources:
 related:
   - {id: quality-tag-prompting, relation: overlaps}
   - {id: dysfunctional-objects, relation: distinct-from}
-history:
-  - {date: 2026-11-17, change: "Added to the v1 image catalog as candidate."}

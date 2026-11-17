@@ -5,7 +5,8 @@ published: 2026-10-05
 accessed: 2026-10-11
 type: blog
 derived_from: [graphite-ai-writing-study]
-access_note: "Published on blog.pebblous.ai; article URL not verified at migration."
+access_note: >
+  Published on blog.pebblous.ai; article URL not verified.
 notes: >
   Secondary analysis of the Graphite data by the publisher's data communication team; not an
   independent primary source. Adds a wider model table for em dashes (human baseline 3.14 per 1,000

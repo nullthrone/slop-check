@@ -90,7 +90,3 @@ sources:
 related:
   - {id: markdown-emphasis-inflation, relation: overlaps}
   - {id: emoji-decoration, relation: distinct-from}
-history:
-  - {date: 2026-09-13, change: "Recorded in the legacy knowledge base as a single-source observation (vrid.ai); possibly a rendering indicator more than a style pattern."}
-  - {date: 2026-11-15, change: "Still single-source; kept separate from the markdown-bleed aspect of the new candidate T2.26."}
-  - {date: 2026-11-17, change: "Migrated to slop-check repository as observation format-bleed."}

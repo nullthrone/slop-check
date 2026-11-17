@@ -8,7 +8,6 @@ summary: >
   my own role here"). The reader gets the scaffolding along with the building.
 category: composition
 status: candidate
-legacy_id: T2.20
 detector:
   kind: regex
   position: any
@@ -114,11 +113,3 @@ related:
   - {id: payoff-announcement, relation: distinct-from}
   - {id: announce-then-answer, relation: overlaps}
   - {id: premise-stacking, relation: overlaps}
-history:
-  - {date: 2026-08-30, change: "Recorded as a single-source observation (tropes.fyi, status new); distinguished from T1.3 and T1.6."}
-  - {date: 2026-09-06, change: "No second source; the related 'Interpretive metadiscourse' entry of no-ai-slop (pointing the reader at the importance of a passage) recorded and not counted."}
-  - {date: 2026-09-20, change: "Opened as legacy candidate T2.20 with avoid-ai-writing ('Reasoning Chain Artifacts') as second source."}
-  - {date: 2026-10-04, change: "Searches return only chain-of-thought security research; not counted."}
-  - {date: 2026-10-11, change: "Two arXiv preprints on chain-of-thought leakage and illegible reasoning checked and not counted (different topic)."}
-  - {date: 2026-11-15, change: "tropes.fyi entry page re-read; no new information and no new source."}
-  - {date: 2026-11-17, change: "Migrated to slop-check repository as observation reasoning-leak (both sources form one independence cluster)."}

@@ -7,7 +7,6 @@ summary: >
   as a badge; the reader learns nothing that could be checked.
 category: attribution
 status: candidate
-legacy_id: T2.19
 detector:
   kind: regex
   position: any
@@ -88,11 +87,3 @@ sources:
       guide, so the two are one lineage.
 related:
   - {id: vague-attribution, relation: distinct-from}
-history:
-  - {date: 2026-08-30, change: "fireprompts.io 'Name-dropping brands' recorded as a single-source observation."}
-  - {date: 2026-09-13, change: "GPTZero 'Name Dropping' recorded as a single-source observation, distinguished from T3.1 (there attribution is missing, here it is piled up)."}
-  - {date: 2026-09-20, change: "Opened as legacy candidate T2.19 with avoid-ai-writing ('Notability Name-Dropping') as second source."}
-  - {date: 2026-09-27, change: "A category 'Vague Attribution/Source Name-Dropping' in an open-source detection project checked and rejected: it matches T3.1."}
-  - {date: 2026-10-11, change: "GPTZero page re-read without change; studies on AI search citations rejected as a different topic."}
-  - {date: 2026-11-15, change: "No new source; no quantified threshold."}
-  - {date: 2026-11-17, change: "Migrated to slop-check repository as candidate name-dropping."}

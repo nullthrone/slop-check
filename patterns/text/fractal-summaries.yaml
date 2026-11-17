@@ -80,8 +80,3 @@ related:
   - {id: compulsive-summary, relation: overlaps}
   - {id: self-echo, relation: overlaps}
   - {id: announce-then-answer, relation: overlaps}
-history:
-  - {date: 2026-09-06, change: "Recorded in the legacy knowledge base as a single-source observation (tropes.fyi, status new): the same core statement repeated at every structural level; close to T1.5 but repeated at several levels."}
-  - {date: 2026-09-13, change: "tropes.fyi status changed from new to rising; directory-internal change, not counted as confirmation."}
-  - {date: 2026-11-15, change: "Still single-source."}
-  - {date: 2026-11-17, change: "Migrated to slop-check repository as observation fractal-summaries."}

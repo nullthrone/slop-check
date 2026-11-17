@@ -42,7 +42,7 @@ Enterprise plans.
 The Help Center gives one set of steps for all Claude apps and no separate steps for the mobile
 apps. Upload the skill in a browser or in the desktop app.
 
-On Team plans, code execution and skills are on by default. On Enterprise plans, an owner turns
+Team plans have code execution and skills switched on by default. On Enterprise plans, an owner turns
 them on under **Organization settings > Plugins & skills**, on the **Policy** tab. If the create or
 upload option is missing, the owner may have turned off **User-created skills**. Owners can also
 upload the skill once for the whole organization.
@@ -84,7 +84,7 @@ access, which slop-check does not need.
 3. In each Messages API request, list the skill ID in the `container` parameter and include the
    code execution tool.
 
-The request format, headers and size limits are in
+The request format and the size limits are described in
 [Using Agent Skills with the API](https://platform.claude.com/docs/en/build-with-claude/skills-guide).
 
 ## Claude Agent SDK
@@ -110,8 +110,8 @@ skills in code.
 
 ## If the upload fails
 
-The Help Center lists the packaging rules for uploads: the archive must contain the skill folder,
-the folder name must match the skill name, and the name and description must stay within the
+The Help Center lists the packaging rules for uploads. The archive must contain the skill folder,
+and the folder name must match the skill name. Name and description must stay within the
 documented lengths. Compare the error message with
 [How to create custom skills](https://support.claude.com/en/articles/12512198-creating-custom-skills)
 and [open an issue]({{ site.repository_url }}/issues) if the package breaks one of the rules.

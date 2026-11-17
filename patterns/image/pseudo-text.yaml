@@ -59,8 +59,6 @@ sources:
     note: "Images with illegible characters."
 related:
   - {id: dysfunctional-objects, relation: distinct-from}
-history:
-  - {date: 2026-11-17, change: "Added to the v1 image catalog as candidate."}
 notes: >
   openart-visual-cliches (2026-05) states that current models render legible text well; the pattern
   now targets almost-right typography and fake logos as much as gibberish.

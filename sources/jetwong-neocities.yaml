@@ -6,10 +6,10 @@ published: null
 accessed: 2026-11-17
 type: community-directory
 notes: >
-  Compiled reference without named author or date. It states that it combines 19 sources, among
-  them the Wikipedia field guide WP:AISIGNS; the compiled sources date from April 2025 to March
-  2026. Entries used by the legacy knowledge base: "Emoji Insertion", "Curly Quotation Marks",
-  "Overly Formal Tone" (contraction avoidance), "Challenges-and-future-prospects formula".
-  Independence caveat: the primary source behind an individual entry cannot be identified, so
-  any entry may repeat one of the compiled sources. None of those sources is registered in this
-  repository, so derived_from stays empty; treat this source as weak support.
+  Compiled reference without named author or date. It states that it combines 19 sources, among them
+  the Wikipedia field guide WP:AISIGNS; the compiled sources date from April 2025 to March 2026.
+  Relevant entries: "Emoji Insertion", "Curly Quotation Marks", "Overly Formal Tone" (contraction
+  avoidance), "Challenges-and-future-prospects formula". Independence caveat: the primary source
+  behind an individual entry cannot be identified, so any entry may repeat one of the compiled
+  sources. None of those sources is registered in this repository, so derived_from stays empty;
+  treat this source as weak support.

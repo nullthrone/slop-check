@@ -57,14 +57,11 @@ prevention: >
   instead.
 notes: >
   Single-source observation. The detector covers stock phrases only; claims of canonicity phrased
-  freely ("the textbook example") need a reader's judgement. Threshold chosen at migration.
+  freely ("the textbook example") need a reader's judgement. Threshold not yet calibrated against
+  the reference corpora.
 sources:
   - source: tropes-fyi
     locator: "entry 'Appeal to Familiarity', category Tone, status new"
     note: "Example: \"A classic,\"."
 related:
   - {id: vague-attribution, relation: overlaps}
-history:
-  - {date: 2026-09-13, change: "Recorded in the legacy knowledge base as a single-source observation (tropes.fyi, status new)."}
-  - {date: 2026-11-15, change: "Still single-source."}
-  - {date: 2026-11-17, change: "Migrated to slop-check repository as observation appeal-to-familiarity."}

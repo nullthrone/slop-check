@@ -64,8 +64,6 @@ sources:
     note: "Teaches 4K, 8K, masterpiece, best quality, hyper-detailed; prevalence evidence only."
 related:
   - {id: uniform-hyper-detail, relation: overlaps}
-history:
-  - {date: 2026-11-17, change: "Added to the v1 image catalog as candidate."}
 notes: >
   Prompt-level pattern. The vision rubric applies to the prompt that accompanies an image and to prompts
   the host model writes in prevent mode; an image audit without a prompt reports it under not

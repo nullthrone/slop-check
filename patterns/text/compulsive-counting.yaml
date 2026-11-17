@@ -7,7 +7,6 @@ summary: >
   The number adds nothing, and the list that follows often does not justify it.
 category: structure
 status: candidate
-legacy_id: T2.21
 detector:
   kind: regex
   position: any
@@ -65,8 +64,7 @@ notes: >
   independent cluster. Counts below three are left out of the detector because "two
   ways" or "two options" is usually informative. No source gives a quantified threshold.
 sources:
-  - source: legacy-knowledge-base
-    locator: "Candidate T2.21, opened 2026-09-20; section 5 (state 2026-11-15)"
+  - source: maintainer-observation
   - source: tropes-fyi
     locator: "entry 'Compulsive Counting', category Tone, status new"
     note: "Examples: \"Five things we wish to discuss\", \"Four reasons why this will work\"."
@@ -83,10 +81,3 @@ related:
   - {id: triad, relation: distinct-from}
   - {id: announce-then-answer, relation: overlaps}
   - {id: excessive-enumeration, relation: overlaps}
-history:
-  - {date: 2026-09-06, change: "Recorded as a single-source observation (tropes.fyi, status new)."}
-  - {date: 2026-09-20, change: "Opened as legacy candidate T2.21 with avoid-ai-writing ('Numbered List Inflation') as second source."}
-  - {date: 2026-10-04, change: "An article on list formatting (popularai.org) checked and rejected: it covers list overuse in general, not count announcements."}
-  - {date: 2026-10-11, change: "No third source; search hits on the term concern an unrelated medical topic."}
-  - {date: 2026-11-15, change: "tropes.fyi entry page re-read; no new information and no third source."}
-  - {date: 2026-11-17, change: "Migrated to slop-check repository as observation compulsive-counting (both sources form one independence cluster)."}

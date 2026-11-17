@@ -54,7 +54,8 @@ notes: >
   German has no comparable contraction system (forms such as "gibt's" are optional in most
   registers). The engine cannot switch the pattern off outside informal context, so the default
   threshold of 4 full forms per 100 words is set high and the informal override at 2 per 100
-  words; both were chosen at migration. Expected false positives in formal texts, which the
+  words; neither is calibrated against the reference corpora yet. Expected false positives in
+  formal texts, which the
   default threshold only partly prevents. The detector counts full forms; it cannot verify that
   contractions are absent.
 sources:
@@ -87,7 +88,3 @@ sources:
       rather than standard contractions.
 related:
   - {id: brochure-tone, relation: distinct-from}
-history:
-  - {date: 2026-11-08, change: "Recorded in the legacy knowledge base as a single-source observation (jetwong.neocities.org, compiled reference)."}
-  - {date: 2026-11-15, change: "Still single-source."}
-  - {date: 2026-11-17, change: "Migrated to slop-check repository as observation contraction-avoidance."}

@@ -8,7 +8,6 @@ summary: >
   document the phrase is leftover framing from a conversation and tells the reader nothing.
 category: lexical
 status: candidate
-legacy_id: T2.23
 detector:
   kind: regex
   position: text_start
@@ -110,11 +109,3 @@ related:
   - {id: sycophant-residue, relation: overlaps}
   - {id: generic-opening, relation: overlaps}
   - {id: announce-then-answer, relation: overlaps}
-history:
-  - {date: 2026-09-13, change: "vrid.ai 'First-Word Fingerprints' recorded as a single-source observation."}
-  - {date: 2026-09-20, change: "Opened as legacy candidate T2.23 with the better-ai-writing-skills fork (citing an ICML 2025 study) as second source."}
-  - {date: 2026-09-27, change: "A category 'Model-Fingerprint Opening Words' in an open-source detection project checked and rejected: it covers knowledge-cutoff phrases."}
-  - {date: 2026-10-04, change: "Search Engine Journal article added as third source; Graphite model-specific word frequencies not counted because they are not position-bound."}
-  - {date: 2026-10-11, change: "arXiv:2603.27006 not counted (em dash frequencies, not position-bound)."}
-  - {date: 2026-11-15, change: "arXiv:2405.14057 read and rejected (position-independent features only); arXiv:2503.01659 not accessible."}
-  - {date: 2026-11-17, change: "Migrated to slop-check repository as candidate model-fingerprint-opener; the Search Engine Journal article turned out to cite the same study as the skill fork and is registered as derived from it."}

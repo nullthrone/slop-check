@@ -1,7 +1,7 @@
 ---
 title: Usage
 eyebrow: Guide
-lead: How to ask for each mode, how to read the report, and how to run the checker from the command line.
+lead: How to ask for each mode and how to read the report. The last section covers the command-line checker.
 description: The four slop-check modes with example requests, the report format, and the command-line tool with JSON output and exit codes.
 ---
 
@@ -13,7 +13,7 @@ as "Klingt das nach KI?"
 
 ### Audit
 
-Audit is the default. Use it to check, review or rate a text. The skill reports and leaves the
+Audit is the default. Use it when you want a text checked or rated. The skill reports and leaves the
 text unchanged.
 
 ```text
@@ -32,8 +32,8 @@ authorship and offers an audit instead.
 ### Rewrite
 
 Rewrite changes only the flagged passages, with as little surrounding text as possible. It keeps
-meaning, facts and voice, audits the result again and returns the cleaned text with a list of
-changes.
+the meaning and your voice. Afterwards it audits the result again and returns the cleaned text
+with a list of changes.
 
 ```text
 Rewrite this paragraph to remove the slop findings. Keep my wording where it is fine.
@@ -52,16 +52,22 @@ Draft a release announcement for version 2.0 of our invoicing app.
 Apply slop-check while you write.
 ```
 
-For images, prevent mode turns a short request into an art-directed prompt: subject and action,
-setting, light source, camera position and composition, palette, medium. It replaces quality tags
-and default looks with the concrete property they stood for.
+For images, prevent mode turns a short request into an art-directed prompt that states:
+
+- the subject and what it is doing
+- the setting and the light source
+- camera position and composition
+- palette and medium
+
+Quality tags and default looks give way to the concrete property they stood for, such as a lens,
+a light source or a texture.
 
 ```text
 Write an image prompt for the header of a blog post about our bakery,
 which opens at 5 a.m. Use slop-check prevention.
 ```
 
-A prompt in the default style, which the rules avoid:
+The rules steer away from prompts in the default style:
 
 ```text
 A beautiful cozy bakery at golden hour, cinematic lighting, hyperrealistic,
@@ -83,8 +89,8 @@ it.
 
 ### Batch
 
-Batch checks several files, a folder or a pipeline input with the bundled script and returns one
-report per file, JSON on request and an exit code. It covers the rule-based patterns only; patterns
+Batch runs the bundled script over several files or a whole folder. It returns one report per
+file and sets an exit code; `--format json` switches the output to JSON. It covers the rule-based patterns only; patterns
 that need a language model are listed as not evaluated. See [command line](#command-line).
 
 ## Context
@@ -129,8 +135,8 @@ Heaviest findings: Generic opening cliche (2.5), Antithesis template (2.5), Nomi
 
 The parts of the report:
 
-- The verdict line gives the verdict, the score, the two thresholds, the word count and the
-  detected language.
+- The verdict line starts with the verdict and the score, followed by the two thresholds. It ends
+  with the word count and the detected language.
 - Findings are the triggered scored patterns, heaviest first. Each one shows the pattern ID, its
   weight, the hit count against the threshold, every quote with its paragraph and a suggested fix.
 - Observations are triggered patterns that carry no weight yet: candidates and patterns that have

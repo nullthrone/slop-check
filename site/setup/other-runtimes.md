@@ -21,20 +21,20 @@ that starts with a `name` and a `description`. Agents load the name and descript
 read the full instructions when a task matches. The slop-check package follows this layout, so any
 compliant runtime can load it from its skills directory.
 
-All runtimes on this page read the shared folder `~/.agents/skills/`. If you already placed
-`slop-check` there for another agent, they pick it up as well.
+All runtimes on this page read the shared folder `~/.agents/skills/`. A copy you placed there for
+another agent serves them too.
 
 ## Cursor
 
-Cursor discovers skills when it starts and makes them available to Agent.
+Cursor discovers skills at startup. Agent can use them right away.
 
 | Scope | Folders |
 |---|---|
 | Project | `.agents/skills/`, `.cursor/skills/` |
 | User | `~/.agents/skills/`, `~/.cursor/skills/` |
 
-Cursor also reads `.claude/skills/` and `.codex/skills/` and their counterparts in your home
-folder.
+For compatibility, Cursor also loads the Claude and Codex skill folders, `.claude/skills/` and
+`.codex/skills/`, in the project and in your home folder.
 
 1. Download [slop-check.zip]({{ site.download_zip }}).
 2. Unzip it into one of the folders above, for example:
@@ -50,13 +50,13 @@ folder.
    applies it on its own when a request matches.
 
 Cloud Agents receive personal skills from `~/.cursor/skills/` only when **Sync Skills for Cloud
-Agents** is on under **Settings → Agents**. Automations load only skills from the repository's
+Agents** is on under **Settings > Agents**. Automations load only skills from the repository's
 `.cursor/skills/` folder.
 
 ## OpenCode
 
-OpenCode loads skills on demand through its `skill` tool and advertises only skills that have a
-description.
+OpenCode loads skills on demand through its `skill` tool. A skill without a description stays
+hidden from the model.
 
 | Scope | Folders |
 |---|---|
@@ -74,12 +74,12 @@ description.
 3. Start OpenCode. The model loads the skill when a request matches. Mention `@slop-check` in a
    prompt to load it yourself.
 
-OpenCode can restrict skills per agent with permission rules in `opencode.json`. If slop-check does
-not load, check that no rule denies it.
+Permission rules in `opencode.json` can restrict skills per agent. If slop-check does not load even
+though the folder is in place, look for a rule in that file that denies it.
 
 ## goose
 
-goose ships with a built-in Skills extension that is on by default.
+Nothing to enable: goose loads skills through its built-in Skills extension, which is on by default.
 
 | Scope | Folder |
 |---|---|

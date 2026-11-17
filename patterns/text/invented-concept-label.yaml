@@ -9,7 +9,6 @@ summary: >
   Several such labels in one piece borrow the authority of a field vocabulary that does not exist.
 category: lexical
 status: candidate
-legacy_id: T2.13
 detector:
   kind: llm
   position: any
@@ -89,12 +88,3 @@ sources:
 related:
   - {id: hallmark-vocabulary, relation: distinct-from}
   - {id: inflated-importance, relation: distinct-from}
-history:
-  - {date: 2026-08-02, change: "Opened as legacy candidate T2.13 (tropes.fyi, lizontheweb.com); provisional threshold proposal: at least 2 coined, unsupported labels per text."}
-  - {date: 2026-08-09, change: "No new source; an article on neologisms requested from GPT-4 as a research method judged not relevant."}
-  - {date: 2026-08-30, change: "tropes.fyi status rising, category Tone."}
-  - {date: 2026-09-20, change: "avoid-ai-writing ('Invented Labels') counted cautiously as third source because it repeats the example 'supervision paradox'."}
-  - {date: 2026-09-27, change: "Targeted search for a fourth source with its own example found nothing."}
-  - {date: 2026-10-11, change: "tropes.fyi entry page found under the slug named-concept-abuse with two more examples."}
-  - {date: 2026-11-15, change: "Entry confirmed in the 49-entry directory; no fourth source."}
-  - {date: 2026-11-17, change: "Migrated to slop-check repository as candidate invented-concept-label."}

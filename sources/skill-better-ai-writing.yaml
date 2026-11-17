@@ -4,13 +4,11 @@ published: null
 accessed: 2026-09-20
 type: practitioner-skill
 access_note: >
-  Public GitHub repository (a fork). URL not verified at migration; the legacy knowledge base
-  recorded owner and repository name only.
+  Public GitHub repository (a fork). URL not verified; only owner and repository name are known.
 notes: >
-  Practitioner-curated writing skill with a research section dated July 2026. Entries used by the
-  legacy knowledge base: sycophancy described as an RLHF-induced stance with an academic citation
-  (yakura-sycophancy); "Model-fingerprint openers" citing a classification study
-  (sun-icml-2025-fingerprints, 97.1 % detection accuracy according to the skill); an
-  attributive-adjective stacking observation. The cited studies were not read directly.
-  Independence caveat recorded in the legacy knowledge base (2026-09-20): practitioner skills may
-  copy publicly circulating examples.
+  Practitioner-curated writing skill with a research section dated July 2026. Relevant entries:
+  sycophancy described as an RLHF-induced stance with an academic citation (yakura-sycophancy);
+  "Model-fingerprint openers" citing a classification study (sun-icml-2025-fingerprints, 97.1 %
+  detection accuracy according to the skill); an attributive-adjective stacking observation. The
+  cited sycophancy study was not read directly. Independence caveat: practitioner skills may copy
+  publicly circulating examples.

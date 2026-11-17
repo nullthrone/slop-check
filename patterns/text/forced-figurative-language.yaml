@@ -82,8 +82,3 @@ sources:
 related:
   - {id: brochure-tone, relation: distinct-from}
   - {id: hollow-sentences, relation: overlaps}
-history:
-  - {date: 2026-09-06, change: "Recorded in the legacy knowledge base as a single-source observation (tropes.fyi, status new)."}
-  - {date: 2026-09-20, change: "Weaker related find at ignorance.ai ('Awkward Analogies') noted, not counted."}
-  - {date: 2026-11-15, change: "No new source found."}
-  - {date: 2026-11-17, change: "Migrated to slop-check repository as observation forced-figurative-language."}

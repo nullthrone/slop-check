@@ -8,7 +8,6 @@ summary: >
   thought. The prose reads smooth but flat, with clauses chained instead of weighted.
 category: typography
 status: candidate
-legacy_id: T2.14
 detector:
   kind: metric
   position: any
@@ -134,13 +133,3 @@ sources:
 related:
   - {id: em-dash-inflation, relation: distinct-from}
   - {id: uniform-rhythm, relation: distinct-from}
-history:
-  - {date: 2026-08-09, change: "Opened as legacy candidate T2.14 on the basis of The Economist data analysis; no threshold specifiable (corpus means only); suggested operationalization: commas and semicolons per 100 words."}
-  - {date: 2026-08-16, change: "and-stacking entry of avoid-ai-writing recorded as weaker independent evidence for the and-stacking component."}
-  - {date: 2026-08-23, change: "tropes.fyi entries 'Never-Ending Conclusion' and 'Comma-Clipped Trailing Phrase' recorded."}
-  - {date: 2026-09-13, change: "An article on AI punctuation (aiprompthackers.com) describes an em dash surplus and does not confirm the pattern."}
-  - {date: 2026-09-27, change: "Counter-finding recorded: a composition course blog claims semicolon overuse; evidence for the sparsity component weaker."}
-  - {date: 2026-10-04, change: "rewritelyapp.com lists punctuation as a feature group ('Humans have quirks. AI has consistency.') without a matching claim or threshold; not counted."}
-  - {date: 2026-10-11, change: "Pebblous secondary analysis (semicolons minus 73 % from Opus 5 to Opus 5.5) weakens the counter-finding; not counted as a source."}
-  - {date: 2026-11-15, change: "No new source and no operational threshold."}
-  - {date: 2026-11-17, change: "Migrated to slop-check repository as candidate punctuation-sparsity; comma_density threshold chosen at migration."}

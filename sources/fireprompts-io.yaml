@@ -4,8 +4,9 @@ publisher: fireprompts.io
 published: 2026-08-18
 accessed: 2026-09-13
 type: blog
-access_note: "URL not verified at migration"
+access_note: >
+  URL not verified.
 notes: >
-  The legacy knowledge base recorded only the domain and the date. It rated the source as weaker
-  and more generic (connector-word accumulation) and treated a further match for the rhetorical
-  self-answer as unconfirmed.
+  Only the domain and the publication date are known. The description is weaker and more generic
+  than the other sources (connector-word accumulation), and a further match for the rhetorical
+  self-answer is unconfirmed.

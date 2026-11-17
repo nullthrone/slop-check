@@ -70,8 +70,3 @@ related:
   - {id: fractal-summaries, relation: overlaps}
   - {id: compulsive-summary, relation: overlaps}
   - {id: synonym-cycling, relation: distinct-from}
-history:
-  - {date: 2026-08-30, change: "Noted in the legacy knowledge base among new single-source tropes.fyi entries."}
-  - {date: 2026-09-13, change: "Recorded as a single-source observation in section 5a (tropes.fyi, status new); closeness to T1.5 and fractal summaries noted, not merged."}
-  - {date: 2026-11-15, change: "Still single-source."}
-  - {date: 2026-11-17, change: "Migrated to slop-check repository as observation self-echo."}

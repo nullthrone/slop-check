@@ -57,5 +57,3 @@ sources:
     note: "Background lighting unlike the foreground; shadows in different directions or absent; perspective inconsistent or wrong."
 related:
   - {id: cinematic-default-lighting, relation: distinct-from}
-history:
-  - {date: 2026-11-17, change: "Added to the v1 image catalog as candidate."}

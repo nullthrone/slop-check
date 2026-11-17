@@ -2,7 +2,7 @@
 title: No skill support
 eyebrow: Setup · Fallback
 lead: Assistants without skills can still apply slop-check. The file system-prompt.md holds the skill instructions and every reference in one Markdown document.
-description: Use slop-check's system-prompt.md as a system prompt, custom instructions or project instructions in assistants that do not support Agent Skills.
+description: Use slop-check's system-prompt.md as standing instructions in assistants that do not support Agent Skills.
 aside: setup
 ---
 
@@ -13,12 +13,12 @@ skill does when it cannot run commands.
 ## Steps
 
 1. Download [system-prompt.md]({{ site.download_prompt }}) from the latest release.
-2. Find the place where your assistant keeps standing instructions. Depending on the product it is
-   called system prompt, custom instructions, project instructions or agent instructions.
+2. Find the place where your assistant keeps standing instructions. Products use different names
+   for it, such as system prompt or custom instructions.
 3. Paste the whole file into that field.
 4. If the field has a length limit that the file exceeds, store the file where the assistant can
-   read it, such as project files or a knowledge base. Then write one line of instructions: "Follow
-   system-prompt.md for every text you review, rewrite or write."
+   read it, such as project files or uploaded documents. Then write one line of instructions: "Apply
+   system-prompt.md to every text you check or write."
 5. Start a new conversation and run the check from the
    [setup overview]({{ '/setup/' | relative_url }}#check-that-it-works).
 

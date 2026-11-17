@@ -6,12 +6,11 @@ published: 2026-07-31
 accessed: 2026-11-17
 type: blog
 notes: >
-  Practitioner article by the makers of a slop detection tool, with a numeric threshold per
-  pattern. Values cited by the legacy knowledge base: transition-word stacking (more than half
-  of the paragraphs open with a formal connector), deletion test (more than a third of the
-  sentences can be removed without information loss), burstiness (coefficient of variation of
-  sentence length below 0.4; human prose typically 0.6 to 1.2), em dash density (more than 20
-  per 1,000 words in short modern prose; human baseline 3.7 to 10 per 1,000). The legacy
-  knowledge base first cited it as "12 Signs of AI Writing: Patterns and Thresholds"
-  (round 2026-09-06) and read the full version on 2026-09-27; a separate em dash article by the
-  same publisher was cited on 2026-08-23. URL and title checked at migration.
+  Practitioner article by the makers of a slop detection tool, with a numeric threshold per pattern.
+  Values cited here: transition-word stacking (more than half of the paragraphs open with a formal
+  connector), deletion test (more than a third of the sentences can be removed without information
+  loss), burstiness (coefficient of variation of sentence length below 0.4; human prose typically
+  0.6 to 1.2), em dash density (more than 20 per 1,000 words in short modern prose; human baseline
+  3.7 to 10 per 1,000). Also published under the title "12 Signs of AI Writing: Patterns and
+  Thresholds". A separate em dash article by the same publisher ("Is the Em Dash an AI Tell?",
+  2026-07-31) is cited on em-dash-inflation.

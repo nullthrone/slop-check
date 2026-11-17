@@ -1,8 +1,8 @@
 ---
 title: Microsoft
 eyebrow: Setup · Copilot
-lead: Install slop-check in GitHub Copilot, in Microsoft 365 Copilot Cowork and in Copilot Studio agents.
-description: Add the slop-check skill folder to GitHub Copilot in VS Code, Copilot CLI and the cloud agent, or upload it to Microsoft 365 Copilot Cowork and Copilot Studio.
+lead: Add slop-check to GitHub Copilot as a skill folder, or upload it to Microsoft 365 Copilot Cowork and to agents in Copilot Studio.
+description: Add the slop-check skill folder to GitHub Copilot, or upload it to Microsoft 365 Copilot Cowork and Copilot Studio.
 aside: setup
 checked: 2026-11-17
 verified:
@@ -23,16 +23,16 @@ an uploaded archive with `SKILL.md` at its root, which needs one repacking step.
 
 ## GitHub Copilot
 
-Agent skills work in the GitHub Copilot app, in Copilot CLI, in the Copilot cloud agent and code
-review on GitHub.com, and in agent mode of VS Code, Visual Studio and JetBrains IDEs. IDE support
-depends on the version you use.
+Agent skills work in the GitHub Copilot app and in Copilot CLI. On GitHub.com the Copilot cloud
+agent and Copilot code review use them, and in the editors agent mode does (VS Code, Visual Studio,
+JetBrains IDEs). IDE support depends on the version you use.
 
 | Scope | Folders |
 |---|---|
 | Project (in the repository) | `.github/skills/`, `.claude/skills/`, `.agents/skills/` |
 | Personal (in your home folder) | `~/.copilot/skills/`, `~/.agents/skills/` |
 
-The cloud agent works on the repository, so it needs the project copy.
+The cloud agent sees only the repository. It needs the project copy.
 
 1. Download [slop-check.zip]({{ site.download_zip }}).
 2. For a personal skill, unzip it into `~/.copilot/skills/`:
@@ -43,7 +43,7 @@ The cloud agent works on the repository, so it needs the project copy.
    ```
 
    For a project skill, unzip it into `.github/skills/` at the repository root and commit it.
-3. In Copilot CLI, start a session or run `/skills reload` in a running one. Then run
+3. In Copilot CLI, run `/skills reload` in a running session, or start a new one. Then run
    `/skills info slop-check` to confirm that the skill loaded.
 4. In VS Code, type `/` in the chat input. `slop-check` appears in the list of skills.
 5. Copilot uses the skill when a prompt matches its description. To ask for it directly, name it
@@ -51,8 +51,8 @@ The cloud agent works on the repository, so it needs the project copy.
 
 ## Microsoft 365 Copilot Cowork
 
-Cowork accepts a `.zip` with `SKILL.md` at the archive root. The release zip holds the
-`slop-check` folder instead, so repack its contents first.
+Cowork wants `SKILL.md` at the root of an uploaded `.zip`. The release zip has the `slop-check`
+folder there instead. Repack it first; one command does it.
 
 1. Download [slop-check.zip]({{ site.download_zip }}) and unzip it.
 2. Create a new archive from the contents of the `slop-check` folder:

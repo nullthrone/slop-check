@@ -53,5 +53,3 @@ sources:
     note: "'Without composition guidance, the model defaults to a straight-on, centered shot.'"
 related:
   - {id: averaged-face, relation: distinct-from}
-history:
-  - {date: 2026-11-17, change: "Added to the v1 image catalog as candidate."}

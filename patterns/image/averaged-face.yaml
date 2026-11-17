@@ -59,8 +59,6 @@ sources:
 related:
   - {id: plastic-texture, relation: overlaps}
   - {id: stereotyped-default-people, relation: overlaps}
-history:
-  - {date: 2026-11-17, change: "Added to the v1 image catalog as candidate."}
 notes: >
   The peer-reviewed evidence concerns GAN face synthesis; applying it to diffusion output is an
   inference that the image benchmark should test.

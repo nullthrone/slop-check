@@ -373,10 +373,12 @@ def test_build_writes_package_zip_and_export(skill_repo, tmp_path):
 
     export = result.export_path.read_text(encoding="utf-8")
     assert result.export_path == tmp_path / "out" / "exports" / "system-prompt.md"
-    assert export.startswith("# slop-check (single-file export)\n")
+    assert export.startswith("# slop-check (compact system prompt)\n")
+    knowledge = (tmp_path / "out" / "exports" / "knowledge.md").read_text(encoding="utf-8")
+    assert knowledge.startswith("# slop-check (single-file export)\n")
     assert "Follow the audit procedure." in export
     assert "name: slop-check" not in export  # frontmatter stripped
-    order = [m.group(1) for m in re.finditer(r"^# File: references/(\S+)$", export, flags=re.MULTILINE)]
+    order = [m.group(1) for m in re.finditer(r"^# File: references/(\S+)$", knowledge, flags=re.MULTILINE)]
     assert order == [
         "audit-procedure.md",
         "report-format.md",
@@ -481,13 +483,17 @@ def test_build_warns_on_missing_reference_and_keeps_extras(repo, tmp_path):
     result = build(tmp_path / "out", root=repo.root)
     assert result.warnings == ["hand-written references missing: prevention-procedure.md"]
     assert (result.package_dir / "references" / "scripts-usage.md").is_file()
-    export = result.export_path.read_text(encoding="utf-8")
-    order = re.findall(r"^# File: references/(\S+)$", export, flags=re.MULTILINE)
+    knowledge = (result.export_path.parent / "knowledge.md").read_text(encoding="utf-8")
+    order = re.findall(r"^# File: references/(\S+)$", knowledge, flags=re.MULTILINE)
     assert (
         order.index("rewrite-procedure.md")
         < order.index("scripts-usage.md")
         < order.index("text-patterns.md")
     )
+    compact = result.export_path.read_text(encoding="utf-8")
+    assert "# File: references/report-format.md" in compact
+    assert "(condensed)" in compact
+    assert len(compact) < len(knowledge)
 
 
 def test_build_enforces_section_7_on_engine_files(skill_repo, tmp_path):

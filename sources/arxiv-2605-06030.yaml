@@ -6,8 +6,8 @@ published: 2026-05-07
 accessed: 2026-11-17
 type: academic-preprint
 notes: >
-  HPSG parsing of New York Times lead sentences and model continuations. Findings used by the
-  legacy knowledge base: 2025 instruction-tuned models cut the share of short sentences (under
-  15 tokens) by a factor of 9 to 30 relative to human reference prose; lower diversity of
-  punctuation types (GPT-4o with very few em dashes or semicolons); preference for "nominal head
-  + preceding adjunct" constructions. Caveat: a single prompt-based news genre.
+  HPSG parsing of New York Times lead sentences and model continuations. Findings used here: 2025
+  instruction-tuned models cut the share of short sentences (under 15 tokens) by a factor of 9 to 30
+  relative to human reference prose; lower diversity of punctuation types (GPT-4o with very few em
+  dashes or semicolons); preference for "nominal head + preceding adjunct" constructions. Caveat: a
+  single prompt-based news genre.

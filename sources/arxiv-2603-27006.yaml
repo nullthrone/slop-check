@@ -10,4 +10,4 @@ notes: >
   with an instruction to avoid markdown and once without it. Em dashes persist under suppression
   (GPT-4.1 about 9 per 1,000 words, Llama none), read as a provider-specific fine-tuning signal;
   Llama 3.1 8B base model 0.49 per 1,000. Human baseline 3.23 per 1,000 (8 published essays).
-  Independent of the Graphite data. Title, URL and date checked at migration.
+  Independent of the Graphite data.

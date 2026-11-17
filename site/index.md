@@ -20,8 +20,7 @@ description: >-
 <div class="home-section__body prose" markdown="1">
 
 slop-check reads a text and reports patterns that occur far more often in language-model output
-than in human writing. Generic openers, antithesis templates and inflated vocabulary are typical
-examples. Each finding names the pattern, quotes the passage verbatim and counts the hits against
+than in human writing. Generic openers and antithesis templates are typical examples. Each finding names the pattern, quotes the passage verbatim and counts the hits against
 the pattern's threshold. The weights of the triggered patterns add up to a score, and the score
 maps to a verdict of `GREEN`, `YELLOW` or `RED`.
 
@@ -44,13 +43,13 @@ they carry no score weight until an image benchmark exists.
 <article class="card">
 <p class="eyebrow">Default</p>
 <h3 class="card__title">Audit</h3>
-<p>Reports findings with quotes, a score and a verdict. Your text stays as it is.</p>
+<p>Reports findings with quotes and ends with a scored verdict. Your text stays as it is.</p>
 <p class="card__footer">Skill and command line</p>
 </article>
 <article class="card">
 <p class="eyebrow">On request</p>
 <h3 class="card__title">Rewrite</h3>
-<p>Changes only the flagged passages, keeps meaning and voice, and lists every change.</p>
+<p>Changes only the flagged passages and keeps your meaning and voice. Every change is listed.</p>
 <p class="card__footer">Skill</p>
 </article>
 <article class="card">
@@ -124,7 +123,7 @@ weight.
 </div>
 <div class="home-section__body prose" markdown="1">
 
-The pattern files, the engine and the measurement code live in the repository
+The pattern files and the engine live in the repository
 [github.com/nullthrone/slop-check]({{ site.repository_url }}). The [usage guide]({{ '/usage/' | relative_url }})
 explains the modes and the report format. The [contribution guide]({{ '/contribute/' | relative_url }})
 explains how new patterns get in.

@@ -47,8 +47,8 @@ notes: >
   newer models produce little or no unrequested markdown (GPT-5.4 in arxiv-2603-27006; the
   Anthropic documentation says one newer model formats less), so the pattern may fade by model
   generation. Distinct from bullet-bold-lead, which concerns the bold-lead structure
-  of list items. Threshold chosen at migration: 4 list items per 100 words, uncalibrated. Expected
-  false positives in documentation and checklists.
+  of list items. Threshold: 4 list items per 100 words, not yet calibrated against the reference
+  corpora. Expected false positives in documentation and checklists.
 sources:
   - source: pangram-signs-of-ai-writing
     locator: "bullet lists"
@@ -68,7 +68,7 @@ sources:
       markdown features (headings, bullets, bold and numbered lists counted together) reach 6.27
       (GPT-4.1), 6.15 (Claude Sonnet 4) and 6.03 (GPT-4o Mini) per 1,000 words, 0 for GPT-5.4 and
       Llama 3.3 70B; a prose instruction removes them. Bullets are not reported separately and
-      there is no human markdown baseline. Read on 2026-11-17.
+      there is no human markdown baseline.
   - source: anthropic-prompting-best-practices
     locator: "section 'Control the format of responses', block avoid_excessive_markdown_and_bullet_points"
     note: >
@@ -83,6 +83,3 @@ related:
   - {id: bullet-bold-lead, relation: distinct-from}
   - {id: excessive-enumeration, relation: distinct-from}
   - {id: markdown-emphasis-inflation, relation: overlaps}
-history:
-  - {date: 2026-11-15, change: "Recorded in the legacy knowledge base as a single-source observation (Pangram, 9x)."}
-  - {date: 2026-11-17, change: "Migrated to slop-check repository as observation bullet-list-preference."}

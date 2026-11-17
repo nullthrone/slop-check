@@ -1,7 +1,7 @@
 ---
 title: Google
 eyebrow: Setup · Gemini
-lead: Install slop-check in the Gemini app, in Gemini Enterprise, in Gemini CLI and in Antigravity CLI.
+lead: Upload slop-check to the Gemini app or Gemini Enterprise, or add the skill folder to Gemini CLI and Antigravity CLI.
 description: Upload the slop-check skill to the Gemini app or Gemini Enterprise, deactivate a converted slop Gem, and add the skill folder to Gemini CLI or Antigravity CLI.
 aside: setup
 checked: 2026-11-17
@@ -22,13 +22,13 @@ verified:
     url: https://geminicli.com/docs/cli/skills/
   - title: Transitioning Gemini CLI to Antigravity CLI (Google Developers Blog)
     url: https://developers.googleblog.com/an-important-update-transitioning-gemini-cli-to-antigravity-cli/
-  - title: Migrating from Gemini CLI (Antigravity documentation)
+  - title: Moving from Gemini CLI to Antigravity CLI (Antigravity documentation)
     url: https://antigravity.google/docs/cli/gcli-migration
 ---
 
-The package meets the rules of the Gemini app, which are the strictest of the runtimes it
-supports: a lowercase folder name with hyphens that matches the skill name, `SKILL.md` in the
-folder root, text files only, and scripts that run without internet access.
+The package meets the rules of the Gemini app, the strictest of the runtimes it supports. Its
+folder name is lowercase with hyphens and matches the skill name. `SKILL.md` sits in the folder
+root, the package holds text files only, and its scripts never need internet access.
 
 ## Gems and skills
 
@@ -56,8 +56,8 @@ from the mobile app.
    with `SKILL.md` in its main folder; the folder is the safer choice for this package.
 5. Skip the optional extra files and select **Upload**.
 6. Review the skill and select **Create**.
-7. Check that the skill is active. If it is not, open it and select **More**, then **Activate**.
-   Gemini uses active skills automatically when a request matches.
+7. Check that the skill is active. If it is inactive, select **More**, then **Activate** on its
+   page. Gemini uses active skills automatically when a request matches.
 
 Remove hidden files such as `.DS_Store` from the folder before you upload; they make the upload
 fail. The package itself contains none. Gemini allows up to 100 active skills at a time.
@@ -73,8 +73,8 @@ business and enterprise editions and June 2027 for education.
 ## Gemini Enterprise
 
 Gemini Enterprise has its own skill store. An administrator must turn on the skills feature first.
-Standard, Plus and pay-as-you-go editions can upload skills; Frontline users can use skills but not
-upload them.
+Standard and Plus editions can upload skills, as can pay-as-you-go. Frontline users can use skills
+but not upload them.
 
 1. Download [slop-check.zip]({{ site.download_zip }}). Gemini Enterprise accepts an archive with
    `SKILL.md` inside a single top-level folder, so the zip works as it is.
@@ -106,7 +106,7 @@ Since 2026-06-18, Google AI Pro and Ultra subscribers and users of Gemini Code A
 individuals use Antigravity CLI instead of Gemini CLI. Agent Skills carry over. Enterprise Code
 Assist licenses and API-key users keep Gemini CLI.
 
-1. For all projects, keep or place the folder in `~/.gemini/skills/slop-check/`. Antigravity CLI
-   reads global skills from your home directory.
+1. To use the skill in all projects, place the folder in `~/.gemini/skills/slop-check/`.
+   Antigravity CLI reads global skills from your home directory.
 2. For one project, put the folder in `.agents/skills/slop-check/`. Antigravity CLI does not read
    `.gemini/skills/` inside a project; move an existing copy to `.agents/skills/`.

@@ -7,9 +7,8 @@ accessed: 2026-11-17
 type: press
 derived_from: [sun-icml-2025-fingerprints]
 notes: >
-  Trade-press summary of model-specific openers: ChatGPT "Below is..." or "Sure!", Claude "here is
-  a summary", "according to the text", Gemini "certainly! below", Grok "which" or "where"; "first
-  words are highly predictable in AI content". Checked at migration: the article cites arXiv
-  2502.12150, the same study that skill-better-ai-writing cites, so it is registered as derived
-  from sun-icml-2025-fingerprints. The legacy knowledge base (2026-10-04) had counted it as an
-  independent third source for model-fingerprint-opener.
+  Trade-press summary of model-specific openers: ChatGPT "Below is..." or "Sure!", Claude "here is a
+  summary", "according to the text", Gemini "certainly! below", Grok "which" or "where"; "first
+  words are highly predictable in AI content". The article cites arXiv 2502.12150, the same study
+  that skill-better-ai-writing cites, so it is registered as derived from sun-icml-2025-fingerprints
+  and does not count as independent of it for model-fingerprint-opener.

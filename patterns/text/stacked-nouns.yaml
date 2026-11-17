@@ -70,6 +70,3 @@ related:
   - {id: premodifier-stacking, relation: distinct-from}
   - {id: nominalization-density, relation: distinct-from}
   - {id: german-stock-phrases, relation: distinct-from}
-history:
-  - {date: 2026-11-15, change: "Recorded in the legacy knowledge base as a single-source observation (arXiv:2610.29162, verified only through tertiary sources); not counted for T2.24."}
-  - {date: 2026-11-17, change: "Migrated to slop-check repository as observation stacked-nouns."}

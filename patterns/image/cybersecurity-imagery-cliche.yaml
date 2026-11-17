@@ -56,8 +56,6 @@ sources:
     note: "Hooded anonymous figures on keyboards, closed locks, glowing green leetspeak on dark backgrounds, a maze of binary. Funded by the same foundation as hewlett-cybersecurity-imagery."
 related:
   - {id: ai-imagery-cliche, relation: overlaps}
-history:
-  - {date: 2026-11-17, change: "Added to the v1 image catalog as candidate."}
 notes: >
   The sources document the stock-imagery cliché. Over-representation in image-model output relative to
   human-made illustrations is untested and is the question for the image benchmark.

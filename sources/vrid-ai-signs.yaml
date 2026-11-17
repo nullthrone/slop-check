@@ -4,8 +4,9 @@ publisher: vrid.ai
 published: 2026-02-11
 accessed: 2026-09-13
 type: blog
-access_note: "URL not verified at migration (the site refused automated requests on 2026-11-17)"
+access_note: >
+  URL not verified (the site refuses automated requests).
 notes: >
-  Entries used by the legacy knowledge base: Treadmill Effect (own estimate: about 100 of 500
-  words carry actual content), Personified Abstractions, First-Word Fingerprints, Format Bleed,
-  Over-Explanation of Basics. Also confirms several base-taxonomy patterns.
+  Relevant entries: Treadmill Effect (own estimate: about 100 of 500 words carry actual content),
+  Personified Abstractions, First-Word Fingerprints, Format Bleed, Over-Explanation of Basics. Also
+  describes several other patterns of this catalog.

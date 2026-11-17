@@ -5,12 +5,10 @@ accessed: 2026-09-20
 type: practitioner-skill
 derived_from: [tropes-fyi]
 access_note: >
-  Public GitHub repository. URL not verified at migration; the legacy knowledge base recorded
-  owner and repository name only.
+  Public GitHub repository. URL not verified; only owner and repository name are known.
 notes: >
-  Practitioner-curated catalog for writing agents. Entries used by the legacy knowledge base:
-  Synonym cycling, Hollow intensifiers, False Agency, Invented Labels, Notability Name-Dropping,
-  Reasoning Chain Artifacts, Numbered List Inflation, Self-QA volleys, and an and-stacking item.
-  Independence caveat recorded in the legacy knowledge base (2026-09-20): practitioner skills may
-  copy publicly circulating examples such as tropes.fyi; one entry repeats an example verbatim
-  ("supervision paradox"). Encoded as derived_from tropes-fyi.
+  Practitioner-curated catalog for writing agents. Relevant entries: Synonym cycling, Hollow
+  intensifiers, False Agency, Invented Labels, Notability Name-Dropping, Reasoning Chain Artifacts,
+  Numbered List Inflation, Self-QA volleys, and an and-stacking item. Independence caveat:
+  practitioner skills may copy publicly circulating examples such as tropes.fyi; one entry repeats
+  an example verbatim ("supervision paradox"). Encoded as derived_from tropes-fyi.

@@ -71,8 +71,6 @@ sources:
 related:
   - {id: averaged-face, relation: overlaps}
   - {id: default-color-grade, relation: distinct-from}
-history:
-  - {date: 2026-11-17, change: "Added to the v1 image catalog as candidate."}
 notes: >
   Counter-evidence: socialmediaexaminer-generic-ai-images (2026-08-11) reports plastic-looking skin as
   largely gone from current models. The image benchmark should measure the rate on current output

@@ -62,7 +62,3 @@ sources:
     note: "Examples: \"Where the market is stuck today\", \"What we do differently\", \"What it's worth to you\"."
 related:
   - {id: title-case-headings, relation: overlaps}
-history:
-  - {date: 2026-09-13, change: "Recorded in the legacy knowledge base as a single-source observation (tropes.fyi, status new)."}
-  - {date: 2026-11-15, change: "Still single-source."}
-  - {date: 2026-11-17, change: "Migrated to slop-check repository as observation where-what-why-headers."}

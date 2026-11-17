@@ -66,5 +66,3 @@ related:
   - {id: default-color-grade, relation: overlaps}
   - {id: unmotivated-shallow-focus, relation: overlaps}
   - {id: physics-inconsistency, relation: distinct-from}
-history:
-  - {date: 2026-11-17, change: "Added to the v1 image catalog as candidate."}

@@ -12,7 +12,8 @@ Output below ``--out`` (default ``dist``)::
     slop-check/scripts/slopcheck/                copy of src/slopcheck
     slop-check/scripts/slopcheck.py              shim: python scripts/slopcheck.py audit ...
     slop-check.zip                               folder slop-check/ at the zip root
-    exports/system-prompt.md                     SKILL.md body plus every reference
+    exports/system-prompt.md                     SKILL.md body, report format, condensed catalog
+    exports/knowledge.md                         SKILL.md body plus every reference
 
 The package is checked against section 7 before the zip is written. Generated Markdown is
 deterministic for the same inputs: patterns are ordered by fixed keys and no timestamps
@@ -687,6 +688,77 @@ The bundled script is not available in this form: apply the pattern catalog your
 """
 
 
+COMPACT_INTRO = """\
+# slop-check (compact system prompt)
+
+This file bundles the slop-check skill for runtimes without skill support, in a size that fits a
+system prompt or custom instructions. It holds the skill instructions, the report format and a
+condensed pattern catalog. Where the instructions refer to a file under `references/`, use the
+section of that name below; for full pattern detail (all example phrases, word lists and
+rubrics) attach `knowledge.md` as a knowledge file where the runtime supports one. The bundled
+script is not available in this form: apply the catalog yourself.
+"""
+
+
+def _first_sentence(text: object, limit: int = 160) -> str:
+    clean = _clean(text)
+    for stop in (". ", "? ", "! "):
+        idx = clean.find(stop)
+        if 0 < idx < limit:
+            return clean[: idx + 1]
+    return clean if len(clean) <= limit else clean[: limit - 3].rstrip() + "..."
+
+
+def _compact_examples(pattern: dict, per_language: int = 1) -> str:
+    parts: list[str] = []
+    for lang, real in sorted((pattern.get("realizations") or {}).items()):
+        examples = ((real or {}).get("examples") or {}).get("positive") or []
+        picked = [f'"{_clean(e)}"' for e in examples[:per_language]]
+        if picked:
+            label = "any language" if lang == "*" else lang
+            parts.append(f"{label}: " + "; ".join(picked))
+    return " | ".join(parts)
+
+
+def render_compact_catalog(catalog: dict) -> str:
+    """Condensed catalog for the compact export: scored core, then candidates, both modalities."""
+    vt = catalog.get("verdict_thresholds") or {}
+    lines = [
+        "# File: references/text-patterns.md (condensed)",
+        "",
+        f"Verdict: GREEN below {_num(vt.get('yellow', 0))}, YELLOW from {_num(vt.get('yellow', 0))}, "
+        f"RED from {_num(vt.get('red', 0))} (sum of the weights of triggered scored patterns). "
+        "Candidates carry weight 0 and are reported as observations.",
+        "",
+    ]
+    for modality in ("text", "image"):
+        core, candidates, _fading = _groups(catalog, modality)
+        if not core and not candidates:
+            continue
+        lines.extend([f"## {modality.capitalize()} patterns", ""])
+        for pattern in core + candidates:
+            status = pattern.get("effective_status")
+            weight = _num(pattern.get("weight") or 0) if status == "core" else "0"
+            head = f"- `{pattern['id']}` {pattern.get('name', '')} ({status}, weight {weight})."
+            body = [_first_sentence(pattern.get("summary"))]
+            body.append(" ".join(threshold_words(pattern)))
+            examples = _compact_examples(pattern)
+            if examples:
+                body.append(f"Examples: {examples}.")
+            body.append("Fix: " + _first_sentence(pattern.get("fix")))
+            lines.append(head + " " + " ".join(b for b in body if b))
+        lines.append("")
+    return "\n".join(lines).rstrip("\n") + "\n"
+
+
+def render_compact_export(skill_body: str, report_format: str | None, catalog: dict) -> str:
+    parts = [COMPACT_INTRO.rstrip("\n"), "", skill_body.strip("\n"), ""]
+    if report_format:
+        parts.extend(["---", "", "# File: references/report-format.md", "", report_format.strip("\n"), ""])
+    parts.extend(["---", "", render_compact_catalog(catalog).strip("\n"), ""])
+    return "\n".join(parts).rstrip("\n") + "\n"
+
+
 def render_export(skill_body: str, references: list[tuple[str, str]]) -> str:
     parts = [EXPORT_INTRO.rstrip("\n"), "", skill_body.strip("\n"), ""]
     for name, text in references:
@@ -782,8 +854,10 @@ def build(
     _meta, body = parse_frontmatter((pkg / "SKILL.md").read_text(encoding="utf-8"))
     names = _reference_order(sorted(p.name for p in refs_dir.glob("*.md")))
     references = [(n, (refs_dir / n).read_text(encoding="utf-8")) for n in names]
+    _write(out / "exports" / "knowledge.md", render_export(body, references))
+    report_format = dict(references).get("report-format.md")
     export_path = out / "exports" / "system-prompt.md"
-    _write(export_path, render_export(body, references))
+    _write(export_path, render_compact_export(body, report_format, catalog))
     return BuildResult(pkg, zip_path, export_path, catalog, warnings)
 
 

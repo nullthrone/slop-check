@@ -8,7 +8,6 @@ summary: >
   When everything is emphasized, nothing stands out.
 category: formatting
 status: candidate
-legacy_id: T2.26
 detector:
   kind: metric
   position: any
@@ -89,6 +88,3 @@ related:
   - {id: bullet-bold-lead, relation: distinct-from}
   - {id: emoji-decoration, relation: distinct-from}
   - {id: format-bleed, relation: overlaps}
-history:
-  - {date: 2026-11-15, change: "Opened as legacy candidate T2.26 with Pangram and aismells as two independent sources; no transferable per-text threshold."}
-  - {date: 2026-11-17, change: "Migrated to slop-check repository as candidate markdown-emphasis-inflation; metric threshold chosen at migration."}
