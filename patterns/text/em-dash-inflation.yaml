@@ -13,6 +13,7 @@ detector:
   params: {per_words: 500}
 threshold:
   value: {op: gt, x: 5.25}
+  short_text: {min_words: 100}
 requires: null
 realizations:
   "*":
@@ -27,7 +28,16 @@ realizations:
         - "Die Strecke Köln-Bonn ist 30 km lang."
         - "The well-known side-effect is documented in the FAQ."
     test_texts:
-      - {text: "The fix — finally — landed on Friday. It was small — three lines — but it closed the oldest bug in the tracker.", expect: trigger}
+      - {text: "The fix — finally — landed on Friday. It was small — three lines — but it closed the oldest bug in the tracker.", expect: no_trigger}
+      - text: >-
+          The fix — finally — landed on Friday. It was small — three lines — but it closed the oldest
+          bug in the tracker. The bug had been open since the first public release and showed up only
+          when two users saved the same draft within one second. Support had collected more than forty
+          reports over the years, most of them from teams that share a single account. The patch adds
+          a version check before each save and rejects the second write with a clear message. We ran
+          the full test suite on three platforms and added two new tests for the race. The release
+          notes describe the change and link to the original report.
+        expect: trigger
       - {text: "The new release changes how the scheduler assigns jobs to workers. Until now every job went to the first idle worker, which caused uneven load when long exports and short thumbnail jobs arrived at the same time. The scheduler now estimates the run time of each job from the last fifty runs of the same type and places it on the worker with the lowest expected finish time. In our staging cluster this cut the p95 queue wait from 41 seconds to 12 seconds over a two week test. Memory use on the coordinator grew by about 30 MB, which is within the budget for the current hardware. The estimate falls back to the old behaviour when fewer than ten historical runs exist, so new job types are not delayed by missing data. Operators can switch the feature off with a single flag in the config file — the default is on for all clusters created after version 4.2. Existing clusters keep the old behaviour until the flag is set by hand during the next maintenance window, and the release notes describe the change with examples for both cases.", expect: no_trigger}
 legitimate_use: >
   Fiction and typeset publications use dashes as a deliberate style. German uses the spaced
@@ -48,7 +58,9 @@ notes: >
   threshold of more than 5.25 per 500 words (10.5 per 1,000) sits at the upper end of the human
   range that SlopDetector reports (up to about 10 per 1,000). The rule applies to all registers,
   not only to expository prose. Because density is computed per 500 words, two dashes trigger in
-  texts shorter than about 190 words. Given the model dependence, a hit is best weighed together
+  texts shorter than about 190 words; below 100 words of analyzed text the short-text rule keeps the
+  pattern from triggering, because one or two dashes there say nothing about density. Texts of more
+  than 150 words are unaffected. Given the model dependence, a hit is best weighed together
   with other accumulation signals; this is not encoded as requires. Curly quotes are covered by
   curly-quotes.
 sources:

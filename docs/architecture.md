@@ -15,7 +15,7 @@ them in the same pull request.
 | D4 | Operational definition: a slop pattern is a pattern that is over-represented in LLM output relative to a human baseline. | Admission to the scored core is decided by measurement. Sources make a pattern a candidate; they do not make it core. |
 | D5 | Lifecycle `observation -> candidate -> core -> fading`. `core` and `fading` are derived from measurements and never declared by contributors; the only declared core patterns are the initial core (5.3). | A contributor cannot self-promote a pattern. |
 | D6 | Four modes: `audit` (default), `rewrite` (surgical, diff), `prevent` (rules applied while generating), `batch` (deterministic CLI with exit code and JSON). | One engine serves batch and audit; rewrite and prevent are skill-mode only. |
-| D7 | Model-agnostic skill in the open Agent Skills format (`SKILL.md` + `references/` + optional `scripts/`). The same package runs in Claude, the Gemini app, Gemini CLI and other skill-capable agents. Scripts accelerate, they are never required. | No vendor-specific tool names or prompt idioms in skill text. Package must satisfy the strictest known runtime (section 7). |
+| D7 | Model-agnostic skill in the open Agent Skills format (`SKILL.md` + `references/` + optional `scripts/`). The same package runs in Claude, the Gemini app, Gemini CLI and other skill-capable agents. Scripts accelerate, they are never required, and neither are the reference files: the packaged `SKILL.md` alone suffices for a correct audit. | No vendor-specific tool names or prompt idioms in skill text. Package must satisfy the strictest known runtime (section 7). |
 | D8 | Multimodal: text is fully cataloged in v1. Image patterns ship as `candidate` (audit runs, no score weight) plus prevention rules for image generation. Schema reserves `code`, `audio`, `video`. | Image prevention works immediately (e.g. Gemini image generation); image scoring waits for an image benchmark. |
 | D9 | Score plus traffic light. Findings sorted by weight, a score (sum of weights of triggered scored patterns) and a verdict GREEN / YELLOW / RED derived from the score. | CLI exit codes hang on the verdict. |
 | D10 | Autonomous quality gate. Content pull requests merge automatically when all checks pass. Maintainer review is required only for changes to the gate itself (workflows, engine, eval code, thresholds, skill instructions), enforced by CODEOWNERS. | No routine review load for the maintainer. |
@@ -31,7 +31,7 @@ them in the same pull request.
 ```
 patterns/<modality>/<id>.yaml   Source of truth, one file per pattern (schema/pattern.schema.json)
 sources/<id>.yaml               Source registry, one file per source (schema/source.schema.json)
-skill/SKILL.md                  Hand-written skill instructions (model-agnostic, no pattern list)
+skill/SKILL.md                  Hand-written skill instructions (model-agnostic); the build fills its core-catalog region (section 7)
 skill/references/*.md           Hand-written references (procedures, report format, rewrite, prevention)
 src/slopcheck/                  Runtime engine. Python >= 3.10, standard library only. Bundled into the skill.
 src/slopcheck_dev/              Dev and CI tooling (validate, build, evals). May use dev dependencies.
@@ -50,9 +50,13 @@ Generated output is never committed to `main`:
 
 ```
 dist/slop-check/                Installable skill package (pushed to branch `dist`, attached to releases)
-dist/slop-check.zip
-dist/slop-check-flat.zip        Same package with SKILL.md at the archive root
-dist/exports/system-prompt.md   Compact single-file fallback for runtimes without skill support
+dist/slop-check.zip             Folder slop-check/ at the archive root (Claude, Gemini CLI)
+dist/slop-check-flat.zip        Same package with SKILL.md at the archive root (Microsoft 365 Copilot, Copilot Studio)
+dist/slop-check-lite.zip        SKILL.md and references/*.md at the archive root, no scripts/ (Gemini app,
+                                Microsoft 365 Copilot Cowork, Vibe Work: no script execution or at most 20 companion files)
+dist/exports/system-prompt.md   Single-file export for API system messages and other large fields (about 60 kB)
+dist/exports/instructions.md    At most 7,500 characters for instruction fields (ChatGPT project instructions,
+                                Microsoft declarative agents): procedure, report skeleton, thresholds, scored patterns
 dist/exports/knowledge.md       Full single-file export (all references) for runtimes with knowledge files
 ```
 
@@ -93,6 +97,7 @@ threshold:
   short_text: {min_count: 1}     # override for texts <= governance short_text_max_words
   value: null                    # metrics: {op: lt|lte|gt|gte, x: <number>}
   min_units: null                # metrics: minimum sentences/paragraphs for the metric to apply
+  min_words: null                # minimum words of analyzed text for the rule to apply
   context_overrides:             # optional, keyed by context (default|informal|technical|academic|marketing)
     informal: {min_count: 2}
 requires: null                   # {min_other_findings: 3}: counts only if >= 3 other scored patterns triggered
@@ -117,6 +122,11 @@ related:
 
 YAML loaders convert date values to ISO strings (`YYYY-MM-DD`) before schema validation,
 so contributors can write unquoted dates.
+
+A density (`per_words`, or a metric that counts per words such as `em_dash_density`) is noise over
+a few dozen words: two nominalizations in a 22-word text give 27 per 300 words. Patterns with a
+density rule therefore carry `short_text: {min_words: 100}`. The thresholds were calibrated on texts
+of 150 words and more, which the short-text rule never touches.
 
 Rules enforced by `slopcheck-dev validate`:
 
@@ -171,6 +181,11 @@ patterns whose `effective_status` is `core`.
 | `metric` | `detector.metric`, `detector.params` | metric returns `value` and evidence spans; trigger via `threshold.value` |
 | `llm` | `detector.rubric` + examples | via `llm_judge`; skipped (listed under not evaluated) without one |
 | `vision` | `detector.rubric` | image modality; evaluated by the host model or an eval judge |
+
+`min_units` (sentences or paragraphs, in the detector's unit) and `min_words` (words of analyzed
+text, `slopcheck.thresholds.words_ok`) are preconditions of every rule: below them a pattern never
+triggers, an aggregate metric reports no hits and an `llm` pattern is not sent to the judge. The
+threshold text names them (`at least 3 sentences`, `at least 100 words`).
 
 Regexes compile with `re.MULTILINE` (inline flags such as `(?i)` allowed). Hit quotes are
 trimmed of leading and trailing whitespace and sentence punctuation. Positions are checked
@@ -258,7 +273,8 @@ Verdict: YELLOW (score 3.5; yellow from 2.0, red from 5.0) | 412 words | languag
 <provisional weights notice if applicable>
 ```
 
-The skill instructs the host model to use the same structure (`skill/references/report-format.md`).
+The skill instructs the host model to use the same structure: `skill/SKILL.md` carries the skeleton
+with English and German labels, `skill/references/report-format.md` the details and the JSON result.
 
 ### 4.7 CLI
 
@@ -442,7 +458,41 @@ The package must satisfy the strictest known runtime (Gemini app, Nov 2026):
 - Two archives: `slop-check.zip` with the folder `slop-check/` at its root (Claude, Gemini) and `slop-check-flat.zip` with `SKILL.md` at its root (runtimes that expect that, such as Microsoft 365 Copilot and Copilot Studio).
 - Allowed file types only: `.md`, `.py`, `.json`, `.yaml`, `.txt`. No archives inside, no hidden files, no `__pycache__`/`.pyc`, total size far below 100 MB.
 - Scripts must not need network access. The engine runs fully offline; `--llm` is a CLI feature outside skill mode.
-- The skill must work when scripts cannot run: the host model then applies `references/text-patterns.md` itself.
+- At most 200 files per archive (claude.ai rejects larger ones, community report). `check_package` counts
+  every file and folder plus the root folder, which is the number of zip entries (`MAX_FILES`).
+- Three archives, one package: `slop-check.zip` (folder `slop-check/` at the root; Claude, Gemini CLI),
+  `slop-check-flat.zip` (`SKILL.md` at the root; Microsoft 365 Copilot, Copilot Studio) and
+  `slop-check-lite.zip` (`SKILL.md` and `references/*.md` at the root, no `scripts/` and no
+  `references/scripts-usage.md`; Gemini app, Microsoft 365 Copilot Cowork, Vibe Work, which run no
+  scripts or accept at most 20 companion files). `check_package(..., lite=True)` enforces no `scripts/`
+  and at most 20 files besides `SKILL.md`. All three carry the same `SKILL.md`; its script step is
+  conditional ("if `scripts/slopcheck.py` exists and you can run commands").
+- The packaged `SKILL.md` must be sufficient on its own for a correct audit. Some hosts load only
+  `SKILL.md`: the Gemini app runs no bundled scripts and opens reference files only on demand, and a
+  model that found neither wrote a free-form critique without pattern IDs, score or verdict
+  (observed 2026-11-17). So `SKILL.md` states first that the skill works fully without code, puts the
+  manual audit first and the script in an optional step after it, never lets the model mention a
+  missing script or file, and carries the report skeleton with English and German labels. Each
+  reference is named with an imperative and its base name as well (`references/text-patterns.md`
+  (`text-patterns.md`)) for hosts that flatten folders. The build guarantees the pattern part:
+  `skill/SKILL.md` holds the lines `<!-- slopcheck:core-catalog -->` and `<!-- /slopcheck:core-catalog -->`
+  with a placeholder between them, and `slopcheck-dev build` replaces that region in the packaged copy
+  with the catalog version, the verdict thresholds and their source, whether weights are provisional,
+  one line per scored text pattern (ID, name, weight, how to find hits, threshold as the report writes
+  it, typical hits per language: the matched part of the positive examples for phrase patterns, the
+  first word-list terms for word lists, short examples for the others) and one line of candidate and
+  fading IDs. The region is generated from the compiled catalog, so it follows every measurement. The
+  build fails when the marker pair is missing or malformed.
+- Size of the packaged `SKILL.md`: at most 500 lines and about 5,000 tokens (Agent Skills guidance),
+  estimated as characters ÷ 4 (`MAX_SKILL_LINES`, `MAX_SKILL_TOKENS`). The build takes the richest
+  core list that fits (two typical hits per language, then one, then none) and warns when it had to
+  reduce it; it fails only when even the list without typical hits does not fit, and then the
+  hand-written text of `skill/SKILL.md` must get shorter. A measurement that promotes more patterns to
+  core therefore shrinks the list instead of breaking the release. The build prints the size.
+- `exports/instructions.md` must fit an instruction field: at most 7,500 characters
+  (`MAX_INSTRUCTIONS_CHARS`), with the same fallback (three key phrases per pattern, then two, one,
+  none) and a build failure beyond it. `exports/system-prompt.md` replaces the core-catalog region by a
+  pointer to its condensed catalog, so it lists each pattern once.
 
 ## 8. Workflows
 

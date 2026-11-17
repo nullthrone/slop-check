@@ -15,6 +15,7 @@ detector:
   params: {}
 threshold:
   value: {op: gt, x: 2}
+  short_text: {min_words: 100}
   context_overrides:
     technical:
       value: {op: gt, x: 5}

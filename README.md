@@ -8,41 +8,27 @@ exact quotes and a weighted verdict. They never claim that a text was written by
 
 ## Setup
 
-Download the package: [slop-check.zip](https://github.com/nullthrone/slop-check/releases/latest/download/slop-check.zip).
-It contains one folder, `slop-check/`, with `SKILL.md` at its top. Detailed guides per runtime:
-[nullthrone.github.io/slop-check/setup](https://nullthrone.github.io/slop-check/setup/).
+Download the file for your assistant from the latest release. The
+[capability matrix](https://nullthrone.github.io/slop-check/setup/) lists every supported product
+with the file to use and what the product does with the skill, and links a step-by-step guide for
+each. Keep the folder name `slop-check` when you unzip `slop-check.zip`.
 
-Claude Code: unzip the package into `~/.claude/skills/` for all your projects, or into
-`.claude/skills/` inside a repository to share it with that project. The result is
-`~/.claude/skills/slop-check/SKILL.md` (or the project equivalent).
-
-claude.ai: turn on code execution ("Create and edit files" under Settings > Capabilities; on
-Enterprise plans an owner enables skills for the organization). Then open Customize > Skills,
-click "+", choose "Create skill", then "Upload a skill", and upload `slop-check.zip` as it is.
-
-Gemini app: unzip the package. On gemini.google.com open Customize in the sidebar (under More
-if you do not see it), then Skills, Create, Upload, and select the `slop-check` folder. Gemini
-applies active skills on its own when a request fits, or you pick one by typing `/` in the chat.
-When Google removes Gems, the Gemini app recreates each Gem as a skill. If one of your Gems
-already did this job, keep only one of the two active (More > Deactivate).
-
-Gemini CLI: unzip the package into `~/.gemini/skills/` (user) or `.gemini/skills/` (workspace),
-or run `gemini skills install ./slop-check` on the unzipped folder. The `.agents/skills/`
-directories work as aliases. Gemini CLI asks for consent before it activates a skill.
-
-Other Agent Skills runtimes: many clients scan `.agents/skills/` in the project and
-`~/.agents/skills/` in your home directory. Unzip the package there, or wherever your client's
-documentation says. The setup guides also cover ChatGPT, Codex, GitHub Copilot, Microsoft 365
-Copilot, Mistral, Cursor and other clients.
-
-Runtimes without skill support: download
-[system-prompt.md](https://github.com/nullthrone/slop-check/releases/latest/download/system-prompt.md)
-and paste it as the system prompt or custom instructions. It is a compact file with the skill
-instructions, the report format and a condensed pattern catalog, and it works without file
-access or scripts. Where the runtime accepts knowledge files, attach
-[knowledge.md](https://github.com/nullthrone/slop-check/blob/dist/exports/knowledge.md) as well:
-the full single-file export with every reference and the complete catalog, including all example
-phrases, word lists and rubrics.
+| Runtime | File |
+|---|---|
+| Claude apps, Claude Code, Claude API, Claude Agent SDK | [slop-check.zip](https://github.com/nullthrone/slop-check/releases/latest/download/slop-check.zip), uploaded as it is or unzipped into `~/.claude/skills/` |
+| ChatGPT, Codex, OpenAI API | [slop-check.zip](https://github.com/nullthrone/slop-check/releases/latest/download/slop-check.zip), uploaded, or unzipped into `~/.agents/skills/` for Codex |
+| Gemini Enterprise, Gemini CLI, Antigravity | [slop-check.zip](https://github.com/nullthrone/slop-check/releases/latest/download/slop-check.zip), uploaded to Gemini Enterprise, or unzipped into `~/.gemini/skills/` (Gemini CLI) or `~/.gemini/config/skills/` (Antigravity) |
+| Gemini app | [slop-check-lite.zip](https://github.com/nullthrone/slop-check/releases/latest/download/slop-check-lite.zip) |
+| GitHub Copilot | [slop-check.zip](https://github.com/nullthrone/slop-check/releases/latest/download/slop-check.zip), unzipped into `~/.copilot/skills/` or `.github/skills/` |
+| Microsoft 365 Copilot Chat, Agent Builder, Copilot Studio | [slop-check-flat.zip](https://github.com/nullthrone/slop-check/releases/latest/download/slop-check-flat.zip) |
+| Microsoft 365 Copilot Cowork | [slop-check-lite.zip](https://github.com/nullthrone/slop-check/releases/latest/download/slop-check-lite.zip) |
+| Mistral Vibe Work | The files of [slop-check-lite.zip](https://github.com/nullthrone/slop-check/releases/latest/download/slop-check-lite.zip), entered in the skill form |
+| Mistral Vibe CLI | [slop-check.zip](https://github.com/nullthrone/slop-check/releases/latest/download/slop-check.zip), unzipped into `~/.vibe/skills/` |
+| Cursor, OpenCode, goose, Devin Desktop, Amp, Zed, JetBrains Junie | [slop-check.zip](https://github.com/nullthrone/slop-check/releases/latest/download/slop-check.zip), unzipped into `~/.agents/skills/` |
+| Kiro | [slop-check.zip](https://github.com/nullthrone/slop-check/releases/latest/download/slop-check.zip), unzipped into `~/.kiro/skills/` |
+| Instruction fields of about 8,000 characters | [instructions.md](https://github.com/nullthrone/slop-check/releases/latest/download/instructions.md), at most 7,500 characters |
+| Knowledge or project files | [knowledge.md](https://github.com/nullthrone/slop-check/releases/latest/download/knowledge.md), the full catalog in one file |
+| API system messages | [system-prompt.md](https://github.com/nullthrone/slop-check/releases/latest/download/system-prompt.md), about 62,000 characters, too long for typical instruction fields |
 
 ## What it checks
 
@@ -83,10 +69,12 @@ when it runs inside a model.
 
 ## Releases and the dist branch
 
-Each GitHub release carries `slop-check.zip`, `system-prompt.md` and `knowledge.md`. The `dist`
-branch holds the unpacked package built from the latest `main` and the latest measurement:
-`slop-check/` and `exports/` with `system-prompt.md` and `knowledge.md`. Nothing generated is
-committed to `main`.
+Each GitHub release carries three packages and three exports: `slop-check.zip` (folder
+`slop-check/` with scripts), `slop-check-flat.zip` (`SKILL.md` at the archive root),
+`slop-check-lite.zip` (no scripts), `instructions.md` (at most 7,500 characters),
+`system-prompt.md` and `knowledge.md`. The `dist` branch holds the unpacked package built from
+the latest `main` and the latest measurement: `slop-check/` and `exports/`. Nothing generated
+is committed to `main`.
 
 ## How measurement works
 

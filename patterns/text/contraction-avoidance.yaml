@@ -16,6 +16,7 @@ threshold:
   per_words: 100
   comparison: gte
   scope: text
+  short_text: {min_words: 100}
   context_overrides:
     informal: {min_count: 2, per_words: 100}
 requires: null

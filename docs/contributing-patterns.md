@@ -132,9 +132,11 @@ validation rejects them and times every expression on a 50 kB adversarial input.
 `threshold` says when the hits count. `min_count` with `comparison` sets the number of hits;
 `per_words` turns it into a density per that many words; `scope: paragraph` triggers when a single
 paragraph reaches the count. Metrics compare their value with `value: {op: gt, x: 3}` and can
-require `min_units` sentences or paragraphs. `short_text` overrides the rule for texts of up to 150
-words, and `context_overrides` adjusts it for the contexts `informal`, `technical`, `academic`
-and `marketing`.
+require `min_units` sentences or paragraphs. `min_words` requires that many words of analyzed text.
+`short_text` overrides the rule for texts of up to 150 words, and `context_overrides` adjusts it
+for the contexts `informal`, `technical`, `academic` and `marketing`. A density (`per_words`, or a
+metric that counts per words) is noise over a few dozen words, so give such a pattern
+`short_text: {min_words: 100}`: two hits in a 20-word text must not count as a dense text.
 
 ### Examples
 

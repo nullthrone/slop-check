@@ -16,6 +16,7 @@ threshold:
   comparison: gte
   scope: text
   min_units: null
+  short_text: {min_words: 100}
 requires: null
 realizations:
   en:

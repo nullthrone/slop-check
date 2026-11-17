@@ -297,6 +297,13 @@
             "null"
           ],
           "minimum": 1
+        },
+        "min_words": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1
         }
       }
     },
@@ -361,6 +368,13 @@
           "$ref": "#/$defs/value_rule"
         },
         "min_units": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1
+        },
+        "min_words": {
           "type": [
             "integer",
             "null"

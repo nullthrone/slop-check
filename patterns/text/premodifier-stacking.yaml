@@ -16,6 +16,7 @@ detector:
   params: {}
 threshold:
   value: {op: gt, x: 2}
+  short_text: {min_words: 100}
 requires: null
 realizations:
   "*":
@@ -45,7 +46,8 @@ prevention: >
   a short sentence that names the actor.
 notes: >
   No source gives a threshold. The value of more than 2 hyphenated premodifiers per 100 words is
-  not yet calibrated against the reference corpora; very short texts reach it with a single hit.
+  not yet calibrated against the reference corpora. Very short texts would reach it with a single
+  hit, so the short-text rule requires at least 100 words of analyzed text.
   arxiv-2610-29162 is not a source here because it measures noun-noun compounds, tracked
   separately as stacked-nouns.
 sources:

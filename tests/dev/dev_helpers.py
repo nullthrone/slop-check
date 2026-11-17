@@ -111,7 +111,10 @@ class MiniRepo:
         (skill / "references").mkdir(parents=True, exist_ok=True)
         default_fm = "---\nname: slop-check\ndescription: Use when a text needs a style check.\n---\n"
         fm = frontmatter if frontmatter is not None else default_fm
-        body = "\n# Slop-Check\n\nFollow the audit procedure.\n"
+        body = (
+            "\n# Slop-Check\n\nFollow the audit procedure.\n\n## Core patterns\n\n"
+            "<!-- slopcheck:core-catalog -->\n(Filled in by the build.)\n<!-- /slopcheck:core-catalog -->\n"
+        )
         (skill / "SKILL.md").write_text(fm + body, encoding="utf-8")
         refs = (
             references
