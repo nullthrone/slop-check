@@ -77,6 +77,15 @@ sources:
     note: >
       "Featured in TechCrunch" as an unsupported appeal to authority. Recorded on 2026-08-30 as a
       separate single-source note; the legacy knowledge base never linked it to T2.19.
+  - source: wikipedia-signs-of-ai-writing
+    locator: "section 'Undue emphasis on notability, attribution, and media coverage' (WP:AIATTR)"
+    note: >
+      Words to watch "independent coverage", "local/regional/national media outlets", "trade
+      publications", "cited/featured/profiled in"; examples "featured in Vogue, Wired, Toronto
+      Star, and other media" (February 2025) and a November 2026 draft that lists eight Indian
+      outlets. The guide says the sign is more common in tools released in 2025 or later and
+      distinct from press releases. gptzero-ai-patterns states that its taxonomy derives from this
+      guide, so the two are one lineage.
 related:
   - {id: vague-attribution, relation: distinct-from}
 history:

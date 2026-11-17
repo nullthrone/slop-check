@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Report a security vulnerability
+    url: https://github.com/nullthrone/slop-check/security/advisories/new
+    about: Report vulnerabilities privately. Do not open a public issue.
+  - name: Setup guides
+    url: https://nullthrone.github.io/slop-check/setup/
+    about: Installing the skill in Claude, Gemini and other runtimes.

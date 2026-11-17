@@ -1,0 +1,66 @@
+id: reader-emphasis-command
+modality: text
+name: Reader-directed emphasis command
+summary: >
+  After a claim, the text tells the reader how to receive it: "Let that sink in.", "Read that
+  again.", "Sit with that.", "Think about that for a second." The command performs significance
+  instead of showing it, and it presumes the claim was striking. It is a stock device of viral
+  LinkedIn posts that generated posts reproduce.
+category: rhetoric
+status: candidate
+detector:
+  kind: regex
+  position: any
+threshold:
+  min_count: 1
+  comparison: gte
+  scope: text
+requires: null
+realizations:
+  en:
+    patterns:
+      - '(?i)(?:^|(?<=[.!?:]\s))(?:let\s(?:that|this|it)\ssink\sin|read\s(?:that|this|it)\s(?:again|twice|one\smore\stime)|sit\swith\s(?:that|this)(?:\sfor\sa\s(?:second|moment|minute))?|think\sabout\s(?:that|this)\sfor\sa\s(?:second|moment|minute))\s{0,2}[.!]'
+    examples:
+      positive:
+        - "We cut the team in half and shipped twice as fast. Let that sink in."
+        - "Your customers don't care about your roadmap. Read that again."
+        - "Most burnout is a planning failure, not a character flaw. Sit with that."
+        - "Ninety percent of the budget went to meetings. Think about that for a second."
+      negative:
+        - "Give the new process a week to sink in before you measure anything."
+        - "Read that chapter again before the exam on Friday."
+        - "Let the dough rest for an hour so the salt can sink in."
+        - "I had to read it twice because the contract language was so dense."
+legitimate_use: >
+  A speaker or columnist may use the device once, deliberately, after a figure that is genuinely
+  surprising and stated precisely. Instructions to reread a specific passage ("Read clause 4 again")
+  are not emphasis commands and fall outside the detector.
+fix: >
+  Delete the command. If the preceding claim needs weight, give it a number, a comparison or a
+  consequence the reader can check.
+prevention: >
+  Do not tell the reader to let something sink in, to read it again or to sit with it. Make the
+  claim strong enough to stand alone.
+notes: >
+  Mechanism: an imperative meta-comment on the reader's reaction, placed after a claim. Closest
+  existing pattern: fragment-pathos (clipped closing fragments such as "That's it. That's the whole
+  thing.") and payoff-announcement ("Here's the kicker:"). Payoff announcements come before the
+  point; fragment pathos is a clipped statement about the content. The emphasis command follows the
+  point, says nothing about the content and addresses the reader; it can occur in any position. The
+  humanizer skill files "Let that sink in." under its dramatic one-line closers, so the boundary with
+  fragment-pathos is close; the deterministic detector here matches only the reader-directed
+  imperatives as whole sentences. "Full stop." from the LinkedIn analysis is left out because it
+  is a fragment about the content (fragment-pathos territory).
+sources:
+  - source: authoritea-current-ai-tells
+    locator: "section 'Words and phrases'"
+    note: "Lists \"Let that sink in.\" (and \"sit with\") among current tells."
+  - source: vega-500-linkedin-posts
+    locator: "phrase table"
+    note: "\"Let that sink in\" 28x (rated Extreme) and \"Read that again\" 22x (High) against normal professional writing in 500 posts judged AI-generated; informal method."
+  - source: skill-humanizer
+    locator: "pattern 2 'One-line closers and dramatic fragments'"
+    note: "Watch phrase \"Let that sink in.\"."
+related:
+  - {id: fragment-pathos, relation: overlaps}
+  - {id: payoff-announcement, relation: distinct-from}

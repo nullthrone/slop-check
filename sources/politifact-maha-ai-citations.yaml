@@ -1,0 +1,14 @@
+id: politifact-maha-ai-citations
+title: "How fake citations appeared in RFK Jr.'s MAHA report: Here are generative AI's red flags in studies"
+url: https://www.politifact.com/article/2025/may/30/MAHA-report-AI-fake-citations/
+publisher: PolitiFact
+authors: [Loreben Tuquero]
+published: 2025-05-30
+accessed: 2026-11-17
+type: press
+notes: >
+  Fact-checking article on the May 2025 "Make America Healthy Again" report of the US government.
+  Relays the Washington Post finding that "some citations included 'oaicite' in their URLs" and
+  notes that ChatGPT users report "oaicite" as text that appears in their output. No count of the
+  affected citations. The Washington Post report itself was not read; it is not recorded as a
+  separate source.

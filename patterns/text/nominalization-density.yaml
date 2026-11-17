@@ -8,9 +8,6 @@ summary: >
   hides who acts and slows reading.
 category: lexical
 status: core
-provisional: true
-legacy_id: T2.11
-legacy_tier: 2
 detector:
   kind: metric
   position: any
@@ -22,7 +19,7 @@ detector:
       de: [ung, heit, keit, tion, sion, tät, ismus]
       en: [tion, sion, ment, ness, ity, ance, ence]
 threshold:
-  value: {op: gte, x: 3}
+  value: {op: gte, x: 23}
   context_overrides:
     academic:
       value: {op: gt, x: 300}
@@ -64,21 +61,21 @@ prevention: >
   Prefer verbs with a named actor over nouns derived from verbs (-ung, -heit, -keit, -tion in
   German; -tion, -ment, -ness, -ity in English), especially outside academic writing.
 sources:
-  - source: legacy-knowledge-base
-    locator: "T2.11 Nominalisierungs-Dichte, base taxonomy 2026-07-30"
+  - source: maintainer-observation
 related:
   - {id: premodifier-stacking, relation: distinct-from}
   - {id: stacked-nouns, relation: distinct-from}
   - {id: german-stock-phrases, relation: overlaps}
-history:
-  - {date: 2026-07-30, change: "Added to legacy knowledge base core as T2.11 (tier 2; at least 3 nominalizations per 300 words in non-academic contexts)."}
-  - {date: 2026-11-01, change: "Demarcation recorded against candidate T2.24 (premodifier stacking): T2.11 covers verbs turned into nouns, T2.24 covers modification moved into the noun phrase."}
-  - {date: 2026-11-15, change: "Noun-noun compound stacking (arXiv:2610.29162) recorded as a separate observation, distinct from T2.11."}
-  - {date: 2026-11-17, change: "Migrated to slop-check repository as grandfathered core (provisional). Academic exemption mapped to a context override that cannot trigger."}
 notes: >
-  False-positive risk: 3 suffix tokens per 300 words is reached by most ordinary German prose and
-  by much English prose, so the legacy threshold will likely fire on many human texts. It is
-  migrated unchanged for calibration. The academic override uses a value above the window size
-  (more than 300 per 300 words) because the threshold object has no explicit off switch. The
-  parameter names suffixes (per language) and min_word_length were chosen at migration; the
-  architecture only states that the suffix list lives in params.
+  Threshold set so that at most 4 % of the human reference corpus (pre-2022 texts, de and en)
+  triggers it; separation from AI-generated text is not yet measured. Suffix tokens are common in
+  ordinary prose: the median human text has about 8 per 300 words, and at 3 per 300 words 85 %
+  (de) and 87 % (en) of the human texts triggered. The threshold of 23 per 300 words (about one
+  word in thirteen) marks the densest 4 % of human texts in both languages. The reference corpus
+  holds texts of 150 words and more; in very short texts two or three nominalizations already
+  exceed the density. The academic override uses a value above the window size (more than 300
+  per 300 words) because the threshold object has no explicit off switch. The parameter names
+  suffixes (per language) and min_word_length are specific to this metric; the architecture only
+  states that the suffix list lives in params. This pattern covers verbs turned into nouns;
+  premodifier-stacking covers modification moved into the noun phrase and stacked-nouns covers
+  noun-noun compound chains.

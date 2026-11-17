@@ -66,6 +66,12 @@ sources:
     note: >
       HPSG parsing of model continuations of news lead sentences shows a preference for "nominal
       head + preceding adjunct" constructions. Single prompt-based news genre.
+  - source: slhck-claudish
+    locator: "level 2 of 'Claudish'"
+    note: >
+      "highly compressed half-sentences, with nouns as adjectives", with hyphenated premodifier
+      chains such as "study-lifecycle handlers" and "a real fleet-storm collapse". Anecdotal, one
+      model family; overlaps stacked-nouns.
 related:
   - {id: nominalization-density, relation: distinct-from}
   - {id: stacked-nouns, relation: distinct-from}

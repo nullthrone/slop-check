@@ -1,0 +1,79 @@
+id: source-gap-hedge
+modality: text
+name: Source-availability hedge
+summary: >
+  Instead of stating a fact, the text comments on the state of its sources: details "are limited in
+  available sources" or "not widely documented", the content is offered "based on available
+  information", a person "maintains a low profile", or a source "does not by itself establish" a
+  claim. Search-enabled chatbots produce these remarks when their search returns little; the remark
+  fills the place of the missing fact, and the claim about the sources is itself unverified.
+category: attribution
+status: observation
+detector:
+  kind: regex
+  position: any
+threshold:
+  min_count: 1
+  comparison: gte
+  scope: text
+requires: null
+realizations:
+  en:
+    patterns:
+      - '(?i)\b(?:not|aren[’'']t|isn[’'']t|wasn[’'']t|weren[’'']t)\s(?:widely|extensively|well|readily|thoroughly|publicly)\s(?:documented|transcribed)\b'
+      - '(?i)\b(?:while|although|though)\s(?:specific|detailed|precise|exact|further)\s(?:details|information|data|figures|records)\s(?:about|on|regarding|concerning)\b[^.!?\n]{1,80}?\b(?:are|is|remain|remains)\s(?:limited|scarce|sparse)\b'
+      - '(?i)\b(?:in|from)\s(?:the\s)?(?:provided|readily\savailable)\s(?:sources|search\sresults)\b'
+      - '(?i)\bbased\son\s(?:the\s)?available\sinformation\b'
+      - '(?i)\bmaintains?\sa\s(?:relatively\s|notably\s)?low\s(?:public\s|online\s|media\s)?profile\b'
+      - '(?i)\bdoes\snot\s(?:by\sitself|on\sits\sown|in\sitself)\sestablish\b'
+    examples:
+      positive:
+        - "While specific details about the village's economy are limited, agriculture likely plays a central role."
+        - "Though her early recordings aren't widely documented, they highlight her versatility as a performer."
+        - "Below is a detailed overview based on available information:"
+        - "The founder maintains a low profile, and little is said about his other business interests."
+        - "A listing in the heritage register does not by itself establish that the building is historically significant."
+        - "Information about the local fauna is sparse in the provided search results."
+      negative:
+        - "The data that support the findings are available from the corresponding author on request."
+        - "The court found that the evidence does not establish that the defendant knew of the defect."
+        - "Little is known about the composer's early life because the parish records burned in 1870."
+        - "The search results page now loads in under 200 milliseconds."
+        - "The bug is well documented in the issue tracker, with steps to reproduce."
+legitimate_use: >
+  Researchers, journalists and encyclopedists legitimately report gaps in the record when they name
+  what they searched and why the gap matters ("the parish records burned in 1870"). Police and
+  agency statements say "based on available information" as a standard caveat. Flag the remark when
+  it stands in place of research, names no source, and is followed by generic or speculative filler.
+fix: >
+  Find the missing fact in a named source, or cut the sentence. If a gap is relevant, state what was
+  checked and what is missing ("No parish register survives for 1820 to 1850"), then move on without
+  speculative filler.
+prevention: >
+  Do not comment on how much information is available. State what a named source says, or leave the
+  point out.
+notes: >
+  Mechanism: the writer reports on its own search instead of on the subject, often as a preamble to
+  speculation ("While specific details ... are limited, X likely ..."). Closest existing patterns:
+  cya-disclaimer ("It's important to note that ...", a meta announcement of importance) and
+  vague-attribution (claims backed by unnamed experts or studies). This pattern adds no authority
+  and announces nothing important; it disclaims the evidence base. The Wikipedia guide dates the
+  forms: "it's important to note" caveats in 2023 to 2024, "not widely documented" and "maintains a
+  low profile" with web-search chatbots in 2024 to 2025, and "does not by itself establish" style
+  epistemic caveats from mid-2026, which it says were nearly unheard of before. The detector leaves
+  out "not publicly available" and the bare "does not establish that", which are standard in
+  data-availability statements and legal writing. Single-source observation.
+sources:
+  - source: wikipedia-signs-of-ai-writing
+    locator: "Communication intended for the user: 'Hedging disclaimers about source availability and recommended usage' (subsections 2023-2024, 2024-2025, Mid-2026-present)"
+    note: >
+      Words to watch "While specific details are limited/scarce...", "not widely
+      available/documented/disclosed", "...in the provided/available sources / search results...",
+      "based on available information", "...does not by itself establish..."; examples from article
+      revisions of December 2024 ("aren't widely documented"), March 2025 ("limited in the provided
+      search results") and July 2025 ("not extensively documented in readily available sources").
+      The guide notes the claim of missing sources "may be fabricated".
+related:
+  - {id: cya-disclaimer, relation: distinct-from}
+  - {id: vague-attribution, relation: distinct-from}
+  - {id: hollow-sentences, relation: overlaps}

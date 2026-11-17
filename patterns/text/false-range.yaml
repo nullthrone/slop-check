@@ -8,9 +8,6 @@ summary: >
   you're a beginner or a pro" form does the same job.
 category: rhetoric
 status: core
-provisional: true
-legacy_id: T2.8
-legacy_tier: 2
 detector:
   kind: regex
   position: any
@@ -66,20 +63,13 @@ prevention: >
   Anfänger bis zum Profi" or "von der Idee bis zur Umsetzung", and avoid "whether you're a
   beginner or a pro". Name the concrete audience or the concrete steps.
 sources:
-  - source: legacy-knowledge-base
-    locator: "T2.8 False Ranges, base taxonomy 2026-07-30"
+  - source: maintainer-observation
   - source: aicheckr-io
     locator: "before/after examples"
-    note: "Recorded as a confirmation of T2.8 in the legacy knowledge base round 2026-09-13."
 related:
   - {id: triad, relation: overlaps}
-history:
-  - {date: 2026-07-30, change: "Added to legacy knowledge base core as T2.8 (tier 2, flags from 1 hit)."}
-  - {date: 2026-09-06, change: "German confirmation sources recorded, including the 'Egal ob ... oder ...' opening as a variant."}
-  - {date: 2026-09-13, change: "aicheckr.io recorded as confirmation; no change to threshold."}
-  - {date: 2026-11-17, change: "Migrated to slop-check repository as grandfathered core (provisional)."}
 notes: >
-  The "whether ... or ..." and "egal ob ... oder ..." regexes cover the variant that German
-  confirmation sources described in the legacy knowledge base round 2026-09-06; those sources are
-  not registered here. Chains of three ("from X to Y to Z") also count toward triad. Endpoint
-  lists are closed vocabularies for precision; unusual endpoints need host-model review.
+  The "whether ... or ..." and "egal ob ... oder ..." regexes cover a variant that German-language
+  guides to AI writing describe; those guides are not registered as sources. Chains of three
+  ("from X to Y to Z") also count toward triad. Endpoint lists are closed vocabularies for
+  precision; unusual endpoints need host-model review.

@@ -1,0 +1,24 @@
+id: wikipedia-signs-of-ai-writing
+title: "Wikipedia:Signs of AI writing"
+url: https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing
+publisher: Wikipedia (WikiProject AI Cleanup)
+published: null
+accessed: 2026-11-17
+type: community-directory
+access_note: >
+  Read as raw wikitext on 2026-11-17 (revision 1386183728 of 2026-11-17), together with the
+  subpages "Wikipedia:Signs of AI writing/Style" and "Wikipedia:Signs of AI writing/Markup".
+  The page is edited continuously; locators name section titles and shortcuts (WP:...).
+notes: >
+  Community field guide maintained by WikiProject AI Cleanup, built from real examples in
+  Wikipedia articles, drafts and talk pages, each dated by revision. It calls itself descriptive
+  ("observations, not rules") and warns that some signs may not apply outside Wikipedia. Sections
+  used here: "Undue emphasis on notability, attribution, and media coverage" (WP:AIATTR),
+  "Collaborative communication" (WP:CERTAINLY), "Section summaries" (WP:CONCLUSION, listed under
+  historical indicators), Style subpage ("Title case" WP:AITITLECASE, "Overuse of boldface"
+  WP:AIBOLD) and Markup subpage ("Use of Markdown" WP:MARKDOWN). Individual entries cite studies
+  (for example the title-case entry cites russell-acl-2025-expert-detectors), but most material
+  is the editors' own documented examples, so derived_from stays empty. Independence caveat:
+  tropes-fyi, gptzero-ai-patterns, aismells and jetwong-neocities each name this guide as a
+  reference or parent source; their entries can repeat it and should be read as one lineage
+  with it.

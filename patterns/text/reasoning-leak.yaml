@@ -7,7 +7,7 @@ summary: >
   thought process", or narration of the writer's own moves and decisions ("I want to be exact about
   my own role here"). The reader gets the scaffolding along with the building.
 category: composition
-status: observation
+status: candidate
 legacy_id: T2.20
 detector:
   kind: regex
@@ -68,13 +68,14 @@ prevention: >
   Do not narrate your reasoning process or announce how you will approach the task ("Let me think
   step by step", "Breaking this down"). Deliver the result and the reasons directly.
 notes: >
-  Legacy candidate T2.20, migrated as observation: its two sources (tropes.fyi and avoid-ai-writing,
-  which repeats the same phrase list and is registered as derived from tropes.fyi) form a single
-  independence cluster under docs/architecture.md section 5.2. The two sources stress different
-  facets: tropes.fyi describes narrated deliberation in prose, avoid-ai-writing lists visible task
-  decomposition phrases. The legacy examples "Step 1:" and "First, let's consider" are left out of
-  the detector because tutorials and textbooks use them legitimately. Many search hits for
-  "reasoning leak" concern chain-of-thought leakage in model security research, a different topic.
+  tropes-fyi, skill-avoid-ai-writing (registered as derived from it) and aismells form one
+  lineage; slhck-claudish and popularai-ai-tells-2026 are independent clusters that describe
+  reasoning or task decomposition reaching the reader. tropes.fyi and avoid-ai-writing stress
+  different facets: tropes.fyi describes narrated deliberation in prose, avoid-ai-writing lists
+  visible task decomposition phrases. The legacy examples "Step 1:" and "First, let's consider"
+  are left out of the detector because tutorials and textbooks use them legitimately. Many search
+  hits for "reasoning leak" concern chain-of-thought leakage in model security research, a
+  different topic.
 sources:
   - source: legacy-knowledge-base
     locator: "Candidate T2.20, opened 2026-09-20; section 5 (state 2026-11-15)"
@@ -90,6 +91,23 @@ sources:
       Phrase list: "Let me think step by step", "Breaking this down", "To approach this
       systematically", "Step 1:", "Here's my thought process", "First, let's consider", "Working
       through this logically".
+  - source: slhck-claudish
+    locator: "level 3 of 'Claudish'"
+    note: >
+      Revised reports carry reasoning-style phrasing ("the single most important correction", "the
+      corrections matter because", "it does not survive contact with the source data") and read
+      like "an AI proving its reasoning rather than informing a reader", as if reasoning tokens had
+      reached the output. Anecdotal; cites neither tropes.fyi nor the Wikipedia guide.
+  - source: popularai-ai-tells-2026
+    locator: "tell 'The \"let's narrow this down\" reflex'"
+    note: >
+      Narrated scoping instead of an answer: "We are narrowing the scope." "We are defining
+      parameters." No data.
+  - source: aismells
+    locator: "entry 'Eager Tour Guide', category Tone"
+    note: >
+      "Let's unpack this", "Let's break this down" as a pedagogical co-pilot voice. aismells names
+      the Wikipedia guide and tropes.fyi as parent resources, so it is not independent of them.
 related:
   - {id: sycophant-residue, relation: distinct-from}
   - {id: cya-disclaimer, relation: distinct-from}

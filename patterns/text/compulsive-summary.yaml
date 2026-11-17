@@ -7,9 +7,6 @@ summary: >
   said.
 category: composition
 status: core
-provisional: true
-legacy_id: T1.5
-legacy_tier: 1
 detector:
   kind: regex
   position: last_paragraph
@@ -61,23 +58,14 @@ prevention: >
   Do not end with a paragraph that opens with "In conclusion", "In summary", "Overall" or
   "Zusammenfassend lässt sich sagen". End on the last new point.
 sources:
-  - source: legacy-knowledge-base
-    locator: "T1.5, base taxonomy 2026-07-30"
+  - source: maintainer-observation
   - source: forbes-jodie-cook
     locator: "article of 2026-08-10"
-    note: "Advises deleting the summary sentence at the end; confirmation recorded 2026-08-16."
+    note: "Advises deleting the summary sentence at the end."
   - source: imperfectly-app
     locator: "'The Too-Clean Wrap-Up'"
-    note: "Confirmation recorded 2026-09-06."
   - source: skill-no-ai-slop
     locator: "'Summary-recap endings'"
-    note: "Confirmation recorded 2026-09-06."
   - source: aicheckr-io
-    note: "Confirmation recorded 2026-08-23."
 related:
   - {id: fractal-summaries, relation: distinct-from}
-history:
-  - {date: 2026-07-30, change: "Added to legacy knowledge base core as T1.5 (tier 1, single hit flags)."}
-  - {date: 2026-08-16, change: "Forbes column confirms ('delete the summary sentence at the end')."}
-  - {date: 2026-09-06, change: "imperfectly.app ('The Too-Clean Wrap-Up') and the no-ai-slop skill ('Summary-recap endings') confirm."}
-  - {date: 2026-11-17, change: "Migrated to slop-check repository as grandfathered core (provisional). Detector bound to sentence starts in the last paragraph."}

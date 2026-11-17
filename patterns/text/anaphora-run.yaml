@@ -1,0 +1,71 @@
+id: anaphora-run
+modality: text
+name: Anaphora run
+summary: >
+  Three or more consecutive sentences open with the same words ("They assume that users will pay.
+  They assume that developers will build. They assume that ecosystems will emerge."). The repeated
+  opening supplies rhythm in place of connection: the sentences are lined up instead of related,
+  and the reader hears a speech where an argument should be.
+category: rhetoric
+status: observation
+detector:
+  kind: regex
+  position: any
+threshold:
+  min_count: 1
+  comparison: gte
+  scope: text
+requires: null
+realizations:
+  en:
+    patterns:
+      - '(?:^|(?<=[.!?]\s))([A-Z][\w’''-]{0,20}\s[\w’''-]{1,20})\s[^.!?\n]{1,200}[.!?]\s{1,3}\1\s[^.!?\n]{1,200}[.!?]\s{1,3}\1\s'
+    examples:
+      positive:
+        - "They assume that users will pay. They assume that developers will build. They assume that ecosystems will emerge."
+        - "They have built engines, but not vehicles. They have built power, but not leverage. They have built walls, but not doors."
+        - "We believe in speed. We believe in craft. We believe in each other."
+        - "Great leaders listen first. Great leaders admit mistakes. Great leaders give credit away."
+      negative:
+        - "He opened the box. He checked the seal. He logged the time."
+        - "They assume that users will pay. Developers, they say, will build. Ecosystems will follow."
+        - "We shall fight on the beaches, we shall fight on the landing grounds, we shall fight in the fields."
+        - "In 2019 we moved to Berlin. In 2021 we moved to Lisbon. In 2023 we came back."
+        - "The report is late. The report is incomplete. Nobody has read it."
+legitimate_use: >
+  Anaphora is a classical figure; speeches, sermons, manifestos and poems use it deliberately, and
+  step-by-step instructions repeat openings for clarity ("Add the flour. Add the sugar. Add the
+  eggs."), which the detector also matches. Flag the run in expository or promotional prose where
+  the repetition replaces the logical links between the sentences.
+fix: >
+  Merge the parallel sentences into one statement, or keep one and say how the others relate to it
+  (cause, contrast, sequence). If the repetition is meant as a figure, use it once in the text and
+  make the last item the strongest.
+prevention: >
+  Do not start three sentences in a row with the same words. Connect the ideas with content, not with
+  a repeated opening.
+notes: >
+  Mechanism: sentence-level repetition of the opening words across consecutive sentences. Closest
+  existing patterns: triad (three-item coordinations inside a sentence) and antithesis-template (a
+  denial followed by an assertion). The anaphora run works across sentence boundaries and needs no
+  contrast; the tropes-fyi example "They have built engines, but not vehicles. ..." combines all
+  three. The detector requires the same first two words in three consecutive sentences, so a
+  narrative run with the same pronoun but different verbs ("He opened ... He checked ...") does not
+  match; the humanizer skill flags those single-subject runs too, which a regex cannot separate from
+  normal narration. Two-word openers that repeat in instructions produce false positives (see
+  legitimate_use). Status: kept as observation although the validator counts two clusters. The
+  Wikipedia guide has no anaphora entry, so neither source copies it here, but skill-humanizer is
+  derived from that guide and the guide's source record names tropes-fyi as part of the same
+  lineage; a third source with no tie to either (the Deslop skill mentions "anaphora/tricolon abuse"
+  but links a tropes catalog) was not found.
+sources:
+  - source: tropes-fyi
+    locator: "entry 'Anaphora abuse', category Sentence Structure, directory status fading"
+    note: "\"Repeating the same sentence opening multiple times in quick succession\"; examples with runs of \"They assume that\", \"They could\" and \"They have built\"."
+  - source: skill-humanizer
+    locator: "pattern 7 'Repeated sentence openings'"
+    note: "\"Several sentences in a row start with the same subject, often she or he.\" No counterpart in the Wikipedia guide, which the skill otherwise draws on."
+related:
+  - {id: triad, relation: distinct-from}
+  - {id: antithesis-template, relation: distinct-from}
+  - {id: uniform-rhythm, relation: overlaps}

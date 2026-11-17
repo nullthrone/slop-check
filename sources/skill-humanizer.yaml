@@ -1,0 +1,20 @@
+id: skill-humanizer
+title: "humanizer (agent writing skill)"
+url: https://github.com/blader/humanizer
+publisher: blader/humanizer (GitHub)
+published: null
+accessed: 2026-11-17
+type: practitioner-skill
+derived_from: [wikipedia-signs-of-ai-writing]
+access_note: >
+  SKILL.md read from the main branch on 2026-11-17 (26 numbered patterns in that version; pattern
+  counts differ between versions).
+notes: >
+  Widely installed agent skill that detects and rewrites AI-style prose. The file says its
+  patterns come from Wikipedia's "Signs of AI writing" plus reviews of AI-generated text "on
+  Wikipedia and elsewhere", hence derived_from. Several entries have no counterpart in the
+  Wikipedia guide and read as the maintainers' own additions, among them pattern 2 "One-line
+  closers and dramatic fragments" (watch phrase "Let that sink in.") and pattern 7 "Repeated
+  sentence openings" ("Several sentences in a row start with the same subject, often she or he";
+  example "He opened the box. He checked the seal. He logged the time."). Because of derived_from
+  it shares an independence cluster with the Wikipedia guide.

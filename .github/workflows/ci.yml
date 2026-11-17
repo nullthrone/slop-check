@@ -110,7 +110,7 @@ jobs:
             echo "corpus=true" >> "$GITHUB_OUTPUT"
           else
             echo "corpus=false" >> "$GITHUB_OUTPUT"
-            echo "::notice title=Empirical gate skipped::Branch data has no corpus yet (bootstrap phase). The first scheduled measurement creates it."
+            echo "::notice title=Empirical gate skipped::Branch data has no corpus yet. The first measurement creates it."
           fi
       - uses: ./.github/actions/human-corpus
         if: steps.data.outputs.corpus == 'true'
@@ -128,7 +128,7 @@ jobs:
           fi
           # shellcheck disable=SC2086  # IDS holds kebab-case ids separated by spaces
           slopcheck-dev measure --human .corpus/human --ai "$DATA/corpus/ai" --split dev \
-            --patterns $IDS "${extra[@]}" --out .eval-out/measure-dev.json --report .eval-out/measure-dev.md
+            --patterns $IDS "${extra[@]}" --out .eval-out/measure-dev.json
       - name: Gate
         if: steps.data.outputs.corpus == 'true'
         env:

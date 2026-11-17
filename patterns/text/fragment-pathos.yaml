@@ -8,9 +8,6 @@ summary: >
   only the closing position counts.
 category: rhetoric
 status: core
-provisional: true
-legacy_id: T1.7
-legacy_tier: 1
 detector:
   kind: llm
   position: paragraph_end
@@ -70,20 +67,13 @@ notes: >
   Kind llm because a surface rule (short sentence at paragraph end) would flag many informative
   closing sentences. Without a language model judge the pattern is listed as not evaluated.
 sources:
-  - source: legacy-knowledge-base
-    locator: "T1.7, base taxonomy 2026-07-30"
-    note: "Legacy exception: only flagged at the end of a paragraph or text; allowed inside running text."
+  - source: maintainer-observation
+    note: "Flagged only at the end of a paragraph or text; inside running text the device is allowed."
   - source: skill-no-ai-slop
     locator: "'Dramatic fragmentation'"
-    note: "Uses the identical example 'The future isn't coming. It's already here.' (confirmation recorded 2026-08-23)."
+    note: "Uses the identical example 'The future isn't coming. It's already here.'"
   - source: aipromptindex-io
     locator: "'Dramatic Fragmentation'"
-    note: "Confirmation recorded 2026-09-06."
 related:
   - {id: rhetorical-self-answer, relation: distinct-from}
   - {id: hollow-sentences, relation: overlaps}
-history:
-  - {date: 2026-07-30, change: "Added to legacy knowledge base core as T1.7 (tier 1; only at paragraph or text end)."}
-  - {date: 2026-08-23, change: "The no-ai-slop skill confirms with an identical example."}
-  - {date: 2026-09-06, change: "aipromptindex.io ('Dramatic Fragmentation') confirms."}
-  - {date: 2026-11-17, change: "Migrated to slop-check repository as grandfathered core (provisional) with an llm detector bound to paragraph ends."}

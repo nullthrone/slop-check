@@ -1,0 +1,72 @@
+id: engagement-bait-closer
+modality: text
+name: Engagement-bait closing question
+summary: >
+  A post ends with a generic request for reactions that is not tied to anything the writer will do
+  with the answers: "What do you think?", "Agree?", "Thoughts?", "What about you?", "Drop a comment
+  below." The closer is a template for social reach, not a question; generated LinkedIn and blog
+  posts attach it regardless of the topic.
+category: composition
+status: candidate
+detector:
+  kind: regex
+  position: last_paragraph
+threshold:
+  min_count: 1
+  comparison: gte
+  scope: text
+requires: null
+realizations:
+  en:
+    patterns:
+      - '(?i)(?:^|(?<=[.!?]\s))(?:so,?\s|now,?\s)?(?:what\sdo\syou\sthink|what\sabout\syou|how\sabout\syou|what[’'']s\syour\s(?:take|experience|view)|what\swould\syou\sadd|agree|thoughts)\s{0,2}\?'
+      - '(?i)\b(?:drop|share|leave)\s(?:a|your)\s(?:comment|thoughts|take|experience)s?\s(?:below|in\sthe\scomments)\b'
+      - '(?i)\blet\sme\sknow\s(?:your\sthoughts\s)?in\sthe\scomments\b'
+      - '(?i)\bwould\slove\sto\shear\s(?:your|what\syou)\b[^.!?\n]{0,40}\bin\sthe\scomments\b'
+    examples:
+      positive:
+        - "Remote work didn't kill culture. Bad managers did. What do you think?"
+        - "That's the framework I use for every hire. What about you?"
+        - "Three lessons from a year of cold outreach. Drop a comment below if you've tried something similar."
+        - "AI won't replace marketers who learn to use it. Agree?"
+        - "Would love to hear your experience in the comments."
+      negative:
+        - "What do you think the board will decide about the March budget?"
+        - "I asked the panel what they thought about the merger, and nobody answered."
+        - "Thoughts on the draft are due Friday at noon."
+        - "Does Tuesday at 3 work for the handover call?"
+legitimate_use: >
+  A real question that the writer needs answered (a colleague asked to choose between two options,
+  a community post asking for specific recommendations) is not bait, and an email that ends "What do
+  you think?" after a concrete proposal is ordinary. Flag the closer in posts and articles where any
+  topic would have received the same line.
+fix: >
+  End with the last substantive point, or ask a specific question that the post has prepared and
+  that readers can answer from their own experience ("Which of these three steps took your team the
+  longest?").
+prevention: >
+  Do not end posts with a generic call for comments such as "Thoughts?", "Agree?" or "What do you
+  think?". End on content, or ask one specific question you want answered.
+notes: >
+  Mechanism: a stock call-to-action appended to the end of a post. Closest existing patterns:
+  sycophant-residue ("Let me know if you'd like me to elaborate", addressed to the chat user) and
+  compulsive-summary (a formulaic coda that restates the text). This closer addresses the audience
+  of a public post, asks for engagement instead of restating, and is independent of chat framing.
+  Position last_paragraph because the sources describe the end of the post. The question forms must
+  end in a question mark right after the stock phrase, so "What do you think the board will decide?"
+  does not match. Human LinkedIn culture used the device before chat assistants; the gate will show
+  how much it separates generated from human posts.
+sources:
+  - source: lexiconn-three-second-test
+    locator: "tell 4 'closing platitude'"
+    note: "Example closer \"The lesson? [restatement]. What do you think? Drop a comment below.\""
+  - source: magicpost-linkedin-tells
+    locator: "section on the closing question"
+    note: "\"The reflex ask for comments\" (example \"What about you?\"); quotes a creator checklist that includes \"ending a post with a weird question\"."
+  - source: vega-500-linkedin-posts
+    locator: "structure mix"
+    note: "\"question-answer-engagement bait\" as the structure of 11 % of 500 posts judged AI-generated; informal method."
+related:
+  - {id: sycophant-residue, relation: distinct-from}
+  - {id: compulsive-summary, relation: distinct-from}
+  - {id: rhetorical-self-answer, relation: distinct-from}

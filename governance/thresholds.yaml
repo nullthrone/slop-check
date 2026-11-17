@@ -63,7 +63,6 @@ initial_core:
   fragment-pathos: 2.5
   triad: 1.0
   em-dash-inflation: 1.0
-  curly-quotes: 1.0
   bullet-bold-lead: 1.0
   hallmark-vocabulary: 1.0
   participle-padding: 1.0

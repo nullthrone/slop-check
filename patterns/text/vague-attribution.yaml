@@ -8,9 +8,6 @@ summary: >
   weak on its own and counts only alongside several other findings.
 category: attribution
 status: core
-provisional: true
-legacy_id: T3.1
-legacy_tier: 3
 detector:
   kind: regex
   position: any
@@ -72,35 +69,25 @@ prevention: >
   Do not write "studies show", "experts agree", "Studien zeigen" or exact percentages without
   naming the study with its publisher and year. If you have no source, drop the claim.
 sources:
-  - source: legacy-knowledge-base
-    locator: "T3.1 Vage oder unbelegt-präzise Attribution, base taxonomy 2026-07-30"
+  - source: maintainer-observation
   - source: slopdetector-org
     locator: "pattern 'Fake-authority phrases'"
-    note: "Confirmation recorded in the legacy knowledge base rounds 2026-09-06 and 2026-09-27."
   - source: aipromptindex-io
     locator: "entry 'Weasel Attribution'"
-    note: "Confirmation recorded in the legacy knowledge base round 2026-09-06."
   - source: skill-no-ai-slop
     locator: "entry 'Weasel attribution'"
-    note: "Confirmation recorded in the legacy knowledge base round 2026-09-06."
   - source: aicheckr-io
     locator: "unsourced-statistics example"
-    note: "Before/after example 'Studies show that 73% of businesses now use AI'; confirmation recorded 2026-09-13."
+    note: "Before/after example 'Studies show that 73% of businesses now use AI'."
   - source: gptzero-ai-patterns
     locator: "pattern 'Phantom Experts'"
-    note: "Confirmation recorded in the legacy knowledge base rounds 2026-09-13 and 2026-09-27."
 related:
   - {id: hollow-sentences, relation: distinct-from}
   - {id: name-dropping, relation: distinct-from}
-history:
-  - {date: 2026-07-30, change: "Added to legacy knowledge base as T3.1 (tier 3; reported only when at least 3 tier-2 patterns are exceeded in parallel)."}
-  - {date: 2026-09-06, change: "Confirmations recorded (SlopDetector 'Fake-Authority Phrases', aipromptindex.io and no-ai-slop 'Weasel attribution')."}
-  - {date: 2026-09-13, change: "Demarcation recorded against T2.16 (hollow sentences lack content, vague attribution lacks the source)."}
-  - {date: 2026-09-20, change: "Demarcation recorded against candidate T2.19 (name dropping piles up named sources, vague attribution names none)."}
-  - {date: 2026-11-17, change: "Migrated to slop-check repository as grandfathered core (provisional). Activation rule mapped to requires.min_other_findings 3."}
 notes: >
-  The legacy activation counted only exceeded tier-2 patterns; requires.min_other_findings counts
-  any other triggered scored pattern, because the repository has no tiers (decision D3). The
-  regexes cover surface forms and skip sentences that carry a citation marker (parenthesis,
-  bracket, year, "according to", "laut", "zufolge", link). Unsourced figures in other shapes need
-  host-model judgment.
+  The signal is weak on its own, so it counts only when at least three other scored patterns
+  trigger in the same text (requires.min_other_findings, decision D3). The regexes cover surface
+  forms and skip sentences that carry a citation marker (parenthesis, bracket, year, "according
+  to", "laut", "zufolge", link). Unsourced figures in other shapes need host-model judgment.
+  hollow-sentences lack concrete content altogether, and name-dropping piles up named sources,
+  while this pattern names none.

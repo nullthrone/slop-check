@@ -1,0 +1,16 @@
+id: slhck-claudish
+title: "The One Thing I Hate About Claude"
+url: https://slhck.info/software/2026/06/22/claudish.html
+publisher: slhck.info
+published: 2026-06-22
+accessed: 2026-11-17
+type: blog
+notes: >
+  Personal blog post by a software engineer about prose produced by one model family in coding
+  sessions and report revisions; anecdotal, no data. Describes "highly compressed half-sentences,
+  with nouns as adjectives" ("This is a real fleet-storm collapse", "Cap the study-lifecycle
+  handlers ..."), more frequent after long reasoning or tool use, and revisions in which
+  reasoning-style phrasing reaches the reader ("the single most important correction", "the
+  corrections matter because", "it does not survive contact with the source data"), which the
+  author reads as "an AI proving its reasoning rather than informing a reader". Cites neither
+  tropes-fyi nor the Wikipedia guide; the Wikipedia guide links to this post in a footnote.

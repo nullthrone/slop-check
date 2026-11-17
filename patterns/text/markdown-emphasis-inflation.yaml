@@ -67,6 +67,24 @@ sources:
     note: >
       "AI bolds and italicizes at rates no human editor would tolerate"; also describes markdown
       bleed and an unsupported RLHF explanation.
+  - source: wikipedia-signs-of-ai-writing
+    locator: "Style subpage, section 'Overuse of boldface' (WP:AIBOLD); Markup subpage, 'Misuse of asterisks'"
+    note: >
+      Boldface "in an excessive, mechanical manner", often emphasizing "every instance of a chosen
+      word or phrase" in a key-takeaways fashion, with dated examples from 2025 and 2026; notes
+      that some newer models or apps are instructed to avoid it. aismells names this guide as its
+      parent source.
+  - source: arxiv-2603-27006
+    locator: "section 3.2 and Table 1"
+    note: >
+      Unrequested headings and bold appear in essay output ("bold text highlights terms the model
+      considers structurally salient"); overt markdown features counted together reach up to 6.27
+      per 1,000 words and vanish under a prose instruction. Bold is not reported separately.
+  - source: anthropic-prompting-best-practices
+    locator: "section 'Control the format of responses'"
+    note: >
+      Vendor sample instruction for long-form content: "Avoid using **bold** and *italics*" and
+      reserve markdown for code and simple headings.
 related:
   - {id: bullet-bold-lead, relation: distinct-from}
   - {id: emoji-decoration, relation: distinct-from}

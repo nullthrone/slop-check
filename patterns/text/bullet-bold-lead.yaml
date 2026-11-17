@@ -6,9 +6,6 @@ summary: >
   paraphrases the keyword ("**Speed:** The new engine is faster.").
 category: formatting
 status: core
-provisional: true
-legacy_id: T2.3
-legacy_tier: 2
 detector:
   kind: metric
   position: any
@@ -39,16 +36,9 @@ prevention: >
   Do not format lists as "**Keyword:** sentence". Write prose, or use plain bullets when the items
   are truly parallel.
 sources:
-  - source: legacy-knowledge-base
-    locator: "T2.3, base taxonomy 2026-07-30"
+  - source: maintainer-observation
   - source: aicheckr-io
-    note: "Confirmation recorded 2026-08-23."
 related:
   - {id: bullet-list-preference, relation: distinct-from}
   - {id: markdown-emphasis-inflation, relation: distinct-from}
   - {id: emoji-decoration, relation: distinct-from}
-history:
-  - {date: 2026-07-30, change: "Added to legacy knowledge base core as T2.3 (tier 2; at least 2 such bullets within one list)."}
-  - {date: 2026-08-23, change: "aicheckr.io confirms the pattern."}
-  - {date: 2026-11-15, change: "Pangram's general bullet-list preference (9x) recorded as a separate single-source observation, distinct from this bold-lead shape."}
-  - {date: 2026-11-17, change: "Migrated to slop-check repository as grandfathered core (provisional) with the bullet_bold_lead metric."}

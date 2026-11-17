@@ -7,7 +7,7 @@ summary: >
   "we're", "it's" and "don't". The register mismatch makes chat replies, posts and personal emails
   sound like documentation.
 category: tone
-status: observation
+status: candidate
 detector:
   kind: regex
   position: any
@@ -46,7 +46,11 @@ prevention: >
   Match the register: use contractions in informal English writing, and full forms only where the
   context is formal or the emphasis is intended.
 notes: >
-  Single-source observation from a compiled reference with an independence caveat. English only:
+  Independent sources: the Pangram guide, the ACL 2025 expert-annotator study
+  (russell-acl-2025-expert-detectors), a corpus study of argumentative essays
+  (alghazo-eujal-2026-informality) and the Reuters Institute; jetwong-neocities compiles other
+  lists, among them the Wikipedia guide. Counter-evidence: o1-Pro used contractions freely enough
+  to mislead an expert annotator, so newer reasoning models may not show the pattern. English only:
   German has no comparable contraction system (forms such as "gibt's" are optional in most
   registers). The engine cannot switch the pattern off outside informal context, so the default
   threshold of 4 full forms per 100 words is set high and the informal override at 2 per 100
@@ -57,6 +61,30 @@ sources:
   - source: jetwong-neocities
     locator: "entry 'Overly Formal Tone'"
     note: "Consistent avoidance of contractions and stiff phrasing in contexts that are actually informal."
+  - source: pangram-ai-writing-patterns-guide
+    locator: "sections 'Spelling and Grammar' and 'Tone'"
+    note: >
+      AI text "rarely uses contractions like 'we've'" and "writes in an extremely formal tone
+      unless it instructed not to". Qualitative.
+  - source: russell-acl-2025-expert-detectors
+    locator: "Table 17 (full clue taxonomy), category 'Formality'"
+    note: >
+      12.3 % of expert explanations cite formality: AI text "rarely contains filler words,
+      contractions, slang, or abbreviations, favoring fully spelled-out terms and a polished
+      tone". The same paper reports that o1-Pro's frequent contractions and colloquialisms misled
+      one annotator.
+  - source: alghazo-eujal-2026-informality
+    note: >
+      40 ChatGPT essays vs. 40 LOCNESS student essays: the AI essays avoid "most conversational
+      elements such as contractions, second-person pronouns, and fragments"; chi-square
+      differences significant for nearly all 12 informality markers. Academic register; abstract
+      read only.
+  - source: reuters-institute-ai-prose
+    note: >
+      Linguist Karolina Rudnicka: when asked to review drafts, ChatGPT and Grammarly "also avoid
+      slang, contractions (like 'gonna' and 'wanna'), colloquial language and passive voice".
+      Qualitative, about revision rather than free generation, and the examples are colloquial
+      rather than standard contractions.
 related:
   - {id: brochure-tone, relation: distinct-from}
 history:

@@ -192,6 +192,7 @@ def cmd_prepare(args: argparse.Namespace) -> int:
         return 0
     result["pr"] = pr["number"]
     result["pr_url"] = pr.get("html_url")
+    write_output("pr", str(pr["number"]))  # early, so a later failure can still be reported
 
     files = paged(f"/repos/{repo}/pulls/{pr['number']}/files")
     candidate = Path(args.candidate)
@@ -201,10 +202,13 @@ def cmd_prepare(args: argparse.Namespace) -> int:
 
     changed_patterns: list[str] = []
     data_count = 0
+    touched = 0
     for f in files:
         name, status = f.get("filename", ""), f.get("status", "")
         previous = f.get("previous_filename")
         in_data = name.startswith(("patterns/", "sources/"))
+        if in_data or (previous or "").startswith(("patterns/", "sources/")):
+            touched += 1
         if previous and DATA_PATH.match(previous):
             (candidate / previous).unlink(missing_ok=True)
         if not in_data:
@@ -256,7 +260,7 @@ def cmd_prepare(args: argparse.Namespace) -> int:
         result["llm_ids"].append(pid)
 
     (out / "prepare.json").write_text(json.dumps(result, indent=2), encoding="utf-8")
-    write_output("pr", str(pr["number"]))
+    write_output("data_files", str(touched))
     write_output("llm_ids", " ".join(result["llm_ids"]))
     print(
         f"pull request #{pr['number']}: {len(result['data_files'])} data files, "

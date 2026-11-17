@@ -7,9 +7,6 @@ summary: >
   we'll explore", "Lassen Sie uns gemeinsam") before anything concrete is said.
 category: composition
 status: core
-provisional: true
-legacy_id: T1.4
-legacy_tier: 1
 detector:
   kind: regex
   position: sentence_start
@@ -74,19 +71,11 @@ prevention: >
   Open with the specific point. Do not frame a text with "in today's fast-paced world", "in an era
   of" or "In der heutigen Zeit", and do not announce what the article is about to explore.
 sources:
-  - source: legacy-knowledge-base
-    locator: "T1.4, base taxonomy 2026-07-30"
+  - source: maintainer-observation
   - source: slopdetector-org
     locator: "'Empty-Opener Clichés'"
-    note: "Confirmation of T1.4 recorded 2026-08-23 and 2026-09-06."
   - source: aicheckr-io
-    note: "Confirmation of T1.4 recorded 2026-08-23."
   - source: skill-no-ai-slop
-    note: "Confirmation of T1.4 recorded 2026-08-09."
 related:
   - {id: model-fingerprint-opener, relation: distinct-from}
   - {id: announce-then-answer, relation: overlaps}
-history:
-  - {date: 2026-07-30, change: "Added to legacy knowledge base core as T1.4 (tier 1, single hit flags)."}
-  - {date: 2026-08-23, change: "SlopDetector.org ('Empty-Opener Clichés') and aicheckr.io confirm the pattern."}
-  - {date: 2026-11-17, change: "Migrated to slop-check repository as grandfathered core (provisional). Detector restricted to sentence starts; German 'Im Folgenden' fires only in reader-addressing forms."}

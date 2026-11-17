@@ -8,9 +8,6 @@ summary: >
   assembled from templates.
 category: lexical
 status: core
-provisional: true
-legacy_id: T2.9
-legacy_tier: 2
 detector:
   kind: regex
   position: any
@@ -59,23 +56,19 @@ prevention: >
   ausschöpfen", "einen echten Mehrwert bieten", repeated "nicht nur ..., sondern auch" and coined
   compound chains. Say concretely what happens and who does it.
 sources:
-  - source: legacy-knowledge-base
-    locator: "T2.9 Deutsche Floskel-Inflation, base taxonomy 2026-07-30"
+  - source: maintainer-observation
 related:
   - {id: antithesis-template, relation: overlaps}
   - {id: nominalization-density, relation: overlaps}
   - {id: transition-stacking, relation: distinct-from}
   - {id: synonym-cycling, relation: distinct-from}
-history:
-  - {date: 2026-07-30, change: "Added to legacy knowledge base core as T2.9 (tier 2, at least 2 hits per text)."}
-  - {date: 2026-09-13, change: "Demarcation recorded: T2.15 covers formal connectors at paragraph start; T2.9 covers stock phrases without position rule or connector list."}
-  - {date: 2026-09-20, change: "Demarcation recorded: T2.17 covers referent consistency; T2.9 covers phrase clichés."}
-  - {date: 2026-11-17, change: "Migrated to slop-check repository as grandfathered core (provisional)."}
 notes: >
-  German only by design. The legacy examples were "nicht nur X, sondern auch Y" (when repeated),
-  "eine zentrale Rolle spielen", "das volle Potenzial ausschöpfen" and unnatural compound chains.
-  Migration added close variants ("von zentraler Bedeutung", "Schlüsselrolle") and common German
-  marketing phrases ("Mehrwert", "auf das nächste Level", "Hand in Hand"); calibrate them
-  separately. The compound regex flags capitalized words with three or more nominal suffixes
+  German only by design. The core phrases are "nicht nur X, sondern auch Y" (when repeated), "eine
+  zentrale Rolle spielen", "das volle Potenzial ausschöpfen" and unnatural compound chains. Close
+  variants ("von zentraler Bedeutung", "Schlüsselrolle") and common German marketing phrases
+  ("Mehrwert", "auf das nächste Level", "Hand in Hand") extend the list; they have no evidence of
+  their own yet. The compound regex flags capitalized words with three or more nominal suffixes
   (-ung, -heit, -keit, -tion, -tät), which spares established two-suffix terms such as
-  "Arbeitsunfähigkeitsbescheinigung".
+  "Arbeitsunfähigkeitsbescheinigung". transition-stacking covers formal connectors at paragraph
+  start and synonym-cycling covers changing labels for one referent; this pattern covers phrase
+  clichés regardless of position.

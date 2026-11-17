@@ -1,0 +1,15 @@
+id: originality-sec-filings-chatgpt-links
+title: "ChatGPT Links Were Copied and Pasted Into Official SEC Filings"
+url: https://originality.ai/blog/sec-filings-chatgpt-links-study
+publisher: Originality.ai
+authors: [Madeleine Lambert]
+published: 2026-09-22
+accessed: 2026-11-17
+type: commercial-study
+notes: >
+  Study by an AI-detection vendor. It searched SEC EDGAR full text for "19 clear signs of AI use"
+  in documents dated 2026-01-01 to 2026-07-10 (the 19 signs are not listed) and reports one of
+  them: 44 filing documents contained "utm_source=chatgpt.com", "a tracking code that ChatGPT adds
+  to some of the links it generates for users", in every month from January to June 2026 (six to
+  ten documents per month). The vendor's own detector flagged 42.9 % (18 of 42) of these documents
+  as likely AI against 15 % of 5,955 random SEC documents. Commercial interest in the detector.

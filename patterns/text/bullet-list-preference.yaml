@@ -6,7 +6,7 @@ summary: >
   regardless of whether the items are parallel. The list format hides the relations between the
   points (cause, contrast, sequence) that prose would have to state.
 category: formatting
-status: observation
+status: candidate
 detector:
   kind: regex
   position: any
@@ -42,7 +42,11 @@ fix: >
 prevention: >
   Write connected prose by default. Use a list only for parallel items, steps or reference data.
 notes: >
-  Single-source observation; distinct from bullet-bold-lead, which concerns the bold-lead structure
+  Independent sources: Pangram (two pages, one cluster), arxiv-2603-27006, the Anthropic
+  prompting documentation and an Inside Higher Ed classroom comparison. Counter-trend: some
+  newer models produce little or no unrequested markdown (GPT-5.4 in arxiv-2603-27006; the
+  Anthropic documentation says one newer model formats less), so the pattern may fade by model
+  generation. Distinct from bullet-bold-lead, which concerns the bold-lead structure
   of list items. Threshold chosen at migration: 4 list items per 100 words, uncalibrated. Expected
   false positives in documentation and checklists.
 sources:
@@ -51,6 +55,30 @@ sources:
     note: >
       General preference for lists where human authors would choose prose, 9x the human baseline.
       Corpus size and methodology not disclosed.
+  - source: pangram-ai-writing-patterns-guide
+    locator: "section 'Organization and Structure'"
+    note: >
+      "list-like structures"; bullet point lists "in the middle of the essay which rarely happens
+      in formal human writing". Same publisher as pangram-signs-of-ai-writing, so the same
+      independence cluster.
+  - source: arxiv-2603-27006
+    locator: "section 3.2 and Table 1"
+    note: >
+      "bullet points enumerate where prose would suffice". With a plain essay prompt, overt
+      markdown features (headings, bullets, bold and numbered lists counted together) reach 6.27
+      (GPT-4.1), 6.15 (Claude Sonnet 4) and 6.03 (GPT-4o Mini) per 1,000 words, 0 for GPT-5.4 and
+      Llama 3.3 70B; a prose instruction removes them. Bullets are not reported separately and
+      there is no human markdown baseline. Read on 2026-11-17.
+  - source: anthropic-prompting-best-practices
+    locator: "section 'Control the format of responses', block avoid_excessive_markdown_and_bullet_points"
+    note: >
+      Vendor guidance to use lists only for truly discrete items or on request and to "incorporate
+      them naturally into sentences"; "NEVER output a series of overly short bullet points".
+  - source: insidehighered-anatomy-ai-essay
+    note: >
+      "AI-generated essays are often list-like" and "may feature numbered body paragraphs or
+      multiple headings and subheadings" (more than 50 generated essays per tool compared with
+      student essays; unquantified).
 related:
   - {id: bullet-bold-lead, relation: distinct-from}
   - {id: excessive-enumeration, relation: distinct-from}

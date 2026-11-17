@@ -7,7 +7,7 @@ summary: >
   keeps the rigidity of a list without its scannability and without real transitions between the
   ideas.
 category: structure
-status: observation
+status: candidate
 detector:
   kind: regex
   position: paragraph_start
@@ -58,13 +58,20 @@ prevention: >
   Do not open consecutive paragraphs with "First", "Second", "Third". Use a real list for parallel
   items, or link paragraphs by their content.
 notes: >
-  Single-source observation. Threshold chosen at migration: three enumerated paragraph openers in
+  Independent sources: tropes-fyi and an Inside Higher Ed classroom comparison of more than 50
+  generated essays per tool. Threshold chosen at migration: three enumerated paragraph openers in
   one text, matching the "first, second, third" shape the source describes. "The first step is"
   is left out because instructions use it legitimately.
 sources:
   - source: tropes-fyi
     locator: "entry 'Excessive Enumeration', category Paragraph Structure, status rising"
     note: "Examples recorded at migration: \"The first wall is the absence of a free, scoped API...\", \"The second takeaway is that... The third takeaway is that...\"."
+  - source: insidehighered-anatomy-ai-essay
+    note: >
+      Paragraphs of generated essays "often begin with formulaic transitional phrases" (one essay
+      ran Firstly, In contrast, Furthermore, On the other hand, In conclusion); the essays are
+      "often list-like" with "numbered body paragraphs". More than 50 essays each by ChatGPT 3.5 and
+      Grammarly compared with student essays; unquantified.
 related:
   - {id: compulsive-counting, relation: overlaps}
   - {id: transition-stacking, relation: overlaps}

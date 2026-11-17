@@ -6,7 +6,7 @@ summary: >
   discuss", "Here are the top seven"), as if getting the count right were itself the achievement.
   The number adds nothing, and the list that follows often does not justify it.
 category: structure
-status: observation
+status: candidate
 legacy_id: T2.21
 detector:
   kind: regex
@@ -60,9 +60,9 @@ prevention: >
   Do not announce the number of points before listing them ("Here are five reasons"). Present the
   points; let the reader count if it matters.
 notes: >
-  Legacy candidate T2.21, migrated as observation: its two sources (tropes.fyi and avoid-ai-writing,
-  registered as derived from tropes.fyi) form a single independence cluster under
-  docs/architecture.md section 5.2. Counts below three are left out of the detector because "two
+  tropes-fyi and skill-avoid-ai-writing (registered as derived from it) form one independence
+  cluster under docs/architecture.md section 5.2; popularai-ai-tells-2026 is a second,
+  independent cluster. Counts below three are left out of the detector because "two
   ways" or "two options" is usually informative. No source gives a quantified threshold.
 sources:
   - source: legacy-knowledge-base
@@ -73,6 +73,12 @@ sources:
   - source: skill-avoid-ai-writing
     locator: "entry 'Numbered List Inflation'"
     note: "Comparable examples and the fix rule to use numbered lists only for real parallelism."
+  - source: popularai-ai-tells-2026
+    locator: "tell 'The list that looks shrink-wrapped'"
+    note: >
+      "Chatbots adore lists because lists create instant authority"; examples "Five reasons.
+      Seven lessons. Nine insights." and "The number changes. The energy does not." No data;
+      cites neither tropes.fyi nor the Wikipedia guide.
 related:
   - {id: triad, relation: distinct-from}
   - {id: announce-then-answer, relation: overlaps}

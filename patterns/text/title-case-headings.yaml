@@ -7,7 +7,7 @@ summary: >
   In German, where only nouns are capitalized, the habit shows as capitalized articles and
   prepositions inside headings ("Tipps Für Den Alltag").
 category: formatting
-status: observation
+status: candidate
 detector:
   kind: regex
   position: any
@@ -55,11 +55,13 @@ prevention: >
   Write headings in sentence case unless a house style requires otherwise. Never capitalize
   articles and prepositions inside a heading.
 notes: >
-  Single-source observation. The detector only sees markdown headings and only the every-word
-  variant (a capitalized function word inside the heading). Threshold chosen at migration: two
-  headings, because the pattern is the consistent habit across a document. A 2025 personal essay
-  on Medium makes the same claim; the legacy knowledge base judged it methodologically weak and
-  did not register it.
+  Independent sources: russell-acl-2025-expert-detectors, good-graf-machine-made-prose and the
+  Wikipedia guide; tropes.fyi names the Wikipedia guide as a reference, and the guide's entry
+  cites the ACL study, so they are not counted separately. The detector only sees markdown
+  headings and only the every-word variant (a capitalized function word inside the heading).
+  Threshold chosen at migration: two headings, because the pattern is the consistent habit across
+  a document. A 2025 personal essay on Medium makes the same claim; the legacy knowledge base
+  judged it methodologically weak and did not register it.
 sources:
   - source: tropes-fyi
     locator: "entry 'Title Case Headings', category Formatting, status consistent"
@@ -67,6 +69,24 @@ sources:
   - source: fireprompts-io
     locator: "'Capitalized Heading Style'"
     note: "Thematic match recorded on 2026-08-30; rated methodologically weak and not counted by the legacy knowledge base."
+  - source: wikipedia-signs-of-ai-writing
+    locator: "Style subpage, section 'Title case' (WP:AITITLECASE)"
+    note: >
+      "In section headings, AI chatbots strongly tend to capitalize all main words", with an
+      example from a December 2023 revision ("Impact of Technology and Digitalization",
+      "Human Rights and Economic Law"). The examples keep "of" and "and" lowercase, so the guide
+      describes standard title case, broader than the every-word variant the detector matches.
+      The entry cites russell-acl-2025-expert-detectors.
+  - source: russell-acl-2025-expert-detectors
+    locator: "Table 17 (full clue taxonomy), category 'Formatting'"
+    note: >
+      15.0 % of expert explanations cite formatting: "AI-generated formatting is overly
+      consistent (e.g., fully capitalized headings, bolded lists, paragraphs of similar length)".
+      "Fully capitalized" is read here, as in the Wikipedia guide, as every main word capitalized.
+  - source: good-graf-machine-made-prose
+    note: >
+      "Technical tells: Title case, dumb apostrophes, low 'perplexity' (predictability) in word
+      choices". Does not say whether headings or titles are meant. No data.
 related:
   - {id: where-what-why-headers, relation: overlaps}
 history:

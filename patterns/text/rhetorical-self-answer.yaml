@@ -84,6 +84,17 @@ sources:
   - source: fireprompts-io
     locator: "'Fake rhetorical questions'"
     note: "Recorded as an unconfirmed additional find; independence could not be verified."
+  - source: aismells
+    locator: "entry 'Self-Posed Question', category Sentence"
+    note: >
+      "The result? Devastating." as a repeated skeleton; the example repeats tropes.fyi, and
+      aismells names tropes.fyi and the Wikipedia guide as parent resources, so it adds no
+      independent cluster.
+  - source: authoritea-current-ai-tells
+    locator: "section 'Marketing'"
+    note: >
+      "One-word questions as fragments" and "Lots of rhetorical question openers or things like
+      'what does this mean for you?'" in marketing copy. Partial match; no data.
 related:
   - {id: payoff-announcement, relation: distinct-from}
   - {id: fragment-pathos, relation: distinct-from}

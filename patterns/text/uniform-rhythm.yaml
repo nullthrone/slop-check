@@ -7,17 +7,14 @@ summary: >
   no prosodic variation, which readers perceive as a metronome ("balanced paragraph").
 category: rhythm
 status: core
-provisional: true
-legacy_id: T2.10
-legacy_tier: 2
 detector:
   kind: metric
   position: any
   metric: sentence_length_cv
   params:
-    run: 3
+    run: 4
 threshold:
-  value: {op: lt, x: 0.2}
+  value: {op: lt, x: 0.1}
   min_units: 3
 requires: null
 realizations:
@@ -30,12 +27,16 @@ realizations:
           The product group shipped three major releases and fixed most of the reported defects. Each release went through a structured review process with clear criteria for quality and scope. The roadmap for next year builds on these results and adds two new markets for expansion.
 
           Our people strategy also delivered measurable progress across hiring, training and retention this year. New team members completed onboarding faster thanks to the redesigned mentoring program for all roles. Leadership will continue to invest in these programs to support long-term growth and stability.
+
+          The finance team closed the annual accounts two weeks earlier than in the previous year. The new reporting tool cut manual work and reduced the number of open review items. Next year we plan to extend the same approach to procurement and the regional offices.
         - |-
           Unser Team hat die Ergebnisse des Quartals geprüft und ein stabiles Wachstum in allen Regionen festgestellt. Der Vertrieb hat seine Ziele übertroffen und die Kosten dabei innerhalb des geplanten Budgets gehalten. Die Rückmeldungen der Kunden blieben im gesamten Zeitraum positiv und zeigten eine hohe Zufriedenheit.
 
           Die Produktgruppe hat drei größere Versionen veröffentlicht und die meisten gemeldeten Fehler behoben. Jede Version durchlief einen strukturierten Prüfprozess mit klaren Kriterien für Qualität und Umfang. Die Planung für das nächste Jahr baut auf diesen Ergebnissen auf und erschließt zwei neue Märkte.
 
           Auch im Personalbereich gab es in diesem Jahr messbare Fortschritte bei Einstellung und Weiterbildung. Neue Mitarbeitende haben die Einarbeitung dank des überarbeiteten Mentoring-Programms deutlich schneller abgeschlossen. Die Geschäftsführung wird weiter in diese Programme investieren und so ein langfristiges Wachstum sichern.
+
+          Die Finanzabteilung hat den Jahresabschluss diesmal ganze zwei Wochen früher als im Vorjahr fertiggestellt. Das neue Berichtswerkzeug hat viel Handarbeit erspart und die Zahl der offenen Prüfpunkte deutlich reduziert. Im nächsten Jahr soll derselbe Ansatz auch im Einkauf und in den Regionalbüros greifen.
       negative:
         - |-
           The build broke at 3 a.m. Nobody noticed until the morning stand-up, when three people tried to deploy the same hotfix at once and the queue jammed for forty minutes. We rolled back.
@@ -43,19 +44,23 @@ realizations:
           The cause was boring. A dependency had published a patch release that changed a default timeout from thirty seconds to five, and our integration tests never waited that long. Pinning fixed it.
 
           Next week we add a lockfile check to CI. It takes ninety seconds. If that sounds slow, compare it with the forty minutes we lost on Tuesday while everyone stared at the same red dashboard.
+
+          Two people asked why we did not pin everything from the start. Fair point. The answer is that nobody here had been burned by an unpinned patch release before, and pinning has a cost of its own: someone has to bump every version by hand each month.
         - |-
           Der Build brach um drei Uhr nachts ab. Bemerkt hat es erst das Team im Daily, als drei Leute gleichzeitig denselben Hotfix ausrollen wollten und die Warteschlange vierzig Minuten lang blockierte. Wir haben zurückgerollt.
 
           Die Ursache war banal. Eine Abhängigkeit hatte in einem Patch-Release das Standard-Timeout von dreißig auf fünf Sekunden gesenkt, und unsere Integrationstests haben nie so lange gewartet. Ein fester Versionsstand behob das.
 
           Nächste Woche kommt eine Lockfile-Prüfung in die CI. Sie dauert neunzig Sekunden. Das wirkt langsam, bis man es mit den vierzig Minuten vergleicht, die wir am Dienstag vor demselben roten Dashboard verloren haben.
+
+          Zwei Kolleginnen fragten, warum wir nicht von Anfang an alles festgeschrieben haben. Berechtigt. Bisher hatte uns noch kein ungepinntes Patch-Release erwischt, und feste Versionen kosten auch etwas: Jemand muss sie jeden Monat von Hand anheben.
         - |-
           Our team reviewed the quarterly results and found steady growth in every region we track. The sales department exceeded its targets while keeping costs within the planned budget. Customer feedback stayed positive throughout the period and pointed to high satisfaction with support.
 
           The product group shipped three major releases and fixed most of the reported defects. Each release went through a structured review process with clear criteria for quality and scope. The roadmap for next year builds on these results and adds two new markets for expansion.
     notes: >
-      The second negative example is uniform but has only two paragraphs, below the three-paragraph
-      run. The first negative keeps three sentences per paragraph with varied lengths.
+      The third negative example is uniform but has only two paragraphs, below the four-paragraph
+      run. The first two negatives have four paragraphs with varied sentence lengths.
 legitimate_use: >
   Some genres keep sentence length steady on purpose: step-by-step instructions, legal clauses,
   glossary entries, verse with a fixed meter. Lists and tables are units of their own and do not
@@ -67,35 +72,32 @@ prevention: >
   Vary sentence length within and across paragraphs. Mix short sentences with longer ones and do
   not give every paragraph the same number of sentences.
 sources:
-  - source: legacy-knowledge-base
-    locator: "T2.10 Rhythmische Gleichförmigkeit, base taxonomy 2026-07-30; section 6.3"
+  - source: maintainer-observation
   - source: slopdetector-org
     locator: "pattern 'Burstiness'"
     note: >
       Coefficient of variation of sentence length below 0.4 counts as monotone; human texts
-      typically range from 0.6 to 1.2. Recorded 2026-09-06 as an alternative quantification
-      for later calibration; full version re-read 2026-09-27 with the same value.
+      typically range from 0.6 to 1.2. Measured over a whole text, so it is a different
+      quantification from the paragraph runs used here.
   - source: arxiv-2605-06030
     locator: "share of short sentences"
     note: >
       2025 models reduce the share of sentences under 15 tokens by a factor of 9 to 30 relative
       to human reference prose (NYT lead sentences only). Supports the thesis; not a burstiness
-      index. Recorded 2026-11-08.
+      index.
   - source: imperfectly-app
     locator: "entry 'The Metronome Rhythm'"
-    note: "Confirmation recorded in the legacy knowledge base round 2026-09-06."
   - source: ignorance-ai
     locator: "field guide entries on sentence rhythm"
-    note: "Confirmation recorded in the legacy knowledge base round 2026-09-20."
-history:
-  - {date: 2026-07-30, change: "Added to legacy knowledge base core as T2.10 (tier 2; at least 3 consecutive paragraphs with a sentence-length standard deviation below about 3 words)."}
-  - {date: 2026-09-06, change: "Alternative quantification documented: burstiness (coefficient of variation) below 0.4 per SlopDetector; legacy threshold unchanged."}
-  - {date: 2026-11-08, change: "Supplementary academic data documented (arXiv:2605.06030, short-sentence share); threshold unchanged."}
-  - {date: 2026-11-17, change: "Migrated to slop-check repository as grandfathered core (provisional). Standard-deviation rule converted to the sentence_length_cv metric (run of 3 paragraphs, CV below 0.2)."}
 notes: >
-  The engine metric is a coefficient of variation, while the legacy rule used an absolute standard
-  deviation (below about 3 words). At the legacy reference length of 15 to 20 words per sentence,
-  3 words correspond to a CV of 0.15 to 0.2; migration uses 0.2. SlopDetector's burstiness value
-  (CV below 0.4) is the documented alternative for calibration. The pooled CV over a
-  three-paragraph run approximates the legacy per-paragraph check. The constant number of
-  sentences per paragraph, which the legacy description also names, is left to the host model.
+  Threshold set so that at most 4 % of the human reference corpus (pre-2022 texts, de and en)
+  triggers it; separation from AI-generated text is not yet measured. The metric is the
+  coefficient of variation (CV) of sentence length pooled over a run of consecutive paragraphs; a
+  standard deviation below about 3 words at 15 to 20 words per sentence corresponds to a CV of
+  0.15 to 0.2. With runs of three paragraphs and CV below 0.2, 16 % (de) and 19 % (en) of the
+  human texts triggered, and only a CV below 0.03 would have kept the rate at 4 %: web pages
+  contain runs of one-line paragraphs (menu labels, product features, hard-wrapped lines) whose
+  few sentences have nearly equal length. A run of four paragraphs with CV below 0.1 meets the
+  limit (3.5 % in both languages). The remaining human triggers are still such one-line runs; the
+  metric has no parameter for a minimum number of sentences per paragraph, which would separate
+  them from prose. The constant number of sentences per paragraph is left to the host model.

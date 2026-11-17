@@ -7,7 +7,7 @@ summary: >
   pressure ("wearing the same italics ... wearing a different costume"). The repetition poses as a
   punchline and adds nothing.
 category: composition
-status: observation
+status: candidate
 detector:
   kind: llm
   position: any
@@ -53,12 +53,19 @@ prevention: >
   Do not reuse a distinctive phrase or image from earlier in the text as a closing punchline. Say
   something new or end the paragraph.
 notes: >
-  Single-source observation. The legacy knowledge base noted the closeness to T1.5 (compulsive
+  Independent sources: tropes-fyi and authoritea-current-ai-tells; the second describes the
+  recurrence of distinctive phrases (in fiction) without the staged-callback framing, a partial
+  match. The legacy knowledge base noted the closeness to T1.5 (compulsive
   summary) and fractal summaries without merging. Threshold chosen at migration.
 sources:
   - source: tropes-fyi
     locator: "entry 'Self-Echo', category Composition, status new"
     note: "Example: \"wearing the same italics ... wearing a different costume\"."
+  - source: authoritea-current-ai-tells
+    locator: "section 'Fiction'"
+    note: >
+      The model "tends to grab onto specific phrases and sentences and reuse them constantly"; the
+      author adds that human writers repeat phrases too, in a different way. No data.
 related:
   - {id: fractal-summaries, relation: overlaps}
   - {id: compulsive-summary, relation: overlaps}

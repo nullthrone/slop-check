@@ -6,16 +6,13 @@ summary: >
   of dashes proves nothing.
 category: typography
 status: core
-provisional: true
-legacy_id: T2.2
-legacy_tier: 2
 detector:
   kind: metric
   position: any
   metric: em_dash_density
   params: {per_words: 500}
 threshold:
-  value: {op: gt, x: 3}
+  value: {op: gt, x: 5.25}
 requires: null
 realizations:
   "*":
@@ -44,15 +41,18 @@ fix: >
 prevention: >
   Use dashes sparingly, at most a few per 500 words. Prefer other punctuation or a new sentence.
 notes: >
-  The legacy rule applies to expository prose (Sachtexte); this context restriction is not encoded.
-  Because density is computed per 500 words, a single dash triggers in texts shorter than about 167
-  words; expect false positives on short texts. The recommendation recorded on 2026-08-09 to count
-  dash density only together with other accumulation signals was never adopted into the legacy rule
-  and is not encoded as requires. The typography part of legacy T2.2 (curly quotes) lives in
+  Threshold set so that at most 4 % of the human reference corpus (pre-2022 texts, de and en)
+  triggers it; separation from AI-generated text is not yet measured. German uses the spaced en
+  dash as its Gedankenstrich, which the metric counts, so German human text runs higher: at more
+  than 3 dashes per 500 words 10 % (de) and 7.7 % (en) of the human texts triggered. The
+  threshold of more than 5.25 per 500 words (10.5 per 1,000) sits at the upper end of the human
+  range that SlopDetector reports (up to about 10 per 1,000). The rule applies to all registers,
+  not only to expository prose. Because density is computed per 500 words, two dashes trigger in
+  texts shorter than about 190 words. Given the model dependence, a hit is best weighed together
+  with other accumulation signals; this is not encoded as requires. Curly quotes are covered by
   curly-quotes.
 sources:
-  - source: legacy-knowledge-base
-    locator: "T2.2, base taxonomy 2026-07-30; section 6.1 (state 2026-11-15)"
+  - source: maintainer-observation
   - source: economist-ai-writing-analysis
     note: >
       Data analysis of 55,940 sentences (1.2 million words) of output from four chatbots (ChatGPT,
@@ -84,7 +84,7 @@ sources:
       words, Llama produces none), read as a provider-specific fine-tuning signal. Llama 3.1 8B base
       model shows 0.49 per 1,000, reduced by RLHF. Human baseline 3.23 per 1,000 (8 essays).
   - source: arxiv-2605-06030
-    note: "Confirms the model dependence with its own method (round 2026-11-08)."
+    note: "Confirms the model dependence with its own method."
   - source: pangram-signs-of-ai-writing
     locator: "em dashes"
     note: >
@@ -94,14 +94,3 @@ related:
   - {id: curly-quotes, relation: distinct-from}
   - {id: emoji-decoration, relation: distinct-from}
   - {id: punctuation-sparsity, relation: distinct-from}
-history:
-  - {date: 2026-07-30, change: "Added to legacy knowledge base core as T2.2 (tier 2; more than 3 em dashes per 500 words in expository prose, or any curly quotes). Absence of em dashes is no counter-evidence."}
-  - {date: 2026-08-09, change: "The Economist data analysis finds the signal model-dependent and weakening; recommendation to weigh it only with other signals recorded, not adopted."}
-  - {date: 2026-08-23, change: "Independent SlopDetector.org analysis confirms model dependence and contradicts the Economist model ranking."}
-  - {date: 2026-09-06, change: "SlopDetector.org threshold recorded as orientation value (more than 20 per 1,000 words in short modern prose)."}
-  - {date: 2026-09-27, change: "Full version of the SlopDetector canon confirms the known threshold unchanged."}
-  - {date: 2026-10-04, change: "Graphite study quantifies the model dependence (Opus 5.5 minus 99 % against Opus 5)."}
-  - {date: 2026-10-11, change: "arXiv:2603.27006 confirms model dependence with a suppression test; Pebblous secondary analysis adds a wider model table."}
-  - {date: 2026-11-08, change: "arXiv:2605.06030 confirms the model dependence with its own method."}
-  - {date: 2026-11-15, change: "Pangram corpus data: 10x overall, Gemini 3 Pro 0.7x."}
-  - {date: 2026-11-17, change: "Migrated to slop-check repository as grandfathered core (provisional); the curly-quote rule moved to curly-quotes."}

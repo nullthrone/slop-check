@@ -1,0 +1,21 @@
+id: reinhart-pnas-2025-llm-style
+title: "Do LLMs write like humans? Variation in grammatical and rhetorical styles"
+url: https://doi.org/10.1073/pnas.2422455122
+publisher: Proceedings of the National Academy of Sciences
+authors: [Alex Reinhart, Ben Markey, Michael Laudenbach, Kachatad Pantusen, Ronald Yurko, Gordon Weinberg, David West Brown]
+published: 2025-02-18
+accessed: 2026-11-17
+type: peer-reviewed
+access_note: >
+  PNAS 122(8), published online 2025-02-18 per Crossref. Read from the arXiv version
+  (2410.16107, v2 of 2025-08-21) on 2026-11-17.
+notes: >
+  Parallel corpora of human text and continuations by GPT-4o, GPT-4o Mini and Llama 3 base and
+  instruction-tuned models, compared on Biber's 66 lexical and grammatical features.
+  Instruction-tuned models prefer present participial clauses, 'that' clauses as subjects,
+  nominalizations and phrasal coordination, read as an "informationally dense, noun-heavy" style:
+  GPT-4o uses present participial clauses at 5.3 times, nominalizations at 2.1 times and phrasal
+  coordination at 1.9 times the human rate; both GPT-4o models avoid clausal coordination while the
+  Llama 3 variants overuse it. The Llama 3 base models use the features at rates close to human
+  text. GPT-4o and GPT-4o Mini use words such as camaraderie, palpable, tapestry and intricate at
+  more than 100 times the human rate.

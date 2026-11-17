@@ -58,14 +58,24 @@ prevention: >
   Do not announce what each section will cover or recap what it covered. Say each thing once, in
   the place where it belongs.
 notes: >
-  Single-source observation. The detector catches preview and recap phrases; the full pattern
-  (the same point restated at every structural level) needs a reader's judgement. Threshold chosen
-  at migration: three preview or recap phrases per text. Expected false positives in academic
-  papers and manuals, where "In this section, we ..." is conventional.
+  Observation: tropes-fyi and the Wikipedia guide, which tropes.fyi names as a reference, are
+  treated as one lineage; no independent second source was found on 2026-11-17 (other guides
+  describe only a recap at the end of the whole text, see compulsive-summary). The detector
+  catches preview and recap phrases; the full pattern (the same point restated at every structural
+  level) needs a reader's judgement. Threshold chosen at migration: three preview or recap phrases
+  per text. Expected false positives in academic papers and manuals, where "In this section, we
+  ..." is conventional.
 sources:
   - source: tropes-fyi
     locator: "entry 'Fractal Summaries', category Composition, status rising"
     note: "Example recorded at migration: \"In this section, we'll explore...\"."
+  - source: wikipedia-signs-of-ai-writing
+    locator: "section 'Section summaries' (WP:CONCLUSION, historical indicators); example in 'Collaborative communication'"
+    note: >
+      Older LLMs "often ended paragraphs or sections by summarizing and restating its core idea",
+      still seen after 2024 but much less; a section preview from an August 2023 revision: "In
+      this section, we will discuss the background information related to the topic of the
+      report." Not independent of tropes-fyi.
 related:
   - {id: compulsive-summary, relation: overlaps}
   - {id: self-echo, relation: overlaps}

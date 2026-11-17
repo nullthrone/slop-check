@@ -1,0 +1,73 @@
+id: unfilled-placeholder
+modality: text
+name: Unfilled template placeholder
+summary: >
+  Slots of a fill-in template remain in the published text: bracketed labels or instructions
+  ("[Your Name]", "[Company Name]", "[Insert statistic here]"), capitalised URL tokens
+  ("INSERT_SOURCE_URL"), parenthetical instructions ("(Add your channel URL here)") or placeholder
+  dates ("2026-xx-xx"). Chat assistants produce such templates when details are missing, sometimes
+  even when told not to; a slot left in the text shows that nobody completed or read the draft.
+category: composition
+status: candidate
+detector:
+  kind: regex
+  position: any
+threshold:
+  min_count: 1
+  comparison: gte
+  scope: text
+requires: null
+realizations:
+  en:
+    patterns:
+      - '\[(?:Your|Insert|Add|Enter|Recipient(?:[’'']s)?|Company|Client|Customer|Product|Brand|Specific|Describe)\b[^\]\n]{0,60}\](?!\()'
+      - '\b(?:INSERT|PASTE)_[A-Z0-9_]{2,40}\b'
+      - '\((?:Add|Insert|Enter|Paste)\s(?:your|the)\s[^)\n]{1,40}\shere\)'
+      - '\b(?:19|20)\d\d-(?:\d\d|[xX]{2})-[xX]{2}\b'
+    examples:
+      positive:
+        - "Thanks again for your time.\n\nBest regards,\n[Your Name]"
+        - "Our platform helped [Company Name] cut onboarding time by 40 percent in one quarter."
+        - "Retrieved 2026-xx-xx from INSERT_SOURCE_URL."
+        - "New videos every Friday. Subscribe here: (Add your channel URL here)"
+        - "[Describe the specific section that needs editing and why.]"
+      negative:
+        - "Log in to [Your account](https://example.com/account) to update your billing details."
+        - "The minister called the plan \"unworkable [sic]\" in a 2019 interview [3]."
+        - "Replace YOUR_API_KEY with the key from the dashboard before running the script."
+        - "The release is planned for 2026-11-30, after the security review."
+        - "\"He [the mayor] never answered the letter,\" she said."
+legitimate_use: >
+  Templates that are meant to be filled in (a form-letter library, a mail-merge source, a style
+  guide that shows the slots, documentation that tells readers to replace a value) contain
+  placeholders on purpose. Editorial brackets in quotations ("[sic]", "[the mayor]") and markdown
+  link text are not placeholders and fall outside the detector.
+fix: >
+  Fill every slot with the real value or delete the sentence that depends on it. If the value is
+  unknown, find it before publishing; never publish a sentence built around a missing fact.
+prevention: >
+  Do not output bracketed slots or placeholder values in a deliverable. Ask for the missing detail
+  or write the sentence so that it does not need it.
+notes: >
+  Mechanism: the generated text is a template, and the writer published it without completing it.
+  No existing pattern covers it; the closest are assistant-self-reference and format-bleed, which
+  are also copy-and-paste residue but concern the assistant's voice and unrendered markup. The
+  bracket rule is case-sensitive and limited to slot words that open a placeholder ("Your",
+  "Insert", "Company", "Recipient" and similar) and excludes markdown links "[text](url)", so
+  editorial brackets in quotations do not match. Upper-case tokens are limited to INSERT_ and
+  PASTE_ because documentation legitimately uses YOUR_API_KEY-style variables. The Wikipedia guide
+  warns that some placeholder comments in Wikipedia infoboxes are genuine template boilerplate.
+sources:
+  - source: wikipedia-signs-of-ai-writing
+    locator: "Communication intended for the user: 'Phrasal templates and placeholder text', 'Date placeholders', 'URL placeholders'"
+    note: >
+      Documented examples include "[Your Name]", "[Your Email Address]", "[Entertainer's Name]",
+      "[Describe the specific section or content that needs editing ...]", "(Add your channel URL
+      here)", access dates like "2026-xx-xx" and URL fields such as "INSERT_SOURCE_URL" or
+      "PASTE_YOUTUBE_VIDEO_URL_HERE".
+  - source: google-ai-forum-placeholder-names
+    locator: "first post and reply of 2024-10-18"
+    note: "Gemini 1.5 Pro intermittently answers with \"[Your Name]\" or \"[Your Store Name]\" despite an instruction not to use placeholders; a second developer reports the same."
+related:
+  - {id: assistant-self-reference, relation: distinct-from}
+  - {id: format-bleed, relation: distinct-from}

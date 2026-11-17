@@ -7,9 +7,6 @@ summary: >
   The announcement builds suspense that the content rarely earns.
 category: rhetoric
 status: core
-provisional: true
-legacy_id: T1.6
-legacy_tier: 1
 detector:
   kind: regex
   position: any
@@ -75,20 +72,13 @@ prevention: >
   Do not announce a point before making it ("Here's the kicker", "But here's the thing", "Was die
   wenigsten wissen:"). Make the point.
 sources:
-  - source: legacy-knowledge-base
-    locator: "T1.6, base taxonomy 2026-07-30"
-    note: "Legacy exception: in explicitly informal short formats (e.g. social media posts) report only from 2 hits."
+  - source: maintainer-observation
+    note: "In explicitly informal short formats (e.g. social media posts) a single announcement is tolerated; encoded as the informal context override."
   - source: skill-no-ai-slop
     locator: "'Throat-clearing openers', 'Colon reveals', 'Fake-profound kickers'"
-    note: "Uses 'Here's what nobody tells you' as an example; confirmations recorded 2026-08-23 and 2026-09-06."
+    note: "Uses 'Here's what nobody tells you' as an example."
   - source: aipromptindex-io
     locator: "'Faux-Insight Setups', 'Dramatic Colon Reveals', 'Throat-Clearing Openers'"
-    note: "Confirmation recorded 2026-09-06."
 related:
   - {id: rhetorical-self-answer, relation: distinct-from}
   - {id: announce-then-answer, relation: overlaps}
-history:
-  - {date: 2026-07-30, change: "Added to legacy knowledge base core as T1.6 (tier 1, single hit flags; informal short formats from 2 hits)."}
-  - {date: 2026-08-23, change: "The no-ai-slop skill confirms with 'Here's what nobody tells you'."}
-  - {date: 2026-09-06, change: "aipromptindex.io and the no-ai-slop skill confirm (faux-insight setups, colon reveals)."}
-  - {date: 2026-11-17, change: "Migrated to slop-check repository as grandfathered core (provisional). Informal exception encoded as context_overrides."}

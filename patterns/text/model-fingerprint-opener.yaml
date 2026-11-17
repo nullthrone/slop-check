@@ -91,6 +91,21 @@ sources:
       Five-way source-model classification at 97.1 %; the first token alone reaches roughly 50 %
       (chance 20 %); ChatGPT begins responses with "certainly" and "below is". Checked at migration
       on the arXiv full text.
+  - source: pangram-signs-of-ai-writing
+    locator: "sign 8 'AI-style headers'"
+    note: >
+      Phrase multipliers against the human baseline: "Certainly! Here's" 0 vs. 94 (70x), "Sure!
+      Here's a" 0 vs. 23 (18x), "I'd be happy to" 54 vs. 358 (5x). Corpus size and method not
+      disclosed. Read on 2026-11-17.
+  - source: wikipedia-signs-of-ai-writing
+    locator: "section 'Collaborative communication' (WP:CERTAINLY)"
+    note: >
+      Words to watch include "Of course!", "Certainly!", "here is a", "I hope this helps" and
+      "Would you like..."; dated examples of chatbot correspondence pasted into articles and talk
+      pages.
+  - source: popularai-ai-tells-2026
+    locator: "tell 'The compulsory warm-up lap'"
+    note: "\"Certainly.\", \"That's a great question.\", \"Here's a structured way to think about it.\" before the content. No data."
 related:
   - {id: sycophant-residue, relation: overlaps}
   - {id: generic-opening, relation: overlaps}

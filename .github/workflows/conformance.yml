@@ -1,0 +1,81 @@
+# Skill conformance: build the package and run the conformance cases on every model resolved
+# for the conformance role. Results go to conformance/<date>.json on branch data.
+name: conformance
+
+on:
+  schedule:
+    - cron: "37 5 2 * *"
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "skill/**"
+
+permissions: {}
+
+concurrency:
+  group: conformance
+  cancel-in-progress: false
+
+jobs:
+  conformance:
+    if: github.repository == 'nullthrone/slop-check'
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    permissions:
+      contents: write
+    env:
+      OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+      - uses: ./.github/actions/setup
+
+      - name: Read branch data
+        id: data
+        run: |
+          {
+            echo "STAGE=$RUNNER_TEMP/stage"
+            echo "DATE=$(date -u +%Y-%m-%d)"
+          } >> "$GITHUB_ENV"
+          python .github/scripts/data_branch.py checkout --branch data --dir "$RUNNER_TEMP/stage"
+          if [ -z "$OPENROUTER_API_KEY" ]; then
+            echo "::warning title=Conformance skipped::OPENROUTER_API_KEY is not set."
+            echo "run=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Build the package
+        if: steps.data.outputs.run == 'true'
+        run: |
+          measurements=()
+          if [ -f "$STAGE/measurements/measurements.json" ]; then
+            measurements=(--measurements "$STAGE/measurements/measurements.json")
+          fi
+          slopcheck-dev build --out dist "${measurements[@]}"
+
+      - name: Run conformance cases
+        if: steps.data.outputs.run == 'true'
+        run: |
+          lock=()
+          if [ -f "$STAGE/models/lock.json" ]; then lock=(--lock "$STAGE/models/lock.json"); fi
+          mkdir -p "$STAGE/conformance"
+          set +e
+          slopcheck-dev conformance --skill dist/slop-check "${lock[@]}" --ledger "$STAGE/budget/ledger.json" \
+            --run-kind conformance --out "$STAGE/conformance/$DATE.json"
+          rc=$?
+          set -e
+          if [ "$rc" -eq 3 ]; then
+            echo "::warning title=Budget::Budget cap reached; conformance results are partial."
+          elif [ "$rc" -ne 0 ]; then
+            exit "$rc"
+          fi
+          python .github/scripts/conformance_summary.py "$STAGE/conformance/$DATE.json" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Commit to branch data
+        if: steps.data.outputs.run == 'true'
+        run: |
+          python .github/scripts/data_branch.py publish --branch data --source "$STAGE" \
+            --path "conformance/$DATE.json" --ledger budget/ledger.json --message "Conformance $DATE"

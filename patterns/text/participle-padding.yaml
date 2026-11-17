@@ -8,9 +8,6 @@ summary: >
   the sentence longer without adding information.
 category: structure
 status: core
-provisional: true
-legacy_id: T2.5
-legacy_tier: 2
 detector:
   kind: regex
   position: any
@@ -74,24 +71,14 @@ prevention: >
   or ", was die Bedeutung von X unterstreicht" to sentences. End the sentence where the information
   ends.
 sources:
-  - source: legacy-knowledge-base
-    locator: "T2.5, base taxonomy 2026-07-30"
+  - source: maintainer-observation
   - source: aipromptindex-io
     locator: "'Trailing -ing Analysis'"
-    note: "Confirmation recorded 2026-09-06."
   - source: skill-no-ai-slop
     locator: "'Superficial analysis'"
-    note: "Confirmation recorded 2026-09-06."
   - source: vrid-ai-signs
     locator: "'-ing' overload"
-    note: "Confirmation recorded 2026-08-16."
   - source: aicheckr-io
-    note: "Confirmation recorded 2026-08-23."
 related:
   - {id: transition-stacking, relation: distinct-from}
   - {id: inflated-importance, relation: overlaps}
-history:
-  - {date: 2026-07-30, change: "Added to legacy knowledge base core as T2.5 (tier 2; at least 2 hits per text)."}
-  - {date: 2026-08-16, change: "vrid.ai confirms ('-ing' overload)."}
-  - {date: 2026-09-06, change: "aipromptindex.io ('Trailing -ing Analysis') and the no-ai-slop skill ('Superficial analysis') confirm."}
-  - {date: 2026-11-17, change: "Migrated to slop-check repository as grandfathered core (provisional). Detector limited to tails that assert significance, so that informative participle clauses do not count."}

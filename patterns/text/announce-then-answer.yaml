@@ -6,7 +6,7 @@ summary: >
   question instead of making the point: "In this article, I'll walk you through ...", "Here's what
   you need to know", "You're asking whether ...". The reader reads a promise before the content.
 category: composition
-status: observation
+status: candidate
 detector:
   kind: regex
   position: paragraph_start
@@ -61,11 +61,13 @@ prevention: >
   Do not announce what the text will do or restate the question. Start with the answer or the main
   point.
 notes: >
-  Single-source observation. tropes.fyi also counts announcing the count or shape of what follows
-  ("Two constraints shape the design.") and throat-clearing frames ("The more important point is
-  where the decision itself sits."); the first overlaps compulsive-counting, the second is left to
-  a reader's judgement because the phrases are common in ordinary prose. The legacy knowledge base
-  noted the closeness to T1.4 and T1.6 without merging. Threshold chosen at migration.
+  Independent sources: tropes-fyi and pangram-signs-of-ai-writing (phrase multipliers for
+  assistant openers); popularai-ai-tells-2026 describes the same throat-clearing. tropes.fyi also
+  counts announcing the count or shape of what follows ("Two constraints shape the design.") and
+  throat-clearing frames ("The more important point is where the decision itself sits."); the
+  first overlaps compulsive-counting, the second is left to a reader's judgement because the
+  phrases are common in ordinary prose. The legacy knowledge base noted the closeness to T1.4 and
+  T1.6 without merging. Threshold chosen at migration.
 sources:
   - source: tropes-fyi
     locator: "entry 'Preamble' (announce-then-answer), category Composition, status new"
@@ -73,6 +75,19 @@ sources:
       Opening by previewing the output, prefacing the point or restating the prompt. Examples
       recorded at migration: "Two constraints shape the design.", "The more important point is
       where the decision itself sits."
+  - source: pangram-signs-of-ai-writing
+    locator: "sign 8 'AI-style headers'"
+    note: >
+      Overly helpful openers and introductions; phrase table "Here's what you need to know" 5
+      human vs. 85 AI (11x), "Certainly! Here's" 70x, "Sure! Here's a" 18x, "I'd be happy to" 5x;
+      the sign as a whole averages 1 (human) vs. 2 (AI) per 10,000 words. Corpus size and method
+      not disclosed. Read on 2026-11-17.
+  - source: popularai-ai-tells-2026
+    locator: "tell 'The compulsory warm-up lap'"
+    note: >
+      AI writing "cannot resist clearing its throat before it does anything"; examples
+      "Certainly.", "Here's a structured way to think about it." No data; cites neither
+      tropes.fyi nor the Wikipedia guide.
 related:
   - {id: generic-opening, relation: overlaps}
   - {id: payoff-announcement, relation: overlaps}

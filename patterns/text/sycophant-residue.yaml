@@ -8,9 +8,6 @@ summary: >
   reader of the final text nothing.
 category: tone
 status: core
-provisional: true
-legacy_id: T1.2
-legacy_tier: 1
 detector:
   kind: regex
   position: any
@@ -74,37 +71,30 @@ prevention: >
   open with affirmations such as "Certainly!" or "Gerne!". Never close with wishes such as "I hope
   this helps".
 sources:
-  - source: legacy-knowledge-base
-    locator: "T1.2, base taxonomy 2026-07-30; section 6.4 (state 2026-11-15)"
+  - source: maintainer-observation
   - source: pangram-signs-of-ai-writing
     locator: "'AI-style headers'"
     note: >
       "Certainly! Here's a" found 94 times in AI text and 0 times in the human comparison sample;
       "Sure! Here's a" and "I'd be happy to" are listed as well. Commercial corpus, methodology not
-      disclosed. Matches the existing example list (2026-11-15).
+      disclosed. Matches the example list.
   - source: vrid-ai-signs
     locator: "model-dependent opener formulas"
     note: >
-      Confirmation recorded 2026-08-16: ChatGPT "Certainly!", Claude "I'd be happy to help", Gemini
+      Names model-specific openers: ChatGPT "Certainly!", Claude "I'd be happy to help", Gemini
       "Great question".
   - source: skill-better-ai-writing
-    locator: "2026-07 research pass"
+    locator: "research section"
     note: >
       Relays the academic framing of sycophancy as an RLHF-induced structural stance (conflict
       avoidance, reflexive agreement), citing yakura-sycophancy.
   - source: yakura-sycophancy
     note: >
-      Not read directly; known only through skill-better-ai-writing (2026-09-20). Methodological
-      deepening only, no change to threshold or examples.
+      Not read directly; known only through skill-better-ai-writing. Supports the explanation of
+      the mechanism; it does not bear on threshold or examples.
 notes: >
-  Since 2026-09-20 the legacy knowledge base also frames the residue as a symptom of an RLHF-induced
-  stance of reflexive agreement, beyond a mere word list. The regex covers the surface formulas only.
+  The residue is also explained as a symptom of an RLHF-induced stance of reflexive agreement,
+  beyond a mere word list. The regex covers the surface formulas only.
 related:
   - {id: model-fingerprint-opener, relation: distinct-from}
   - {id: reasoning-leak, relation: distinct-from}
-history:
-  - {date: 2026-07-30, change: "Added to legacy knowledge base core as T1.2 (tier 1, single hit flags)."}
-  - {date: 2026-08-16, change: "vrid.ai confirms model-dependent opener formulas (ChatGPT, Claude, Gemini)."}
-  - {date: 2026-09-20, change: "Academic framing as RLHF-induced stance added via better-ai-writing-skills (citing Yakura et al.); no change to threshold or examples."}
-  - {date: 2026-11-15, change: "Pangram corpus data confirms the example list ('Certainly! Here's a': 94 AI vs 0 human)."}
-  - {date: 2026-11-17, change: "Migrated to slop-check repository as grandfathered core (provisional)."}

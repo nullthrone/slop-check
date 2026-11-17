@@ -113,6 +113,24 @@ sources:
       (figures from a third-party tally service). Weakens the semicolon-overuse counter-claim; one
       model pair only, and derived from the Graphite data, so the legacy knowledge base did not
       count it as a source.
+  - source: reinhart-pnas-2025-llm-style
+    note: >
+      GPT-4o uses phrasal coordination at 1.9 times the human rate (paired Cohen's d = 0.81); both
+      GPT-4o models avoid clausal coordination, while the instruction-tuned Llama 3 variants use it
+      more than humans. Supports the and-stacking component at phrase level; at clause level the
+      direction depends on the model family.
+  - source: arxiv-2605-06030
+    locator: "section 5.5 'Punctuation'"
+    note: >
+      2025 models are "much less diverse in their usage of punctuation" than 2023 models and human
+      news prose; GPT-4o "generates very few em-dashes or semicolons". Single prompt-based news
+      genre; read on 2026-11-17.
+  - source: russell-acl-2025-expert-detectors
+    locator: "Table 17 (full clue taxonomy), category 'Grammar & Punctuation'"
+    note: >
+      24.8 % of expert explanations: AI text is usually grammatically perfect, "also avoiding
+      dashes and ellipses", while human text mixes dashes, brackets and quotes. Qualitative
+      support for the sparsity component; expert clues, not feature rates.
 related:
   - {id: em-dash-inflation, relation: distinct-from}
   - {id: uniform-rhythm, relation: distinct-from}

@@ -1,0 +1,46 @@
+# Weekly model resolution (docs/architecture.md section 6.6): resolve the selectors in
+# evals/models.yaml against the public OpenRouter model list and commit models/lock.json to
+# branch data. Needs no secrets. The lock is committed every week, also when no model changed,
+# so its resolved_at stays fresh and other jobs do not re-resolve on their own.
+name: models
+
+on:
+  schedule:
+    - cron: "41 4 * * 1"
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: models
+  cancel-in-progress: false
+
+jobs:
+  resolve:
+    if: github.repository == 'nullthrone/slop-check'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+      - uses: ./.github/actions/setup
+
+      - name: Resolve model selectors
+        run: |
+          echo "STAGE=$RUNNER_TEMP/stage" >> "$GITHUB_ENV"
+          python .github/scripts/data_branch.py checkout --branch data --dir "$RUNNER_TEMP/stage"
+          previous=()
+          if [ -f "$RUNNER_TEMP/stage/models/lock.json" ]; then
+            previous=(--previous "$RUNNER_TEMP/stage/models/lock.json")
+          fi
+          slopcheck-dev models resolve "${previous[@]}" --out "$RUNNER_TEMP/stage/models/lock.json" \
+            --report "$RUNNER_TEMP/models.md"
+          cat "$RUNNER_TEMP/models.md" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Commit models/lock.json to branch data
+        run: |
+          python .github/scripts/data_branch.py publish --branch data --source "$STAGE" \
+            --path models/lock.json --message "Resolve models $(date -u +%Y-%m-%d)"

@@ -56,7 +56,7 @@ jobs:
 
       - name: Validate pattern and source files on a copy of the trusted checkout
         id: validate
-        if: steps.prepare.outputs.pr != ''
+        if: steps.prepare.outputs.pr != '' && steps.prepare.outputs.data_files != '0'
         run: |
           if slopcheck-dev validate --root "$CANDIDATE"; then
             echo "result=ok" >> "$GITHUB_OUTPUT"

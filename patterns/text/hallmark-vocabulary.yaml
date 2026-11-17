@@ -7,9 +7,6 @@ summary: >
   when several accumulate in one text.
 category: lexical
 status: core
-provisional: true
-legacy_id: T2.4
-legacy_tier: 2
 detector:
   kind: lexicon
   position: any
@@ -133,23 +130,22 @@ prevention: >
   sauber, umfassend, zukunftssicher, robust, gezielt, entscheidend, prägend). Use the specific word
   for what happens.
 notes: >
-  Isolated sub-threshold hits (legacy T3.2) are no longer reported. The list update proposed on
-  2026-08-02 (quietly, shape, land, earn, hold, pull, signal, compound, real, actually, built
-  different) remains unadopted because the Graphite study finds new vocabulary to be model- and
-  version-specific, with no convergence across models. Pebblous reports that a composite of eight classic LLM
-  words now falls below the human level for three newer models, so hit rates on recent models are
-  expected to decline. The multi-word terms ("quiet confidence" and similar) encode the legacy rule
-  that "quiet" counts only as a generic intensifier; they assume the lexicon detector matches
+  Isolated sub-threshold hits are not reported. Vaguer verbs that newer models are said to prefer
+  (quietly, shape, land, earn, hold, pull, signal, compound, real, actually, built different) are
+  not in the list because the Graphite study finds new vocabulary to be model- and
+  version-specific, with no convergence across models. Pebblous reports that a composite of eight
+  classic LLM words now falls below the human level for three newer models, so hit rates on recent
+  models are expected to decline. The multi-word terms ("quiet confidence" and similar) encode the
+  rule that "quiet" counts only as a generic intensifier; they assume the lexicon detector matches
   phrases as whole words. The threshold is an absolute count independent of text length, so long
-  documents reach it easily; a scan of about two million words of pre-2022 technical documentation
-  during migration found mostly technical senses (underscore, landscape orientation) in long files.
+  documents reach it more easily; a scan of about two million words of pre-2022 technical
+  documentation found mostly technical senses (underscore, landscape orientation) in long files.
 sources:
-  - source: legacy-knowledge-base
-    locator: "T2.4 and T3.2, base taxonomy 2026-07-30; section 6.2 (state 2026-11-15)"
+  - source: maintainer-observation
   - source: kobak-excess-vocabulary
     note: >
-      Cited in the legacy knowledge base via SlopDetector.org: analysis of 14.2 million PubMed
-      abstracts with a 25-fold rise in the frequency of "delves" since ChatGPT spread.
+      Cited via SlopDetector.org: analysis of 14.2 million PubMed abstracts with a 25-fold rise in
+      the frequency of "delves" since ChatGPT spread.
   - source: graphite-ai-writing-study
     note: >
       About 13,000 words and word combinations over-represented in AI text, with model-specific
@@ -163,7 +159,7 @@ sources:
       than a [X] it" 98x, "rather than simply" 32x, "looking ahead the" 40x, "dependable" 23x. A
       composite of 8 classic LLM words (among them delve, tapestry, nuance) is below the human level
       for three newer models. Own "mannered prose score" (Opus 5 16.75, Opus 5.5 10.57, human 6.65)
-      not adopted because its method is not disclosed.
+      not used because its method is not disclosed.
   - source: pangram-signs-of-ai-writing
     locator: "'AI Phrases'"
     note: >
@@ -171,22 +167,14 @@ sources:
       the existing list. Commercial corpus, methodology not disclosed.
   - source: slopdetector-org
     locator: "'Excess Style Words'"
-    note: "Points to the Kobak et al. analysis (recorded 2026-09-06)."
+    note: "Points to the Kobak et al. analysis."
   - source: forbes-jodie-cook
     note: >
-      Proposed list update (2026-05-21): newer models shift to vaguer verbs such as quietly, shape,
-      land, earn, hold, pull, signal, compound, real, actually, built different. Reconfirmed on
-      2026-08-10 for quietly, delve, landscape and journey. Not adopted into the list.
+      A column of 2026-05-21 reports that newer models shift to vaguer verbs such as quietly, shape,
+      land, earn, hold, pull, signal, compound, real, actually, built different; a column of
+      2026-08-10 names quietly, delve, landscape and journey again. The newer verbs are not in the
+      list (see notes).
 related:
   - {id: brochure-tone, relation: overlaps}
   - {id: empty-intensifiers, relation: distinct-from}
   - {id: invented-concept-label, relation: distinct-from}
-history:
-  - {date: 2026-07-30, change: "Added to legacy knowledge base core as T2.4 (tier 2; at least 3 hits per text, short texts at least 2). Isolated sub-threshold hits kept as tier-3 note T3.2."}
-  - {date: 2026-08-02, change: "List update recommendation recorded (Forbes column of 2026-05-21: shift to vaguer verbs); not adopted."}
-  - {date: 2026-08-16, change: "Forbes column of 2026-08-10 reconfirms quietly, delve, landscape, journey; list unchanged."}
-  - {date: 2026-09-06, change: "Academic support recorded: Kobak et al. (14.2 million PubMed abstracts, 'delves' 25-fold) via SlopDetector.org."}
-  - {date: 2026-10-04, change: "Graphite study finds new hallmark vocabulary model- and version-specific; non-adoption of the list update now backed by data."}
-  - {date: 2026-10-11, change: "Pebblous secondary analysis adds phrase multipliers from the Graphite data; classic words fall below human level for three newer models."}
-  - {date: 2026-11-15, change: "Pangram corpus data confirms (AI phrases 12x, 'delve into' 45x); list unchanged."}
-  - {date: 2026-11-17, change: "Migrated to slop-check repository as grandfathered core (provisional). Absorbs legacy T3.2: isolated sub-threshold hits are no longer reported."}

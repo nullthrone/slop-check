@@ -8,9 +8,6 @@ summary: >
   lies somewhere in between") belongs to the same formula.
 category: rhetoric
 status: core
-provisional: true
-legacy_id: T1.3
-legacy_tier: 1
 detector:
   kind: regex
   position: any
@@ -70,31 +67,23 @@ prevention: >
   Do not wave off objections with "despite these challenges" or "while it has limitations, it
   remains...". Either name the specific objection and answer it with evidence, or leave it out.
 sources:
-  - source: legacy-knowledge-base
-    locator: "T1.3, concession pivot example group (since state 2026-08-16)"
+  - source: maintainer-observation
     note: >
-      Admitted on 2026-08-16 with four independent sources: tropes.fyi, a Substack field guide to AI
-      tells ("I Asked the Machine to Tell on Itself", 2026-04-24, entry "False Concession", not
-      registered separately), vrid.ai and the avoid-ai-writing skill.
+      A Substack field guide to AI tells ("I Asked the Machine to Tell on Itself", 2026-04-24, entry
+      "False Concession") describes the same formula; it is not registered as a source.
   - source: tropes-fyi
     locator: "entry 'Despite Its Challenges'"
   - source: vrid-ai-signs
-    note: "Second independent source found in the 2026-08-16 round."
   - source: skill-avoid-ai-writing
     locator: "patterns #6 and #22"
   - source: imperfectly-app
     locator: "'The Diplomatic Hedge'"
     note: >
-      "both approaches have merit, the truth lies somewhere between"; confirms the false-concession
-      variant (2026-09-06).
+      "both approaches have merit, the truth lies somewhere between"; describes the false-balance
+      variant.
   - source: forbes-jodie-cook
     locator: "'Setup-and-dismiss sentences' (article of 2026-08-10)"
-    note: "Related but vaguer; counted only as weak supporting confirmation in 2026-08-16."
+    note: "Related but vaguer; weak supporting evidence only."
 related:
   - {id: cya-disclaimer, relation: split-from}
   - {id: antithesis-template, relation: overlaps}
-history:
-  - {date: 2026-08-02, change: "Recorded as a borderline case between T1.3 and T1.1 (tropes.fyi 'Despite Its Challenges', a Substack field guide's 'False Concession'); recommendation to extend T1.3 instead of opening a new ID."}
-  - {date: 2026-08-16, change: "Added to legacy knowledge base core as an example group of T1.3 (tier 1), based on four independent sources."}
-  - {date: 2026-09-06, change: "imperfectly.app 'The Diplomatic Hedge' confirms the false-balance variant."}
-  - {date: 2026-11-17, change: "Split from cya-disclaimer into its own pattern because the detector differs; migrated to slop-check repository as grandfathered core (provisional)."}

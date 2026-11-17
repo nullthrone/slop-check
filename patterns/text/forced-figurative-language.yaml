@@ -6,7 +6,7 @@ summary: >
   clarifying anything ("Like tracking weight loss with a scale you control."). The image needs
   decoding, often fits the point only loosely, and replaces the plain statement it imitates.
 category: rhetoric
-status: observation
+status: candidate
 detector:
   kind: llm
   position: any
@@ -56,9 +56,11 @@ prevention: >
   Use a metaphor or simile only when it explains something better than a literal sentence. Never
   stack or mix images for effect.
 notes: >
-  Single-source observation. ignorance.ai lists "Awkward Analogies" (generic metaphors that sound
-  plausible but lack specificity); the legacy knowledge base noted it as a weaker, broader match
-  and did not count it. Threshold chosen at migration.
+  Independent sources: tropes-fyi, good-graf-machine-made-prose (stock metaphors),
+  insidehighered-anatomy-ai-essay (awkward metaphors in generated essays) and
+  authoritea-current-ai-tells (weighty metaphors that do not hold up). ignorance.ai lists "Awkward
+  Analogies" (generic metaphors that sound plausible but lack specificity); the legacy knowledge
+  base noted it as a weaker, broader match and did not count it. Threshold chosen at migration.
 sources:
   - source: tropes-fyi
     locator: "entry 'Forced Figurative Language', category Tone, status new"
@@ -66,6 +68,17 @@ sources:
   - source: ignorance-ai
     locator: "entry 'Awkward Analogies'"
     note: "Broader and weaker match; not counted by the legacy knowledge base."
+  - source: good-graf-machine-made-prose
+    note: >
+      "Metaphors involving symphonies, tapestries, or 'complex dances'" listed as a tell (stock
+      comparisons, the last clause of the rubric). No data.
+  - source: insidehighered-anatomy-ai-essay
+    note: >
+      "AI-produced texts frequently use metaphors, sometimes awkwardly"; several ChatGPT essays
+      compared writing to "weaving" a "rich" or "intricate tapestry". Unquantified.
+  - source: authoritea-current-ai-tells
+    locator: "section 'Universal'"
+    note: "\"Metaphors that sound weighty but don't actually mean anything when you think about them\". No data."
 related:
   - {id: brochure-tone, relation: distinct-from}
   - {id: hollow-sentences, relation: overlaps}

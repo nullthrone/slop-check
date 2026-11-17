@@ -7,9 +7,6 @@ summary: >
   importance instead of describing an effect.
 category: tone
 status: core
-provisional: true
-legacy_id: T2.6
-legacy_tier: 2
 detector:
   kind: regex
   position: any
@@ -80,24 +77,17 @@ prevention: >
   Do not declare ordinary events milestones or turning points. Describe what changed and let the
   reader judge its importance.
 sources:
-  - source: legacy-knowledge-base
-    locator: "T2.6, base taxonomy 2026-07-30; section 5a (Grandiose Stakes Inflation)"
+  - source: maintainer-observation
   - source: tropes-fyi
     locator: "entry 'Grandiose Stakes Inflation' (category Tone, status rising)"
-    note: "Recorded as a confirmation of this pattern, not as a separate observation (2026-09-06)."
+    note: "Describes the same mechanism; covered by this pattern rather than a separate one."
   - source: aipromptindex-io
     locator: "'Importance Puffery'"
-    note: "Confirmation recorded 2026-09-06."
   - source: skill-no-ai-slop
     locator: "'Importance puffery'"
-    note: "Confirmation recorded 2026-09-06."
 related:
   - {id: hollow-sentences, relation: distinct-from}
   - {id: false-agency, relation: distinct-from}
   - {id: empty-intensifiers, relation: distinct-from}
   - {id: participle-padding, relation: overlaps}
   - {id: hallmark-vocabulary, relation: overlaps}
-history:
-  - {date: 2026-07-30, change: "Added to legacy knowledge base core as T2.6 (tier 2; at least 1 hit in short texts, at least 2 in long-form texts)."}
-  - {date: 2026-09-06, change: "tropes.fyi 'Grandiose Stakes Inflation' recorded as a confirmation; aipromptindex.io and the no-ai-slop skill ('Importance puffery') confirm."}
-  - {date: 2026-11-17, change: "Migrated to slop-check repository as grandfathered core (provisional)."}

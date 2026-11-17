@@ -3,13 +3,10 @@ modality: text
 name: Curly quotes in plain text
 summary: >
   Typographic (curly) quotation marks and apostrophes in plain-text contexts, typically carried over
-  by copy and paste from an interface that renders them. Part of the typography artifacts of legacy
-  T2.2, split out for separate measurement.
+  by copy and paste from an interface that renders them. Kept apart from em dash density so that
+  the two typography signals are measured separately.
 category: typography
-status: core
-provisional: true
-legacy_id: T2.2
-legacy_tier: 2
+status: observation
 detector:
   kind: metric
   position: any
@@ -43,19 +40,20 @@ prevention: >
   In plain-text channels use straight quotes (" and ') unless the target language or the
   publication style requires typographic quotes.
 notes: >
-  Legacy rule: any occurrence of curly quotes triggers. The metric also counts U+2019 used as an
-  apostrophe. Because editors and keyboards insert curly quotes automatically, expect a high
-  false-positive rate on edited human text; calibration pending. The German negative example with
-  „…“ relies on language detection recognising the sentence as German.
+  Observation, not scored. Any curly quote or apostrophe counts; the metric also counts U+2019
+  used as an apostrophe. In the human reference corpus (pre-2022 texts) 42 % of the English texts
+  contain at least one, because editors, publishing systems and phone keyboards insert them
+  automatically. Keeping the English trigger rate at or below 4 % would need about 23 curly
+  characters per text, a count that tracks text length and editing software rather than generated
+  text, so no meaningful core threshold exists for this metric. German is exempt via
+  exempt_languages (no German text triggers). The pattern can return to the candidate track if a
+  length-normalized measure or a scope limited to plain-text channels (commit messages, Markdown
+  source) shows separation from AI-generated text. The German negative example with „…“ relies on
+  language detection recognising the sentence as German.
 sources:
-  - source: legacy-knowledge-base
-    locator: "T2.2 (typography part), base taxonomy 2026-07-30"
+  - source: maintainer-observation
   - source: fireprompts-io
-    note: "Confirms T2.2 including curly quotes (recorded 2026-08-23)."
+    note: "Lists curly quotes, together with em dashes, as typography markers of generated text."
 related:
   - {id: em-dash-inflation, relation: split-from}
   - {id: emoji-decoration, relation: distinct-from}
-history:
-  - {date: 2026-07-30, change: "Added to legacy knowledge base core as part of T2.2 (tier 2; any occurrence of curly quotes flags)."}
-  - {date: 2026-08-23, change: "fireprompts.io confirms T2.2 including curly quotes."}
-  - {date: 2026-11-17, change: "Split from em-dash-inflation and migrated to slop-check repository as grandfathered core (provisional); German exempt via the metric parameter exempt_languages."}

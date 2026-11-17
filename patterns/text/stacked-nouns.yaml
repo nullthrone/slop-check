@@ -7,7 +7,7 @@ summary: >
   a relation that a preposition or a verb would make explicit, and the reader has to reconstruct
   it.
 category: lexical
-status: observation
+status: candidate
 detector:
   kind: llm
   position: any
@@ -46,18 +46,26 @@ prevention: >
   Avoid chains of three or more nouns that are not established terms. Use prepositions or a
   clause to show how the nouns relate.
 notes: >
-  Single-source observation; the primary study was not accessible to the legacy knowledge base,
-  which relied on three concordant tertiary summaries. English only: German writes noun compounds
+  Independent sources: arxiv-2610-29162 (abstract and full text read on 2026-11-17) and
+  slhck-claudish. English only: German writes noun compounds
   as one word by rule, and unnatural compound chains in German are covered by german-stock-phrases.
   Explicitly not counted as a fourth source for premodifier-stacking (adjective premodification),
   and distinct from nominalization-density (verbal nouns). Threshold chosen at migration.
 sources:
   - source: arxiv-2610-29162
+    locator: "abstract; section 3.1 'Linguistic features of interest', paragraph 'Stacked noun compounds'"
     note: >
-      Measures chains of three or more nouns in noun-noun modifier relations as a feature that
-      separates AI-generated from human text (example via tertiary sources: "reader-patience
-      budget"). Known only through tertiary summaries (aiweekly.co, emergentmind.com,
-      braindetox.kr) at the time of the legacy round.
+      Stacked noun compounds are defined as "three or more nouns in a modifier relationship";
+      compared with genre-matched human baselines, most of the nine frontier and near-frontier
+      models tested "use longer dependencies, more stacked nouns, and more reduced object
+      relatives in conversation". The paper's opening example of model prose contains
+      "reader-patience budget". Read on arXiv (v1, 2026-10-21) on 2026-11-17.
+  - source: slhck-claudish
+    locator: "level 2 of 'Claudish'"
+    note: >
+      Output degrades into "highly compressed half-sentences, with nouns as adjectives" ("This is
+      a real fleet-storm collapse", "Cap the study-lifecycle handlers ..."), more often after long
+      reasoning or tool use. Anecdotal, one model family.
 related:
   - {id: premodifier-stacking, relation: distinct-from}
   - {id: nominalization-density, relation: distinct-from}

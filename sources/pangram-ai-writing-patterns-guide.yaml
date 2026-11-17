@@ -1,0 +1,15 @@
+id: pangram-ai-writing-patterns-guide
+title: "Comprehensive Guide to Spotting AI Writing Patterns"
+url: https://www.pangram.com/blog/comprehensive-guide-to-spotting-ai-writing-patterns
+publisher: Pangram Labs
+authors: [Bradley Emi]
+published: 2025-04-02
+accessed: 2026-11-17
+type: blog
+notes: >
+  Practitioner guide by the AI-detection vendor that publishes pangram-signs-of-ai-writing (same
+  publisher, hence the same independence cluster). Qualitative, no figures. Statements used here:
+  under "Spelling and Grammar" AI text "rarely uses contractions like 'we've'"; under "Tone" it
+  "writes in an extremely formal tone unless it instructed not to"; under "Organization and
+  Structure" it mentions "list-like structures" and bullet point lists "in the middle of the essay
+  which rarely happens in formal human writing".

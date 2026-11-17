@@ -8,9 +8,6 @@ summary: >
   the cost of making readers wonder whether several things are meant.
 category: lexical
 status: core
-provisional: true
-legacy_id: T2.17
-legacy_tier: 2
 detector:
   kind: llm
   position: any
@@ -59,11 +56,9 @@ prevention: >
   Choose one precise term per referent and keep it; do not rotate synonyms such as "dashboard",
   "interface" and "portal" for the same thing.
 sources:
-  - source: legacy-knowledge-base
-    locator: "T2.17 Synonym Cycling / Zwanghafter Bezeichnungswechsel (admitted 2026-09-20)"
+  - source: maintainer-observation
   - source: tropes-fyi
     locator: "entry 'Synonym cycling' (/tropes/synonym-cycling)"
-    note: "Single-source observation from 2026-08-30 until two further sources were found."
   - source: aipromptindex-io
     locator: "entry 'Synonym Cycling'"
     note: "Rotating different words for the same thing (agent, assistant, tool, system) instead of repeating the clear term."
@@ -72,18 +67,14 @@ sources:
     note: "Rotating terms unnecessarily instead of repeating the precise word."
   - source: skill-avoid-ai-writing
     locator: "entry 'Synonym cycling'"
-    note: "Nearly identical example; fourth source that led to core admission on 2026-09-20."
+    note: "Nearly identical example."
 related:
   - {id: german-stock-phrases, relation: distinct-from}
   - {id: hallmark-vocabulary, relation: distinct-from}
-history:
-  - {date: 2026-08-30, change: "Recorded as single-source observation (tropes.fyi)."}
-  - {date: 2026-09-06, change: "Opened as candidate T2.17 with three sources (tropes.fyi, aipromptindex.io, no-ai-slop skill)."}
-  - {date: 2026-09-20, change: "Admitted to legacy knowledge base core as T2.17 (tier 2) after a fourth source (avoid-ai-writing skill); self-calibrated threshold of at least 3 labels for one referent within a paragraph."}
-  - {date: 2026-11-17, change: "Migrated to slop-check repository as grandfathered core (provisional)."}
 notes: >
-  The threshold (three or more labels per referent within one paragraph) is self-calibrated in the
-  legacy knowledge base by analogy with T2.4 and T2.9; no source quantifies it. Demarcation: this
-  pattern concerns referent consistency whatever words are used, while german-stock-phrases
-  targets phrase clichés and hallmark-vocabulary a fixed word list. A broad catalog checked on
-  2026-09-20 did not list the pattern, recorded as negative evidence in the legacy knowledge base.
+  The threshold (three or more labels per referent within one paragraph) is set by analogy with
+  the count thresholds of hallmark-vocabulary and german-stock-phrases; no source quantifies it.
+  This pattern concerns referent consistency whatever words are used, while german-stock-phrases
+  targets phrase clichés and hallmark-vocabulary a fixed word list. At least one broad catalog of
+  AI writing signs does not list the pattern. Kind llm: the human trigger rate cannot be measured
+  without a judge and has not been measured yet.

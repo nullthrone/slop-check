@@ -20,6 +20,8 @@ kramdown:
   input: GFM
   auto_ids: true
   hard_wrap: false
+  # Keep straight quotes and apostrophes in the rendered pages.
+  smart_quotes: ["apos", "apos", "quot", "quot"]
   syntax_highlighter_opts:
     disable: true
 

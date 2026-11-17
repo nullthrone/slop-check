@@ -7,9 +7,6 @@ summary: >
   its content. The connector simulates logical flow that the paragraphs do not build.
 category: structure
 status: core
-provisional: true
-legacy_id: T2.15
-legacy_tier: 2
 detector:
   kind: metric
   position: any
@@ -88,30 +85,23 @@ prevention: >
   "Zudem" or "Darüber hinaus". Link paragraphs through their content; keep connectors for real
   consequences or contrasts.
 sources:
-  - source: legacy-knowledge-base
-    locator: "T2.15 Formal-Transition-Stacking am Absatzanfang (admitted 2026-09-13)"
+  - source: maintainer-observation
   - source: slopdetector-org
     locator: "pattern 'Transition-word stacking'"
-    note: "Threshold: more than half of the paragraphs open with a formal connector; the legacy threshold was adopted from here."
+    note: "Threshold: more than half of the paragraphs open with a formal connector; the threshold here follows it."
   - source: imperfectly-app
     locator: "entry 'The Transition Word Graveyard'"
     note: "Same example words (Furthermore, Additionally) and the same position rule, worded independently."
   - source: aicheckr-io
     locator: "entry 'Furthermore/Moreover transition chains'"
-    note: "Found 2026-09-13; supplied the reconfirmation that led to core admission."
   - source: fireprompts-io
     note: "Weaker, more generic description (connector-word accumulation) without a position rule."
 related:
   - {id: participle-padding, relation: distinct-from}
   - {id: german-stock-phrases, relation: distinct-from}
-history:
-  - {date: 2026-09-06, change: "Opened as candidate T2.15 with two to three independent sources and a threshold adopted from SlopDetector (more than 50 % of paragraphs)."}
-  - {date: 2026-09-13, change: "Admitted to legacy knowledge base core as T2.15 (tier 2) with four sources (SlopDetector, imperfectly.app, aicheckr.io, fireprompts.io)."}
-  - {date: 2026-11-17, change: "Migrated to slop-check repository as grandfathered core (provisional)."}
 notes: >
-  min_units 2 was added at migration: a single paragraph that opens with a connector would
-  otherwise reach 100 %. Demarcation from the legacy knowledge base: participle-padding works at
-  sentence end, german-stock-phrases has no position rule and no connector list. The term lists
-  extend the legacy examples (Furthermore, Moreover, Additionally, Zudem, Darüber hinaus,
-  Außerdem) with further formal connectors; contrastive "however" and "allerdings" are left out on
-  purpose because they usually mark a real contrast.
+  min_units 2 keeps a single paragraph that opens with a connector from reaching 100 %.
+  participle-padding works at sentence end; german-stock-phrases has no position rule and no
+  connector list. The term lists start from Furthermore, Moreover, Additionally, Zudem, Darüber
+  hinaus and Außerdem and add further formal connectors; contrastive "however" and "allerdings"
+  are left out on purpose because they usually mark a real contrast.
