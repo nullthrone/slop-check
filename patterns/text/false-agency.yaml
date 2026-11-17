@@ -1,0 +1,103 @@
+id: false-agency
+modality: text
+name: False agency
+summary: >
+  Inanimate or abstract entities (data, tools, decisions, cultures, complaints) appear as actors
+  that tell or choose things, or that change on their own ("the data tells a story", "the tool
+  chose to focus", "complaints become fixes"). The phrasing hides the person or institution that
+  acted.
+category: rhetoric
+status: core
+provisional: true
+legacy_id: T2.22
+legacy_tier: 2
+detector:
+  kind: llm
+  position: any
+  rubric: >
+    Flag clauses whose grammatical subject is an inanimate or abstract entity (data, a tool, a
+    decision, a culture, a market, complaints, a strategy, a document) combined with a verb that
+    presupposes intention, perception, speech or choice (tells, chooses, decides, wants, knows,
+    believes, insists) or with a self-causing change (the decision emerged, complaints become
+    fixes, cultures shift), where the sentence thereby hides the person or institution who acted.
+    Count each such clause once. Do not flag conventional descriptions of mechanical behavior
+    (a function returns a value, a sensor measures, a valve opens, a thermostat switches),
+    institutions acting through their members (the board decided, the court ruled), established
+    citation metonymy (the study found, the report lists), or deliberate personification in
+    fiction and poetry. In code descriptions, flag only the anthropomorphic verb: in
+    "is_file() swallows that and returns False", "swallows" counts and "returns" does not.
+threshold:
+  min_count: 2
+  comparison: gte
+  scope: text
+  short_text: {min_count: 1}
+requires: null
+realizations:
+  en:
+    examples:
+      positive:
+        - "The data tells a clear story about our customers."
+        - "The tool chose to focus on speed over accuracy."
+        - "After weeks of discussion, the decision emerged."
+        - "In our team, complaints become fixes within a week."
+      negative:
+        - "The function returns False when the file is missing."
+        - "The board decided to delay the launch until March."
+        - "Our analysts read 400 tickets and found that refunds cause most complaints."
+        - "The thermostat switches the heating off at 21 °C."
+  de:
+    examples:
+      positive:
+        - "Die Daten erzählen eine klare Geschichte über unsere Kundschaft."
+        - "Das Tool hat sich entschieden, auf Geschwindigkeit zu setzen."
+        - "Im Laufe der Gespräche ist die Entscheidung entstanden."
+        - "Bei uns werden aus Beschwerden innerhalb einer Woche Verbesserungen."
+      negative:
+        - "Die Funktion gibt False zurück, wenn die Datei fehlt."
+        - "Der Vorstand hat beschlossen, den Start auf März zu verschieben."
+        - "Unsere Analystinnen haben 400 Tickets gelesen und festgestellt, dass Erstattungen die meisten Beschwerden auslösen."
+        - "Das Thermostat schaltet die Heizung bei 21 °C ab."
+legitimate_use: >
+  Technical descriptions of what a program or device does, collective actors with human members (a
+  board, a court, a parliament), citation shorthand such as "the study found", and deliberate
+  personification in fiction are fine. The finding concerns clauses where the abstract subject
+  replaces an identifiable human or institutional actor.
+fix: >
+  Replace the abstract subject with the actual human or institutional actor, in an active or
+  passive construction with a concrete subject ("our analysts read 400 tickets" instead of "the
+  data tells a story").
+prevention: >
+  Do not make abstract nouns such as data or decisions the acting subject of verbs that need a
+  person (tell, choose, decide, want). Name who did it.
+sources:
+  - source: legacy-knowledge-base
+    locator: "T2.22 Personifizierte Abstraktionen / False Agency (admitted 2026-09-27); section 6.5"
+  - source: vrid-ai-signs
+    locator: "entry 'Personified Abstractions'"
+    note: "Examples 'the data tells a story', 'the tool chose to focus'. Single-source observation from 2026-09-13."
+  - source: skill-avoid-ai-writing
+    locator: "entry 'False Agency'"
+  - source: skill-stop-slop
+    locator: "entry 'False Agency'"
+    note: "Examples 'complaints become fixes', 'cultures shift', 'data tells us'."
+  - source: ananas-ai-pattern-detector
+    locator: "'Signature constructions', item 'false agency'"
+    note: "Fourth source that led to core admission on 2026-09-27; checked with a follow-up query."
+  - source: arxiv-2610-29162
+    locator: "feature 'inanimate subjects with animate verbs'"
+    note: >
+      Same mechanism under a linguistic definition, with code-register examples. The legacy
+      knowledge base could not open the preprint and relied on three concordant tertiary
+      summaries. Recorded 2026-11-15 as supporting academic evidence.
+related:
+  - {id: inflated-importance, relation: distinct-from}
+history:
+  - {date: 2026-09-13, change: "Recorded as single-source observation 'Personified Abstractions' (vrid.ai)."}
+  - {date: 2026-09-20, change: "Opened as candidate T2.22 with three sources (vrid.ai, avoid-ai-writing skill, stop-slop skill)."}
+  - {date: 2026-09-27, change: "Admitted to legacy knowledge base core as T2.22 (tier 2) after a fourth source (ai-pattern-detector); self-calibrated threshold of at least 2 hits (short texts 1)."}
+  - {date: 2026-11-15, change: "Academic confirmation recorded (arXiv:2610.29162, via tertiary sources); no change to threshold or status."}
+  - {date: 2026-11-17, change: "Migrated to slop-check repository as grandfathered core (provisional)."}
+notes: >
+  The threshold is self-calibrated in the legacy knowledge base by analogy with T2.6 and T2.9; no
+  source quantifies it. Demarcation: inflated-importance exaggerates a real event, while this
+  pattern invents an actor role for an abstract noun regardless of any significance framing.

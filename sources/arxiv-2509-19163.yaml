@@ -1,0 +1,13 @@
+id: arxiv-2509-19163
+title: "Measuring AI \"Slop\" in Text"
+url: https://arxiv.org/abs/2509.19163
+publisher: arXiv
+published: 2025-09-23
+accessed: 2026-11-17
+type: academic-preprint
+notes: >
+  Taxonomy study based on 19 expert interviews, 3 copy editors and 250 annotated texts. Seven
+  codes are statistically significant (p < 0.05): Density, Relevance, Factuality,
+  Bias/Subjectivity, Repetition & Templatedness, Coherence & Fluency, Verbosity/Tone. The
+  Density code (low information content relative to length) matches the hollow-sentences
+  pattern. Revisions: v2 2026-01-24 (the version the legacy knowledge base cited), v3 2026-10-16.

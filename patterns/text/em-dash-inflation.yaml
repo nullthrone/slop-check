@@ -1,0 +1,107 @@
+id: em-dash-inflation
+modality: text
+name: Em dash inflation
+summary: >
+  Excessive use of em dashes (and of spaced en dashes) in place of commas or parentheses. The signal is model-dependent and has weakened in recent model generations; the absence
+  of dashes proves nothing.
+category: typography
+status: core
+provisional: true
+legacy_id: T2.2
+legacy_tier: 2
+detector:
+  kind: metric
+  position: any
+  metric: em_dash_density
+  params: {per_words: 500}
+threshold:
+  value: {op: gt, x: 3}
+requires: null
+realizations:
+  "*":
+    examples:
+      positive:
+        - "The release — finally — shipped on Friday."
+        - "It was small — three lines — but it closed the oldest bug in the tracker."
+        - "Die Lösung – so das Team – liegt im Cache."
+      negative:
+        - "See pages 10–12 for the 2019–2024 figures."
+        - "Run the tool with --dry-run first."
+        - "Die Strecke Köln-Bonn ist 30 km lang."
+        - "The well-known side-effect is documented in the FAQ."
+    test_texts:
+      - {text: "The fix — finally — landed on Friday. It was small — three lines — but it closed the oldest bug in the tracker.", expect: trigger}
+      - {text: "The new release changes how the scheduler assigns jobs to workers. Until now every job went to the first idle worker, which caused uneven load when long exports and short thumbnail jobs arrived at the same time. The scheduler now estimates the run time of each job from the last fifty runs of the same type and places it on the worker with the lowest expected finish time. In our staging cluster this cut the p95 queue wait from 41 seconds to 12 seconds over a two week test. Memory use on the coordinator grew by about 30 MB, which is within the budget for the current hardware. The estimate falls back to the old behaviour when fewer than ten historical runs exist, so new job types are not delayed by missing data. Operators can switch the feature off with a single flag in the config file — the default is on for all clusters created after version 4.2. Existing clusters keep the old behaviour until the flag is set by hand during the next maintenance window, and the release notes describe the change with examples for both cases.", expect: no_trigger}
+legitimate_use: >
+  Fiction and typeset publications use dashes as a deliberate style. German uses the spaced
+  en dash as its standard Gedankenstrich, which the metric counts as well. Several independent
+  studies find the signal model-dependent and falling sharply in recent models, so treat a hit as
+  weak evidence and weigh it together with other findings; never read the absence of dashes as a
+  sign of human authorship.
+fix: >
+  Replace about half of the dashes with other punctuation (comma, parenthesis, colon) or split the
+  sentence.
+prevention: >
+  Use dashes sparingly, at most a few per 500 words. Prefer other punctuation or a new sentence.
+notes: >
+  The legacy rule applies to expository prose (Sachtexte); this context restriction is not encoded.
+  Because density is computed per 500 words, a single dash triggers in texts shorter than about 167
+  words; expect false positives on short texts. The recommendation recorded on 2026-08-09 to count
+  dash density only together with other accumulation signals was never adopted into the legacy rule
+  and is not encoded as requires. The typography part of legacy T2.2 (curly quotes) lives in
+  curly-quotes.
+sources:
+  - source: legacy-knowledge-base
+    locator: "T2.2, base taxonomy 2026-07-30; section 6.1 (state 2026-11-15)"
+  - source: economist-ai-writing-analysis
+    note: >
+      Data analysis of 55,940 sentences (1.2 million words) of output from four chatbots (ChatGPT,
+      Claude, Gemini, Grok) against Economist prose, reported 2026-08-04: only Claude stayed above the human em dash
+      rate; ChatGPT fell below it.
+  - source: slopdetector-org
+    locator: "'Em Dash Density in Wrong Register'; separate article 'Is the Em Dash an AI Tell?' (2026-07-31)"
+    note: >
+      Threshold: more than 20 em dashes per 1,000 words in short modern prose is conspicuous, human
+      baseline 3.7 to 10 per 1,000. The em dash article measures a human baseline of 4.76 per 1,000
+      words (702,939 words of public-domain literature, single texts 0.00 to 10.13) against a
+      controlled model study: GPT-4.1 10.62, Claude Opus 4.6 9.09, DeepSeek V3 6.95, Gemini 2.5 Pro
+      3.53 (indistinguishable from human), Llama 3.1 8B 0.00. Contradicts the Economist ranking for
+      GPT; calls the dash "a weak signal, not a fingerprint".
+  - source: graphite-ai-writing-study
+    note: >
+      Claude Opus 5.5 uses 0.015 em dashes per 1,000 words against 2.92 for Opus 5 (minus 99 %).
+      Remaining tells overall: 2,548 for Opus 5.5 against 2,666 for Opus 5.
+  - source: pebblous-graphite-analysis
+    note: >
+      Recomputed Graphite table, em dashes per 1,000 words: Opus 4 0.66, Opus 4.6 0.20, Opus 5 2.92,
+      GPT-4.1 7.13, GPT-5 6.92, Gemini 2.5 Pro 1.43, GPT-6 Astra 0.37, GPT-5.6 Sol 0.31, Gemini 3.1
+      Pro 0.014; human baseline 3.14. Other tools report different Opus 5 baselines (15.2 and 12.9),
+      a sign of inconsistent measurement between tools.
+  - source: arxiv-2603-27006
+    note: >
+      12 instruction-tuned models from 5 providers, about 240,000 generated words; each model ran
+      once with an instruction to avoid markdown and once without it: em dashes survive suppression (GPT-4.1 keeps about 9 per 1,000
+      words, Llama produces none), read as a provider-specific fine-tuning signal. Llama 3.1 8B base
+      model shows 0.49 per 1,000, reduced by RLHF. Human baseline 3.23 per 1,000 (8 essays).
+  - source: arxiv-2605-06030
+    note: "Confirms the model dependence with its own method (round 2026-11-08)."
+  - source: pangram-signs-of-ai-writing
+    locator: "em dashes"
+    note: >
+      10x the human baseline overall; by family OpenAI 9x, open source 8x, Anthropic 7x, Gemini 3 Pro
+      0.7x. Corpus size and methodology not disclosed.
+related:
+  - {id: curly-quotes, relation: distinct-from}
+  - {id: emoji-decoration, relation: distinct-from}
+  - {id: punctuation-sparsity, relation: distinct-from}
+history:
+  - {date: 2026-07-30, change: "Added to legacy knowledge base core as T2.2 (tier 2; more than 3 em dashes per 500 words in expository prose, or any curly quotes). Absence of em dashes is no counter-evidence."}
+  - {date: 2026-08-09, change: "The Economist data analysis finds the signal model-dependent and weakening; recommendation to weigh it only with other signals recorded, not adopted."}
+  - {date: 2026-08-23, change: "Independent SlopDetector.org analysis confirms model dependence and contradicts the Economist model ranking."}
+  - {date: 2026-09-06, change: "SlopDetector.org threshold recorded as orientation value (more than 20 per 1,000 words in short modern prose)."}
+  - {date: 2026-09-27, change: "Full version of the SlopDetector canon confirms the known threshold unchanged."}
+  - {date: 2026-10-04, change: "Graphite study quantifies the model dependence (Opus 5.5 minus 99 % against Opus 5)."}
+  - {date: 2026-10-11, change: "arXiv:2603.27006 confirms model dependence with a suppression test; Pebblous secondary analysis adds a wider model table."}
+  - {date: 2026-11-08, change: "arXiv:2605.06030 confirms the model dependence with its own method."}
+  - {date: 2026-11-15, change: "Pangram corpus data: 10x overall, Gemini 3 Pro 0.7x."}
+  - {date: 2026-11-17, change: "Migrated to slop-check repository as grandfathered core (provisional); the curly-quote rule moved to curly-quotes."}

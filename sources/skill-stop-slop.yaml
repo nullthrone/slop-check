@@ -1,0 +1,16 @@
+id: skill-stop-slop
+title: "stop-slop (agent writing skill)"
+published: null
+accessed: 2026-09-20
+type: practitioner-skill
+derived_from: [tropes-fyi]
+access_note: >
+  Public GitHub repository. URL not verified at migration; the legacy knowledge base recorded
+  owner and repository name only.
+notes: >
+  Practitioner-curated rule set for writing agents. Entries used by the legacy knowledge base:
+  an empty-adverb word list (really, just, literally, genuinely, honestly, simply, actually)
+  and "False Agency" with the examples "complaints become fixes", "cultures shift", "data tells
+  us". Independence caveat recorded in the legacy knowledge base (2026-09-20): practitioner
+  skills may copy publicly circulating examples such as tropes.fyi. Encoded as derived_from
+  tropes-fyi.

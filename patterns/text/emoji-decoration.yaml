@@ -1,0 +1,86 @@
+id: emoji-decoration
+modality: text
+name: Emoji and Unicode decoration
+summary: >
+  Emoji and decorative Unicode symbols (check marks, arrows, stars, box-drawing characters,
+  mathematical operators) are used systematically as bullet markers and heading prefixes,
+  sometimes also as ornaments in running text, without any need for visual emphasis. A check mark
+  in front of every bullet or a rocket before "Einleitung" decorates structure that plain markers
+  would carry equally well.
+category: formatting
+status: core
+provisional: true
+legacy_id: T2.25
+legacy_tier: 2
+detector:
+  kind: metric
+  position: any
+  metric: emoji_decoration
+threshold:
+  value: {op: gte, x: 2}
+  short_text:
+    value: {op: gte, x: 1}
+requires: null
+realizations:
+  "*":
+    examples:
+      positive:
+        - "✅ Fast setup\n✅ No configuration\n✅ Works offline"
+        - "## 🚀 Einleitung\n\nDas Projekt startet im Mai.\n\n## 📌 Ziele\n\nWir wollen die Ladezeit halbieren."
+        - "- ⭐ Key benefits\n- ⭐ Pricing\n- ⭐ FAQ"
+        - "→ Schritt eins: Konto anlegen\n→ Schritt zwei: Daten importieren\n→ Schritt drei: Team einladen"
+      negative:
+        - "Thanks for the quick fix, see you on Monday 🙂"
+        - "- Fast setup\n- No configuration\n- Works offline"
+        - "```\nsrc/\n├── main.py\n└── util.py\n```"
+        - "Mapping: old_name → new_name, legacy_id → id."
+        - "Danke für die schnelle Antwort, bis Montag 👍"
+    notes: >
+      Negatives cover a single emoji at the end of a chat message, plain list markers, a
+      directory tree inside a fenced code block (excluded from analysis) and an inline arrow.
+legitimate_use: >
+  Emoji belong to the register of chat messages and social posts, and some product interfaces use
+  them as icons. Status symbols that carry information per row (pass or fail in a test report, a
+  warning sign on a real warning) are functional. A single emoji used on purpose is outside the
+  pattern. Directory trees and diagrams in code blocks use box-drawing characters legitimately.
+fix: >
+  Delete decorative symbols, or replace them with neutral list markers and plain-text headings.
+prevention: >
+  Do not prefix bullets or headings with emoji or decorative symbols (check marks, arrows, stars,
+  box-drawing characters). Use plain list markers and plain headings unless the symbol carries
+  information the reader needs.
+sources:
+  - source: legacy-knowledge-base
+    locator: "T2.25 Emoji-/Unicode-Dekoration (admitted 2026-11-15)"
+  - source: tropes-fyi
+    locator: "entry 'Unicode decoration' (/tropes/unicode-decoration)"
+  - source: aismells
+    locator: "entry 'Emoji Overload'"
+    note: "Names a check mark in front of every bullet as a fingerprint."
+  - source: pangram-signs-of-ai-writing
+    locator: "categories 'Unusual Unicode' and 'Emojis'"
+    note: >
+      Raw frequency multiples against a human baseline: check mark 167x, warning sign 57x, arrow
+      48x, decorative dash character 940x. No per-text threshold. Fourth source that led to core
+      admission on 2026-11-15; commercial corpus, methodology not disclosed.
+  - source: jetwong-neocities
+    locator: "entry 'Emoji Insertion'"
+    note: "Compiled source; counted with an independence caveat because the primary source behind the entry could not be identified."
+  - source: aipromptindex-io
+    locator: "entry 'Formatting Slop'"
+    note: "Emoji in headings, recorded as a single-source observation on 2026-09-06; not counted in the 2026-11-15 admission."
+related:
+  - {id: em-dash-inflation, relation: distinct-from}
+  - {id: curly-quotes, relation: distinct-from}
+  - {id: bullet-bold-lead, relation: distinct-from}
+history:
+  - {date: 2026-09-06, change: "Emoji in headings recorded as a single-source observation (aipromptindex.io, 'Formatting Slop')."}
+  - {date: 2026-11-08, change: "Opened as candidate T2.25 with three sources (tropes.fyi, aismells, jetwong.neocities.org with independence caveat)."}
+  - {date: 2026-11-15, change: "Admitted to legacy knowledge base core as T2.25 (tier 2) after Pangram supplied a quantified fourth source; self-calibrated threshold of at least 2 decorative symbols as bullet or heading decoration (short texts 1)."}
+  - {date: 2026-11-17, change: "Migrated to slop-check repository as grandfathered core (provisional)."}
+notes: >
+  The threshold is self-calibrated in the legacy knowledge base by analogy with T2.6, T2.9, T2.18
+  and T2.22. The emoji_decoration metric counts line prefixes (bullets, headings) only; emoji
+  scattered through running text, which the legacy description also mentions, are left to the host
+  model. Demarcation from the legacy knowledge base: em-dash-inflation and curly-quotes cover
+  punctuation, bullet-bold-lead covers the bold keyword structure of list items.

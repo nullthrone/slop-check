@@ -1,0 +1,92 @@
+id: generic-opening
+modality: text
+name: Generic opening cliche
+summary: >
+  Formulaic opening macros that frame the whole world or the present age ("In today's fast-paced
+  world", "In an era of", "In der heutigen Zeit") or announce the text itself ("In this article
+  we'll explore", "Lassen Sie uns gemeinsam") before anything concrete is said.
+category: composition
+status: core
+provisional: true
+legacy_id: T1.4
+legacy_tier: 1
+detector:
+  kind: regex
+  position: sentence_start
+threshold:
+  min_count: 1
+  comparison: gte
+  scope: text
+requires: null
+realizations:
+  en:
+    patterns:
+      - '(?i)(?:^|(?<=[.!?]\s)|(?<=^[-*•]\s))in\s+today[’'']?s\s+(?:(?:fast[- ]paced|rapidly\s+(?:evolving|changing)|ever[- ](?:evolving|changing)|constantly\s+(?:evolving|changing)|digital|modern|hyper[- ]?connected|interconnected|competitive|data[- ]driven|busy|complex|dynamic|globali[sz]ed|tech[- ]driven|AI[- ]driven|increasingly\s+[a-z-]{3,20})[,\s]{1,3}){0,2}(?:world|landscape|age|era|society|day\s+and\s+age|business\s+(?:world|environment|landscape))\b'
+      - '(?i)(?:^|(?<=[.!?]\s)|(?<=^[-*•]\s))in\s+(?:an|this|the\s+current|today[’'']?s|our)\s+(?:era|age)\s+(?:of|where|when|in\s+which|defined\s+by)\b'
+      - '(?i)(?:^|(?<=[.!?]\s)|(?<=^[-*•]\s))in\s+(?:the|our)\s+(?:ever[- ]evolving|rapidly\s+(?:evolving|changing)|fast[- ]paced|ever[- ]changing|constantly\s+(?:evolving|changing))\s+(?:world|landscape|realm|field|space)\s+of\b'
+      - '(?i)(?:^|(?<=[.!?]\s)|(?<=^[-*•]\s))in\s+a\s+world\s+(?:where|in\s+which|that\s+is\s+increasingly)\b'
+      - '(?i)(?:^|(?<=[.!?]\s)|(?<=^[-*•]\s))in\s+this\s+(?:article|post|blog\s+post|guide|piece|essay),?\s+(?:we|I)(?:[’'']ll|\s+will)\s+(?:explore|delve|dive|take\s+a\s+(?:closer\s+|deep\s+)?look|discuss|examine|unpack|walk\s+(?:you\s+)?through|break\s+down|uncover)\b'
+      - '(?i)(?:^|(?<=[.!?]\s)|(?<=^[-*•]\s))(?:(?:so|now|okay|alright|without\s+further\s+ado),?\s+)?let[’'']?s\s+(?:dive|delve|jump)\s+(?:right\s+)?in(?:to)?\b'
+      - '(?i)(?:^|(?<=[.!?]\s)|(?<=^[-*•]\s))let[’'']?s\s+(?:explore|take\s+a\s+(?:closer\s+)?look\s+at|unpack|embark\s+on)\b[^.!?\n]{0,50}?\btogether\b'
+    examples:
+      positive:
+        - "In today's fast-paced world, teams need better tools."
+        - "In an era of constant disruption, leaders must adapt."
+        - "In the ever-evolving landscape of cloud computing, security matters more than ever."
+        - "In this article, we'll explore five ways to cut cloud costs."
+        - "Customer data is everywhere. Let’s dive in."
+      negative:
+        - "In today's standup we agreed to freeze the API until March."
+        - "The novel is set in an era of rationing, 1946 to 1954."
+        - "Let's look at the error at 14:02 first; it explains the retry storm."
+        - "The world record attempt in today's race was cancelled due to wind."
+  de:
+    patterns:
+      - '(?i)(?:^|(?<=[.!?]\s)|(?<=^[-*•]\s))in\s+der\s+heutigen\s+(?:(?:digitalen|schnelllebigen|modernen|vernetzten|globalisierten|dynamischen|komplexen|hektischen|zunehmend\s+[a-zäöüß]{3,20}en)[,\s]{1,3}){0,2}(?:Zeit|Welt|Gesellschaft|Arbeitswelt|Geschäftswelt|Ära|Wirtschaft|Medienlandschaft)\b'
+      - '(?i)(?:^|(?<=[.!?]\s)|(?<=^[-*•]\s))in\s+(?:einer|unserer)\s+(?:Zeit|Welt|Ära),\s+in\s+der\b'
+      - '(?i)(?:^|(?<=[.!?]\s)|(?<=^[-*•]\s))in\s+Zeiten\s+(?:zunehmender|wachsender|rasanter|ständiger|stetiger|des\s+(?:digitalen\s+|rasanten\s+|stetigen\s+|ständigen\s+)?Wandels|der\s+(?:digitalen\s+)?Transformation|der\s+Digitalisierung)\b'
+      - '(?i)(?:^|(?<=[.!?]\s)|(?<=^[-*•]\s))im\s+Folgenden\s+(?:erfahren\s+Sie|erfährst\s+du|zeigen\s+(?:wir|ich)\s+(?:Ihnen|dir|euch)|möchten?\s+(?:wir|ich)\s+(?:Ihnen|dir|euch)|werfen\s+wir|schauen\s+wir\s+uns|tauchen\s+wir|gehen\s+wir\s+gemeinsam|nehmen\s+wir\s+(?:Sie|dich|euch)\s+mit)\b'
+      - '(?i)(?:^|(?<=[.!?]\s)|(?<=^[-*•]\s))(?:lassen\s+Sie\s+uns|lasst?\s+uns)\s+(?:nun\s+|jetzt\s+)?(?:gemeinsam|zusammen)\b'
+      - '(?i)(?:^|(?<=[.!?]\s)|(?<=^[-*•]\s))tauchen\s+(?:wir|Sie)\s+(?:nun\s+|jetzt\s+)?(?:gemeinsam\s+)?(?:tiefer\s+)?ein\b'
+      - '(?i)(?:^|(?<=[.!?]\s)|(?<=^[-*•]\s))in\s+diesem\s+(?:Artikel|Beitrag|Blogbeitrag|Blogartikel|Leitfaden|Ratgeber|Text),?\s+(?:werden\s+wir|erfahren\s+Sie|erfährst\s+du|zeigen\s+wir\s+(?:Ihnen|dir|euch)|zeige\s+ich\s+(?:Ihnen|dir|euch)|schauen\s+wir\s+uns|tauchen\s+wir|beleuchten\s+wir|werfen\s+wir)\b'
+    examples:
+      positive:
+        - "In der heutigen Zeit ist Flexibilität wichtiger denn je."
+        - "In der heutigen digitalen Welt zählt jede Sekunde."
+        - "Im Folgenden erfahren Sie, wie Sie Kosten senken."
+        - "Lassen Sie uns gemeinsam einen Blick auf die Zahlen werfen."
+        - "In einer Welt, in der Daten alles bestimmen, braucht es Orientierung."
+      negative:
+        - "In der heutigen Sitzung wurde der Haushalt beschlossen."
+        - "Im Folgenden wird das Messverfahren beschrieben."
+        - "Wir haben gemeinsam entschieden, den Termin zu verschieben."
+        - "Die heutige Zeitmessung nutzt Atomuhren."
+legitimate_use: >
+  Historical or comparative framing with a concrete anchor ("In the 1990s, ...", "In the current
+  funding round, ...") is fine. Signposting in long structured documents such as theses or manuals
+  ("Im Folgenden wird ... beschrieben") is conventional; the German detector fires only on the forms
+  that address the reader. Flag the macro when it frames the world or the present age before any
+  concrete observation appears.
+fix: >
+  Delete the run-up and start with the concrete observation or number that the opener was
+  postponing.
+prevention: >
+  Open with the specific point. Do not frame a text with "in today's fast-paced world", "in an era
+  of" or "In der heutigen Zeit", and do not announce what the article is about to explore.
+sources:
+  - source: legacy-knowledge-base
+    locator: "T1.4, base taxonomy 2026-07-30"
+  - source: slopdetector-org
+    locator: "'Empty-Opener Clichés'"
+    note: "Confirmation of T1.4 recorded 2026-08-23 and 2026-09-06."
+  - source: aicheckr-io
+    note: "Confirmation of T1.4 recorded 2026-08-23."
+  - source: skill-no-ai-slop
+    note: "Confirmation of T1.4 recorded 2026-08-09."
+related:
+  - {id: model-fingerprint-opener, relation: distinct-from}
+  - {id: announce-then-answer, relation: overlaps}
+history:
+  - {date: 2026-07-30, change: "Added to legacy knowledge base core as T1.4 (tier 1, single hit flags)."}
+  - {date: 2026-08-23, change: "SlopDetector.org ('Empty-Opener Clichés') and aicheckr.io confirm the pattern."}
+  - {date: 2026-11-17, change: "Migrated to slop-check repository as grandfathered core (provisional). Detector restricted to sentence starts; German 'Im Folgenden' fires only in reader-addressing forms."}

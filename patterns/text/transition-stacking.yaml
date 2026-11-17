@@ -1,0 +1,117 @@
+id: transition-stacking
+modality: text
+name: Transition stacking at paragraph start
+summary: >
+  Most paragraphs open with a formal connector ("Furthermore", "Moreover", "Additionally",
+  "Zudem", "Darüber hinaus", "Außerdem") where the link to the previous paragraph should come from
+  its content. The connector simulates logical flow that the paragraphs do not build.
+category: structure
+status: core
+provisional: true
+legacy_id: T2.15
+legacy_tier: 2
+detector:
+  kind: metric
+  position: any
+  metric: paragraph_start_ratio
+threshold:
+  value: {op: gt, x: 0.5}
+  min_units: 2
+requires: null
+realizations:
+  en:
+    terms:
+      - furthermore
+      - moreover
+      - additionally
+      - in addition
+      - consequently
+      - subsequently
+      - nevertheless
+      - nonetheless
+      - conversely
+      - likewise
+      - similarly
+      - accordingly
+      - hence
+      - thus
+      - ultimately
+      - notably
+      - indeed
+    examples:
+      positive:
+        - "Our platform answers most requests in under 40 ms.\n\nFurthermore, it scales to 2,000 requests per second on a single node.\n\nMoreover, the pricing model rewards steady usage.\n\nAdditionally, the support team replies within one business day."
+        - "Remote work changes how teams plan.\n\nMoreover, it changes how they meet.\n\nIn addition, onboarding needs a written playbook."
+      negative:
+        - "Our platform answers most requests in under 40 ms.\n\nIt scales to 2,000 requests per second on one node, and moreover it costs less than the old setup.\n\nWe will migrate the remaining services in May."
+        - "The first test run failed on ARM.\n\nThe second run passed after we pinned the compiler version.\n\nHowever, the benchmark still shows a 12 percent gap, so x86 stays the default."
+    test_texts:
+      - {text: "The first test run failed on ARM.\n\nThe second run passed after we pinned the compiler.\n\nHowever, the benchmark still shows a 12 percent gap.\n\nConsequently, x86 stays the default until the gap closes.", expect: no_trigger}
+      - {text: "Furthermore, the committee asked for the raw data.", expect: no_trigger}
+  de:
+    terms:
+      - zudem
+      - darüber hinaus
+      - außerdem
+      - ausserdem
+      - ferner
+      - des weiteren
+      - weiterhin
+      - überdies
+      - zusätzlich
+      - folglich
+      - demzufolge
+      - dementsprechend
+      - nichtsdestotrotz
+      - nichtsdestoweniger
+      - ebenso
+      - gleichermaßen
+      - letztlich
+    examples:
+      positive:
+        - "Die Plattform beantwortet die meisten Anfragen in unter 40 ms.\n\nZudem skaliert sie auf einem Knoten bis 2.000 Anfragen pro Sekunde.\n\nDarüber hinaus belohnt das Preismodell eine gleichmäßige Nutzung.\n\nAußerdem antwortet der Support innerhalb eines Werktags."
+        - "Homeoffice verändert die Planung im Team.\n\nDes Weiteren verändert es die Meetings.\n\nFerner braucht das Onboarding ein schriftliches Handbuch."
+      negative:
+        - "Die Plattform beantwortet die meisten Anfragen in unter 40 ms.\n\nSie skaliert auf einem Knoten bis 2.000 Anfragen pro Sekunde und kostet zudem weniger als die alte Lösung.\n\nDie restlichen Dienste ziehen wir im Mai um."
+        - "Der erste Testlauf schlug auf ARM fehl.\n\nDer zweite lief durch, nachdem wir die Compiler-Version festgeschrieben hatten.\n\nAllerdings zeigt der Benchmark noch eine Lücke von 12 Prozent, deshalb bleibt x86 Standard."
+    test_texts:
+      - {text: "Der erste Testlauf schlug auf ARM fehl.\n\nDer zweite lief durch.\n\nAllerdings zeigt der Benchmark noch eine Lücke von 12 Prozent.\n\nFolglich bleibt x86 Standard, bis die Lücke geschlossen ist.", expect: no_trigger}
+legitimate_use: >
+  Formal connectors are fine where they mark a real logical relation (a consequence or a contrast)
+  and open some paragraphs. Academic and legal writing uses them more often by convention. The
+  finding applies when more than half of the paragraphs open this way.
+fix: >
+  Delete the transition word and make the content link to the previous paragraph explicit, or
+  start the paragraph without a connector.
+prevention: >
+  Do not open paragraphs with formal connectors such as "Furthermore", "Moreover", "Additionally",
+  "Zudem" or "Darüber hinaus". Link paragraphs through their content; keep connectors for real
+  consequences or contrasts.
+sources:
+  - source: legacy-knowledge-base
+    locator: "T2.15 Formal-Transition-Stacking am Absatzanfang (admitted 2026-09-13)"
+  - source: slopdetector-org
+    locator: "pattern 'Transition-word stacking'"
+    note: "Threshold: more than half of the paragraphs open with a formal connector; the legacy threshold was adopted from here."
+  - source: imperfectly-app
+    locator: "entry 'The Transition Word Graveyard'"
+    note: "Same example words (Furthermore, Additionally) and the same position rule, worded independently."
+  - source: aicheckr-io
+    locator: "entry 'Furthermore/Moreover transition chains'"
+    note: "Found 2026-09-13; supplied the reconfirmation that led to core admission."
+  - source: fireprompts-io
+    note: "Weaker, more generic description (connector-word accumulation) without a position rule."
+related:
+  - {id: participle-padding, relation: distinct-from}
+  - {id: german-stock-phrases, relation: distinct-from}
+history:
+  - {date: 2026-09-06, change: "Opened as candidate T2.15 with two to three independent sources and a threshold adopted from SlopDetector (more than 50 % of paragraphs)."}
+  - {date: 2026-09-13, change: "Admitted to legacy knowledge base core as T2.15 (tier 2) with four sources (SlopDetector, imperfectly.app, aicheckr.io, fireprompts.io)."}
+  - {date: 2026-11-17, change: "Migrated to slop-check repository as grandfathered core (provisional)."}
+notes: >
+  min_units 2 was added at migration: a single paragraph that opens with a connector would
+  otherwise reach 100 %. Demarcation from the legacy knowledge base: participle-padding works at
+  sentence end, german-stock-phrases has no position rule and no connector list. The term lists
+  extend the legacy examples (Furthermore, Moreover, Additionally, Zudem, Darüber hinaus,
+  Außerdem) with further formal connectors; contrastive "however" and "allerdings" are left out on
+  purpose because they usually mark a real contrast.

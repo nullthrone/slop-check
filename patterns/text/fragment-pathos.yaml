@@ -1,0 +1,89 @@
+id: fragment-pathos
+modality: text
+name: Dramatic fragment pathos
+summary: >
+  Incomplete or extremely clipped sentences at the end of a paragraph or text that simulate
+  emotional weight or finality ("That's it. That's the whole thing.", "The future isn't coming.
+  It's already here."). Inside running text the same device is a legitimate stylistic sharpening;
+  only the closing position counts.
+category: rhetoric
+status: core
+provisional: true
+legacy_id: T1.7
+legacy_tier: 1
+detector:
+  kind: llm
+  position: paragraph_end
+  rubric: >
+    Inspect only the final one or two sentences of each paragraph and of the whole text. Report a
+    hit when they are incomplete or extremely short sentences (usually under six words, often
+    verbless, a bare noun phrase, or a set-up and punchline pair) whose function is to create
+    emotional weight or finality instead of adding information. Typical shapes: "That's it.
+    That's the whole thing.", "X isn't coming. It's already here.", "Every. Single. Time.", "And
+    that changes everything.", "Let that sink in.", "Das war's. Mehr nicht.", "Sie ist längst da."
+    Do not report fragments in the middle of a paragraph. Do not report short closing sentences
+    that carry information, for example a number or an instruction ("See Table 2.", "Restart the
+    service."). Ignore quoted dialogue. Ignore headings and captions. Report at most one hit per
+    paragraph ending and quote the fragment or fragments.
+threshold:
+  min_count: 1
+  comparison: gte
+  scope: text
+requires: null
+realizations:
+  en:
+    examples:
+      positive:
+        - "We spent six months on the migration. It finally shipped on Friday. That's it. That's the whole thing."
+        - "Everyone keeps waiting for AI to arrive in their industry. The future isn't coming. It's already here."
+        - "The old process took three approvals and a week of waiting. Now it takes one click. Game over."
+        - "We missed the deadline again. And again. Every. Single. Time."
+      negative:
+        - "The cache reduced p95 latency from 210 ms to 140 ms. See Table 2."
+        - "That's it for the setup. The next section explains how the scheduler assigns jobs to workers."
+        - "It wasn't the network. It was DNS, as the resolver logs from 02:14 show."
+        - "\"Never again,\" she said, and closed the ticket."
+  de:
+    examples:
+      positive:
+        - "Wir haben monatelang optimiert. Jetzt ist es fertig. Das war's. Mehr nicht."
+        - "Alle warten auf den großen Umbruch. Die Zukunft kommt nicht. Sie ist längst da."
+        - "Drei Teams, zwei Jahre, ein Ziel. Geschafft."
+        - "Früher dauerte die Freigabe eine Woche. Heute ein Klick. Punkt."
+      negative:
+        - "Der Test lief durch. Details stehen in Abschnitt 4.2."
+        - "Das war's mit der Einrichtung. Der nächste Abschnitt erklärt, wie der Scheduler Jobs verteilt."
+        - "Es lag nicht am Netz. Es lag am DNS, wie die Resolver-Logs von 02:14 Uhr zeigen."
+        - "„Nie wieder“, sagte sie und schloss das Ticket."
+legitimate_use: >
+  The same fragments inside running text are accepted as stylistic sharpening. Short closing
+  sentences that carry information (a result or an instruction) are fine. Quoted dialogue and
+  fiction where the fragment belongs to a character's voice are fine as well. Flag only closing
+  fragments whose sole job is to make the paragraph feel weighty.
+fix: >
+  Resolve the fragments into a full sentence that states the actual point. Alternatively delete
+  them and let the paragraph end on its last informative sentence.
+prevention: >
+  Do not end paragraphs with dramatic fragments such as "That's it. That's the whole thing." or
+  "It's already here." End on the last sentence that carries information.
+notes: >
+  Kind llm because a surface rule (short sentence at paragraph end) would flag many informative
+  closing sentences. Without a language model judge the pattern is listed as not evaluated.
+sources:
+  - source: legacy-knowledge-base
+    locator: "T1.7, base taxonomy 2026-07-30"
+    note: "Legacy exception: only flagged at the end of a paragraph or text; allowed inside running text."
+  - source: skill-no-ai-slop
+    locator: "'Dramatic fragmentation'"
+    note: "Uses the identical example 'The future isn't coming. It's already here.' (confirmation recorded 2026-08-23)."
+  - source: aipromptindex-io
+    locator: "'Dramatic Fragmentation'"
+    note: "Confirmation recorded 2026-09-06."
+related:
+  - {id: rhetorical-self-answer, relation: distinct-from}
+  - {id: hollow-sentences, relation: overlaps}
+history:
+  - {date: 2026-07-30, change: "Added to legacy knowledge base core as T1.7 (tier 1; only at paragraph or text end)."}
+  - {date: 2026-08-23, change: "The no-ai-slop skill confirms with an identical example."}
+  - {date: 2026-09-06, change: "aipromptindex.io ('Dramatic Fragmentation') confirms."}
+  - {date: 2026-11-17, change: "Migrated to slop-check repository as grandfathered core (provisional) with an llm detector bound to paragraph ends."}

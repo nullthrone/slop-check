@@ -1,0 +1,110 @@
+id: brochure-tone
+modality: text
+name: Brochure tone
+summary: >
+  Promotional adjectives from travel and marketing copy accumulate in expository text ("vibrant",
+  "breathtaking", "captivating", "atemberaubend", "unvergesslich"). Each one asserts an impression
+  where the reader needs a property they could observe or measure.
+category: tone
+status: core
+provisional: true
+legacy_id: T2.7
+legacy_tier: 2
+detector:
+  kind: lexicon
+  position: any
+threshold:
+  min_count: 2
+  comparison: gte
+  scope: text
+  context_overrides:
+    technical: {min_count: 1}
+    academic: {min_count: 1}
+requires: null
+realizations:
+  en:
+    terms:
+      - vibrant
+      - breathtaking*
+      - captivating
+      - stunning*
+      - picturesque
+      - enchanting
+      - unforgettable
+      - awe-inspiring
+      - idyllic
+      - nestled
+      - bustling
+      - majestic
+      - must-see
+      - must-visit
+      - hidden gem*
+    examples:
+      positive:
+        - "Nestled between rolling hills, the vibrant town offers breathtaking views."
+        - "The new dashboard delivers a captivating experience with stunning visuals."
+        - "Our conference venue sits on a bustling, picturesque harbor that guests find unforgettable."
+        - "This hidden gem is a must-visit for every developer."
+      negative:
+        - "The town lies 12 km north of the pass at 1,450 m and has two hotels with 80 beds in total."
+        - "Each record carries a unique identifier that the importer checks for collisions."
+        - "The captive portal redirects unauthenticated clients to the login page."
+        - "The nested loop runs in quadratic time and dominates the profile."
+    test_texts:
+      - {text: "The API answers in a breathtaking 40 ms on average.", context: technical, expect: trigger}
+      - {text: "The old harbor is vibrant in summer and quiet in winter.", expect: no_trigger}
+      - {text: "The vibrant old town and the breathtaking coastline draw visitors all year.", expect: trigger}
+  de:
+    terms:
+      - atemberaubend*
+      - bezaubernd*
+      - einzigartig*
+      - unvergesslich*
+      - malerisch*
+      - traumhaft*
+      - idyllisch*
+      - zauberhaft*
+      - verwunschen*
+    examples:
+      positive:
+        - "Die atemberaubende Altstadt und der bezaubernde Hafen machen jeden Besuch unvergesslich."
+        - "Unsere Software bietet ein einzigartiges Nutzererlebnis."
+        - "Das malerische Dorf liegt in einer traumhaften Bucht."
+      negative:
+        - "Das Dorf liegt auf 1.450 m Höhe und hat zwei Hotels mit zusammen 80 Betten."
+        - "Jeder Datensatz hat eine eindeutige Kennung, die der Import auf Dubletten prüft."
+        - "Der Atemwegsinfekt dauerte bei den meisten Probanden fünf bis sieben Tage."
+        - "Die Einzelteile werden vor der Montage gezählt und gewogen."
+    test_texts:
+      - {text: "Die Schnittstelle antwortet in atemberaubenden 40 ms.", context: technical, expect: trigger}
+      - {text: "Im Sommer ist der Hafen malerisch, im Winter fast leer.", expect: no_trigger}
+legitimate_use: >
+  Travel guides, hotel and venue marketing, product reviews and fiction use evaluative adjectives
+  by genre; quoted customer feedback is also fine. Dismiss hits when the text is advertising copy
+  by design and the adjective sits next to concrete details. The finding targets expository prose,
+  technical and academic writing included, where the adjective replaces a description.
+fix: >
+  Replace each adjective with an observable or measurable property: altitude, distance, opening
+  hours, latency, a detail the reader can verify. Delete it if no such property exists.
+prevention: >
+  In expository text, technical and academic writing included, do not use promotional adjectives
+  such as "vibrant", "breathtaking", "stunning", "atemberaubend" or "einzigartig". Describe a
+  property the reader can check instead.
+sources:
+  - source: legacy-knowledge-base
+    locator: "T2.7 Tourism-Brochure-Ton, base taxonomy 2026-07-30"
+  - source: gptzero-ai-patterns
+    locator: "pattern 'Sales-pitch Tone' (also shown as 'Promotional Tone')"
+    note: "Recorded as a confirmation of T2.7 in the legacy knowledge base rounds 2026-09-27 and 2026-11-01."
+related:
+  - {id: hallmark-vocabulary, relation: overlaps}
+history:
+  - {date: 2026-07-30, change: "Added to legacy knowledge base core as T2.7 (tier 2; at least 1 hit in specialist contexts, at least 2 in descriptive contexts)."}
+  - {date: 2026-09-27, change: "GPTZero 'Sales-pitch Tone' recorded as confirmation; no change to list or threshold."}
+  - {date: 2026-11-17, change: "Migrated to slop-check repository as grandfathered core (provisional). Specialist contexts mapped to the technical and academic contexts."}
+notes: >
+  The legacy rule distinguished specialist contexts (1 hit) from descriptive contexts (2 hits).
+  Migration maps specialist to the technical and academic contexts and keeps 2 hits for all other
+  contexts. The term lists extend the legacy examples (vibrant, breathtaking, captivating,
+  atemberaubend, bezaubernd, einzigartig, unvergesslich) with common brochure adjectives;
+  "captivating" also overlaps with "captivate" in hallmark-vocabulary.

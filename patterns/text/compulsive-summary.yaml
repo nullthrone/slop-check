@@ -1,0 +1,83 @@
+id: compulsive-summary
+modality: text
+name: Compulsive summary
+summary: >
+  A formulaic opening of the closing paragraph ("In summary", "Overall", "In conclusion",
+  "Zusammenfassend lässt sich sagen") that introduces a coda restating what the text has already
+  said.
+category: composition
+status: core
+provisional: true
+legacy_id: T1.5
+legacy_tier: 1
+detector:
+  kind: regex
+  position: last_paragraph
+threshold:
+  min_count: 1
+  comparison: gte
+  scope: text
+requires: null
+realizations:
+  en:
+    patterns:
+      - '(?i)(?:^|(?<=[.!?]\s)|(?<=^[-*•]\s))(?:in\s+summary|in\s+conclusion|in\s+sum|to\s+summari[sz]e|to\s+sum\s+(?:it\s+|things\s+)?up|to\s+conclude|summing\s+up|all\s+in\s+all|in\s+closing|in\s+short|overall|ultimately|at\s+the\s+end\s+of\s+the\s+day|the\s+bottom\s+line)(?=\s*[,:]|\s+(?:we|I|the|this|these|it|our|they|you|is|there)\b)'
+    examples:
+      positive:
+        - "In conclusion, the migration was a success."
+        - "In summary, the options differ mainly in cost."
+        - "Overall, the new process saves time and money."
+        - "All in all, it was a productive quarter."
+        - "We fixed the cache and the queue. At the end of the day, what matters is the customer."
+      negative:
+        - "Overall latency dropped from 210 ms to 140 ms after the cache change."
+        - "The summary table lists all 14 endpoints."
+        - "In summary statistics, the median is more stable than the mean."
+        - "Ultimate frisbee practice moves to Thursday."
+  de:
+    patterns:
+      - '(?i)(?:^|(?<=[.!?]\s)|(?<=^[-*•]\s))(?:zusammenfassend\s+(?:lässt\s+sich\s+(?:sagen|festhalten|feststellen)|kann\s+(?:man\s+)?(?:sagen|festhalten|feststellen|gesagt\s+werden|festgehalten\s+werden|festgestellt\s+werden)|ist\s+festzuhalten|zeigt\s+sich|gesagt|betrachtet|bleibt\s+festzuhalten)|zusammengefasst\s*[:,]|insgesamt\s+(?:zeigt\s+sich|lässt\s+sich\s+(?:sagen|festhalten|feststellen)|betrachtet|gesehen|ist\s+festzuhalten|bleibt\s+festzuhalten)|abschlie(?:ß|ss)end\s+(?:ist\s+festzuhalten|lässt\s+sich\s+(?:sagen|festhalten|feststellen)|kann\s+(?:man\s+)?(?:sagen|festhalten|gesagt\s+werden)|sei\s+(?:gesagt|betont|festgehalten|angemerkt)|bleibt\s+(?:festzuhalten|zu\s+sagen)|möchte\s+ich)|alles\s+in\s+allem|unterm\s+Strich|kurz\s+gesagt|kurzum)(?=\W|$)'
+    examples:
+      positive:
+        - "Zusammenfassend lässt sich sagen, dass die Migration erfolgreich war."
+        - "Insgesamt zeigt sich, dass die Optionen sich vor allem im Preis unterscheiden."
+        - "Abschließend ist festzuhalten, dass das Projekt im Zeitplan liegt."
+        - "Alles in allem war es ein produktives Quartal."
+        - "Wir haben Cache und Queue repariert. Unterm Strich zählt der Kunde."
+      negative:
+        - "Insgesamt wurden 42 Proben analysiert."
+        - "Die Zusammenfassung steht auf Seite 2."
+        - "Abschließend wurde der Server neu gestartet und der Test wiederholt."
+        - "Unterm Tisch lag das fehlende Kabel."
+legitimate_use: >
+  Long reports and theses often need an explicitly labelled conclusion; a heading such as
+  "Conclusion" or "Fazit" is not the pattern. A closing sentence that adds a new consequence or a
+  concrete next step is fine even when it starts with "Overall". Flag the formula when the last
+  paragraph only restates what the text already said.
+fix: >
+  Delete the summary formula. If the text does not hold up without a coda, fix the argument
+  instead and end on the last new piece of information or on the concrete next step.
+prevention: >
+  Do not end with a paragraph that opens with "In conclusion", "In summary", "Overall" or
+  "Zusammenfassend lässt sich sagen". End on the last new point.
+sources:
+  - source: legacy-knowledge-base
+    locator: "T1.5, base taxonomy 2026-07-30"
+  - source: forbes-jodie-cook
+    locator: "article of 2026-08-10"
+    note: "Advises deleting the summary sentence at the end; confirmation recorded 2026-08-16."
+  - source: imperfectly-app
+    locator: "'The Too-Clean Wrap-Up'"
+    note: "Confirmation recorded 2026-09-06."
+  - source: skill-no-ai-slop
+    locator: "'Summary-recap endings'"
+    note: "Confirmation recorded 2026-09-06."
+  - source: aicheckr-io
+    note: "Confirmation recorded 2026-08-23."
+related:
+  - {id: fractal-summaries, relation: distinct-from}
+history:
+  - {date: 2026-07-30, change: "Added to legacy knowledge base core as T1.5 (tier 1, single hit flags)."}
+  - {date: 2026-08-16, change: "Forbes column confirms ('delete the summary sentence at the end')."}
+  - {date: 2026-09-06, change: "imperfectly.app ('The Too-Clean Wrap-Up') and the no-ai-slop skill ('Summary-recap endings') confirm."}
+  - {date: 2026-11-17, change: "Migrated to slop-check repository as grandfathered core (provisional). Detector bound to sentence starts in the last paragraph."}

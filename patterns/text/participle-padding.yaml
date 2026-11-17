@@ -1,0 +1,97 @@
+id: participle-padding
+modality: text
+name: Participle padding at sentence end
+summary: >
+  Dependent participle clauses (in German usually a "was ..." relative clause) appended to the end
+  of a sentence to assert a significance the sentence has not shown (", highlighting the importance
+  of ...", ", showcasing the commitment ...", ", was die Bedeutung von X unterstreicht"). They make
+  the sentence longer without adding information.
+category: structure
+status: core
+provisional: true
+legacy_id: T2.5
+legacy_tier: 2
+detector:
+  kind: regex
+  position: any
+threshold:
+  min_count: 2
+  comparison: gte
+  scope: text
+requires: null
+realizations:
+  en:
+    patterns:
+      - '(?i),\s+(?:highlighting|underscoring|showcasing|emphasi[sz]ing|reflecting|demonstrating|illustrating|signall?ing|reinforcing|symboli[sz]ing|cementing|solidifying|affirming|exemplifying|testifying\s+to)\s+(?:(?:the|its|their|our|a|an|this|his|her|your)\s+)?[\w\s-]{0,30}?\b(?:importance|significance|commitment|dedication|role|value|need|power|potential|impact|relevance|vision|resilience|strength|legacy|spirit|ability|status|position|promise|growing|ongoing|enduring|broader|deep|deeper|continued|unwavering|vital|essential|critical|central)\b'
+      - '(?i),\s+paving\s+the\s+way\s+for\b'
+      - '(?i),\s+(?:contributing|adding)\s+to\s+(?:the\s+|its\s+|their\s+)?(?:overall|broader|wider|ongoing|growing|rich|vibrant)\b'
+      - '(?i),\s+making\s+(?:it|them|this)\s+(?:a|an)\s+(?:essential|valuable|ideal|key|vital|indispensable|must[- ]have|go[- ]to|invaluable|perfect|powerful|standout|compelling)\b'
+      - '(?i),\s+marking\s+(?:a|an|the)\s+(?:significant|major|pivotal|new|important|key|historic|defining)\s+(?:milestone|moment|step|shift|chapter|turning\s+point|departure)\b'
+      - '(?i),\s+(?:ensuring|fostering|enabling)\s+(?:a\s+)?(?:seamless|smooth|holistic|lasting|meaningful|sustainable|vibrant|thriving)\b'
+    examples:
+      positive:
+        - "The city opened a new library, highlighting the importance of public education."
+        - "The company donated 10,000 meals, showcasing its commitment to the community."
+        - "The update adds dark mode, paving the way for further customization."
+        - "The team released the code as open source, fostering a vibrant community."
+        - "Sales rose in every region, underscoring the growing demand for the product."
+      negative:
+        - "Revenue fell 2%, reflecting lower demand in Europe."
+        - "She left the room, slamming the door behind her."
+        - "The patch adds a retry loop, ensuring that dropped connections are reopened."
+        - "Highlighting the importance of tests is the job of the review checklist."
+    test_texts:
+      - {text: "The city opened a new library, highlighting the importance of public education. It also extended opening hours, showcasing its commitment to families.", expect: trigger}
+      - {text: "The city opened a new library, highlighting the importance of public education. It is open until 20:00 on weekdays.", expect: no_trigger}
+  de:
+    patterns:
+      - '(?i),\s+was\s+(?:einmal\s+mehr\s+|erneut\s+|eindrucksvoll\s+|deutlich\s+)?(?:die|den|das|ihre?|seine?|unsere?)\s+[^.!?\n,]{0,40}?\b(?:Bedeutung|Wichtigkeit|Relevanz|Notwendigkeit|Rolle|Engagement|Anspruch|Potenzial|Stärke|Innovationskraft|Vorreiterrolle|Kompetenz|Vision|Entschlossenheit|Verbundenheit|Verantwortung)\b[^.!?\n]{0,60}?\b(?:unterstreicht|unterstreichen|unterstrich|verdeutlicht|verdeutlichen|hervorhebt|hervorheben|betont|betonen|widerspiegelt|widerspiegeln|bekräftigt|deutlich\s+macht|zeigt|belegt|demonstriert|unter\s+Beweis\s+stellt)\b'
+      - '(?i)(?:,\s+(?:und\s+)?|\bund\s+)(?:unterstreicht|unterstreichen|verdeutlicht|verdeutlichen|betont|betonen|zeigt|zeigen|demonstriert|demonstrieren|bekräftigt|bekräftigen)\s+(?:damit|so|somit|einmal\s+mehr|eindrucksvoll|dadurch)\s+(?:die|den|das|ihre?|seine?|unsere?)\s+[^.!?\n]{0,40}?\b(?:Bedeutung|Wichtigkeit|Relevanz|Notwendigkeit|Rolle|Engagement|Anspruch|Potenzial|Stärke|Innovationskraft|Kompetenz|Vorreiterrolle|Verantwortung)\b'
+      - '(?i),\s+(?:womit|wodurch|wobei)\s+[^.!?\n,]{0,40}?\b(?:Bedeutung|Wichtigkeit|Relevanz|Rolle|Engagement|Potenzial|Stärke)\b[^.!?\n]{0,40}?\b(?:unterstrichen|verdeutlicht|hervorgehoben|betont|bekräftigt)\s+(?:wird|werden|wurde)\b'
+      - '(?i),\s+was\s+(?:den\s+Weg|die\s+Weichen)\s+für\b[^.!?\n]{0,60}?\b(?:ebnet|ebnen|stellt|stellen)\b'
+    examples:
+      positive:
+        - "Die Stadt eröffnete eine neue Bibliothek, was die Bedeutung öffentlicher Bildung unterstreicht."
+        - "Das Unternehmen spendete 10.000 Mahlzeiten und unterstreicht damit sein Engagement für die Region."
+        - "Das Update bringt einen Dunkelmodus, was den Weg für weitere Anpassungen ebnet."
+        - "Der Verein verdoppelte seine Mitglieder, was einmal mehr die Stärke der Gemeinschaft zeigt."
+      negative:
+        - "Die Latenz sank um 30 %, was auf den neuen Cache zurückgeht."
+        - "Der Bericht unterstreicht die Bedeutung von Backups auf Seite 4."
+        - "Die Abteilung wuchs, was die Bürofläche knapp machte."
+        - "Das Team testete die Rolle des Caches, was zwei Wochen dauerte."
+    test_texts:
+      - {text: "Die Stadt eröffnete eine neue Bibliothek, was die Bedeutung öffentlicher Bildung unterstreicht. Sie verlängerte auch die Öffnungszeiten und zeigt damit ihr Engagement für Familien.", expect: trigger}
+      - {text: "Die Stadt eröffnete eine neue Bibliothek, was die Bedeutung öffentlicher Bildung unterstreicht. Sie ist werktags bis 20 Uhr geöffnet.", expect: no_trigger}
+legitimate_use: >
+  Participle and "was ..." clauses that add a concrete cause or a number are ordinary syntax ("Revenue fell 2 %, reflecting lower demand in Europe"). Flag the tail when it only asserts
+  significance (importance, commitment, role) that the main clause has not demonstrated.
+fix: >
+  Delete the tail and let the main clause stand. If the significance is real, show it with a
+  concrete consequence in a sentence of its own.
+prevention: >
+  Do not append clauses such as ", highlighting the importance of", ", showcasing its commitment to"
+  or ", was die Bedeutung von X unterstreicht" to sentences. End the sentence where the information
+  ends.
+sources:
+  - source: legacy-knowledge-base
+    locator: "T2.5, base taxonomy 2026-07-30"
+  - source: aipromptindex-io
+    locator: "'Trailing -ing Analysis'"
+    note: "Confirmation recorded 2026-09-06."
+  - source: skill-no-ai-slop
+    locator: "'Superficial analysis'"
+    note: "Confirmation recorded 2026-09-06."
+  - source: vrid-ai-signs
+    locator: "'-ing' overload"
+    note: "Confirmation recorded 2026-08-16."
+  - source: aicheckr-io
+    note: "Confirmation recorded 2026-08-23."
+related:
+  - {id: transition-stacking, relation: distinct-from}
+  - {id: inflated-importance, relation: overlaps}
+history:
+  - {date: 2026-07-30, change: "Added to legacy knowledge base core as T2.5 (tier 2; at least 2 hits per text)."}
+  - {date: 2026-08-16, change: "vrid.ai confirms ('-ing' overload)."}
+  - {date: 2026-09-06, change: "aipromptindex.io ('Trailing -ing Analysis') and the no-ai-slop skill ('Superficial analysis') confirm."}
+  - {date: 2026-11-17, change: "Migrated to slop-check repository as grandfathered core (provisional). Detector limited to tails that assert significance, so that informative participle clauses do not count."}

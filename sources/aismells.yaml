@@ -1,0 +1,13 @@
+id: aismells
+title: "aismells: a catalog of recognizable AI writing patterns"
+url: https://aismells.pages.dev/llms.txt
+publisher: aismells
+published: null
+accessed: 2026-11-17
+type: community-directory
+notes: >
+  Compilation page with 15 "smells" in 5 categories and no visible creation date. Entries used
+  by the legacy knowledge base: "Emoji Overload" (a check mark in front of every bullet as a
+  fingerprint) and "Emphasis Epidemic" (formatting category, including visible unrendered
+  markdown). Several other entries match existing patterns. When checked at migration the entry
+  links pointed to aismells.com.

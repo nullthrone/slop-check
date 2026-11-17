@@ -1,0 +1,109 @@
+id: sycophant-residue
+modality: text
+name: Sycophant residue
+summary: >
+  Politeness formulas left over from chat interfaces. Typical forms praise the question ("Great
+  question!") or affirm eagerly before answering ("Certainly!", "Gerne!"); closing wishes such as
+  "I hope this helps!" belong to the same family. They address an imagined chat partner and give the
+  reader of the final text nothing.
+  Since 2026-09-20 the legacy knowledge base also frames the residue as a symptom of an
+  RLHF-induced stance of reflexive agreement, beyond a mere word list.
+category: tone
+status: core
+provisional: true
+legacy_id: T1.2
+legacy_tier: 1
+detector:
+  kind: regex
+  position: any
+threshold:
+  min_count: 1
+  comparison: gte
+  scope: text
+requires: null
+realizations:
+  en:
+    patterns:
+      - '(?i)(?:^|(?<=[.!?]\s)|(?<=^[-*•]\s))(?:what\s+an?\s+|that[’'']?s\s+an?\s+|such\s+an?\s+)?(?:great|excellent|fantastic|wonderful|insightful|good)\s+question\s*[!,.:]'
+      - '(?i)(?:^|(?<=[.!?]\s)|(?<=^[-*•]\s))(?:certainly|absolutely|of\s+course|sure|definitely)(?:!|\s*[—–]\s*|\s+-\s+|,\s+(?:here[’'']?s|here\s+(?:is|are)|I[’'']d|I\s+would|I\s+can|let\s+me)\b)'
+      - '(?i)\bI\s+hope\s+(?:this|that|these|it)\s+(?:helps|was\s+helpful|is\s+helpful|clarifies|answers\s+your\s+question)\b'
+      - '(?i)\bI(?:[’'']d|\s+would)\s+be\s+(?:happy|glad|delighted)\s+to\s+(?:help|assist|explain|clarify)\b'
+      - '(?i)\byou[’'']?re\s+(?:absolutely|completely|totally)\s+right\b'
+      - '(?i)\blet\s+me\s+know\s+if\s+you[’'']?d\s+like\s+me\s+to\s+(?:elaborate|expand|go\s+deeper|adjust|refine|tweak|clarify|provide\s+more)\b'
+    examples:
+      positive:
+        - "Great question! The short answer is that caching helps."
+        - "Certainly! Here's a summary of the options."
+        - "Absolutely - the migration can run overnight."
+        - "I hope this helps! Let me know if you have other questions."
+        - "You're absolutely right, the second query is redundant."
+        - "Sure! Here’s a draft you can adapt."
+      negative:
+        - "The panel asked a good question about latency, which section 4 answers."
+        - "Certainly the data shows a drop after March."
+        - "Of course, the patch still has to be backported to 2.3."
+        - "I hope the build passes before the freeze on Friday."
+        - "We would be happy to review a pull request for the parser fix."
+  de:
+    patterns:
+      - '(?i)(?:^|(?<=[.!?]\s)|(?<=^[-*•]\s))(?:gerne|sehr\s+gerne|gern\s+geschehen|selbstverständlich|natürlich|klar|absolut)\s*!'
+      - '(?i)(?:^|(?<=[.!?]\s)|(?<=^[-*•]\s))(?:gerne|sehr\s+gerne|selbstverständlich|natürlich|klar)[,!]\s+(?:hier\s+(?:ist|sind|kommt|kommen|finden\s+Sie|findest\s+du)|ich\s+(?:helfe|erkläre|fasse|zeige))\b'
+      - '(?i)\bich\s+hoffe,?\s+(?:das|dies|diese\s+\w+|meine\s+\w+)\s+(?:hilft|helfen|hat\s+geholfen|war\s+hilfreich|ist\s+hilfreich)\b'
+      - '(?i)(?:^|(?<=[.!?]\s)|(?<=^[-*•]\s))(?:das\s+ist\s+)?(?:eine\s+)?(?:sehr\s+)?(?:tolle|gute|ausgezeichnete|hervorragende|spannende|großartige|super)\s+Frage\s*[!,.:]'
+      - '(?i)\b(?:du\s+hast|Sie\s+haben|ihr\s+habt)\s+(?:völlig|absolut|vollkommen|total)\s+recht\b'
+    examples:
+      positive:
+        - "Gerne! Hier ist eine Übersicht der Optionen."
+        - "Selbstverständlich! Ich erkläre dir den Ablauf."
+        - "Ich hoffe, das hilft dir weiter."
+        - "Tolle Frage! Die kurze Antwort lautet: ja."
+        - "Du hast völlig recht, die zweite Abfrage ist überflüssig."
+      negative:
+        - "Natürlich muss der Patch noch auf 2.3 zurückportiert werden."
+        - "Die Frage nach der Latenz beantwortet Abschnitt 4."
+        - "Ich hoffe, dass der Build vor dem Freeze durchläuft."
+        - "Gerne erinnern wir an die Abgabefrist am Freitag."
+legitimate_use: >
+  Quoted dialogue, transcripts of real conversations and direct one-to-one correspondence in which
+  the writer actually answers a person (a support reply saying "I'd be happy to help") are not slop.
+  Flag the formula when a text written for a general reader still greets or praises an absent
+  questioner, for example in an article or on a documentation page.
+fix: >
+  Delete the formula without replacement. If it carried a real offer (a follow-up, a contact), state
+  that offer once and plainly at the end.
+prevention: >
+  Start with the content and stop after the last piece of content. Never praise the question or
+  open with affirmations such as "Certainly!" or "Gerne!". Never close with wishes such as "I hope
+  this helps".
+sources:
+  - source: legacy-knowledge-base
+    locator: "T1.2, base taxonomy 2026-07-30; section 6.4 (state 2026-11-15)"
+  - source: pangram-signs-of-ai-writing
+    locator: "'AI-style headers'"
+    note: >
+      "Certainly! Here's a" found 94 times in AI text and 0 times in the human comparison sample;
+      "Sure! Here's a" and "I'd be happy to" are listed as well. Commercial corpus, methodology not
+      disclosed. Matches the existing example list (2026-11-15).
+  - source: vrid-ai-signs
+    locator: "model-dependent opener formulas"
+    note: >
+      Confirmation recorded 2026-08-16: ChatGPT "Certainly!", Claude "I'd be happy to help", Gemini
+      "Great question".
+  - source: skill-better-ai-writing
+    locator: "2026-07 research pass"
+    note: >
+      Relays the academic framing of sycophancy as an RLHF-induced structural stance (conflict
+      avoidance, reflexive agreement), citing yakura-sycophancy.
+  - source: yakura-sycophancy
+    note: >
+      Not read directly; known only through skill-better-ai-writing (2026-09-20). Methodological
+      deepening only, no change to threshold or examples.
+related:
+  - {id: model-fingerprint-opener, relation: distinct-from}
+  - {id: reasoning-leak, relation: distinct-from}
+history:
+  - {date: 2026-07-30, change: "Added to legacy knowledge base core as T1.2 (tier 1, single hit flags)."}
+  - {date: 2026-08-16, change: "vrid.ai confirms model-dependent opener formulas (ChatGPT, Claude, Gemini)."}
+  - {date: 2026-09-20, change: "Academic framing as RLHF-induced stance added via better-ai-writing-skills (citing Yakura et al.); no change to threshold or examples."}
+  - {date: 2026-11-15, change: "Pangram corpus data confirms the example list ('Certainly! Here's a': 94 AI vs 0 human)."}
+  - {date: 2026-11-17, change: "Migrated to slop-check repository as grandfathered core (provisional)."}

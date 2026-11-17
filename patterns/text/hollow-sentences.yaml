@@ -1,0 +1,106 @@
+id: hollow-sentences
+modality: text
+name: Hollow sentences (deletion test)
+summary: >
+  Sentences sound self-contained and quotable yet carry no concrete, checkable statement: no
+  number, name, date or fact. Deleting them in thought leaves the reader with the same
+  information. When more than a third of a text's sentences pass this deletion test, the text is
+  padded with pseudo-substance.
+category: composition
+status: core
+provisional: true
+legacy_id: T2.16
+legacy_tier: 2
+detector:
+  kind: llm
+  position: any
+  params:
+    unit: sentence
+  rubric: >
+    Apply a deletion test to every sentence of the text. A sentence is hollow when deleting it
+    would leave the reader with the same information: it contains no concrete, checkable
+    content (no number, name, date, place, quantity, specific event, definition, instruction,
+    or claim specific enough that someone could dispute it) and it supplies no reason,
+    condition or logical step that a neighboring sentence depends on. Typical forms are
+    quotable one-liners, pseudo-wisdom, generic praise and closing lines that restate the mood
+    of the paragraph. Skip headings, list labels, questions that set up a following answer,
+    quoted speech, and sentences in fiction or poetry. A topic sentence counts as hollow only
+    if the paragraph states the same point concretely and the topic sentence adds nothing to
+    it. Return each hollow sentence as a hit and report value = number of hollow sentences
+    divided by the number of sentences evaluated.
+threshold:
+  value: {op: gt, x: 0.3334}
+  min_units: 3
+requires: null
+realizations:
+  en:
+    examples:
+      positive:
+        - "In the end, what matters is the impact we create together."
+        - "Every challenge is an opportunity in disguise."
+        - "Quality always speaks for itself."
+        - "Success is about more than numbers."
+      negative:
+        - "The release slipped two weeks because the signing key expired on 3 March."
+        - "Latency fell from 180 ms to 40 ms after we added the cache."
+        - "Short version: the test fails on ARM only, and only with GCC 13."
+        - "Run the migration before you restart the workers, or the queue will reject old jobs."
+  de:
+    examples:
+      positive:
+        - "Am Ende zählt, was wir gemeinsam daraus machen."
+        - "Qualität entsteht nicht zufällig."
+        - "Jede Herausforderung birgt auch eine Chance."
+        - "Erfolg beginnt im Kopf."
+      negative:
+        - "Der Build schlug fehl, weil das Zertifikat am 3. März abgelaufen war."
+        - "Nach dem Umbau sank die Latenz von 180 auf 40 Millisekunden."
+        - "Kurz gesagt: Der Test scheitert nur auf ARM und nur mit GCC 13."
+        - "Führen Sie die Migration vor dem Neustart der Worker aus, sonst lehnt die Queue alte Jobs ab."
+legitimate_use: >
+  Slogans in advertising copy and closing lines of speeches may be hollow by design, as may
+  fiction and poetry. A short framing sentence that eases the reader into a dense paragraph is
+  acceptable when the paragraph then delivers specifics. The finding concerns expository text in
+  which such sentences make up more than a third of the whole.
+fix: >
+  Replace the sentence with a concrete, checkable statement (number, name, date, fact) or delete
+  it without replacement.
+prevention: >
+  Write no sentence that would survive deletion without loss. Give every sentence a checkable fact
+  or a step that the next sentence needs, and cut quotable one-liners and pseudo-wisdom.
+sources:
+  - source: legacy-knowledge-base
+    locator: "T2.16 Pseudo-substanzielle Füllsätze / Deletion-Test (admitted 2026-09-13)"
+  - source: slopdetector-org
+    locator: "patterns 'Pseudo-Wisdom Filler' and 'Nothing You Can Restate (Deletion Test)'"
+    note: "Threshold: more than a third of the sentences or paragraphs survive the deletion test; the legacy threshold was adopted from here."
+  - source: tropes-fyi
+    locator: "entry 'Quotable One-Liners' (/tropes/quotable-one-liners)"
+    note: "Standalone lines designed for extraction but carrying no actual information."
+  - source: imperfectly-app
+    locator: "entry 'The Confident Emptiness'"
+    note: "Grammatically perfect sentences that sound authoritative but contain no verifiable assertions."
+  - source: vrid-ai-signs
+    locator: "entry 'Treadmill Effect'"
+    note: "Own estimate: about 100 of 500 words carry actual content. Found 2026-09-13."
+  - source: arxiv-2509-19163
+    locator: "code 'Density'"
+    note: >
+      Low information content relative to length; one of seven codes that are statistically
+      significant (p < 0.05) in a study with 19 expert interviews, 3 copy editors and 250
+      annotated texts. Found 2026-09-13.
+  - source: ignorance-ai
+    locator: "entry 'Filler Content'"
+    note: "Near match, recorded as confirmation in the legacy knowledge base round 2026-09-20."
+related:
+  - {id: vague-attribution, relation: distinct-from}
+  - {id: inflated-importance, relation: distinct-from}
+history:
+  - {date: 2026-09-06, change: "Opened as candidate T2.16 with three independent sources (SlopDetector, tropes.fyi, imperfectly.app) and a threshold adopted from SlopDetector (more than a third of sentences)."}
+  - {date: 2026-09-13, change: "Admitted to legacy knowledge base core as T2.16 (tier 2) with five sources, adding vrid.ai and arXiv:2509.19163."}
+  - {date: 2026-11-17, change: "Migrated to slop-check repository as grandfathered core (provisional)."}
+notes: >
+  Demarcation from the legacy knowledge base: in vague-attribution the claim exists and only its
+  source is missing, and inflated-importance exaggerates a real event. Here the concrete content
+  itself is absent, whatever the framing. The ratio threshold assumes that the judge reports the
+  share of hollow sentences as the value; min_units 3 keeps very short texts out.

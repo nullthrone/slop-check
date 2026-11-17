@@ -1,0 +1,13 @@
+id: skill-no-ai-slop
+title: "no-ai-slop (agent writing skill)"
+published: null
+accessed: 2026-09-06
+type: practitioner-skill
+access_note: >
+  Public GitHub repository, published July 2026 according to the legacy knowledge base. URL not
+  verified at migration; the legacy knowledge base recorded owner and repository name only.
+notes: >
+  Practitioner-curated rule set for writing agents. Entries used by the legacy knowledge base:
+  "Synonym cycling", "often-empty adverbs", "Weasel attribution", "Interpretive metadiscourse",
+  plus confirmations of several base-taxonomy patterns. The legacy knowledge base described its
+  wording as independent of the other sources it cited at the time.

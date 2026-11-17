@@ -1,0 +1,135 @@
+id: empty-intensifiers
+modality: text
+name: Empty intensifiers
+summary: >
+  Filler adverbs and set phrases simulate emphasis or sincerity without adding content ("just",
+  "literally", "honestly", "simply", "actually", "truly", "genuinely", "to be honest", "let's be
+  clear"; German "wirklich", "tatsächlich", "ehrlich gesagt"). One is harmless; several per text
+  inflate the tone and weaken the claims they decorate.
+category: lexical
+status: core
+provisional: true
+legacy_id: T2.18
+legacy_tier: 2
+detector:
+  kind: lexicon
+  position: any
+threshold:
+  min_count: 3
+  comparison: gte
+  scope: text
+  short_text: {min_count: 2}
+requires: null
+realizations:
+  en:
+    terms:
+      - just
+      - literally
+      - honestly
+      - simply
+      - actually
+      - truly
+      - fundamentally
+      - importantly
+      - genuinely
+      - really
+      - crucially
+      - to be honest
+      - quite frankly
+      - let's be clear
+      - let’s be clear
+    examples:
+      positive:
+        - "Honestly, this is simply the best approach, and it truly matters."
+        - "Let's be clear: the new plan is genuinely better."
+        - "To be honest, the update is literally a game changer."
+        - "It's really just a matter of fundamentally rethinking the workflow."
+      negative:
+        - "The actual cost exceeded the estimate by 12 percent."
+        - "The simplified form needs one signature instead of three."
+        - "The court found the dismissal unjust and ordered back pay."
+        - "Real-time sync works on both clients."
+        - "She gave honest feedback on the second draft."
+    test_texts:
+      - {text: "Honestly, the fix is simple.", expect: no_trigger}
+      - {text: "Honestly, the fix is simply a one-line change.", expect: trigger}
+  de:
+    terms:
+      - wirklich
+      - tatsächlich
+      - buchstäblich
+      - ehrlich gesagt
+      - um ehrlich zu sein
+      - ganz ehrlich
+      - offen gesagt
+      - seien wir ehrlich
+      - schlichtweg
+      - schlicht und ergreifend
+      - wahrhaft
+      - wahrhaftig
+      - geradezu
+    examples:
+      positive:
+        - "Ehrlich gesagt ist das wirklich die beste Lösung."
+        - "Das ist tatsächlich ein buchstäblich neuer Ansatz."
+        - "Um ehrlich zu sein, ist der Plan schlichtweg besser."
+        - "Seien wir ehrlich: Das Ergebnis ist geradezu revolutionär."
+      negative:
+        - "Die tatsächlichen Kosten lagen 12 Prozent über der Schätzung."
+        - "Die Wirklichkeit im Lager sah anders aus als im Bericht."
+        - "Das Formular ist einfach gehalten und braucht nur eine Unterschrift."
+        - "Ehrliche Rückmeldungen helfen dem Team beim nächsten Entwurf."
+    test_texts:
+      - {text: "Ehrlich gesagt ist das wirklich die beste Lösung.", expect: trigger}
+legitimate_use: >
+  "Just" in the sense of "only" or "a moment ago" is fine, as is "actually" marking a real
+  contrast with an expectation; quoted speech is exempt. Conversational registers tolerate more of
+  these words. The finding concerns accumulation (three or more per text, two in short texts)
+  where the words carry no meaning.
+fix: >
+  Delete the adverb or replace it with a concrete reason for the emphasis.
+prevention: >
+  Do not use emphasis fillers such as "just", "literally", "honestly", "simply", "actually",
+  "truly", "genuinely", "to be honest", "wirklich", "tatsächlich" or "ehrlich gesagt". If a point
+  needs weight, give the reason.
+sources:
+  - source: legacy-knowledge-base
+    locator: "T2.18 Leere Verstärker-Adverbien (admitted 2026-09-20)"
+  - source: aipromptindex-io
+    locator: "entry 'Empty Adverbs'"
+  - source: skill-no-ai-slop
+    locator: "entry 'often-empty adverbs'"
+    note: "Nearly identical word list, worded independently."
+  - source: workbravely-substack
+    locator: "category 'Intensifier Adverbs/Adjectives'"
+    note: "importantly, crucially, fundamentally, truly, genuinely; three of the then eight legacy words match exactly. Found 2026-09-13."
+  - source: skill-avoid-ai-writing
+    locator: "entry 'Hollow intensifiers'"
+  - source: skill-stop-slop
+    locator: "empty-adverb word list"
+    note: "really, just, literally, genuinely, honestly, simply, actually."
+  - source: arxiv-2609-23090
+    locator: "booster and hedge frequencies in CHI papers"
+    note: >
+      Broader booster vocabulary rises from 42.5 to 49.4 on the study's own scale (2025 to 2026)
+      while hedges stay stable. Supporting evidence for the thesis; it measures a wider linguistic
+      category than this word list and was not counted as a further source (2026-11-01).
+related:
+  - {id: cya-disclaimer, relation: distinct-from}
+  - {id: inflated-importance, relation: distinct-from}
+  - {id: hallmark-vocabulary, relation: distinct-from}
+history:
+  - {date: 2026-09-06, change: "Opened as candidate T2.18 with two sources (aipromptindex.io, no-ai-slop skill)."}
+  - {date: 2026-09-13, change: "Third source found (workbravely.substack.com)."}
+  - {date: 2026-09-20, change: "Admitted to legacy knowledge base core as T2.18 (tier 2) with five sources; list extended with genuinely, to be honest, quite frankly, let's be clear; self-calibrated threshold of at least 3 hits (short texts 2)."}
+  - {date: 2026-11-01, change: "Supporting academic evidence recorded (arXiv:2609.23090, booster vocabulary); no change to list, threshold or status."}
+  - {date: 2026-11-17, change: "Migrated to slop-check repository as grandfathered core (provisional)."}
+notes: >
+  The threshold is self-calibrated in the legacy knowledge base by analogy with T2.4; no source
+  quantifies it. Expected false-positive risk: "just" and "really" are frequent in ordinary
+  English, so the English list may trigger on informal human prose. The legacy knowledge base
+  listed English words only; the German list was written at migration from direct equivalents and
+  leaves out "einfach" and "eigentlich" because both carry content in most uses. "really" and
+  "crucially" come from the cited source lists (stop-slop, workbravely). A broad catalog checked
+  on 2026-09-20 did not list the pattern, recorded as negative evidence in the legacy knowledge
+  base.
