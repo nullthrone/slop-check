@@ -55,9 +55,8 @@ notes: >
   registers). The engine cannot switch the pattern off outside informal context, so the default
   threshold of 4 full forms per 100 words is set high and the informal override at 2 per 100
   words; neither is calibrated against the reference corpora yet. Expected false positives in
-  formal texts, which the
-  default threshold only partly prevents. The detector counts full forms; it cannot verify that
-  contractions are absent.
+  formal texts, which the default threshold only partly prevents. The detector counts full forms;
+  it cannot verify that contractions are absent.
 sources:
   - source: jetwong-neocities
     locator: "entry 'Overly Formal Tone'"

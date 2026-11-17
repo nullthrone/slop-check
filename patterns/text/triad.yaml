@@ -13,11 +13,14 @@ detector:
   metric: triad
   params: {}
 threshold:
+  min_count: 6.5
+  per_words: 500
+  comparison: gte
   scope: text
-  value: {op: gte, x: 7}
   short_text:
     scope: paragraph
-    value: {op: gte, x: 2}
+    min_count: 2
+    per_words: null
 requires: null
 realizations:
   en:
@@ -58,13 +61,14 @@ prevention: >
 notes: >
   Threshold set so that at most 4 % of the human reference corpus (pre-2022 texts, de and en)
   triggers it; separation from AI-generated text is not yet measured. Encyclopedic and web prose
-  of up to 1,200 words often contains several real three-item enumerations: at 3 triads per text
-  18 % (de) and 21 % (en) of the human texts triggered, at 6 still 5.4 % (en), at 7 2.7 % (de)
-  and 3.8 % (en). The threshold object cannot express an OR of two rules, so texts above
-  short_text_max_words use the text-wide count (7 or more) and short texts use a paragraph count
-  (2 or more triads in one paragraph). A long text whose triads all sit in one paragraph triggers
-  only through the text-wide count. "From X to Y to Z" belongs to false-range; the triad metric
-  does not count it.
+  often contains several real three-item enumerations: with a fixed count of 3 triads per text 18 %
+  (de) and 21 % (en) of the human texts triggered. Texts above short_text_max_words therefore use
+  a density, 6.5 or more triads per 500 words (3 triads in 230 words, 7 in 540 words); the densest
+  human texts reach 13 to 14 per 500 words. A fixed count would have to be 7 per text to meet the
+  limit, which misses short and medium texts and lets long ones accumulate freely. Short texts use
+  a paragraph count instead (2 or more triads in one paragraph), because a single triad in a few
+  dozen words would already exceed the density. "From X to Y to Z" belongs to false-range; the
+  triad metric does not count it.
 sources:
   - source: maintainer-observation
   - source: pangram-signs-of-ai-writing

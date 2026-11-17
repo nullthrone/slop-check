@@ -20,8 +20,8 @@ verified:
     url: https://code.claude.com/docs/en/agent-sdk/skills
 ---
 
-Claude reads skills in the Agent Skills format, so the package works without changes. Custom
-skills do not sync between surfaces: a skill uploaded to claude.ai is not available in Claude
+Claude reads skills in the Agent Skills format, which is the format of the package. Custom skills
+do not sync between surfaces: a skill uploaded to claude.ai is not available in Claude
 Code or through the API. Install it once for each surface you use.
 
 ## Claude apps (web, desktop, mobile)
