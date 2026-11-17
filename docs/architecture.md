@@ -9,13 +9,13 @@ them in the same pull request.
 
 | # | Decision | Consequence |
 |---|----------|-------------|
-| D1 | The repository is the single source of truth. The former Google Drive knowledge base (dated documents, last state 2026-11-15) is migrated once and archived. | Git history replaces dated documents. `docs/migration.md` maps legacy IDs. |
+| D1 | Pattern and source data are YAML files in this repository, validated against JSON Schemas. Generated packages and bot-written data live outside `main` (branches `dist` and `data`). | Git history is the change log; files carry no history of their own. |
 | D2 | Findings describe style patterns. They never claim that a text was written by an AI. | Report wording, skill instructions and docs avoid authorship claims. |
-| D3 | No tier taxonomy. What tiers encoded is kept as per-pattern attributes: detection rule (`threshold`), weight (measured), dependency (`requires`). | Contributors answer "when does it count, how much does it weigh, what does it depend on" instead of "which tier". |
-| D4 | Operational definition: a slop pattern is a pattern that is over-represented in LLM output relative to a human baseline. | Admission to the scored core is decided by measurement, not by counting sources. |
-| D5 | Lifecycle `observation -> candidate -> core -> fading`. `core` and `fading` are derived from measurements, never declared by contributors (exception: grandfathered legacy patterns, see 5.3). | A contributor cannot self-promote a pattern. |
+| D3 | Each pattern carries its own detection rule (`threshold`), weight (measured) and optional dependency (`requires`). | A contributor states when a pattern counts and what it depends on; the measurement decides how much it weighs. |
+| D4 | Operational definition: a slop pattern is a pattern that is over-represented in LLM output relative to a human baseline. | Admission to the scored core is decided by measurement. Sources make a pattern a candidate; they do not make it core. |
+| D5 | Lifecycle `observation -> candidate -> core -> fading`. `core` and `fading` are derived from measurements and never declared by contributors; the only declared core patterns are the initial core (5.3). | A contributor cannot self-promote a pattern. |
 | D6 | Four modes: `audit` (default), `rewrite` (surgical, diff), `prevent` (rules applied while generating), `batch` (deterministic CLI with exit code and JSON). | One engine serves batch and audit; rewrite and prevent are skill-mode only. |
-| D7 | Model-agnostic skill in the open Agent Skills format (`SKILL.md` + `references/` + optional `scripts/`). The same package runs in Claude, the Gemini app (Gems migrated to skills in Nov 2026), Gemini CLI and other skill-capable agents. Scripts accelerate, they are never required. | No vendor-specific tool names or prompt idioms in skill text. Package must satisfy the strictest known runtime (section 7). |
+| D7 | Model-agnostic skill in the open Agent Skills format (`SKILL.md` + `references/` + optional `scripts/`). The same package runs in Claude, the Gemini app, Gemini CLI and other skill-capable agents. Scripts accelerate, they are never required. | No vendor-specific tool names or prompt idioms in skill text. Package must satisfy the strictest known runtime (section 7). |
 | D8 | Multimodal: text is fully cataloged in v1. Image patterns ship as `candidate` (audit runs, no score weight) plus prevention rules for image generation. Schema reserves `code`, `audio`, `video`. | Image prevention works immediately (e.g. Gemini image generation); image scoring waits for an image benchmark. |
 | D9 | Score plus traffic light. Findings sorted by weight, a score (sum of weights of triggered scored patterns) and a verdict GREEN / YELLOW / RED derived from the score. | CLI exit codes hang on the verdict. |
 | D10 | Autonomous quality gate. Content pull requests merge automatically when all checks pass. Maintainer review is required only for changes to the gate itself (workflows, engine, eval code, thresholds, skill instructions), enforced by CODEOWNERS. | No routine review load for the maintainer. |
@@ -38,10 +38,10 @@ src/slopcheck_dev/              Dev and CI tooling (validate, build, evals). May
 evals/models.yaml               Model configuration for corpus generation, judging, conformance
 evals/corpus/                   Corpus specifications and generation prompts (no human texts committed)
 evals/conformance/cases/*.yaml  Skill conformance cases
-governance/thresholds.yaml      Admission thresholds, weights, budget, grandfathered IDs
+governance/thresholds.yaml      Admission thresholds, weights, budget, initial core
 schema/*.schema.json            JSON Schemas
 tests/                          pytest suite for src/
-docs/                           Architecture, governance, contributing details, migration
+docs/                           Architecture, governance, contributing details
 .github/                        Workflows, CODEOWNERS, templates
 ```
 
@@ -75,10 +75,7 @@ name: Antithesis template
 summary: >                       # the mechanism, in English
   ...
 category: rhetoric               # see schema enum
-status: core                     # observation | candidate | core (core only if grandfathered)
-provisional: true                # grandfathered legacy core, not yet measured
-legacy_id: T1.1                  # ID in the former Drive knowledge base
-legacy_tier: 1                   # used only for bootstrap weights
+status: core                     # observation | candidate | core (core only for the initial core, 5.3)
 detector:
   kind: regex                    # regex | lexicon | metric | llm | vision
   position: any                  # any | text_start | paragraph_start | paragraph_end | last_paragraph | sentence_start
@@ -113,8 +110,6 @@ sources:
   - {source: tropes-fyi, locator: "entry 'Negative parallelism'", note: "..."}
 related:
   - {id: german-stock-phrases, relation: overlaps}
-history:
-  - {date: 2026-07-30, change: "Added to legacy knowledge base core (T1.1)."}
 ```
 
 YAML loaders convert date values to ISO strings (`YYYY-MM-DD`) before schema validation,
@@ -122,7 +117,7 @@ so contributors can write unquoted dates.
 
 Rules enforced by `slopcheck-dev validate`:
 
-1. `status: core` requires the ID to be listed in `governance/thresholds.yaml: grandfathered_core`.
+1. `status: core` requires the ID to be listed in `governance/thresholds.yaml: initial_core`.
 2. `candidate` requires at least 2 independent sources (section 5.2), a detector, and per realization language at least 2 positive and 2 negative examples.
 3. `observation` requires at least 1 source. Detector optional.
 4. Every `source` reference resolves to `sources/<id>.yaml`.
@@ -205,8 +200,8 @@ Produced by `slopcheck-dev build`. Runtime never reads YAML.
   "catalog_version": "2026.11.17",
   "generated_at": "2026-11-17T12:00:00Z",
   "short_text_max_words": 150,
-  "verdict_thresholds": {"yellow": 2.0, "red": 5.0, "source": "bootstrap|measured"},
-  "patterns": [ { "...all pattern fields...": "...", "effective_status": "core", "weight": 2.5, "weight_source": "bootstrap|measured|none" } ]
+  "verdict_thresholds": {"yellow": 2.0, "red": 5.0, "source": "provisional|measured"},
+  "patterns": [ { "...all pattern fields...": "...", "effective_status": "core", "weight": 2.5, "weight_source": "provisional|measured|none" } ]
 }
 ```
 
@@ -233,7 +228,7 @@ Produced by `slopcheck-dev build`. Runtime never reads YAML.
 }
 ```
 
-`provisional` is true if any scored weight is a bootstrap weight.
+`provisional` is true if any scored weight is a provisional weight (not yet measured).
 
 ### 4.6 Report (Markdown)
 
@@ -280,7 +275,7 @@ In the skill package the CLI runs as `python scripts/slopcheck.py audit ...`.
 
 ### 5.1 `governance/thresholds.yaml`
 
-Admission thresholds, weights, verdict bootstrap, budget, grandfathered core IDs.
+Admission thresholds, weights, provisional verdict thresholds, budget, initial core.
 Protected by CODEOWNERS.
 
 ### 5.2 Source independence
@@ -292,12 +287,11 @@ Source types: `academic-preprint`, `peer-reviewed`, `corpus-study`, `commercial-
 `community-directory`, `practitioner-skill`, `blog`, `press`, `documentation`, `own-observation`.
 `own-observation` never counts toward independence.
 
-### 5.3 Grandfathered core
+### 5.3 Initial core
 
-The legacy knowledge base core is migrated with `status: core`, `provisional: true` and
-bootstrap weights by legacy tier (`thresholds.yaml: weights.bootstrap`). The first
-measurement that covers a grandfathered pattern replaces the bootstrap weight or
-demotes the pattern to `fading`.
+`governance/thresholds.yaml: initial_core` lists the patterns that start with `status: core`
+and maps each to a provisional weight. The first measurement that covers such a pattern
+replaces its provisional weight with a measured one or demotes it to `fading`.
 
 ## 6. Evaluation (`src/slopcheck_dev/evals`)
 
@@ -324,7 +318,7 @@ demotes the pattern to `fading`.
   "verdict_thresholds": {"yellow": 2.1, "red": 5.4},
   "patterns": {
     "<id>": {
-      "pattern_hash": "<sha256 of canonical pattern JSON without history>",
+      "pattern_hash": "<sha256 of the canonical pattern JSON>",
       "per_language": {"de": {"fpr_human": 0.01, "hit_ai": 0.22, "lift": 14.3, "n_human": 100, "n_ai": 500}},
       "per_family": {"anthropic": {"hit_ai": 0.3, "lift": 18.0}},
       "fpr_human": 0.01, "hit_ai": 0.2, "lift": 12.0,
@@ -348,15 +342,15 @@ derive(pattern, measurement | None, thresholds) -> (effective_status, weight, we
 | observation | any | observation | 0 |
 | candidate | none or not meets_core | candidate | 0 |
 | candidate | meets_core | core | measured |
-| core (grandfathered) | none | core | bootstrap by legacy_tier |
-| core (grandfathered) | meets_core | core | measured |
-| core (grandfathered) | meets_fading | fading | 0 |
-| core (grandfathered) | neither | core | measured |
+| core (initial) | none | core | provisional (`initial_core`) |
+| core (initial) | meets_core | core | measured |
+| core (initial) | meets_fading | fading | 0 |
+| core (initial) | neither | core | measured |
 | any measured core | meets_fading | fading | 0 |
 
 Measured weight: `clamp(ln(lift), weights.from_lift.min, weights.from_lift.max)`.
 Verdict thresholds: measured values if present (yellow = 90th percentile of human
-scores, red = median AI score, both on holdout), else bootstrap.
+scores, red = median AI score, both on holdout), else `verdict_provisional`.
 
 ### 6.5 Budget
 

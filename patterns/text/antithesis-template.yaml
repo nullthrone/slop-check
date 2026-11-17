@@ -7,9 +7,6 @@ summary: >
   is ordinary rhetoric; produced reflexively it signals template writing.
 category: rhetoric
 status: core
-provisional: true
-legacy_id: T1.1
-legacy_tier: 1
 detector:
   kind: regex
   position: any
@@ -59,14 +56,9 @@ prevention: >
   Do not build sentences of the form "not X, but Y" or "it's not just X, it's Y" unless you are
   correcting a misconception the reader demonstrably holds. State the point directly.
 sources:
-  - source: legacy-knowledge-base
-    locator: "T1.1, base taxonomy 2026-07-30"
+  - source: maintainer-observation
   - source: pangram-signs-of-ai-writing
     locator: "'not just X but Y' construction"
     note: "Reported at 3x the human baseline (commercial corpus, methodology not disclosed)."
 related:
   - {id: german-stock-phrases, relation: overlaps}
-history:
-  - {date: 2026-07-30, change: "Added to legacy knowledge base core as T1.1 (tier 1, single hit flags)."}
-  - {date: 2026-11-15, change: "Pangram corpus data confirms over-representation (3x)."}
-  - {date: 2026-11-17, change: "Migrated to slop-check repository as grandfathered core (provisional)."}

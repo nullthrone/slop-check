@@ -1,0 +1,10 @@
+id: maintainer-observation
+title: "Observation by the slop-check maintainers"
+publisher: slop-check
+published: null
+accessed: 2026-11-17
+type: own-observation
+notes: >
+  Provenance for patterns the maintainers observed in practice. Never counts toward source
+  independence (docs/architecture.md section 5.2); a pattern that rests on it alone stays
+  in the initial core or as an observation until external evidence or a measurement supports it.
