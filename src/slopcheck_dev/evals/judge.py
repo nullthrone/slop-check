@@ -7,7 +7,9 @@ A judge has the engine's interface (``slopcheck.engine.analyze(llm_judge=...)``)
 The prompt and the reply parsing come from ``slopcheck.llm`` so the measured judge sees the
 same instructions as ``slopcheck audit --llm``. Calls go through :class:`OpenRouterClient`,
 which adds the response cache and the budget checks. Agreement of two judges is applied by
-:mod:`measure` (a pattern counts only if it triggers under both).
+:mod:`measure` (a pattern counts only if it triggers under both). :mod:`measure` also splits
+each request so that effective-core patterns and all other patterns go to the judge in separate
+calls (``measure.core_separated``); every one of those calls is budgeted and counted here.
 """
 
 from __future__ import annotations

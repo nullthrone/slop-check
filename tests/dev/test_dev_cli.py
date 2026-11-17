@@ -8,7 +8,7 @@ import sys
 from slopcheck_dev import __version__
 from slopcheck_dev.cli import build_parser, main
 
-OWN = {"validate", "check-fixtures", "build", "gate"}
+OWN = {"validate", "check-fixtures", "build", "gate", "guard"}
 EVALS = {"corpus", "measure", "conformance", "budget", "models"}
 
 

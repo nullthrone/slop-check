@@ -1,6 +1,6 @@
 """``slopcheck-dev``: development and CI commands (docs/architecture.md section 6.7).
 
-Subcommands defined here: ``validate``, ``check-fixtures``, ``build``, ``gate``.
+Subcommands defined here: ``validate``, ``check-fixtures``, ``build``, ``gate``, ``guard``.
 The evaluation subcommands (``corpus``, ``measure``, ``conformance``, ``budget``,
 ``models``) come from :func:`slopcheck_dev.evals.cli.register` when that module is present.
 Every subcommand sets ``func`` (``callable(args) -> int``) via ``set_defaults``.
@@ -50,6 +50,12 @@ def _gate(args: argparse.Namespace) -> int:
     return run(args)
 
 
+def _guard(args: argparse.Namespace) -> int:
+    from .guard import run
+
+    return run(args)
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="slopcheck-dev", description="slop-check development tooling")
     parser.add_argument("--version", action="version", version=f"slopcheck-dev {__version__}")
@@ -85,6 +91,26 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--summary", default=None, metavar="FILE", help="append the Markdown summary to FILE")
     _add_root(p)
     p.set_defaults(func=_gate)
+
+    p = sub.add_parser(
+        "guard",
+        help="fail when a change deletes, renames or ungates a scored pattern (needs a maintainer)",
+    )
+    p.add_argument(
+        "--base",
+        required=True,
+        metavar="BASE_REF",
+        help="compare with the merge base of BASE_REF and HEAD (in ci: HEAD^1 of the merge commit)",
+    )
+    p.add_argument(
+        "--measurements",
+        default=None,
+        metavar="PATH",
+        help="measurements.json from branch data; also guards patterns that are measured core",
+    )
+    p.add_argument("--summary", default=None, metavar="FILE", help="append the Markdown summary to FILE")
+    _add_root(p)
+    p.set_defaults(func=_guard)
 
     try:
         from slopcheck_dev.evals.cli import register

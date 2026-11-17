@@ -5,7 +5,10 @@ documents), ``hit_ai`` (triggered AI documents / AI documents, also per model fa
 ``lift = (hit_ai + a) / (fpr_human + a)`` with ``a = 0.5 / n_human``. "Triggered" is the full
 rule (detector, threshold, requires) as computed by ``slopcheck.engine.analyze`` with a
 catalog compiled from the pattern files. ``kind: llm`` patterns count only when both judges
-agree. ``meets_core`` and ``meets_fading`` apply ``governance/thresholds.yaml: admission``.
+agree; each judge sees the llm patterns whose effective status is core in a separate call from
+all other llm patterns (at most two calls per document and judge), so candidate rubrics cannot
+steer the judging of scored patterns. ``meets_core`` and ``meets_fading`` apply
+``governance/thresholds.yaml: admission``.
 
 Output: the ``measurements.json`` structure of section 6.3, plus a Markdown report.
 """
@@ -173,6 +176,42 @@ def _doc_result(doc: dict) -> DocResult:
     )
 
 
+def effective_status(entry: dict) -> str:
+    """``effective_status`` of a catalog entry, falling back to the declared status (as the engine)."""
+    return entry.get("effective_status") or entry.get("status") or "observation"
+
+
+def core_separated(judge: Callable[[str, list, str], dict]) -> Callable[[str, list, str], dict]:
+    """Wrap an engine-compatible judge so effective-core patterns never share a call with others.
+
+    The engine asks the judge about all llm patterns of a document in one call. Inside one
+    prompt the rubric of one pattern can steer how the model reads another (a rubric can say
+    "never report X"). Candidate rubrics arrive through content pull requests that merge without
+    review, while patterns whose ``effective_status`` is core carry the score. When a call holds
+    both kinds, the wrapper splits it in two: first the core patterns, then all others, and
+    merges the replies (at most two calls per document and judge). A reply counts only for the
+    patterns that were in its call. Each part is an ordinary call of the wrapped judge, so budget
+    checks, ledger entries and judge stats count every call. A failing part raises, as one call
+    did before, and the engine then leaves all llm patterns of that document unevaluated.
+    """
+
+    def judge_batched(text: str, patterns: list, lang: str) -> dict:
+        patterns = list(patterns)
+        core = [p for p in patterns if effective_status(p) == "core"]
+        other = [p for p in patterns if effective_status(p) != "core"]
+        if not core or not other:
+            return judge(text, patterns, lang)
+        merged: dict = {}
+        for batch in (core, other):
+            reply = judge(text, batch, lang) or {}
+            ids = {p["id"] for p in batch}
+            merged.update({pid: hits for pid, hits in reply.items() if pid in ids})
+        return merged
+
+    judge_batched.wrapped = judge  # type: ignore[attr-defined]
+    return judge_batched
+
+
 def evaluate_docs(
     docs: list[dict],
     catalog: dict,
@@ -183,7 +222,13 @@ def evaluate_docs(
     llm_doc_ids: set[tuple[str, str | None]] | None = None,
     progress: Callable[[int, int], None] | None = None,
 ) -> tuple[list[DocResult], list[str]]:
-    """Run the engine on each document. LLM patterns need agreement of every judge."""
+    """Run the engine on each document. LLM patterns need agreement of every judge.
+
+    Each judge sees the effective-core llm patterns and all other measured llm patterns in
+    separate calls (:func:`core_separated`), so a candidate rubric cannot steer how a scored
+    pattern is judged. That holds for the scheduled measurement (all patterns) and for the pull
+    request gate (the changed patterns only, with core patterns judged apart from candidates).
+    """
     notices: list[str] = []
     llm_ids = set(llm_ids or ())
     llm_catalog = None
@@ -193,6 +238,7 @@ def evaluate_docs(
         llm_catalog["patterns"] = [
             p for p in catalog.get("patterns", []) if detector_kind(p) != "llm" or p["id"] in llm_ids
         ]
+    batched_judges = [core_separated(j) for j in judges or []]
     results: list[DocResult] = []
     budget_stop = False
     for i, doc in enumerate(docs):
@@ -208,8 +254,8 @@ def evaluate_docs(
         )
         if wants_llm:
             per_judge = []
-            for judge in judges or []:
-                out = _run_analyze(analyze_fn, doc["text"], llm_catalog, doc["language"], judge)
+            for judge, batched in zip(judges or [], batched_judges, strict=True):
+                out = _run_analyze(analyze_fn, doc["text"], llm_catalog, doc["language"], batched)
                 per_judge.append(out.get("all_patterns") or {})
                 stats = getattr(judge, "stats", None)
                 if stats is not None and getattr(stats, "budget_exceeded", False):

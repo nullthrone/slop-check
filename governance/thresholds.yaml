@@ -45,7 +45,7 @@ verdict_provisional:
 budget:
   # Hard cap, about 25 EUR per month (conservative conversion).
   monthly_usd_cap: 26.0
-  per_pull_request_usd_cap: 0.50
+  per_pull_request_usd_cap: 0.50       # per llm-eval run (each push or re-run is a new run), not per pull request
   per_scheduled_run_usd_cap: 12.0
   conformance_run_usd_cap: 6.0
 

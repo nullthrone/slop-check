@@ -313,6 +313,11 @@ replaces its provisional weight with a measured one or demotes it to `fading`.
 - `lift` = (hit_ai + a) / (fpr_human + a), a = 0.5 / n_human
 - Triggered means the full rule (detector + threshold + requires), computed by `slopcheck.engine.analyze`.
 - `kind: llm` patterns: a hit requires agreement of both judges in `evals/models.yaml: judges`.
+  Each judge receives the measured `llm` patterns whose `effective_status` is `core` and all
+  other measured `llm` patterns in separate calls (at most two calls per document and judge;
+  one when only one kind is measured), so a candidate rubric never shares a prompt with a
+  scored pattern. This holds for the pull request gate (changed patterns only) as well. A
+  document with both kinds costs two calls per judge; each call is budgeted and recorded.
 
 ### 6.3 `measurements.json` (branch `data`)
 
@@ -362,7 +367,10 @@ scores, red = median AI score, both on holdout), else `verdict_provisional`.
 `budget/ledger.json` records month, run, model, tokens, cost (from OpenRouter usage
 data, else estimated from `/api/v1/models` pricing). Every privileged job checks the
 month total against `thresholds.yaml: budget` before spending and aborts cleanly when
-the cap would be exceeded. Spending jobs share the concurrency group `openrouter-budget`, so
+the cap would be exceeded. The run caps (`per_pull_request_usd_cap`, `per_scheduled_run_usd_cap`,
+`conformance_run_usd_cap`) apply per run id, which is the workflow run and attempt; entries carry
+no pull request number, so `per_pull_request_usd_cap` bounds one llm-eval run, and each push or
+re-run of a pull request is a new run. Spending jobs share the concurrency group `openrouter-budget`, so
 they run one at a time and read the ledger only while they hold it; the job that holds the key
 never holds a token that can push, and a separate job merges its spend into the ledger. When budget
 or key is missing: candidates pass the LLM gate with a notice (weight 0 anyway); changes to
@@ -413,10 +421,18 @@ slopcheck-dev corpus fetch-human --out DIR
 slopcheck-dev corpus generate-ai --human DIR --out DIR [--models ...]
 slopcheck-dev measure --human DIR --ai DIR --split dev|holdout [--patterns IDS ...] [--llm] --out FILE
 slopcheck-dev gate --measure FILE --patterns IDS ...          # applies PR admission rules, exit 1 on failure
+slopcheck-dev guard --base BASE_REF [--measurements PATH]     # scored patterns stay gated, exit 1 on failure
 slopcheck-dev conformance --skill dist/slop-check [--models ...] --out FILE
 slopcheck-dev budget status|check --amount USD
 slopcheck-dev models resolve [--out FILE] [--previous FILE]
 ```
+
+`guard` compares the merge base of `BASE_REF` and `HEAD` with the working tree. It fails when a
+scored pattern (listed in `initial_core`, declaring `status: core`, or, with `--measurements`,
+effective core on the base commit) loses its file at its path (deleted, renamed, moved) or
+changes `id`, `status`, `modality` or `detector.kind`: the gates skip deleted files, other
+modalities and detectors they cannot run. A change that also touches `governance/` needs
+code-owner review, so the guard then reports these findings as notices and passes.
 
 ## 7. Skill package constraints
 
@@ -432,7 +448,7 @@ The package must satisfy the strictest known runtime (Gemini app, Nov 2026):
 
 | File | Trigger | Privileges | Purpose |
 |------|---------|------------|---------|
-| `ci.yml` | `pull_request`, `push` to main | read-only, no secrets | lint, tests, validate, fixtures, deterministic empirical gate (dev split), build check, dogfood; final job `ci-gate` |
+| `ci.yml` | `pull_request`, `push` to main | read-only, no secrets | lint, tests, validate, scored-pattern guard (`slopcheck-dev guard`), fixtures, deterministic empirical gate (dev split), build check, dogfood; final job `ci-gate` |
 | `llm-eval.yml` | `workflow_run` of ci (completed with success) | secrets, trusted code from main only | LLM gate for changed `llm` patterns; fetches PR files via API at the head SHA, treats them as data; posts commit status `llm-gate` |
 | `automerge.yml` | `pull_request_target` | `contents: write`, `pull-requests: write`; never checks out PR code | enables auto-merge (squash) only for content-only PRs into `main`; labels PRs touching protected paths `needs-owner` and withholds auto-merge from them |
 | `measure.yml` | monthly schedule (daily in the first week until the month is measured), dispatch | secrets in a read-only job; a separate job without them writes to `data` | corpus refresh, full holdout measurement, report, issue |

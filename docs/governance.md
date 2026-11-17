@@ -74,11 +74,22 @@ checks it measures each changed text pattern with a deterministic detector on th
 - A pattern that scores today must still meet the core criteria on the dev half after the edit.
   That includes the initial core.
 
+A pattern that scores today also has to stay where the gates can measure it. `ci-gate` fails a
+pull request that deletes or renames the file of such a pattern (the initial core, and every
+pattern the current measurement makes core), or changes its status, modality or detector kind.
+The gates skip deleted files, other modalities and detectors they cannot run, so these changes
+would take the pattern out of the score without a measurement. They need a maintainer: the same
+pull request has to change `governance/` (for example remove the id from `initial_core`), which
+requires code-owner review. Edits to thresholds, examples, regular expressions, word lists and
+rubrics stay open to everyone, because the gates measure them.
+
 `llm-gate` covers patterns whose detector is a rubric for a language model. Two judge models from
 different families read each example; a hit counts only when both agree. The positive examples
 must be recognized at a rate of at least 0.8 and the negative examples flagged at a rate of at
 most 0.2 (each example is judged without itself in the prompt). The dev-half rules above apply
-as well.
+as well. On the corpus, the judges read the scored patterns and all other patterns in separate
+requests, in the pull request gate as in the monthly measurement, so the rubric of a new
+candidate cannot change how a scored pattern is judged.
 
 Until branch `data` holds a corpus, the corpus-based parts of both gates are skipped with a notice.
 
@@ -118,8 +129,11 @@ measurement belongs to the exact content it was taken from (it stores a hash of 
 ## Budget and transparency
 
 Language-model calls go through OpenRouter with one key and a hard cap of 25 EUR per month,
-enforced in code before every call. Each pull request may spend at most 0.50 USD, a scheduled
-measurement at most 12 USD and a conformance run at most 6 USD. When the money or the key is
+enforced in code before every call. Each run of the LLM gate may spend at most 0.50 USD, a
+scheduled measurement at most 12 USD and a conformance run at most 6 USD. The LLM gate cap counts
+per workflow run, not per pull request: every push to a pull request that changes an LLM-judged
+pattern, and every re-run, starts a new run with its own 0.50 USD, so a pull request with many
+pushes can spend more in total. The monthly cap bounds all of it. When the money or the key is
 missing, candidates still pass the LLM gate with a notice (they carry no weight anyway), and edits
 to scored LLM-judged patterns fail until the check can run.
 

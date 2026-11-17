@@ -441,26 +441,33 @@ def _duplicates(report: Report, records: list[tuple[str, dict]], what: str) -> N
 # changed files
 
 
+def git(root: Path, *args: str) -> str:
+    """Run git in ``root`` and return its stdout; raise RuntimeError on a non-zero exit."""
+    proc = subprocess.run(  # noqa: S603 - fixed git invocation
+        ["git", *args],  # noqa: S607
+        cwd=root,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    if proc.returncode != 0:
+        raise RuntimeError(f"git {' '.join(args)} failed: {proc.stderr.strip()}")
+    return proc.stdout
+
+
 def changed_files(base_ref: str, root: Path) -> set[str]:
     """Paths (relative to ``root``) changed against the merge base with ``base_ref``,
     including uncommitted and untracked files."""
+    base = git(root, "merge-base", base_ref, "HEAD").strip() or base_ref
+    return paths_changed_since(base, root)
 
-    def git(*args: str) -> str:
-        proc = subprocess.run(  # noqa: S603 - fixed git invocation
-            ["git", *args],  # noqa: S607
-            cwd=root,
-            capture_output=True,
-            text=True,
-            check=False,
-        )
-        if proc.returncode != 0:
-            raise RuntimeError(f"git {' '.join(args)} failed: {proc.stderr.strip()}")
-        return proc.stdout
 
-    base = git("merge-base", base_ref, "HEAD").strip() or base_ref
-    names = set(git("diff", "--name-only", "--no-renames", base).split("\n"))
-    names |= set(git("ls-files", "--others", "--exclude-standard").split("\n"))
-    prefix = git("rev-parse", "--show-prefix").strip()
+def paths_changed_since(base: str, root: Path) -> set[str]:
+    """Paths (relative to ``root``) whose working-tree state differs from commit ``base``,
+    including uncommitted and untracked files."""
+    names = set(git(root, "diff", "--name-only", "--no-renames", base).split("\n"))
+    names |= set(git(root, "ls-files", "--others", "--exclude-standard").split("\n"))
+    prefix = git(root, "rev-parse", "--show-prefix").strip()
     out = set()
     for name in names:
         name = name.strip()

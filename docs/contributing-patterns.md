@@ -166,6 +166,13 @@ independent sources, regex safety, unique terms, file names). `check-fixtures` r
 positive and negative example through the engine. Patterns with `llm` or `vision` detectors are
 listed as skipped there; the LLM gate judges them in the pull request.
 
+If you edit a pattern that scores today (one listed under `initial_core` in
+`governance/thresholds.yaml`, or one the measurement made core), run
+`slopcheck-dev guard --base origin/main` as well. It fails when the change deletes or renames the
+file or changes its status, modality or detector kind; such changes need a maintainer (see
+[governance.md](governance.md), "Pull request gate"). Edits to its thresholds, examples, regular
+expressions, word lists and rubric are fine; the gates measure them.
+
 Once branch `data` holds a corpus, you can run the empirical gate locally as well:
 
 ```
