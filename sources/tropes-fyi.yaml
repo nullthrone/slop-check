@@ -5,6 +5,7 @@ publisher: tropes.fyi
 published: null
 accessed: 2026-11-17
 type: community-directory
+derived_from: [wikipedia-signs-of-ai-writing]
 notes: >
   Community directory of AI writing tropes. Since late August 2026 it lists 49 entries with a status
   label per entry (new, rising, fading, consistent); entry pages live under /tropes/<slug>, for

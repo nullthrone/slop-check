@@ -106,10 +106,10 @@ Reports in the skill and on the command line share one layout. This report is ab
 ```text
 # Slop-Check: draft.md
 
-Verdict: RED (score 6.0; yellow from 2.0, red from 5.0) | 48 words | language: en
-Heaviest findings: Generic opening cliche (2.5), Antithesis template (2.5), Nominalization density (1.0).
+Verdict: RED (score 5.0; yellow from 2.0, red from 5.0) | 48 words | language: en
+Heaviest findings: Generic opening cliche (2.5), Antithesis template (2.5).
 
-## Findings (3)
+## Findings (2)
 1. Generic opening cliche (`generic-opening`, weight 2.5): 2 hits, threshold min 1 per text
    > "In today's fast-paced world" (paragraph 1)
    > "Let's dive in" (paragraph 2)
@@ -118,17 +118,17 @@ Heaviest findings: Generic opening cliche (2.5), Antithesis template (2.5), Nomi
 2. Antithesis template (`antithesis-template`, weight 2.5): 1 hit, threshold min 1 per text
    > "It's not just about sending messages, it's" (paragraph 1)
    Suggestion: State the claim directly without the negation.
-3. ...
 
 ## Observations, not scored (1)
 1. Premodifier stacking (`premodifier-stacking`, candidate): 1 hit, value 2.0833, threshold value > 2
    > "fast-paced" (paragraph 1)
 
-## Not evaluated (11)
+## Not evaluated (9)
 - `hollow-sentences` (requires a language model)
 - ...
 
 ## Notes
+- Some weights are provisional: they apply until the first measurement replaces them with measured values.
 - Short text (48 words): short-text thresholds apply.
 - Findings describe style patterns. They do not show who or what wrote the text.
 ```
@@ -143,7 +143,8 @@ The parts of the report:
   lost their weight. They do not change the score.
 - Not evaluated lists patterns the run could not judge. On the command line these are the patterns
   that need a language model. In the skill, the assistant judges them itself.
-- Notes explain conditions that affect the result, such as short-text thresholds.
+- Notes explain conditions that affect the result, such as provisional weights or short-text
+  thresholds.
 
 The score is the sum of the weights of the triggered scored patterns. `GREEN` means the score is
 below the yellow threshold. `YELLOW` means it reached the yellow threshold but stayed below the red
@@ -198,8 +199,9 @@ The JSON result has this shape (abridged):
   "engine_version": "0.1.0",
   "catalog_version": "2026.11.17",
   "verdict": "RED",
-  "score": 6.0,
+  "score": 5.0,
   "verdict_thresholds": {"yellow": 2.0, "red": 5.0},
+  "provisional": true,
   "words": 48,
   "language": "en",
   "context": "default",
@@ -224,8 +226,8 @@ The JSON result has this shape (abridged):
 ```
 {% endraw %}
 
-The field `provisional` is true while any scored weight is still a starting value rather than a
-measured one.
+The field `provisional` is true while any scored weight is still a provisional starting value
+rather than a measured one. The Markdown report says so in its notes.
 
 In CI, call the script by its path and let the exit code fail the job:
 

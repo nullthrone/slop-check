@@ -66,14 +66,13 @@ prevention: >
   walk you through". Start with the content itself.
 notes: >
   Position text_start because the sources describe the first words of a response; a phrase such as
-  "below is" in the middle of a document is ordinary. The bare single-word openers from the legacy
-  examples ("I'd", "My") are left out of the detector because they start countless human texts.
+  "below is" in the middle of a document is ordinary. The bare single-word openers that vrid.ai
+  names ("I'd", "My") are left out of the detector because they start countless human texts.
   Independence: skill-better-ai-writing and sej-ai-fingerprints both relay the same study
-  (sun-icml-2025-fingerprints), which the migration verified; the legacy knowledge base had counted
-  them as two independent sources. With vrid.ai the pattern keeps at least two independent clusters.
+  (sun-icml-2025-fingerprints), so they count as one line of evidence with it, not as two
+  independent sources. With vrid.ai the pattern keeps at least two independent clusters.
 sources:
-  - source: legacy-knowledge-base
-    locator: "Candidate T2.23, opened 2026-09-20; section 5 (state 2026-11-15)"
+  - source: maintainer-observation
   - source: vrid-ai-signs
     locator: "entry 'First-Word Fingerprints'"
     note: "Model-specific signature words at the start: ChatGPT \"Certainly\", Claude \"I'd\", Gemini \"My\"."
@@ -88,14 +87,14 @@ sources:
   - source: sun-icml-2025-fingerprints
     note: >
       Five-way source-model classification at 97.1 %; the first token alone reaches roughly 50 %
-      (chance 20 %); ChatGPT begins responses with "certainly" and "below is". Checked at migration
-      on the arXiv full text.
+      (chance 20 %); ChatGPT begins responses with "certainly" and "below is". Figures from the
+      arXiv full text.
   - source: pangram-signs-of-ai-writing
     locator: "sign 8 'AI-style headers'"
     note: >
       Phrase multipliers against the human baseline: "Certainly! Here's" 0 vs. 94 (70x), "Sure!
       Here's a" 0 vs. 23 (18x), "I'd be happy to" 54 vs. 358 (5x). Corpus size and method not
-      disclosed. Read on 2026-11-17.
+      disclosed.
   - source: wikipedia-signs-of-ai-writing
     locator: "section 'Collaborative communication' (WP:CERTAINLY)"
     note: >

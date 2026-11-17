@@ -58,13 +58,12 @@ prevention: >
   Do not list media outlets or publications to signal credibility. Cite a specific source only
   together with what it reported.
 notes: >
-  The legacy knowledge base found no quantified threshold. Threshold chosen at migration: a single
-  match, because the regex itself requires a credit phrase followed by three or more capitalized
-  names. German has no trigger for "zitiert in" because capitalized common nouns ("in Lehrbüchern,
+  No source gives a quantified threshold. Threshold: a single match, because the regex itself
+  requires a credit phrase followed by three or more capitalized names. Distinct from
+  vague-attribution: there attribution is missing, here it is piled up. German has no trigger for "zitiert in" because capitalized common nouns ("in Lehrbüchern,
   Normen und Leitfäden") would match; only badge phrases are covered.
 sources:
-  - source: legacy-knowledge-base
-    locator: "Candidate T2.19, opened 2026-09-20; section 5 (state 2026-11-15)"
+  - source: maintainer-observation
   - source: gptzero-ai-patterns
     locator: "entry 'Name Dropping'"
     note: "The example names Wired, Forbes and BBC. Page last modified 2026-09-28 per its metadata."
@@ -74,8 +73,7 @@ sources:
   - source: fireprompts-io
     locator: "'Name-dropping brands'"
     note: >
-      "Featured in TechCrunch" as an unsupported appeal to authority. Recorded on 2026-08-30 as a
-      separate single-source note; the legacy knowledge base never linked it to T2.19.
+      "Featured in TechCrunch" as an unsupported appeal to authority.
   - source: wikipedia-signs-of-ai-writing
     locator: "section 'Undue emphasis on notability, attribution, and media coverage' (WP:AIATTR)"
     note: >
