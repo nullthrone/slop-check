@@ -1,0 +1,39 @@
+---
+layout: default
+---
+<main id="main" class="main">
+  <div class="container">
+    <header class="page-head">
+      {%- if page.eyebrow %}
+      <p class="eyebrow">{{ page.eyebrow }}</p>
+      {%- endif %}
+      <h1 class="page-head__title">{{ page.title }}</h1>
+      {%- if page.lead %}
+      <p class="lead">{{ page.lead }}</p>
+      {%- endif %}
+    </header>
+    {% include steprule.html %}
+    {%- if page.aside == 'setup' %}
+    <div class="with-aside">
+      <nav class="aside" aria-label="Setup guides">
+        <p class="aside__title">Setup guides</p>
+        <ul class="aside__list">
+          <li><a class="aside__link" href="{{ '/setup/' | relative_url }}"{% if page.url == '/setup/' %} aria-current="page"{% endif %}>Overview</a></li>
+          {%- for p in site.data.providers %}
+          <li><a class="aside__link" href="{{ p.url | relative_url }}"{% if page.url == p.url %} aria-current="page"{% endif %}>{{ p.name }}</a></li>
+          {%- endfor %}
+        </ul>
+      </nav>
+      <article class="prose">
+        {{ content }}
+        {%- include verified.html %}
+      </article>
+    </div>
+    {%- else %}
+    <article class="prose">
+      {{ content }}
+      {%- include verified.html %}
+    </article>
+    {%- endif %}
+  </div>
+</main>

@@ -1,0 +1,180 @@
+# LLM gate for kind: llm patterns. Triggered when the ci workflow completes for a pull request.
+# Runs only trusted code: the checkout is the default branch, never the pull request head.
+# Pull request files are fetched through the REST API at the head commit and treated as data
+# (.github/scripts/llm_gate.py). Values from github.event.workflow_run reach shell steps only
+# through environment variables. Posts the commit status "llm-gate", a required check on main.
+name: llm-eval
+
+on:
+  workflow_run:
+    workflows: [ci]
+    types: [completed]
+
+permissions: {}
+
+concurrency:
+  group: llm-eval-${{ github.event.workflow_run.head_sha }}
+  cancel-in-progress: true
+
+jobs:
+  llm-gate:
+    if: >-
+      github.repository == 'nullthrone/slop-check' &&
+      github.event.workflow_run.event == 'pull_request' &&
+      github.event.workflow_run.conclusion != 'cancelled' &&
+      github.event.workflow_run.conclusion != 'skipped'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    permissions:
+      contents: read
+      statuses: write
+      pull-requests: write
+    outputs:
+      spent: ${{ steps.spend.outputs.spent }}
+    env:
+      GH_TOKEN: ${{ github.token }}
+      HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+      HEAD_REPO: ${{ github.event.workflow_run.head_repository.full_name }}
+      RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          persist-credentials: false
+      - uses: ./.github/actions/setup
+
+      - name: Find the pull request and fetch its pattern and source files
+        id: prepare
+        run: |
+          echo "WORK=$RUNNER_TEMP/llm" >> "$GITHUB_ENV"
+          echo "CANDIDATE=$RUNNER_TEMP/candidate" >> "$GITHUB_ENV"
+          python .github/scripts/llm_gate.py prepare --candidate "$RUNNER_TEMP/candidate" --out "$RUNNER_TEMP/llm"
+
+      - name: Mark llm-gate as pending
+        if: steps.prepare.outputs.pr != ''
+        run: python .github/scripts/llm_gate.py status --state pending --description "LLM gate is running"
+
+      - name: Validate pattern and source files on a copy of the trusted checkout
+        id: validate
+        if: steps.prepare.outputs.pr != ''
+        run: |
+          if slopcheck-dev validate --root "$CANDIDATE"; then
+            echo "result=ok" >> "$GITHUB_OUTPUT"
+          else
+            echo "result=failed" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Read branch data
+        id: data
+        if: steps.prepare.outputs.llm_ids != ''
+        run: |
+          python .github/scripts/data_branch.py checkout --branch data --dir "$RUNNER_TEMP/data"
+          mkdir -p "$WORK"
+          if [ -f "$RUNNER_TEMP/data/budget/ledger.json" ]; then
+            cp "$RUNNER_TEMP/data/budget/ledger.json" "$WORK/ledger.json"
+          fi
+          if [ -f "$RUNNER_TEMP/data/corpus/human/manifest.json" ] && compgen -G "$RUNNER_TEMP/data/corpus/ai/*/*.jsonl*" > /dev/null; then
+            echo "corpus=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "corpus=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Judge the examples of changed llm patterns
+        id: examples
+        if: steps.prepare.outputs.llm_ids != '' && steps.validate.outputs.result == 'ok'
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          IDS: ${{ steps.prepare.outputs.llm_ids }}
+        run: |
+          lock=()
+          if [ -f "$RUNNER_TEMP/data/models/lock.json" ]; then lock=(--lock "$RUNNER_TEMP/data/models/lock.json"); fi
+          # shellcheck disable=SC2086  # IDS holds kebab-case ids separated by spaces
+          python .github/scripts/llm_gate.py examples --candidate "$CANDIDATE" "${lock[@]}" \
+            --ledger "$WORK/ledger.json" --out "$WORK/examples.json" $IDS
+
+      - uses: ./.github/actions/human-corpus
+        if: steps.examples.outputs.examples_ok == 'true' && steps.data.outputs.corpus == 'true'
+        with:
+          manifest: ${{ runner.temp }}/data/corpus/human/manifest.json
+
+      - name: Measure changed llm patterns on the dev split
+        id: measure
+        if: steps.examples.outputs.examples_ok == 'true'
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          IDS: ${{ steps.prepare.outputs.llm_ids }}
+          CORPUS: ${{ steps.data.outputs.corpus }}
+        run: |
+          if [ "$CORPUS" != true ]; then
+            echo "::notice title=LLM gate::Branch data has no corpus yet; the dev-split fpr is not measured."
+            echo "state=no-corpus" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          extra=()
+          if [ -f "$RUNNER_TEMP/data/models/lock.json" ]; then
+            extra+=(--lock-filter --lock "$RUNNER_TEMP/data/models/lock.json")
+          fi
+          set +e
+          # shellcheck disable=SC2086
+          slopcheck-dev measure --root "$CANDIDATE" --human .corpus/human --ai "$RUNNER_TEMP/data/corpus/ai" \
+            --split dev --patterns $IDS --llm --llm-ai-sample 20 --run-kind pull_request \
+            --ledger "$WORK/ledger.json" "${extra[@]}" --out "$WORK/measure-dev.json"
+          rc=$?
+          set -e
+          case $rc in
+            0) echo "state=ok" >> "$GITHUB_OUTPUT" ;;
+            3) echo "state=budget" >> "$GITHUB_OUTPUT" ;;
+            *) echo "state=error" >> "$GITHUB_OUTPUT" ;;
+          esac
+
+      - name: Decide and post llm-gate
+        if: steps.prepare.outputs.pr != ''
+        env:
+          VALIDATE: ${{ steps.validate.outputs.result || 'skipped' }}
+          MEASURE_STATE: ${{ steps.measure.outputs.state || 'not-run' }}
+        run: |
+          python .github/scripts/llm_gate.py decide --candidate "$CANDIDATE" --prepare "$WORK/prepare.json" \
+            --validate "$VALIDATE" --examples "$WORK/examples.json" --measure "$WORK/measure-dev.json" \
+            --measure-state "$MEASURE_STATE" --current "$RUNNER_TEMP/data/measurements/measurements.json"
+
+      - name: Record whether this run spent budget
+        id: spend
+        if: always() && steps.prepare.outputs.llm_ids != ''
+        run: |
+          if [ -f "$WORK/ledger.json" ] && ! cmp -s "$WORK/ledger.json" "$RUNNER_TEMP/data/budget/ledger.json"; then
+            echo "spent=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "spent=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always() && steps.spend.outputs.spent == 'true'
+        with:
+          name: llm-ledger
+          path: ${{ runner.temp }}/llm/ledger.json
+          retention-days: 7
+
+      - name: Report a workflow error as llm-gate
+        if: failure() && steps.prepare.outputs.pr != ''
+        run: python .github/scripts/llm_gate.py status --state error --description "LLM gate workflow failed; see the run log"
+
+  # Separate job so that the job holding the API key never holds a token that can push.
+  record-spend:
+    needs: llm-gate
+    if: always() && github.repository == 'nullthrone/slop-check' && needs.llm-gate.outputs.spent == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: llm-ledger
+          path: ${{ runner.temp }}/spend/budget
+      - name: Merge this run's spend into budget/ledger.json on branch data
+        run: |
+          python .github/scripts/data_branch.py publish --branch data --source "$RUNNER_TEMP/spend" \
+            --ledger budget/ledger.json --message "Record LLM gate spend of run $GITHUB_RUN_ID"

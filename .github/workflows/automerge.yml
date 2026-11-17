@@ -1,0 +1,57 @@
+# Enables auto-merge (squash) for every non-draft pull request and labels pull requests that
+# touch paths outside the content area with "needs-owner". Branch protection decides the rest:
+# ci-gate, llm-gate and, for protected paths, a code-owner review (.github/CODEOWNERS).
+# pull_request_target runs in the context of the base repository. This workflow never checks
+# out or runs pull request code; it only calls the REST API with the pull request number.
+name: automerge
+
+on:
+  pull_request_target:
+    types: [opened, reopened, synchronize, ready_for_review]
+
+permissions: {}
+
+concurrency:
+  group: automerge-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  automerge:
+    if: github.repository == 'nullthrone/slop-check'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+      pull-requests: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+      PR: ${{ github.event.pull_request.number }}
+    steps:
+      - name: Label pull requests that touch protected paths
+        run: |
+          # Content paths merge on green checks: patterns/, sources/ and docs/ except the
+          # documents that define the gate. Everything else needs the code owner.
+          files=$(gh api --paginate "repos/$GH_REPO/pulls/$PR/files" --jq '.[] | .filename, (.previous_filename // empty)')
+          protected=0
+          while IFS= read -r f; do
+            [ -z "$f" ] && continue
+            case "$f" in
+              docs/architecture.md|docs/governance.md|docs/maintainers.md) protected=$((protected + 1)) ;;
+              patterns/*|sources/*|docs/*) ;;
+              *) protected=$((protected + 1)) ;;
+            esac
+          done <<< "$files"
+          if [ "$protected" -gt 0 ]; then
+            echo "$protected changed file(s) outside the content paths; adding label needs-owner"
+            gh api -X POST "repos/$GH_REPO/labels" -f name=needs-owner -f color=d93f0b \
+              -f description="Touches the gate itself; needs a code-owner review" > /dev/null 2>&1 || true
+            gh api -X POST "repos/$GH_REPO/issues/$PR/labels" -f "labels[]=needs-owner" > /dev/null
+          else
+            echo "Content-only change"
+            gh api -X DELETE "repos/$GH_REPO/issues/$PR/labels/needs-owner" > /dev/null 2>&1 || true
+          fi
+
+      - name: Enable auto-merge
+        if: github.event.pull_request.draft == false
+        run: gh pr merge "$PR" --auto --squash

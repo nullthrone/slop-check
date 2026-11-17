@@ -1,0 +1,11 @@
+{%- if page.verified %}
+<section class="verified" aria-labelledby="verified-against">
+  <h2 class="verified__title" id="verified-against">Verified against</h2>
+  <p class="verified__meta">Official documentation, read on {{ page.checked | date: "%Y-%m-%d" }}. Menus change; if a step no longer matches, the linked page is the authority.</p>
+  <ul class="verified__list">
+    {%- for source in page.verified %}
+    <li><a href="{{ source.url }}">{{ source.title }}</a></li>
+    {%- endfor %}
+  </ul>
+</section>
+{%- endif %}

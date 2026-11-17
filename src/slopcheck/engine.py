@@ -396,6 +396,9 @@ def _assemble(
     observations = [_finding(ev) for ev in evaluations if ev.triggered and ev.status in OBSERVED_STATUSES]
     observations.sort(key=lambda f: (-f["count"], f["pattern_id"]))
     score = round(sum(f["weight"] for f in findings), 4)
+    # Observations are not part of the published catalog, so a skipped observation is not reported.
+    status_by_id = {p.get("id"): effective_status(p) for p in catalog.get("patterns", [])}
+    not_evaluated = {k: v for k, v in not_evaluated.items() if status_by_id.get(k) != "observation"}
     result = {
         "engine_version": __version__,
         "catalog_version": catalog.get("catalog_version"),

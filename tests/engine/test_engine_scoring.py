@@ -137,3 +137,10 @@ def test_empty_text(pattern, catalog):
     assert result["words"] == 0
     assert result["language"] == "und"
     assert result["verdict"] == "GREEN"
+
+
+def test_observation_llm_patterns_are_not_listed_as_not_evaluated(pattern, catalog):
+    cand = pattern("cand-llm", kind="llm", status="candidate", weight=0.0)
+    obs = pattern("obs-llm", kind="llm", status="observation", weight=0.0)
+    result = analyze("Some text here.", catalog(cand, obs), lang="en")
+    assert result["not_evaluated"] == ["cand-llm"]
