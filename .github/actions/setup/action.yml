@@ -1,5 +1,8 @@
 name: Set up Python and slop-check
-description: Install Python 3.12 and the repository with its dev dependencies (pip install -e ".[dev]").
+description: >
+  Install Python 3.12, the pinned and hash-checked dev dependencies from
+  constraints/requirements-dev.txt, then the repository itself (pip install -e ".[dev]" without
+  an index, so nothing outside the lock can be installed).
 runs:
   using: composite
   steps:
@@ -7,9 +10,12 @@ runs:
       with:
         python-version: "3.12"
         cache: pip
-        cache-dependency-path: pyproject.toml
-    - name: Install slop-check with dev dependencies
+        cache-dependency-path: constraints/requirements-dev.txt
+    - name: Install slop-check with pinned dev dependencies
       shell: bash
       run: |
-        python -m pip install --upgrade pip
-        python -m pip install -e ".[dev]"
+        # No pip self-upgrade: the runner's pip installs exact versions in hash-checking mode,
+        # cached files included. Jobs that hold OPENROUTER_API_KEY or a write token run this too.
+        python -m pip install --require-hashes --no-deps -r constraints/requirements-dev.txt
+        # The checkout itself; --no-index fails if pyproject.toml needs anything the lock lacks.
+        python -m pip install --no-index --no-build-isolation -e ".[dev]"

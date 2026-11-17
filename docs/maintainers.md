@@ -152,12 +152,25 @@ point once with a test pull request from a fork, or in the run logs.
   merges at once when a pull request already meets all requirements (as on a branch without
   rules), only the base-branch check stands between such a pull request and the branch, so
   consider a ruleset for `data` and `dist` that blocks force pushes and deletion.
-- Budget cap under load: every llm-eval run checks the ledger as it was when the run started, so
-  runs in parallel can together exceed the monthly cap by up to their number times the
-  per-pull-request cap, and the per-pull-request cap applies per run (each push is a new run).
-  Keep the OpenRouter key limit (section 4) at the cap; it is the hard stop.
+- One budget queue: every job that calls OpenRouter shares the concurrency group
+  `openrouter-budget` (the judge job of llm-eval, the whole measure and conformance runs), so
+  spenders run one at a time and read `budget/ledger.json` only once they hold the group. This
+  relies on job-level and workflow-level groups of the same name sharing one queue; confirm it
+  once by starting measure by hand while an llm-eval judge runs (measure must wait).
+- What the queue leaves open: measure and conformance write the ledger before they release the
+  group, but llm-eval's `record-spend` runs after its judge released it, so the next spender may
+  miss up to one judge run's spend (at most the per-pull-request cap, which applies per run; each
+  push is a new run). Keep the OpenRouter key limit (section 4) at the cap; it is the hard stop.
+- GitHub keeps one pending entry per group and cancels it when a newer one queues. A cancelled
+  llm-eval judge posts an error status on the pull request ("push again or re-run"); measure and
+  conformance repeat daily in the first week of the month and skip once the month has a result.
+  Check after the first month that the report and the conformance result exist.
 - A cancelled llm-eval run (a newer push to the same commit cancels it) still records its spend:
   `record-spend` runs with `always()`; look for the run's entry in `budget/ledger.json`.
+- Pinned dependencies: every workflow installs from `constraints/requirements-dev.txt` in
+  hash-checking mode. Confirm that Dependabot opens pull requests for that file (it is listed in
+  `.github/dependabot.yml`); if not, update the pins and hashes with
+  `pip-compile --generate-hashes` when you bump `pyproject.toml`.
 - workflow_run matches workflows by name: a fork pull request that adds a workflow named `ci`
   starts llm-eval when that workflow passes. Such a pull request touches `.github/` and cannot
   merge without you; the cost is budget, which the approval setting in section 3 limits.

@@ -1,10 +1,17 @@
 # Skill conformance: build the package and run the conformance cases on every model resolved
 # for the conformance role. Results go to conformance/<date>.json on branch data.
+#
+# Two jobs, so that no job holds both the API key and a token that can push: conformance holds
+# OPENROUTER_API_KEY and a read-only token; publish holds the write token and no key and commits
+# the result (only the spend ledger if the run failed). The run holds the concurrency group
+# "openrouter-budget" that every job calling OpenRouter shares, so it reads budget/ledger.json
+# only after the previous spender has written it. GitHub cancels a pending run when a newer one
+# queues, so the schedule repeats daily in its first week and skips once the month has a result.
 name: conformance
 
 on:
   schedule:
-    - cron: "37 5 2 * *"
+    - cron: "37 5 2-8 * *"
   workflow_dispatch:
   push:
     branches: [main]
@@ -14,7 +21,7 @@ on:
 permissions: {}
 
 concurrency:
-  group: conformance
+  group: openrouter-budget
   cancel-in-progress: false
 
 jobs:
@@ -23,25 +30,36 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 120
     permissions:
-      contents: write
+      contents: read
+    outputs:
+      date: ${{ steps.data.outputs.date }}
+      staged: ${{ steps.collect.outputs.staged }}
     env:
       OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+      EVENT: ${{ github.event_name }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ github.event.repository.default_branch }}
+          persist-credentials: false
       - uses: ./.github/actions/setup
 
+      # Read only now, while this run holds the openrouter-budget group.
       - name: Read branch data
         id: data
         run: |
+          date=$(date -u +%Y-%m-%d)
           {
             echo "STAGE=$RUNNER_TEMP/stage"
-            echo "DATE=$(date -u +%Y-%m-%d)"
+            echo "DATE=$date"
           } >> "$GITHUB_ENV"
+          echo "date=$date" >> "$GITHUB_OUTPUT"
           python .github/scripts/data_branch.py checkout --branch data --dir "$RUNNER_TEMP/stage"
           if [ -z "$OPENROUTER_API_KEY" ]; then
             echo "::warning title=Conformance skipped::OPENROUTER_API_KEY is not set."
+            echo "run=false" >> "$GITHUB_OUTPUT"
+          elif [ "$EVENT" = schedule ] && compgen -G "$RUNNER_TEMP/stage/conformance/${date%-*}-*.json" > /dev/null; then
+            echo "This month has a conformance result already; later scheduled runs only catch up a missed one."
             echo "run=false" >> "$GITHUB_OUTPUT"
           else
             echo "run=true" >> "$GITHUB_OUTPUT"
@@ -74,8 +92,52 @@ jobs:
           fi
           python .github/scripts/conformance_summary.py "$STAGE/conformance/$DATE.json" >> "$GITHUB_STEP_SUMMARY"
 
-      - name: Commit to branch data
-        if: steps.data.outputs.run == 'true'
+      # Also after a failure, so that publish can record what was spent.
+      - name: Collect the files for branch data
+        id: collect
+        if: always() && steps.data.outputs.run == 'true'
         run: |
-          python .github/scripts/data_branch.py publish --branch data --source "$STAGE" \
-            --path "conformance/$DATE.json" --ledger budget/ledger.json --message "Conformance $DATE"
+          out=$RUNNER_TEMP/out
+          mkdir -p "$out"
+          cd "$STAGE"
+          for p in "conformance/$DATE.json" budget/ledger.json; do
+            if [ -e "$p" ]; then cp -a --parents "$p" "$out/"; fi
+          done
+          if [ -n "$(ls -A "$out")" ]; then echo "staged=true" >> "$GITHUB_OUTPUT"; fi
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always() && steps.collect.outputs.staged == 'true'
+        with:
+          name: conformance-out
+          path: ${{ runner.temp }}/out
+          if-no-files-found: error
+          retention-days: 3
+
+  publish:
+    needs: conformance
+    if: always() && github.repository == 'nullthrone/slop-check' && needs.conformance.outputs.staged == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    env:
+      DATE: ${{ needs.conformance.outputs.date }}
+      PASSED: ${{ needs.conformance.result == 'success' }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: conformance-out
+          path: ${{ runner.temp }}/out
+      - name: Commit to branch data
+        run: |
+          if [ "$PASSED" = true ]; then
+            python3 .github/scripts/data_branch.py publish --branch data --source "$RUNNER_TEMP/out" \
+              --path "conformance/$DATE.json" --ledger budget/ledger.json --message "Conformance $DATE"
+          else
+            # the run failed; its spend still belongs in the ledger
+            python3 .github/scripts/data_branch.py publish --branch data --source "$RUNNER_TEMP/out" \
+              --ledger budget/ledger.json --message "Record spend of failed conformance run $DATE"
+          fi

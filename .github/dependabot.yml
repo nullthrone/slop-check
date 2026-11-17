@@ -10,7 +10,9 @@ updates:
       actions:
         patterns: ["*"]
   - package-ecosystem: pip
-    directory: /
+    directories:
+      - /
+      - /constraints  # hash-pinned lock that every workflow installs from
     schedule:
       interval: weekly
     groups:

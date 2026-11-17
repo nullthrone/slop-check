@@ -43,6 +43,7 @@ schema/*.schema.json            JSON Schemas
 tests/                          pytest suite for src/
 docs/                           Architecture, governance, contributing details
 .github/                        Workflows, CODEOWNERS, templates
+constraints/requirements-dev.txt  Exact, hash-pinned versions of everything the workflows install from PyPI
 ```
 
 Generated output is never committed to `main`:
@@ -361,8 +362,11 @@ scores, red = median AI score, both on holdout), else `verdict_provisional`.
 `budget/ledger.json` records month, run, model, tokens, cost (from OpenRouter usage
 data, else estimated from `/api/v1/models` pricing). Every privileged job checks the
 month total against `thresholds.yaml: budget` before spending and aborts cleanly when
-the cap would be exceeded. When budget or key is missing: candidates pass the LLM gate
-with a notice (weight 0 anyway); changes to effective-core `llm` patterns fail.
+the cap would be exceeded. Spending jobs share the concurrency group `openrouter-budget`, so
+they run one at a time and read the ledger only while they hold it; the job that holds the key
+never holds a token that can push, and a separate job merges its spend into the ledger. When budget
+or key is missing: candidates pass the LLM gate with a notice (weight 0 anyway); changes to
+effective-core `llm` patterns fail.
 
 ### 6.6 Model resolution (self-updating)
 
@@ -431,8 +435,8 @@ The package must satisfy the strictest known runtime (Gemini app, Nov 2026):
 | `ci.yml` | `pull_request`, `push` to main | read-only, no secrets | lint, tests, validate, fixtures, deterministic empirical gate (dev split), build check, dogfood; final job `ci-gate` |
 | `llm-eval.yml` | `workflow_run` of ci (completed with success) | secrets, trusted code from main only | LLM gate for changed `llm` patterns; fetches PR files via API at the head SHA, treats them as data; posts commit status `llm-gate` |
 | `automerge.yml` | `pull_request_target` | `contents: write`, `pull-requests: write`; never checks out PR code | enables auto-merge (squash) only for content-only PRs into `main`; labels PRs touching protected paths `needs-owner` and withholds auto-merge from them |
-| `measure.yml` | monthly schedule, dispatch | secrets, write to `data` | corpus refresh, full holdout measurement, report, issue |
-| `conformance.yml` | monthly schedule, dispatch, push to main touching `skill/` | secrets, write to `data` | skill conformance across model families |
+| `measure.yml` | monthly schedule (daily in the first week until the month is measured), dispatch | secrets in a read-only job; a separate job without them writes to `data` | corpus refresh, full holdout measurement, report, issue |
+| `conformance.yml` | monthly schedule (daily in its first week until the month has a result), dispatch, push to main touching `skill/` | secrets in a read-only job; a separate job without them writes to `data` | skill conformance across model families |
 | `release.yml` | push to main, dispatch, tags `v*` | write to `dist`, releases | build package with current measurements, publish |
 | `models.yml` | weekly schedule, dispatch | write to `data`, no secrets needed | resolve model selectors against OpenRouter, commit `models/lock.json` |
 

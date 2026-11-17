@@ -95,7 +95,7 @@ jobs:
   # Deterministic empirical gate on the dev split for the text patterns this change touches.
   # Corpus data comes from branch "data"; while it does not exist yet the gate is skipped
   # with a notice for candidates, so the repository works before the first measurement, and
-  # fails pull requests that change a pattern declaring status core.
+  # fails pull requests that modify an existing pattern declaring status core.
   empirical:
     runs-on: ubuntu-latest
     timeout-minutes: 45
@@ -135,6 +135,7 @@ jobs:
         env:
           EVENT: ${{ github.event_name }}
           IDS: ${{ steps.changed.outputs.ids }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
         run: |
           echo "DATA=$RUNNER_TEMP/data" >> "$GITHUB_ENV"
           DATA=$RUNNER_TEMP/data
@@ -143,13 +144,23 @@ jobs:
             echo "corpus=true" >> "$GITHUB_OUTPUT"
           else
             echo "corpus=false" >> "$GITHUB_OUTPUT"
-            # Candidates carry no weight and may pass unmeasured; a pattern that declares status
-            # core is scored at once, so a pull request must not change it unmeasured.
+            # Candidates carry no weight and may pass unmeasured. A pattern that declares status
+            # core and already exists on the base commit is scored at once, so a pull request must
+            # not modify it unmeasured. Newly added core patterns are gated already: status core
+            # requires an initial_core entry in governance/thresholds.yaml, which CODEOWNERS
+            # protects (except an id whose file an earlier pull request deleted).
             # shellcheck disable=SC2086  # IDS holds kebab-case ids separated by spaces
             core=$(python -c 'import sys; from slopcheck_dev.patterns import load_yaml; print(" ".join(i for i in sys.argv[1:] if (load_yaml(f"patterns/text/{i}.yaml") or {}).get("status") == "core"))' $IDS)
             if [ "$EVENT" = pull_request ] && [ -n "$core" ]; then
-              echo "::error title=Empirical gate::Branch data has no corpus yet, so changes to these scored core patterns cannot be measured: $core"
-              exit 1
+              git cat-file -e "$BASE_SHA^{commit}" 2>/dev/null || git fetch --no-tags --depth=1 origin "$BASE_SHA"
+              modified=
+              for id in $core; do
+                if git cat-file -e "$BASE_SHA:patterns/text/$id.yaml" 2>/dev/null; then modified="$modified $id"; fi
+              done
+              if [ -n "$modified" ]; then
+                echo "::error title=Empirical gate::Branch data has no corpus yet, so changes to these scored core patterns cannot be measured:$modified"
+                exit 1
+              fi
             fi
             echo "::notice title=Empirical gate skipped::Branch data has no corpus yet. The first measurement creates it."
           fi

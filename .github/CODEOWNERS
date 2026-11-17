@@ -16,6 +16,7 @@
 /.github/FUNDING.yml      @t11z
 /src/                     @t11z
 /tests/                   @t11z
+/constraints/             @t11z
 /evals/                   @t11z
 /governance/              @t11z
 /schema/                  @t11z
