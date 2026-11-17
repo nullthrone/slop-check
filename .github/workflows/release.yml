@@ -1,8 +1,8 @@
 # Build the skill package with the current measurements and publish it.
 # - Builds of main replace the tree of the orphan branch "dist" (slop-check/ and exports/).
 # - Tags v* and dispatches with release_tag create a GitHub release with the assets
-#   slop-check.zip and system-prompt.md (the README and the site link to them), plus
-#   slop-check-flat.zip and knowledge.md when the build produces them.
+#   slop-check.zip, slop-check-flat.zip, system-prompt.md and knowledge.md (the README and
+#   the site link to them).
 # The daily schedule is a safety net: merges done by auto-merge that was enabled with the
 # workflow token do not trigger push workflows, so the schedule rebuilds dist when main or
 # the measurements moved since the last build and skips otherwise.
@@ -92,11 +92,8 @@ jobs:
       - name: Create or update the GitHub release
         if: steps.plan.outputs.build == 'true' && env.RELEASE_TAG != ''
         run: |
-          assets=(dist/slop-check.zip dist/exports/system-prompt.md)
-          # SKILL.md-at-root archive and full knowledge file (section 7), attached once the build makes them
-          for optional in dist/slop-check-flat.zip dist/exports/knowledge.md; do
-            if [ -f "$optional" ]; then assets+=("$optional"); fi
-          done
+          # folder archive, SKILL.md-at-root archive (section 7), single-file and knowledge exports
+          assets=(dist/slop-check.zip dist/slop-check-flat.zip dist/exports/system-prompt.md dist/exports/knowledge.md)
           if gh release view "$RELEASE_TAG" > /dev/null 2>&1; then
             gh release upload "$RELEASE_TAG" "${assets[@]}" --clobber
           elif [ "$GITHUB_REF_TYPE" = tag ]; then
