@@ -1,5 +1,5 @@
 """Threshold rules: min_count, per_words, comparison, scope, short_text, context_overrides,
-min_units, value rules and requires."""
+min_units, min_words, value rules and requires."""
 
 import pytest
 
@@ -26,6 +26,7 @@ def test_effective_rule_defaults():
         "scope": "text",
         "value": None,
         "min_units": None,
+        "min_words": None,
     }
 
 
@@ -113,6 +114,42 @@ def test_min_units_for_count_rules(pattern, catalog):
     assert triggered("One slop. Two. Three.", p, catalog)
 
 
+def test_min_words_for_count_rules(pattern, catalog):
+    p = rx_pattern(pattern, threshold={"min_count": 4, "per_words": 100, "short_text": {"min_words": 30}})
+    assert not triggered("slop slop word", p, catalog)  # density 66.7, but only 3 words
+    assert triggered("slop " * 2 + "word " * 28, p, catalog)  # 30 words, density 6.7
+    assert not triggered("slop " * 2 + "word " * 58, p, catalog)  # 60 words, density 3.3
+    # texts above the short-text limit are not affected by the short-text rule
+    assert triggered("slop " * 9 + "word " * 191, p, catalog)
+
+
+def test_min_words_for_density_metrics(pattern, catalog):
+    threshold = {"value": {"op": "gt", "x": 5.25}, "short_text": {"min_words": 100}}
+    p = pattern("dash", kind="metric", metric="em_dash_density", params={"per_words": 500}, threshold=threshold)
+    short = "The fix — finally — landed on Friday."
+    result = analyze(short, catalog(p), lang="en")
+    entry = result["all_patterns"]["dash"]
+    assert entry["triggered"] is False and entry["count"] == 0  # an untriggered density keeps no hits
+    assert entry["value"] > 5.25  # the value is still reported
+    longer = short + " " + " ".join(["The release notes describe the change in plain words."] * 12)
+    assert analyze(longer, catalog(p), lang="en")["all_patterns"]["dash"]["triggered"] is True
+
+
+def test_min_words_skips_the_judge(pattern, catalog):
+    calls = []
+
+    def judge(text, patterns, lang):
+        calls.append([p["id"] for p in patterns])
+        return {p["id"]: [text.split(".")[0]] for p in patterns}
+
+    p = pattern("j", kind="llm", rubric="Flag it.", threshold={"min_count": 1, "min_words": 10})
+    assert not analyze("Too short here.", catalog(p), lang="en", llm_judge=judge)["findings"]
+    assert calls == []
+    text = "This sentence is long enough to pass the minimum of ten words easily."
+    assert analyze(text, catalog(p), lang="en", llm_judge=judge)["findings"]
+    assert calls == [["j"]]
+
+
 @pytest.mark.parametrize(
     ("op", "x", "expected"),
     [
@@ -184,6 +221,12 @@ def test_requires_chain_resolves_to_fixpoint(pattern, catalog):
             None,
             "value < 0.2, at least 3 sentences",
             "Wert < 0,2, mind. 3 Sätze",
+        ),
+        (
+            {"value": {"op": "gt", "x": 5.25}, "min_words": 100},
+            None,
+            "value > 5.25, at least 100 words",
+            "Wert > 5,25, mind. 100 Wörter",
         ),
         ({"min_count": 1}, {"min_other_findings": 3}, "min 1 per text; only with 3 other findings", None),
     ],

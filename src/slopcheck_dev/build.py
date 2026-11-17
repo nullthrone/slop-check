@@ -13,6 +13,7 @@ Output below ``--out`` (default ``dist``)::
     slop-check/scripts/slopcheck.py              shim: python scripts/slopcheck.py audit ...
     slop-check.zip                               folder slop-check/ at the zip root
     slop-check-flat.zip                          SKILL.md and the package files at the zip root
+    slop-check-lite.zip                          SKILL.md and references/*.md at the zip root, no scripts
     exports/system-prompt.md                     SKILL.md body, report format, condensed catalog
     exports/knowledge.md                         SKILL.md body plus every reference
 
@@ -23,6 +24,9 @@ audit in runtimes that neither run scripts nor open ``references/`` (section 7).
 ``SKILL.md`` must stay within the Agent Skills size guidance (``MAX_SKILL_LINES``,
 ``MAX_SKILL_TOKENS``); the build shows fewer typical hits per pattern when the full list does
 not fit, and fails when even the list without typical hits does not fit.
+
+The lite archive serves hosts that cannot run scripts or accept at most 20 files besides
+``SKILL.md``; it leaves out ``scripts/`` and ``references/scripts-usage.md``.
 
 The package is checked against section 7 before the zips are written. Generated Markdown is
 deterministic for the same inputs: patterns are ordered by fixed keys and no timestamps
@@ -40,6 +44,7 @@ import os
 import re
 import shutil
 import sys
+import tempfile
 import zipfile
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -57,6 +62,10 @@ MAX_BYTES = 100 * 1024 * 1024
 # check_package counts conservatively: every file and folder of the package plus the root folder,
 # which is the number of entries in slop-check.zip.
 MAX_FILES = 200
+# The lite archive targets hosts that cannot run scripts or allow at most 20 companion files
+# besides SKILL.md (Microsoft 365 Copilot Cowork, Gemini app, Vibe Work).
+MAX_LITE_COMPANION_FILES = 20
+LITE_EXCLUDED_REFERENCES = ("scripts-usage.md",)  # describes scripts/, which the lite archive lacks
 HANDWRITTEN_REFERENCES = (
     "audit-procedure.md",
     "report-format.md",
@@ -857,11 +866,24 @@ def _archive_kind(path: Path) -> str | None:
     return None
 
 
-def check_package(pkg_dir: str | Path) -> tuple[list[str], list[str]]:
-    """Section 7 checks on a built package directory: (errors, warnings)."""
+def check_package(pkg_dir: str | Path, lite: bool = False) -> tuple[list[str], list[str]]:
+    """Section 7 checks on a built package directory: (errors, warnings).
+
+    With ``lite``, also: no ``scripts/`` folder and at most ``MAX_LITE_COMPANION_FILES`` files
+    besides ``SKILL.md``.
+    """
     pkg = Path(pkg_dir)
     errors: list[str] = []
     warnings: list[str] = []
+    if lite:
+        if (pkg / "scripts").exists():
+            errors.append("lite package must not contain scripts/")
+        companions = [p for p in pkg.rglob("*") if p.is_file() and p != pkg / "SKILL.md"]
+        if len(companions) > MAX_LITE_COMPANION_FILES:
+            errors.append(
+                f"lite package holds {len(companions)} files besides SKILL.md; at most "
+                f"{MAX_LITE_COMPANION_FILES} are allowed"
+            )
     if pkg.name != SKILL_NAME:
         errors.append(f"package folder must be named '{SKILL_NAME}', is '{pkg.name}'")
     skill = pkg / "SKILL.md"
@@ -936,6 +958,7 @@ class BuildResult:
     warnings: list[str] = field(default_factory=list)
     flat_zip_path: Path | None = None
     skill_size: dict | None = None  # lines, chars, tokens of the packaged SKILL.md (skill_size())
+    lite_zip_path: Path | None = None
 
 
 def _copy_engine(src: Path, dest: Path) -> list[str]:
@@ -986,6 +1009,23 @@ def write_zip(pkg_dir: Path, zip_path: Path, *, flat: bool = False) -> None:
             info.external_attr = 0o100644 << 16
             info.compress_type = zipfile.ZIP_DEFLATED
             zf.writestr(info, path.read_bytes())
+
+
+def write_lite_zip(pkg_dir: Path, zip_path: Path) -> None:
+    """``slop-check-lite.zip``: ``SKILL.md`` and ``references/*.md`` (without
+    ``LITE_EXCLUDED_REFERENCES``) at the zip root, no ``scripts/``. Checked with
+    ``check_package(..., lite=True)``; raises :class:`BuildError` on a violation."""
+    with tempfile.TemporaryDirectory() as tmp:
+        lite = Path(tmp) / SKILL_NAME
+        (lite / "references").mkdir(parents=True)
+        shutil.copyfile(pkg_dir / "SKILL.md", lite / "SKILL.md")
+        for path in sorted((pkg_dir / "references").glob("*.md")):
+            if path.name not in LITE_EXCLUDED_REFERENCES:
+                shutil.copyfile(path, lite / "references" / path.name)
+        errors, _warnings = check_package(lite, lite=True)
+        if errors:
+            raise BuildError("lite package violates section 7:\n  " + "\n  ".join(errors))
+        write_zip(lite, zip_path, flat=True)
 
 
 EXPORT_INTRO = """\
@@ -1167,6 +1207,8 @@ def build(
     write_zip(pkg, zip_path)
     flat_zip_path = out / f"{SKILL_NAME}-flat.zip"
     write_zip(pkg, flat_zip_path, flat=True)
+    lite_zip_path = out / f"{SKILL_NAME}-lite.zip"
+    write_lite_zip(pkg, lite_zip_path)
 
     _meta, body = parse_frontmatter((pkg / "SKILL.md").read_text(encoding="utf-8"))
     names = _reference_order(sorted(p.name for p in refs_dir.glob("*.md")))
@@ -1175,7 +1217,7 @@ def build(
     report_format = dict(references).get("report-format.md")
     export_path = out / "exports" / "system-prompt.md"
     _write(export_path, render_compact_export(body, report_format, catalog))
-    return BuildResult(pkg, zip_path, export_path, catalog, warnings, flat_zip_path, size)
+    return BuildResult(pkg, zip_path, export_path, catalog, warnings, flat_zip_path, size, lite_zip_path)
 
 
 def run(args) -> int:
@@ -1200,6 +1242,7 @@ def run(args) -> int:
             f"tokens (limits {MAX_SKILL_LINES} lines, about {MAX_SKILL_TOKENS} tokens)"
         )
     print(
-        f"build: wrote {result.package_dir}, {result.zip_path}, {result.flat_zip_path}, {result.export_path}"
+        f"build: wrote {result.package_dir}, {result.zip_path}, {result.flat_zip_path}, "
+        f"{result.lite_zip_path}, {result.export_path}"
     )
     return 0

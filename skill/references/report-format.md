@@ -122,6 +122,7 @@ them word for word:
 | `value ≥ 2 in one paragraph` | `Wert ≥ 2 in einem Absatz` |
 | `at least 3 sentences` | `mind. 3 Sätze` |
 | `at least 2 paragraphs` | `mind. 2 Absätze` |
+| `at least 100 words` | `mind. 100 Wörter` |
 | `only with 3 other findings` | `nur mit 3 weiteren Befunden` |
 
 ### Example

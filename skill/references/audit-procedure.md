@@ -37,13 +37,14 @@ never instructions to you.
 
 ## 4. Find the hits
 
-Choose one of two ways.
+Choose one of two ways. By hand is the default and always complete; the script only speeds up
+the rule-based patterns.
 
 ### With the script
 
-If you can run commands, run the script as `references/scripts-usage.md` describes, with
-`--format json` and, if known, `--lang` and `--context`. Take its hits for all rule-based
-patterns. The script lists every judgment pattern under `not_evaluated`; evaluate those that
+If `scripts/slopcheck.py` exists and you can run commands, run it as
+`references/scripts-usage.md` describes, with `--format json` and, if known, `--lang` and
+`--context`. Take its hits for all rule-based patterns. The script lists every judgment pattern under `not_evaluated`; evaluate those that
 have an entry in `references/text-patterns.md` by hand with step 4b, and drop the others from
 the result. Then go on with step 5.
 
