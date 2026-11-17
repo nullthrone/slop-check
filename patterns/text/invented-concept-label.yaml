@@ -1,0 +1,100 @@
+id: invented-concept-label
+modality: text
+name: Invented concept label
+summary: >
+  The text coins a catchy, analytical-sounding term for its own point and then treats it as an
+  established concept: an abstract problem noun (paradox, trap, creep, tax, divide, inversion) is
+  attached to a domain word ("the supervision paradox", "the acceleration trap", "workload creep"),
+  often introduced with "call it ..." or "nennen wir es ...", and never defined or attributed.
+  Several such labels in one piece borrow the authority of a field vocabulary that does not exist.
+category: lexical
+status: candidate
+legacy_id: T2.13
+detector:
+  kind: llm
+  position: any
+  rubric: >
+    Find compound labels that the text coins for its own argument and presents as if they were
+    established terms. Typical shape: an abstract problem noun (paradox, trap, creep, tax, gap,
+    divide, inversion, problem, loop, spiral, cliff, debt; German Paradox, Falle, Steuer, Lücke,
+    Kluft, Schere, Spirale) attached to a domain word, sometimes introduced by "call it", "let's
+    call this", "what I call", "nennen wir es", "man könnte es ... nennen". Count a label only if
+    the text neither defines it with checkable criteria nor attributes it to a source, and if it is
+    not an established term of the field (for example scope creep, feature creep, digital divide,
+    liquidity trap, poverty trap, technical debt, priority inversion, dependency inversion,
+    birthday paradox, Fachkräftemangel, Liquiditätsfalle). Do not count product names, named
+    metrics the text defines and measures, or quoted terms from other authors. Each distinct label
+    counts once, however often it recurs. Return each coined label as a hit with the sentence in
+    which it first appears.
+threshold:
+  min_count: 2
+  comparison: gte
+  scope: text
+requires: null
+realizations:
+  en:
+    examples:
+      positive:
+        - "Call it the supervision paradox: the more the agent does, the less anyone checks its work."
+        - "Teams soon fall into the acceleration trap, and workload creep does the rest."
+        - "This is the complexity divide, and most companies are on the wrong side of it."
+        - "What we are seeing is the identity inversion: users now adapt to the tool instead of the other way round."
+      negative:
+        - "The project slipped because of scope creep: twelve features were added after the spec freeze."
+        - "Economists have described a liquidity trap since the 1930s: rate cuts no longer raise spending."
+        - "The scheduler suffers from priority inversion when a low-priority task holds the lock."
+        - "We call this metric time to first review and define it as the hours between opening a pull request and the first comment."
+  de:
+    examples:
+      positive:
+        - "Nennen wir es das Aufsichtsparadox: Je mehr der Agent erledigt, desto seltener prüft jemand seine Arbeit."
+        - "Viele Teams tappen in die Beschleunigungsfalle, und die Arbeitslast-Spirale erledigt den Rest."
+        - "Das ist die Komplexitätsschere, und die meisten Unternehmen stehen auf der falschen Seite."
+      negative:
+        - "Das Projekt verzögerte sich durch Scope Creep: Nach dem Spezifikationsstopp kamen zwölf Funktionen hinzu."
+        - "Ökonomen sprechen seit den 1930er-Jahren von der Liquiditätsfalle: Zinssenkungen erhöhen die Ausgaben nicht mehr."
+        - "Wir nennen diese Kennzahl Durchlaufzeit und messen sie in Stunden vom Eingang bis zur Freigabe."
+legitimate_use: >
+  Essays and research papers may introduce one new term on purpose, define it, and use it
+  consistently as a handle for a concept the text develops. Established terms of a field and
+  attributed concepts are no finding. Flag labels that appear without definition, often several
+  per text, and that a plain description would replace without loss.
+fix: >
+  Replace the label with a plain description of the mechanism it stands for. If the concept is
+  needed throughout the text, define it once with concrete criteria and keep it.
+prevention: >
+  Do not coin catchy labels such as "the X paradox" or "the Y trap" for your own points. Describe
+  the mechanism in plain words, or use the established term of the field.
+notes: >
+  Detector kind llm because separating coined labels from established terms needs world knowledge;
+  a regex on "call it the ..." would catch only the marked subset. Threshold taken from the
+  provisional legacy proposal of 2026-08-02 (at least 2 coined labels in one text); tropes.fyi
+  likewise says several in one piece are the signal.
+sources:
+  - source: legacy-knowledge-base
+    locator: "Candidate T2.13, opened 2026-08-02; section 5 (state 2026-11-15)"
+  - source: tropes-fyi
+    locator: "entry 'Invented Concept Labels' (entry page under the slug named-concept-abuse), category Tone, status rising"
+    note: >
+      Examples "the supervision paradox", "the acceleration trap", "workload creep"; two more added
+      by 2026-10-11: "the complexity divide", "the identity inversion".
+  - source: lizontheweb-indicators
+    locator: "entry on invented concept labels"
+  - source: skill-avoid-ai-writing
+    locator: "entry 'Invented Labels'"
+    note: >
+      "Pseudo-analytical compound terms coined mid-sentence and never defined ('the supervision
+      paradox,' 'the context-collapse problem,' 'a coordination tax')". Counted cautiously by the
+      legacy knowledge base because it repeats the example "supervision paradox".
+related:
+  - {id: hallmark-vocabulary, relation: distinct-from}
+  - {id: inflated-importance, relation: distinct-from}
+history:
+  - {date: 2026-08-02, change: "Opened as legacy candidate T2.13 (tropes.fyi, lizontheweb.com); provisional threshold proposal: at least 2 coined, unsupported labels per text."}
+  - {date: 2026-08-09, change: "No new source; an article on neologisms requested from GPT-4 as a research method judged not relevant."}
+  - {date: 2026-08-30, change: "tropes.fyi status rising, category Tone."}
+  - {date: 2026-09-20, change: "avoid-ai-writing ('Invented Labels') counted cautiously as third source because it repeats the example 'supervision paradox'."}
+  - {date: 2026-09-27, change: "Targeted search for a fourth source with its own example found nothing."}
+  - {date: 2026-10-11, change: "tropes.fyi entry page found under the slug named-concept-abuse with two more examples."}
+  - {date: 2026-11-15, change: "Entry confirmed in the 49-entry directory; no fourth source."}
+  - {date: 2026-11-17, change: "Migrated to slop-check repository as candidate invented-concept-label."}

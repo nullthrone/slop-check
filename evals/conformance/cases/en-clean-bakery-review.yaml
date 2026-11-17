@@ -1,0 +1,16 @@
+id: en-clean-bakery-review
+language: en
+mode: audit
+notes: Plain, concrete local review written in a human register. Expected GREEN with no scored findings.
+text: |
+  We tried the new bakery on Hill Street on Saturday. The rye loaf was dense and sour, with a crust you have to saw through. At 4.80 pounds it costs about a pound more than the supermarket version, which seems fair for bread that keeps for five days.
+
+  The croissants were less convincing. Ours came from a tray that had clearly been sitting there since early morning, and by eleven they had gone soft. The woman at the counter said they bake a second batch at noon on weekdays but not on Saturdays, so go early if you want them.
+
+  Coffee comes from a roaster in Bristol. I had a flat white. My partner had the filter coffee and liked it better than I liked mine.
+
+  There are two small tables and a bench by the window, which fill up fast. On a dry day you can take your bread to the park across the road. Cards are accepted. They close at three and stay shut on Mondays.
+must_find: []
+must_not_find: [antithesis-template, hallmark-vocabulary, triad, em-dash-inflation, brochure-tone, compulsive-summary]
+expect_verdict: [GREEN]
+max_findings: 0

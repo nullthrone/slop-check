@@ -1,0 +1,68 @@
+id: default-color-grade
+modality: image
+name: Default color grade
+summary: >
+  Colors follow a generator default instead of the subject: saturation and contrast pushed hard, an
+  orange-and-teal split, or a uniform yellow, amber or sepia cast over the whole frame. Reported for
+  Midjourney and Ideogram (orange and teal, stronger on abstract prompts), for ChatGPT image generation
+  (yellow cast, 2025) and for generators in general (oversaturation). Each palette is a legitimate
+  grading choice; the pattern is its appearance by default.
+category: visual-style
+status: candidate
+detector:
+  kind: vision
+  rubric: >
+    Judge the overall color treatment. Flag the image if one of these dominates without a reason in the
+    subject or the brief: saturation and contrast pushed so far that reds read as neon, blues as
+    electric and skin as orange; an orange-and-teal split where warm highlights and skin sit against
+    cyan or teal shadows and backgrounds in a scene that contains no such colors; a yellow, amber or
+    sepia cast that tints whites, skies and neutral surfaces across the whole frame. Count one hit per
+    image. Does not count: scenes whose real colors produce the palette (sunset over the sea, a teal
+    wall, tungsten-lit interiors); a grade the brief asks for (period look, film emulation, brand
+    palette); monochrome or duotone design; images in which neutral whites stay neutral. Describe the
+    visible pattern only; do not infer how the image was made.
+threshold: {min_count: 1}
+realizations:
+  "*":
+    examples:
+      positive:
+        - "Image of a pianist on stage in which every highlight and skin tone is orange and every shadow and wall is teal, although the hall has white walls and wooden panels."
+        - "Illustration of a city street in which the whole frame, including white shirts and the sky, carries a uniform yellow-sepia tint like an old print, with no period brief."
+        - "Landscape image with neon-green grass, an electric-blue sky and orange skin tones, contrast so high that the shadows turn solid black."
+      negative:
+        - "Photo of a beach at sunset where the orange sky and the blue-green sea are the real colors of the scene."
+        - "Product photo on a white background in which white stays neutral and the packaging colors match the real product."
+        - "Sepia-toned image for a magazine feature on the 1920s, where the brief asks for a period look."
+legitimate_use: >
+  Color grading is a craft choice. Orange and teal, warm vintage tints and saturated palettes are
+  legitimate when the brief or the scene asks for them. Flag only a grade that appears regardless of
+  subject, which practitioners report most often on short or abstract prompts.
+fix: >
+  Re-grade from neutral: set white balance on something known to be neutral (a white shirt, paper, a
+  grey wall), pull saturation back until skin reads natural, remove the global tint, then apply a
+  palette chosen for the subject or the brand if one is wanted.
+prevention: >
+  Name the palette and the white balance in the prompt, either generically ("neutral white balance,
+  true-to-life colors, muted saturation") or concretely ("sage green, off-white and charcoal", "cool
+  blue-grey winter light"). Give a full scene description, since short abstract prompts leave color to
+  the default. Ask for a vintage tint or an orange-and-teal grade only when the brief calls for it.
+sources:
+  - source: flitto-orange-teal-bias
+    locator: "whole post"
+    note: "Orange-and-teal bias in Midjourney and Ideogram, stronger on abstract prompts."
+  - source: knowyourmeme-ai-art-yellow
+    locator: "entry history, March to May 2025"
+    note: "User reports of a yellow or sepia cast in ChatGPT image output; derived_from flitto-orange-teal-bias."
+  - source: fastcompany-gen-ai-aesthetic
+    locator: "contrast quote"
+    note: "'the color saturation cranked to 11'."
+  - source: atlantic-why-ai-art-looks
+    locator: "description of the default look"
+    note: "Colors 'bright and saturated'."
+  - source: kellogg-insight-ai-photo-signs
+    locator: "sign 2, stylistic artifacts"
+    note: "'excessive saturation'."
+related:
+  - {id: cinematic-default-lighting, relation: overlaps}
+history:
+  - {date: 2026-11-17, change: "Added to the v1 image catalog as candidate."}

@@ -1,0 +1,59 @@
+id: unmotivated-shallow-focus
+modality: image
+name: Unmotivated shallow focus
+summary: >
+  A creamy blurred background and heavy bokeh behind subjects that would not be photographed that way:
+  wide scenes where the setting matters, groups in which people at the same distance are unevenly
+  sharp, everyday snapshots. Practitioner sources list cinema-grade bokeh as a cliché, and detection
+  guides note blur that masks unresolved detail.
+category: visual-style
+status: candidate
+detector:
+  kind: vision
+  rubric: >
+    Compare depth of field with the shot. Flag the image if the background or foreground is strongly
+    blurred with smooth bokeh although framing, distance or purpose call for deep focus: environmental
+    or wide shots where the setting carries the story; group scenes in which people at a similar
+    distance are unevenly sharp; documentary or everyday snapshots; areas where the blur hides
+    incoherent detail such as hands, objects or crowds. Count one hit per image. Does not count: close
+    portraits, macro shots and product detail shots where shallow focus is the usual choice and the blur
+    increases gradually with distance; sports and wildlife shots made with long lenses; briefs that ask
+    for the effect. Describe the visible pattern only; do not infer how the image was made.
+threshold: {min_count: 1}
+realizations:
+  "*":
+    examples:
+      positive:
+        - "Image of a team in a workshop where the person in front is sharp and a colleague at the same table one meter behind dissolves into creamy bokeh."
+        - "Image meant to show a village market in which a single apple is in focus and the whole square is reduced to soft discs of light."
+        - "Portrait in which the subject is sharp while the book she holds in front of her is smeared by blur that cuts off at its edges."
+      negative:
+        - "Close headshot taken with a portrait lens, background softly out of focus with gradual falloff."
+        - "Landscape photo of a valley, sharp from the rocks in the foreground to the distant peaks."
+        - "Wildlife photo of a heron taken with a long telephoto lens, background blurred by distance."
+legitimate_use: >
+  Portraits, macro work, product details, sports and wildlife photography, where shallow depth of field
+  is the normal optical result.
+fix: >
+  Increase depth of field so the setting reads (smaller aperture, wider lens); let blur grow with
+  distance; keep people at the same distance equally sharp; if the blur was hiding broken detail,
+  repair that detail and show it.
+prevention: >
+  State the depth of field the image needs: "deep focus, background sharp and readable", "f/8, sharp
+  from the table to the far wall", or for a portrait "85mm at f/2.8, background slightly soft". Ask for
+  strong bokeh only for close portraits and product details.
+sources:
+  - source: openart-visual-cliches
+    locator: "cliché 6, unmotivated background blur"
+    note: "'a creamy blurred background behind subjects that would never actually be shot that way', 'cinema-grade bokeh'."
+  - source: sightengine-spot-ai-images
+    locator: "background section"
+    note: "Backgrounds overly blurred."
+  - source: arxiv-2406-08651
+    locator: "section 2.4 Inconsistencies in Resolution & Color"
+    note: "'an unnatural amount of blur that appears to mask out the hand and book'."
+related:
+  - {id: cinematic-default-lighting, relation: overlaps}
+  - {id: dysfunctional-objects, relation: distinct-from}
+history:
+  - {date: 2026-11-17, change: "Added to the v1 image catalog as candidate."}

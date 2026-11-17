@@ -1,0 +1,86 @@
+id: compulsive-counting
+modality: text
+name: Compulsive counting
+summary: >
+  The text announces the exact number of items before or inside a list ("Five things we wish to
+  discuss", "Here are the top seven"), as if getting the count right were itself the achievement.
+  The number adds nothing, and the list that follows often does not justify it.
+category: structure
+status: observation
+legacy_id: T2.21
+detector:
+  kind: regex
+  position: any
+threshold:
+  min_count: 1
+  comparison: gte
+  scope: text
+requires: null
+realizations:
+  en:
+    patterns:
+      - '(?i)\bhere\s(?:are|is)\s(?:the\s)?(?:top\s)?(?:three|four|five|six|seven|eight|nine|ten|[3-9]|1[0-9])\s(?:key\s|main\s|core\s|critical\s|essential\s|simple\s|big\s|biggest\s|most\simportant\s)?(?:things|reasons|ways|takeaways|lessons|tips|steps|factors|pillars|principles|questions|mistakes|signs|strategies|benefits|truths|ideas|insights)\b'
+      - '(?i)\bhere\sare\sthe\stop\s(?:three|four|five|six|seven|eight|nine|ten|[3-9]|1[0-9])\b'
+      - '(?:^|(?<=[.!?:]\s))(?i:(?:three|four|five|six|seven|eight|nine|ten)\s(?:key\s|main\s|core\s|quick\s|simple\s|big\s)?(?:things|reasons|ways|takeaways|lessons|tips|factors|pillars|principles|truths|insights)\b)'
+    examples:
+      positive:
+        - "Five things we wish to discuss today."
+        - "Four reasons why this will work."
+        - "Three key takeaways from the conference:"
+        - "Here are the top seven tools for remote teams."
+      negative:
+        - "There are two ways to install the package: with pip or from source."
+        - "We tested five strategies against a control group of 120 patients."
+        - "Three people were injured when the scaffold collapsed."
+        - "The top seven floors of the tower are offices."
+  de:
+    patterns:
+      - '(?i)\bhier\ssind\s(?:die\s)?(?:drei|vier|fünf|sechs|sieben|acht|neun|zehn|[3-9]|1[0-9])\s(?:wichtigsten\s|zentralen\s|entscheidenden\s|größten\s|besten\s|einfachen\s)?(?:Dinge|Gründe|Wege|Tipps|Lektionen|Erkenntnisse|Schritte|Faktoren|Säulen|Prinzipien|Fragen|Fehler|Strategien|Vorteile|Punkte|Learnings)\b'
+      - '(?:^|(?<=[.!?:]\s))(?i:(?:drei|vier|fünf|sechs|sieben|acht|neun|zehn)\s(?:wichtige\s|zentrale\s|entscheidende\s|einfache\s|schnelle\s)?(?:Dinge|Gründe|Tipps|Lektionen|Erkenntnisse|Faktoren|Säulen|Prinzipien|Wahrheiten|Learnings)\b)'
+    examples:
+      positive:
+        - "Fünf Dinge, die wir heute besprechen wollen."
+        - "Vier Gründe, warum das funktioniert."
+        - "Drei zentrale Erkenntnisse aus der Konferenz:"
+        - "Hier sind die sieben wichtigsten Tipps für Teams im Homeoffice."
+      negative:
+        - "Es gibt zwei Wege, das Paket zu installieren: mit pip oder aus dem Quellcode."
+        - "Wir haben fünf Strategien an 120 Patienten getestet."
+        - "Drei Personen wurden bei dem Unfall verletzt."
+        - "Die oberen sieben Etagen sind Büros."
+legitimate_use: >
+  A count is information when the reader needs it: a checklist with a fixed number of steps, a
+  title promising a set the text then delivers, or a legal text with numbered grounds. Dismiss a hit
+  when the number lets the reader track progress or verify completeness; flag counts that only
+  announce a list.
+fix: >
+  Drop the number and introduce the content directly, or make the items carry the structure
+  themselves. Use a numbered list only for items that are truly parallel.
+prevention: >
+  Do not announce the number of points before listing them ("Here are five reasons"). Present the
+  points; let the reader count if it matters.
+notes: >
+  Legacy candidate T2.21, migrated as observation: its two sources (tropes.fyi and avoid-ai-writing,
+  registered as derived from tropes.fyi) form a single independence cluster under
+  docs/architecture.md section 5.2. Counts below three are left out of the detector because "two
+  ways" or "two options" is usually informative. No source gives a quantified threshold.
+sources:
+  - source: legacy-knowledge-base
+    locator: "Candidate T2.21, opened 2026-09-20; section 5 (state 2026-11-15)"
+  - source: tropes-fyi
+    locator: "entry 'Compulsive Counting', category Tone, status new"
+    note: "Examples: \"Five things we wish to discuss\", \"Four reasons why this will work\"."
+  - source: skill-avoid-ai-writing
+    locator: "entry 'Numbered List Inflation'"
+    note: "Comparable examples and the fix rule to use numbered lists only for real parallelism."
+related:
+  - {id: triad, relation: distinct-from}
+  - {id: announce-then-answer, relation: overlaps}
+  - {id: excessive-enumeration, relation: overlaps}
+history:
+  - {date: 2026-09-06, change: "Recorded as a single-source observation (tropes.fyi, status new)."}
+  - {date: 2026-09-20, change: "Opened as legacy candidate T2.21 with avoid-ai-writing ('Numbered List Inflation') as second source."}
+  - {date: 2026-10-04, change: "An article on list formatting (popularai.org) checked and rejected: it covers list overuse in general, not count announcements."}
+  - {date: 2026-10-11, change: "No third source; search hits on the term concern an unrelated medical topic."}
+  - {date: 2026-11-15, change: "tropes.fyi entry page re-read; no new information and no third source."}
+  - {date: 2026-11-17, change: "Migrated to slop-check repository as observation compulsive-counting (both sources form one independence cluster)."}

@@ -1,0 +1,14 @@
+id: de-audit-unternehmensblog
+language: de
+mode: audit
+notes: Unternehmensblog mit unbelegten Expertenaussagen, Bedeutungsaufblähung und Prospektton.
+text: |
+  Experten sind sich einig, dass die Energiewende ohne neue Speicher nicht gelingen kann. Studien zeigen, dass der Bedarf in den kommenden Jahren stark steigen wird.
+
+  Unser neues Werk in der malerischen Lausitz markiert einen historischen Wendepunkt für die gesamte Region. Inmitten einer atemberaubenden Landschaft entstehen hier Batteriespeicher, die Strom aus Wind und Sonne für die Nacht aufbewahren. Das Projekt ist ein eindrucksvolles Zeugnis dafür, was mutige Investitionen bewirken können.
+
+  Rund 400 Menschen werden im Werk arbeiten, viele davon in neu geschaffenen Ausbildungsberufen. Gemeinsam mit der Hochschule vor Ort entwickeln wir Lehrgänge für Elektronik, Logistik und Qualitätssicherung.
+
+  Mit dieser Investition gestalten wir maßgeblich die Zukunft der Energieversorgung in Deutschland. Die Bedeutung des Standorts kann nicht hoch genug eingeschätzt werden.
+must_find: [vague-attribution, inflated-importance, brochure-tone]
+must_not_find: [emoji-decoration, bullet-bold-lead, sycophant-residue, curly-quotes]

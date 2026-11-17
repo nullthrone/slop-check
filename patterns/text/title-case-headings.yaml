@@ -1,0 +1,77 @@
+id: title-case-headings
+modality: text
+name: Title case headings
+summary: >
+  Every word of a heading is capitalized, articles and prepositions included ("Understanding The
+  Impact Of Modern Technology On Society"), instead of sentence case or a consistent house style.
+  In German, where only nouns are capitalized, the habit shows as capitalized articles and
+  prepositions inside headings ("Tipps Für Den Alltag").
+category: formatting
+status: observation
+detector:
+  kind: regex
+  position: any
+threshold:
+  min_count: 2
+  comparison: gte
+  scope: text
+requires: null
+realizations:
+  en:
+    patterns:
+      - '^#{1,6}[ \t]{1,3}(?:[A-Z0-9][\w’''&,.-]{0,30}[ \t]){1,12}(?:The|Of|On|In|And|For|To|With|At|By|From|Into|Or|A|An)[ \t][A-Z0-9][\w’''&,.-]{0,30}(?:[ \t][A-Z0-9][\w’''&,.-]{0,30}){0,12}[ \t]*$'
+    examples:
+      positive:
+        - "## Understanding The Impact Of Modern Technology On Society"
+        - "### Why Your Team Needs A Better Process"
+        - "# The Future Of Work Is Here"
+      negative:
+        - "## Understanding the impact of modern technology on society"
+        - "## How to Build a Data Pipeline"
+        - "## Installing on Windows"
+        - "## Chapter 3: The Road North"
+  de:
+    patterns:
+      - '^#{1,6}[ \t]{1,3}\S[^\n]{0,80}?(?<!:)[ \t](?:Der|Die|Das|Den|Dem|Des|Und|Oder|Für|Mit|Von|Vom|Im|Auf|Zu|Zur|Zum|Ein|Eine|Einer|Bei|Aus|Nach|Über)[ \t][^\n]{1,80}$'
+    examples:
+      positive:
+        - "## Die Zukunft Der Arbeit"
+        - "## Tipps Für Den Alltag"
+        - "### Hinweise Zur Installation"
+      negative:
+        - "## Die Zukunft der Arbeit"
+        - "## Was Sie über Docker wissen müssen"
+        - "## Kapitel 3: Der Weg nach Rom"
+legitimate_use: >
+  Several English style guides prescribe title case for headings, though most keep short articles
+  and prepositions lowercase; titles of works keep their own capitalization. Dismiss a hit that
+  follows a documented house style or quotes a title; flag every-word capitalization repeated
+  across headings, and capitalized function words in German headings, which German orthography
+  does not use.
+fix: >
+  Switch headings to sentence case, or apply one style guide consistently, with articles and
+  short prepositions in lowercase.
+prevention: >
+  Write headings in sentence case unless a house style requires otherwise. Never capitalize
+  articles and prepositions inside a heading.
+notes: >
+  Single-source observation. The detector only sees markdown headings and only the every-word
+  variant (a capitalized function word inside the heading). Threshold chosen at migration: two
+  headings, because the pattern is the consistent habit across a document. A 2025 personal essay
+  on Medium makes the same claim; the legacy knowledge base judged it methodologically weak and
+  did not register it.
+sources:
+  - source: tropes-fyi
+    locator: "entry 'Title Case Headings', category Formatting, status consistent"
+    note: "Example: \"Understanding The Impact Of Modern Technology On Society\"."
+  - source: fireprompts-io
+    locator: "'Capitalized Heading Style'"
+    note: "Thematic match recorded on 2026-08-30; rated methodologically weak and not counted by the legacy knowledge base."
+related:
+  - {id: where-what-why-headers, relation: overlaps}
+history:
+  - {date: 2026-08-30, change: "Recorded in the legacy knowledge base as a single-source observation (tropes.fyi), with weak thematic matches at fireprompts.io and in a 2025 essay."}
+  - {date: 2026-09-06, change: "tropes.fyi status now consistent; no second source."}
+  - {date: 2026-09-20, change: "Appears as a single item in several overview articles without own specificity; not counted as a second source."}
+  - {date: 2026-11-15, change: "No second source found; still an observation."}
+  - {date: 2026-11-17, change: "Migrated to slop-check repository as observation title-case-headings."}

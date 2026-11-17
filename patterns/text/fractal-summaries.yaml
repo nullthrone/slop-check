@@ -1,0 +1,77 @@
+id: fractal-summaries
+modality: text
+name: Fractal summaries
+summary: >
+  The text previews what it will say and recaps what it said, at every level: each section opens
+  with a preview ("In this section, we'll explore ...") and closes with a recap, and the whole
+  document does the same. The core point is restated so
+  often that the structure outweighs the content.
+category: composition
+status: observation
+detector:
+  kind: regex
+  position: any
+threshold:
+  min_count: 3
+  comparison: gte
+  scope: text
+requires: null
+realizations:
+  en:
+    patterns:
+      - '(?i)\bin\sthis\s(?:section|chapter|article|post|guide|part)\s?,?\s(?:we[’'']ll|we\swill|I[’'']ll|I\swill|you[’'']ll|you\swill|let[’'']s)\s(?:explore|look\sat|take\sa\slook\sat|examine|discuss|cover|dive\sinto|delve\sinto|walk\sthrough|learn|unpack|break\sdown)\b'
+      - '(?i)\bas\swe(?:[’'']ve|\shave)\s(?:seen|discussed|explored|covered|learned|established)\b'
+      - '(?i)\b(?:to\srecap|let[’'']s\srecap|to\ssum\sup\sthis\ssection|in\sthis\ssection,?\swe\s(?:have\s)?(?:explored|covered|looked\sat|discussed))\b'
+    examples:
+      positive:
+        - "In this section, we'll explore the three causes of churn."
+        - "As we've seen, onboarding drives retention."
+        - "To recap, the pricing page confuses new visitors."
+        - "In this section we have explored how caching reduces load."
+      negative:
+        - "This section lists the configuration options in alphabetical order."
+        - "In this section of the river, fishing is prohibited between March and June."
+        - "As we saw in the 2019 audit, the backups were incomplete."
+        - "The recap meeting is scheduled for Thursday at ten."
+  de:
+    patterns:
+      - '(?i)\bin\sdiesem\s(?:Abschnitt|Kapitel|Artikel|Beitrag|Leitfaden|Teil)\s(?:werden\swir|schauen\swir\suns|betrachten\swir|erfahren\sSie|erfährst\sdu|beleuchten\swir|gehen\swir|tauchen\swir)\b'
+      - '(?i)\bwie\swir\s(?:gesehen|besprochen|festgestellt|erfahren)\shaben\b'
+      - '(?i)\b(?:fassen\swir\s(?:kurz\s)?zusammen|halten\swir\sfest|in\sdiesem\sAbschnitt\shaben\swir)\b'
+    examples:
+      positive:
+        - "In diesem Abschnitt werden wir die drei Ursachen der Kündigungen untersuchen."
+        - "Wie wir gesehen haben, entscheidet das Onboarding über die Bindung."
+        - "Fassen wir kurz zusammen: Die Preisseite verwirrt neue Besucher."
+      negative:
+        - "Dieser Abschnitt listet die Konfigurationsoptionen alphabetisch auf."
+        - "In diesem Abschnitt des Flusses ist das Angeln von März bis Juni verboten."
+        - "Wie wir im Audit 2019 sahen, waren die Backups unvollständig."
+legitimate_use: >
+  Textbooks, long manuals and academic papers use section previews and recaps as navigation aids,
+  and one closing summary in a long report is normal. Flag previews and recaps at several levels of
+  a text that is short enough to be read in one go.
+fix: >
+  Remove section previews and recaps that only restate headings or earlier paragraphs. Keep one
+  summary where the reader needs it, usually at the top of a long document.
+prevention: >
+  Do not announce what each section will cover or recap what it covered. Say each thing once, in
+  the place where it belongs.
+notes: >
+  Single-source observation. The detector catches preview and recap phrases; the full pattern
+  (the same point restated at every structural level) needs a reader's judgement. Threshold chosen
+  at migration: three preview or recap phrases per text. Expected false positives in academic
+  papers and manuals, where "In this section, we ..." is conventional.
+sources:
+  - source: tropes-fyi
+    locator: "entry 'Fractal Summaries', category Composition, status rising"
+    note: "Example recorded at migration: \"In this section, we'll explore...\"."
+related:
+  - {id: compulsive-summary, relation: overlaps}
+  - {id: self-echo, relation: overlaps}
+  - {id: announce-then-answer, relation: overlaps}
+history:
+  - {date: 2026-09-06, change: "Recorded in the legacy knowledge base as a single-source observation (tropes.fyi, status new): the same core statement repeated at every structural level; close to T1.5 but repeated at several levels."}
+  - {date: 2026-09-13, change: "tropes.fyi status changed from new to rising; directory-internal change, not counted as confirmation."}
+  - {date: 2026-11-15, change: "Still single-source."}
+  - {date: 2026-11-17, change: "Migrated to slop-check repository as observation fractal-summaries."}

@@ -1,0 +1,68 @@
+id: where-what-why-headers
+modality: text
+name: Where/What/Why headers
+summary: >
+  Section headings are built as wh-clauses without a question mark ("Where the market is stuck
+  today", "What we do differently", "Why it matters"). Used as the default shape for every heading,
+  the form reads as template and says less than a heading that names the content.
+category: formatting
+status: observation
+detector:
+  kind: regex
+  position: any
+threshold:
+  min_count: 2
+  comparison: gte
+  scope: text
+requires: null
+realizations:
+  en:
+    patterns:
+      - '^#{1,6}[ \t]{1,3}(?:Where|What|Why)\b[^\n?]{1,80}$'
+    examples:
+      positive:
+        - "## Where the market is stuck today"
+        - "## What we do differently"
+        - "### Why it matters"
+      negative:
+        - "## What is a container?"
+        - "## Whatever happened to Usenet"
+        - "## Results of the 2024 survey"
+        - "## Why?"
+  de:
+    patterns:
+      - '^#{1,6}[ \t]{1,3}(?:Wo|Was|Warum|Wieso|Weshalb|Wofür)\b[^\n?]{1,80}$'
+    examples:
+      positive:
+        - "## Wo der Markt heute feststeckt"
+        - "## Was wir anders machen"
+        - "### Warum das wichtig ist"
+      negative:
+        - "## Was ist ein Container?"
+        - "## Wartung und Pflege"
+        - "## Ergebnisse der Umfrage 2024"
+        - "## Warum?"
+legitimate_use: >
+  One wh-heading in a document, FAQ headings phrased as real questions, and the "how to" headings
+  of tutorials are normal. Flag documents in which several headings follow the "Where/What/Why
+  clause" template.
+fix: >
+  Rename headings after their content ("Market stagnation since 2023", "Our pricing model"), or use
+  real questions with question marks in FAQ sections.
+prevention: >
+  Name sections after their content. Do not default to headings of the form "What we do", "Why it
+  matters", "Where it stands".
+notes: >
+  Single-source observation. "How" headings are left out because tutorials use them legitimately.
+  Threshold chosen at migration: two such headings, because the source describes the form as the
+  default shape across a document.
+sources:
+  - source: tropes-fyi
+    locator: "entry 'Where/What/Why Headers', category Formatting, status new"
+    note: "Examples: \"Where the market is stuck today\", \"What we do differently\", \"What it's worth to you\"."
+related:
+  - {id: title-case-headings, relation: overlaps}
+history:
+  - {date: 2026-09-13, change: "Recorded in the legacy knowledge base as a single-source observation (tropes.fyi, status new)."}
+  - {date: 2026-11-15, change: "Still single-source."}
+  - {date: 2026-11-17, change: "Migrated to slop-check repository as observation where-what-why-headers."}

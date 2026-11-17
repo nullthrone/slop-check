@@ -1,0 +1,16 @@
+id: de-audit-werbetext
+language: de
+mode: audit
+notes: Werbetext mit Antithese, deutschen Floskeln und Hallmark-Vokabular.
+text: |
+  Das ist kein gewöhnliches Software-Update, das ist ein Neuanfang.
+
+  Mit Nordlicht 3 bieten wir Ihnen eine ganzheitliche Lösung, die sich nahtlos in Ihre bestehenden Abläufe einfügt. Die Plattform ist nicht nur schneller, sondern auch deutlich einfacher zu bedienen. Maßgeschneiderte Dashboards und umfassende Auswertungen schaffen einen echten Mehrwert für Ihr gesamtes Team.
+
+  Digitalisierung spielt dabei eine zentrale Rolle. Nur wer seine Prozesse konsequent vernetzt, kann das volle Potenzial seiner Daten ausschöpfen. Nordlicht 3 verbindet Planung, Controlling und Kommunikation auf einer gemeinsamen Oberfläche.
+
+  Die Einrichtung dauert wenige Minuten. Bestehende Projekte übernehmen Sie per Import, und unser Support-Team steht Ihnen bei Fragen montags bis freitags zur Verfügung.
+
+  Starten Sie jetzt und bringen Sie Ihre Zusammenarbeit auf ein neues Level.
+must_find: [antithesis-template, german-stock-phrases, hallmark-vocabulary]
+must_not_find: [emoji-decoration, bullet-bold-lead, sycophant-residue, curly-quotes]

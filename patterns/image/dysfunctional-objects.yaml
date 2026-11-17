@@ -1,0 +1,60 @@
+id: dysfunctional-objects
+modality: image
+name: Dysfunctional objects and dissolving detail
+summary: >
+  Objects look plausible at a glance and fail on inspection: a watch growing out of an arm, a broom
+  with an unusable grip, a detached racket handle, stairs leading into a wall, guitar strings in varying
+  numbers, a backpack strap turning into a shirt, background crowds whose faces dissolve, repeating
+  background patterns. The image renders what objects look like without how they work.
+category: visual-artifact
+status: candidate
+detector:
+  kind: vision
+  rubric: >
+    Check each object and how it is used. Flag the image if an object could not work as depicted
+    (handles detached or fused, tools with impossible grips, furniture blocking its own use, stairs or
+    doors leading nowhere, instruments with irregular strings or keys); if objects merge into each
+    other or into people; if a person holds or uses something in a way that cannot work (a sandwich held
+    edge-on, a hand inside a burger); or if background detail dissolves on close view (smeared faces in
+    a crowd, repeating or melting patterns, nonsensical architecture). Count one hit per image. Does not
+    count: unusual but real designs (avant-garde fashion, historic architecture); objects too small or
+    too far out of focus to resolve in an otherwise coherent image; deliberate surreal art. Describe the
+    visible pattern only; do not infer how the image was made.
+threshold: {min_count: 1}
+realizations:
+  "*":
+    examples:
+      positive:
+        - "Image of a man checking a wristwatch that grows out of his forearm, its face showing lines instead of numbers."
+        - "Photo-style kitchen in which the oven door and the stovetop merge into one object and the cupboard handles float beside the doors."
+        - "Street scene in which the people in the background have smeared, melted faces and every shop front repeats the same window."
+      negative:
+        - "Photo of a jacket with oversized buckles from a designer runway collection."
+        - "Portrait with an out-of-focus crowd behind the subject, faces softened by depth of field but shaped like faces."
+        - "Surrealist painting of a melting clock presented as surrealism."
+legitimate_use: >
+  Surreal art and real but unusual designs. Softness from depth of field is optical and does not count.
+fix: >
+  Inspect props one by one and replace or inpaint any object that could not work; reduce the number of
+  props; keep backgrounds sparse and coherent, or blur them deliberately; correct the action so the
+  grip and contact are physically possible.
+prevention: >
+  Keep scenes sparse and name the few props that matter together with their function ("an analog
+  wristwatch with a leather strap on her left wrist", "holding a broom by its handle with both hands").
+  Describe background people as few and distant, or ask for an empty background when a crowd adds
+  nothing. Inspect props and background at full size before use.
+sources:
+  - source: arxiv-2406-08651
+    locator: "section 03 Functional Implausibilities (3.1 to 3.3), 3.3 crowd faces"
+    note: "Floating or merging objects, dysfunctional objects (watch emerging from the arm, broken broom grip, detached racket handle), glitched detail, uncanny small faces in crowds."
+  - source: kellogg-insight-ai-photo-signs
+    locator: "sign 3, functional implausibilities"
+    note: "'a hand inside a hamburger'."
+  - source: sightengine-spot-ai-images
+    locator: "background and plausibility sections"
+    note: "Backgrounds repetitive or nonsensical; impossible details such as oversized flowers on a hat."
+related:
+  - {id: anatomical-errors, relation: distinct-from}
+  - {id: uniform-hyper-detail, relation: distinct-from}
+history:
+  - {date: 2026-11-17, change: "Added to the v1 image catalog as candidate."}

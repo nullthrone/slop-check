@@ -1,0 +1,16 @@
+id: de-audit-ratgeber
+language: de
+mode: audit
+notes: Ratgebertext mit Chat-Resten, Einleitungsfloskel, Absicherung und Pflichtfazit.
+text: |
+  Gute Frage! In der heutigen schnelllebigen Zeit ist ein gesunder Schlaf wichtiger denn je.
+
+  Wer regelmäßig zur gleichen Zeit ins Bett geht, schläft meist schneller ein. Der Körper gewöhnt sich an den Rhythmus, und das Hormon Melatonin wird zuverlässiger ausgeschüttet. Hilfreich ist auch ein kühles, dunkles Schlafzimmer mit einer Temperatur von etwa 18 Grad.
+
+  Es ist wichtig zu beachten, dass Bildschirme am Abend den Schlaf stören können. Das blaue Licht von Smartphone und Laptop hemmt die Melatoninproduktion. Legen Sie die Geräte deshalb etwa eine Stunde vor dem Schlafengehen zur Seite und lesen Sie lieber ein Buch.
+
+  Koffein wirkt bei vielen Menschen bis zu acht Stunden. Wer abends schlecht einschläft, sollte den letzten Kaffee daher spätestens am frühen Nachmittag trinken. Auch schweres Essen kurz vor dem Zubettgehen belastet die Nachtruhe.
+
+  Zusammenfassend lässt sich sagen, dass schon kleine Veränderungen im Alltag einen großen Unterschied machen. Ich hoffe, das hilft dir weiter!
+must_find: [sycophant-residue, generic-opening, cya-disclaimer, compulsive-summary]
+must_not_find: [emoji-decoration, bullet-bold-lead, em-dash-inflation]

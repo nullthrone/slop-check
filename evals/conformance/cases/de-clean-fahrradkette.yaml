@@ -1,0 +1,18 @@
+id: de-clean-fahrradkette
+language: de
+mode: audit
+notes: Praktische Anleitung in natürlichem Ton. Erwartet GREEN ohne gewertete Befunde.
+text: |
+  Eine Fahrradkette sollte etwa alle 300 Kilometer geölt werden, nach Fahrten im Regen auch früher. Man braucht dafür Kettenöl aus dem Fahrradladen, einen alten Lappen und etwas Geduld.
+
+  Zuerst wird die Kette gereinigt. Dazu hält man den Lappen locker um die Kette und dreht die Kurbel rückwärts, bis kaum noch schwarzer Schmutz am Stoff hängen bleibt. Bei sehr verdreckten Ketten hilft ein Kettenreiniger.
+
+  Dann kommt auf jedes Kettenglied ein kleiner Tropfen Öl, und zwar auf die Innenseite, wo die Kette über die Zahnräder läuft. Danach die Kurbel ein paar Mal drehen und die Gänge durchschalten, damit sich das Öl verteilt.
+
+  Nach zehn Minuten wischt man das überschüssige Öl außen wieder ab. Diesen Schritt vergessen viele. Eine zu nasse Kette sammelt Staub und Sand, und dieser Schmirgel verschleißt Kette und Ritzel schneller als jede Trockenheit.
+
+  Wer nicht weiß, ob die Kette schon gelängt ist, kann sie im Laden mit einer Kettenlehre messen lassen. Das dauert eine Minute und kostet meist nichts.
+must_find: []
+must_not_find: [german-stock-phrases, cya-disclaimer, generic-opening, hallmark-vocabulary, compulsive-summary]
+expect_verdict: [GREEN]
+max_findings: 0

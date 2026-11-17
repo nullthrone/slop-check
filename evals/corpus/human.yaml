@@ -1,0 +1,110 @@
+# Human baseline corpus specification (docs/architecture.md section 6.1).
+# Read by `slopcheck-dev corpus fetch-human`. Texts are fetched at run time through the
+# Hugging Face datasets-server JSON API and are never committed. See README.md in this
+# directory for the reasoning behind each dataset, its license and why it predates LLM text.
+#
+# Changing this file changes what the empirical gate measures against.
+#
+# Per source:
+#   rows        upper bound of the row range used for sampling (pinned so that offsets stay
+#               stable when the dataset grows or the server converts more rows)
+#   batch       rows fetched per request at each sampled offset
+#   docs        documents to keep after filtering
+#   revision    Hub commit at the time the source was chosen; fetch-human records the commit
+#               it actually saw and warns (or fails with --strict-revision) when they differ
+#   adapter     fineweb | wiki40b | mqa | plain (see src/slopcheck_dev/evals/corpus.py)
+
+version: 1
+cutoff_date: "2022-11-01"   # contract cutoff: nothing published on or after this date
+seed: 20221101
+min_words: 150
+max_words: 1200
+
+sources:
+  - id: fineweb-en-cc2019-18
+    language: en
+    register: web
+    dataset: HuggingFaceFW/fineweb
+    config: CC-MAIN-2019-18
+    split: train
+    revision: 9bb295ddab0e05d785b879661af7260fed5140fc
+    license: ODC-By 1.0 (Common Crawl terms of use apply to the underlying pages)
+    adapter: fineweb
+    rows: 222552960
+    batch: 8
+    docs: 110
+    max_date: "2020-06-01"
+    max_per_domain: 1
+
+  - id: fineweb2-de-test
+    language: de
+    register: web
+    dataset: HuggingFaceFW/fineweb-2
+    config: deu_Latn
+    split: test
+    revision: af9c13333eb981300149d5ca60a8e9d659b276b9
+    license: ODC-By 1.0 (Common Crawl terms of use apply to the underlying pages)
+    adapter: fineweb
+    rows: 65176
+    batch: 8
+    docs: 110
+    max_date: "2020-06-01"
+    max_per_domain: 1
+
+  - id: wiki40b-en-test
+    language: en
+    register: encyclopedic
+    dataset: google/wiki40b
+    config: en
+    split: test
+    revision: 06bfe584d8193cf58f79c6354ecc2a2b94a7deea
+    license: CC BY-SA 3.0 (Wikipedia article text)
+    adapter: wiki40b
+    rows: 162274
+    batch: 8
+    docs: 75
+    truncate: true
+
+  - id: wiki40b-de-test
+    language: de
+    register: encyclopedic
+    dataset: google/wiki40b
+    config: de
+    split: test
+    revision: 06bfe584d8193cf58f79c6354ecc2a2b94a7deea
+    license: CC BY-SA 3.0 (Wikipedia article text)
+    adapter: wiki40b
+    rows: 86594
+    batch: 8
+    docs: 75
+    truncate: true
+
+  - id: mqa-en-cqa
+    language: en
+    register: qa
+    dataset: clips/mqa
+    config: en-cqa-question
+    split: train
+    revision: 27eebc4a00d229f8dd4ae2a6d9f1e4ad45781f3b
+    license: CC0 1.0 (dataset card; the answers remain the work of their forum authors)
+    adapter: mqa
+    rows: 1623000
+    batch: 4
+    docs: 75
+    max_bucket: "2021.52"
+    max_per_domain: 2
+
+  - id: mqa-de-cqa
+    language: de
+    register: qa
+    dataset: clips/mqa
+    config: de-cqa-question
+    split: train
+    revision: 27eebc4a00d229f8dd4ae2a6d9f1e4ad45781f3b
+    license: CC0 1.0 (dataset card; the answers remain the work of their forum authors)
+    adapter: mqa
+    rows: 1085067
+    batch: 4
+    docs: 75
+    max_bucket: "2021.52"
+    max_per_domain: 2

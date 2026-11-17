@@ -1,0 +1,68 @@
+id: where-it-actually-lives
+modality: text
+name: "\"Where it actually lives\""
+summary: >
+  An abstract quality is said to physically reside somewhere ("where the complexity actually
+  lives", "the real value lives in the workflow"). The spatial metaphor stands in for a direct
+  answer about what causes what.
+category: lexical
+status: observation
+detector:
+  kind: regex
+  position: any
+threshold:
+  min_count: 1
+  comparison: gte
+  scope: text
+requires: null
+realizations:
+  en:
+    patterns:
+      - '(?i)\bwhere\s(?:the\s|its\s|their\s|our\s)?(?:real\s|true\s)?(?:complexity|value|magic|risk|difficulty|leverage|power|meaning|truth|bottleneck|nuance|insight|opportunity|tension|story|hard\spart|interesting\spart)\s(?:actually\s|really\s|truly\s)?lives\b'
+      - '(?i)\b(?:the\s)?(?:real\s|true\s)?(?:complexity|value|magic|risk|difficulty|leverage|power|meaning|truth|bottleneck|nuance|insight|opportunity|tension|story|hard\spart|interesting\spart)\s(?:actually\s|really\s|truly\s)?lives\s(?:in|at|inside|within|with|on)\b'
+    examples:
+      positive:
+        - "That is where the complexity actually lives."
+        - "The real value lives in the workflow, not in the model."
+        - "Most teams never look at where the hard part really lives."
+      negative:
+        - "The config file lives in /etc/app, next to the TLS certificates."
+        - "My sister actually lives in Lisbon now."
+        - "Where the river bends, the current is strongest."
+  de:
+    patterns:
+      - '(?i)\bwo\s(?:die|der|das)\s(?:eigentliche\s|wahre\s)?(?:Komplexität|Wert|Magie|Schwierigkeit|Risiko|Hebel|Bedeutung|Wahrheit|Spannung|Chance)\s(?:eigentlich\s|wirklich\s|tatsächlich\s)?(?:lebt|wohnt)\b'
+      - '(?i)\b(?:die|der|das)\s(?:eigentliche\s|wahre\s)?(?:Komplexität|Wert|Magie|Schwierigkeit|Risiko|Hebel|Bedeutung|Wahrheit|Spannung|Chance)\s(?:eigentlich\s|wirklich\s|tatsächlich\s)?(?:lebt|wohnt)\s(?:in|im|bei|auf)\b'
+    examples:
+      positive:
+        - "Genau dort, wo die Komplexität eigentlich lebt, schauen die wenigsten Teams hin."
+        - "Der eigentliche Wert wohnt im Arbeitsablauf, nicht im Modell."
+        - "Die Schwierigkeit lebt in den Schnittstellen."
+      negative:
+        - "Die Konfigurationsdatei liegt unter /etc/app."
+        - "Meine Schwester lebt inzwischen in Lissabon."
+        - "Wo der Fehler steckt, zeigt erst das Log."
+legitimate_use: >
+  Software engineers say that code, data or configuration "lives" in a file or service; that is
+  ordinary jargon and outside the detector's noun list. Flag the metaphor applied to abstract
+  qualities in place of an explanation.
+fix: >
+  Say directly what causes the effect or where the work is ("Most of the effort goes into the
+  interface code").
+prevention: >
+  Do not say that an abstract quality "lives" somewhere. Name the concrete cause or component.
+notes: >
+  Single-source observation. The detector restricts the subject to abstract nouns so that
+  technical uses ("the config lives in /etc") stay clear. Threshold chosen at migration.
+sources:
+  - source: tropes-fyi
+    locator: "entry 'Where It Actually Lives', category Word Choice, status new"
+    note: "Example: \"where the complexity actually lives\"."
+related:
+  - {id: false-agency, relation: overlaps}
+  - {id: hallmark-vocabulary, relation: distinct-from}
+history:
+  - {date: 2026-08-30, change: "Noted in the legacy knowledge base among new single-source tropes.fyi entries (fixed phrase describing the origin or location of something)."}
+  - {date: 2026-09-13, change: "Recorded as a single-source observation in section 5a (tropes.fyi, status new)."}
+  - {date: 2026-11-15, change: "Still single-source."}
+  - {date: 2026-11-17, change: "Migrated to slop-check repository as observation where-it-actually-lives."}

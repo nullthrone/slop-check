@@ -1,0 +1,97 @@
+id: rhetorical-self-answer
+modality: text
+name: Rhetorical self-answer
+summary: >
+  A short rhetorical question that nobody asked, built from a bare noun phrase, is answered at once
+  by a clipped, often fragmentary sentence ("The result? Devastating."). The question adds no
+  information; it stages suspense for a point that a plain sentence would state faster.
+category: rhetoric
+status: candidate
+legacy_id: T2.12
+detector:
+  kind: regex
+  position: any
+threshold:
+  min_count: 2
+  comparison: gte
+  scope: text
+requires: null
+realizations:
+  en:
+    patterns:
+      - '(?:^|(?<=[.!?:]\s))(?:The|Our|Your|My|Their|His|Her|Its|This|That|And the|But the|So the)\s(?:(?!(?:is|are|was|were|has|have|had|does|do|did|will|can|could|would|should|not|no)\b)[\w’''-]{1,20}\s){0,3}[\w’''-]{1,20}\?\s{1,3}(?!Then\b|If\b)[A-Z][^.!?\n]{0,60}[.!]'
+    examples:
+      positive:
+        - "The result? Devastating."
+        - "The worst part? Nobody saw it coming."
+        - "The solution? It's simpler than you think."
+        - "We shipped on Friday. The scary part? This attack vector is perfect for developers."
+      negative:
+        - "What was the result? We lost two days of data because the backup job had failed silently."
+        - "The meeting is tomorrow? Nobody told me."
+        - "The server does not respond? Then check the firewall rules first."
+        - "Is the result correct? Yes, it matches the reference values to four decimal places."
+  de:
+    patterns:
+      - '(?:^|(?<=[.!?:]\s))(?:Der|Die|Das|Den|Dem|Des|Unser|Unsere|Ihr|Ihre|Mein|Meine|Sein|Seine|Und der|Und die|Und das)\s(?:(?!(?:ist|sind|war|waren|hat|haben|hatte|wird|werden|kann|können|soll|muss|nicht|kein|keine)\b)[\w’''-]{1,20}\s){0,3}[\w’''-]{1,20}\?\s{1,3}(?!Dann\b|Wenn\b)[A-ZÄÖÜ][^.!?\n]{0,60}[.!]'
+    examples:
+      positive:
+        - "Das Ergebnis? Ernüchternd."
+        - "Der Haken? Es gibt keinen."
+        - "Die Folge? Stillstand in der gesamten Abteilung."
+        - "Das Beste daran? Es kostet nichts."
+      negative:
+        - "Das Meeting ist morgen? Davon wusste ich nichts."
+        - "Der Server antwortet nicht? Dann prüfen Sie zuerst die Firewall."
+        - "Wie hoch war das Ergebnis? Genau 4,2 Prozent über Plan."
+        - "Die Frage ist offen: Wer zahlt den Umbau?"
+legitimate_use: >
+  Spoken-style formats (talks, podcasts, short social posts) use a single self-answered question as
+  a deliberate beat, and FAQ or troubleshooting texts pair a real reader question with its answer.
+  Dismiss a hit when the question is one the reader plausibly has, or when it occurs once in a long
+  text. Flag the reflexive form: repeated staged questions whose answers could stand alone.
+fix: >
+  Delete the question and state the answer as a full sentence with its subject ("The result was a
+  two-day outage"). If the suspense matters, earn it with the facts that lead up to the point.
+prevention: >
+  Do not pose a short question and answer it yourself ("The result? Devastating."). State the point
+  directly in a complete sentence.
+notes: >
+  The legacy knowledge base never promoted this pattern although it reached four precise sources in
+  2026-09, because tropes.fyi labelled the entry "fading". Under docs/architecture.md D4 and D5 a
+  directory trend label carries no weight; measurement decides. The "Self-QA volleys" variant
+  (several question-answer pairs in a row, "Is it fast? Yes. Is it cheap? Also yes.") is related
+  and only partly covered by the detector, which needs a noun-phrase question opened by a
+  determiner. Threshold taken from the provisional legacy proposal of 2026-08-02.
+sources:
+  - source: legacy-knowledge-base
+    locator: "Candidate T2.12, opened 2026-08-02; section 5 (state 2026-11-15)"
+  - source: tropes-fyi
+    locator: "entry 'The X? A Y.' (formerly 'Rhetorical Q&A'), category Sentence Structure, status fading"
+    note: >
+      Examples: "The result? Devastating.", "The worst part? Nobody saw it coming." Status label
+      checked repeatedly from 2026-08-30 to 2026-11-15, always "fading".
+  - source: lizontheweb-indicators
+    locator: "entry 'The X? A Y.'"
+  - source: ignorance-ai
+    locator: "entry 'Mid-Sentence Questions'"
+    note: "\"Questions posed then immediately answered: 'The solution? It's simpler than you think.'\""
+  - source: ananas-ai-pattern-detector
+    locator: "'self-answered questions' under 'Signature constructions'"
+  - source: skill-avoid-ai-writing
+    locator: "entry 'Self-QA volleys'"
+    note: "Weaker, partial match: several question-answer pairs instead of one self-answer."
+  - source: fireprompts-io
+    locator: "'Fake rhetorical questions'"
+    note: "Recorded as an unconfirmed additional find; independence could not be verified."
+related:
+  - {id: payoff-announcement, relation: distinct-from}
+  - {id: fragment-pathos, relation: distinct-from}
+history:
+  - {date: 2026-08-02, change: "Opened as legacy candidate T2.12 (tropes.fyi, lizontheweb.com); provisional threshold proposal: at least 2 occurrences per text."}
+  - {date: 2026-08-23, change: "fireprompts.io ('Fake rhetorical questions') recorded as an unconfirmed additional find."}
+  - {date: 2026-08-30, change: "tropes.fyi restructured into 49 entries with status labels; entry now 'The X? A Y.', status fading."}
+  - {date: 2026-09-20, change: "ignorance.ai ('Mid-Sentence Questions') added as fourth source and avoid-ai-writing ('Self-QA volleys') as a weaker partial match; not promoted because of the fading trend label."}
+  - {date: 2026-09-27, change: "ai-pattern-detector ('self-answered questions') added; four precise sources, still deliberately not promoted."}
+  - {date: 2026-11-15, change: "No new source; status unchanged."}
+  - {date: 2026-11-17, change: "Migrated to slop-check repository as candidate rhetorical-self-answer."}

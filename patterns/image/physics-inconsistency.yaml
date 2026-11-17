@@ -1,0 +1,61 @@
+id: physics-inconsistency
+modality: image
+name: Light, shadow and perspective inconsistency
+summary: >
+  The scene breaks optics and geometry: shadows point in different directions or are missing,
+  reflections show a different scene, perspective lines fail to converge, stairs climb and descend at
+  once, and the subject is lit differently from the background as if pasted in. The research guide
+  lists these as violations of physics and as inconsistencies of resolution and color.
+category: visual-artifact
+status: candidate
+detector:
+  kind: vision
+  rubric: >
+    Trace light and geometry. Flag the image if shadows from one light source point in different
+    directions, are missing under objects that should cast them, or have shapes unlike their objects;
+    if mirrors, water or glossy surfaces reflect something that differs from the scene (other clothing,
+    another pose, extra limbs); if parallel lines such as floors, roads or shelves converge
+    inconsistently, straight lines warp, or paths and stairs are geometrically impossible; or if a
+    subject's light direction, color temperature or sharpness differs from the background as in a
+    cut-out composite. Count one hit per image. Does not count: several real light sources that explain
+    several shadow directions; distortion from wide-angle or fisheye lenses; deliberate surreal or
+    optical-illusion images; photomontage that presents itself as montage. Describe the visible pattern
+    only; do not infer how the image was made.
+threshold: {min_count: 1}
+realizations:
+  "*":
+    examples:
+      positive:
+        - "Image of three people on a sunny sidewalk whose shadows fall behind them while the shadow of the tree beside them falls to the left."
+        - "A man in a short-sleeved shirt stands in front of a mirror, and his reflection wears a long-sleeved jacket."
+        - "Portrait of a runner lit from the left, placed on a stadium background lit from the right and rendered sharper than the runner."
+      negative:
+        - "Night street scene with two street lamps producing two consistent shadows per person."
+        - "Wide-angle interior photo with the curved edges typical of the lens."
+        - "Impossible-staircase illustration made as a deliberate optical illusion and presented as art."
+legitimate_use: >
+  Surreal and optical-illusion art, montage that announces itself, and multi-light setups that explain
+  several shadows.
+fix: >
+  Choose one key light and correct every shadow, highlight and reflection to it; rebuild reflections
+  from the actual scene; straighten lines so they share vanishing points; match the subject's light
+  direction, color temperature and sharpness to the background, or rebuild the composite.
+prevention: >
+  Describe the light source and its direction once and keep the scene simple enough for it to govern,
+  for example "late-afternoon sun from the right, long shadows falling to the left". Use mirrors, water
+  reflections and complex staircases only when the image needs them, and then describe what the
+  reflection shows. Ask for one consistent camera position and lens.
+sources:
+  - source: arxiv-2406-08651
+    locator: "section 04 Violations of Physics (4.1 to 4.3) and 2.4 Inconsistencies in Resolution & Color"
+    note: "Shadows in inconsistent directions, reflections inconsistent with the scene, depth and perspective warping; subjects that look pasted onto backgrounds."
+  - source: kellogg-insight-ai-photo-signs
+    locator: "sign 4, violations of physics"
+    note: "'shadows often defy the laws of physics'."
+  - source: sightengine-spot-ai-images
+    locator: "lighting, shadows and perspective sections"
+    note: "Background lighting unlike the foreground; shadows in different directions or absent; perspective inconsistent or wrong."
+related:
+  - {id: cinematic-default-lighting, relation: distinct-from}
+history:
+  - {date: 2026-11-17, change: "Added to the v1 image catalog as candidate."}

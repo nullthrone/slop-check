@@ -1,0 +1,65 @@
+id: contraction-avoidance
+modality: text
+name: Contraction avoidance
+summary: >
+  English text in an informal setting consistently avoids contractions ("I am not sure we are
+  ready, but it is worth a try") and uses stiff, formal phrasing where a person would write "I'm",
+  "we're", "it's" and "don't". The register mismatch makes chat replies, posts and personal emails
+  sound like documentation.
+category: tone
+status: observation
+detector:
+  kind: regex
+  position: any
+threshold:
+  min_count: 4
+  per_words: 100
+  comparison: gte
+  scope: text
+  context_overrides:
+    informal: {min_count: 2, per_words: 100}
+requires: null
+realizations:
+  en:
+    patterns:
+      - '(?i)\b(?:do|does|did|is|are|was|were|have|has|had|would|should|could|will)\snot\b'
+      - '(?i)\bcannot\b'
+      - '(?i)\b(?:I\sam|you\sare|we\sare|they\sare|it\sis|that\sis|there\sis|I\shave|I\swill|you\swill|we\swill|let\sus)\b'
+    examples:
+      positive:
+        - "I am not sure we are ready, but it is worth a try."
+        - "Do not worry, you will love it."
+        - "We cannot make it tonight, sorry!"
+      negative:
+        - "I'm not sure we're ready, but it's worth a try."
+        - "Don't forget the cables; we can't start without them."
+        - "The cannon fired at noon."
+        - "Isn't it late already?"
+legitimate_use: >
+  Formal registers (legal, academic, official correspondence, documentation) avoid contractions
+  by convention, and writers use the full form for emphasis ("I do not agree"). The pattern only
+  matters in informal texts such as chat replies, social posts and personal emails.
+fix: >
+  In informal texts, contract auxiliaries and pronouns the way people speak ("I'm", "it's",
+  "don't"), and keep full forms only for emphasis.
+prevention: >
+  Match the register: use contractions in informal English writing, and full forms only where the
+  context is formal or the emphasis is intended.
+notes: >
+  Single-source observation from a compiled reference with an independence caveat. English only:
+  German has no comparable contraction system (forms such as "gibt's" are optional in most
+  registers). The engine cannot switch the pattern off outside informal context, so the default
+  threshold of 4 full forms per 100 words is set high and the informal override at 2 per 100
+  words; both were chosen at migration. Expected false positives in formal texts, which the
+  default threshold only partly prevents. The detector counts full forms; it cannot verify that
+  contractions are absent.
+sources:
+  - source: jetwong-neocities
+    locator: "entry 'Overly Formal Tone'"
+    note: "Consistent avoidance of contractions and stiff phrasing in contexts that are actually informal."
+related:
+  - {id: brochure-tone, relation: distinct-from}
+history:
+  - {date: 2026-11-08, change: "Recorded in the legacy knowledge base as a single-source observation (jetwong.neocities.org, compiled reference)."}
+  - {date: 2026-11-15, change: "Still single-source."}
+  - {date: 2026-11-17, change: "Migrated to slop-check repository as observation contraction-avoidance."}

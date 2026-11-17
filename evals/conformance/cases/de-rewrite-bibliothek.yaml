@@ -1,0 +1,21 @@
+id: de-rewrite-bibliothek
+language: de
+mode: rewrite
+notes: Die Überarbeitung muss die Floskeln entfernen und Termine, Zeiten und Preis erhalten.
+text: |
+  In der heutigen digitalen Welt ist unsere Stadtbibliothek nicht nur ein Ort für Bücher, sondern auch ein lebendiger Treffpunkt für alle Generationen.
+
+  Seit dem 1. März gelten neue Öffnungszeiten: dienstags bis freitags von 10 bis 18 Uhr und samstags von 10 bis 14 Uhr. Der Jahresausweis kostet weiterhin 15 Euro, für Schülerinnen und Schüler ist er kostenlos.
+
+  Zusammenfassend lässt sich sagen, dass die Bibliothek eine zentrale Rolle im Leben unserer Stadt spielt.
+must_remove:
+  - "In der heutigen digitalen Welt"
+  - "Zusammenfassend lässt sich sagen"
+  - "eine zentrale Rolle"
+must_keep:
+  - "1. März"
+  - "10 bis 18 Uhr"
+  - "10 bis 14 Uhr"
+  - "15 Euro"
+min_length_ratio: 0.4
+max_length_ratio: 1.3

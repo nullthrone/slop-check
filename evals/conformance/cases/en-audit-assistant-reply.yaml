@@ -1,0 +1,16 @@
+id: en-audit-assistant-reply
+language: en
+mode: audit
+notes: Chat-assistant residue pasted into a help-center article.
+text: |
+  Great question! In today's fast-paced digital world, keeping your passwords safe is more important than ever.
+
+  A password manager stores all of your logins in one encrypted vault. You only have to remember a single master password, and the tool fills in the rest for you. Most managers also generate long random passwords, warn you when a site you use has been breached, and sync across your phone and your laptop.
+
+  It's important to note that no tool can protect you if your master password is weak or reused. Choose a long passphrase that you do not use anywhere else, and turn on two-factor authentication for the vault itself. It's also worth mentioning that some free plans limit the number of devices you can connect.
+
+  When you switch, export the passwords saved in your browser first, import them into the manager, and then delete the browser copies so that only one list remains.
+
+  In conclusion, a password manager is one of the simplest ways to improve your security. I hope this helps! Let me know if you'd like me to elaborate on any of these steps.
+must_find: [sycophant-residue, generic-opening, cya-disclaimer, compulsive-summary]
+must_not_find: [emoji-decoration, bullet-bold-lead, em-dash-inflation, curly-quotes]

@@ -1,0 +1,68 @@
+id: anatomical-errors
+modality: image
+name: Anatomical errors
+summary: >
+  Bodies that cannot exist: missing, extra or merged fingers, absent fingernails, implausible hand
+  proportions, misaligned or non-circular pupils, glossy hollow eyes, teeth in odd numbers or fused
+  with the lips, extra or missing limbs, joints bending the wrong way, body parts merging between
+  people. Current models make these errors less often and more subtly, which is why a close look at
+  hands, eyes and mouths still pays off.
+category: visual-artifact
+status: candidate
+detector:
+  kind: vision
+  rubric: >
+    Inspect every visible hand, face and limb at full resolution. Flag the image if any person or
+    animal shows an anatomical impossibility: a wrong number of fingers or toes, fused or branching
+    fingers, missing nails, a thumb on the wrong side; pupils of different shapes or directions, irises
+    bleeding into the white; too many or uneven teeth, teeth merging with lips or tongue; an extra,
+    missing or detached limb; a joint bent beyond its range; body parts of two people merging; a neck
+    or torso of impossible length. Count one hit per image regardless of how many errors it has. Does
+    not count: hands or limbs hidden by objects or cropping in a plausible way; motion blur, low
+    resolution or compression that hides detail; real conditions (a missing finger, a prosthesis)
+    shown as such; stylized conventions such as four-fingered cartoon hands or caricature. Describe the
+    visible pattern only; do not infer how the image was made.
+threshold: {min_count: 1}
+realizations:
+  "*":
+    examples:
+      positive:
+        - "Photo-style image of a woman holding a coffee cup with six fingers on her right hand, two of them merged at the base."
+        - "Close-up of a smiling man whose front teeth are uneven in number and blend into his lower lip."
+        - "Image of a couple holding hands in which their fingers merge into one shared hand."
+      negative:
+        - "Photo of a hand partly in a coat pocket, three fingers visible and plausibly placed."
+        - "Cartoon character with four-fingered gloved hands in a classic animation style."
+        - "Portrait of a person with a visible prosthetic arm that is part of the story."
+legitimate_use: >
+  None for realistic images. Stylized conventions such as four-fingered cartoon hands and real anatomy
+  such as prosthetics or limb differences are not errors.
+fix: >
+  Regenerate or inpaint the affected region with a crop that shows the anatomy clearly; simplify the
+  pose (a hand resting flat, holding one simple object); compare with a reference photo; if the region
+  cannot be repaired, recrop so it leaves the frame.
+prevention: >
+  Choose poses that keep anatomy readable. Describe what each hand does in concrete terms ("both hands
+  resting flat on the table", "right hand holding a mug by its handle"), prefer separate figures to
+  interlaced fingers and overlapping crowds when the story allows, and ask for a closed-mouth smile
+  when teeth add nothing. Review hands, eyes and teeth at full size before using the image.
+sources:
+  - source: arxiv-2406-08651
+    locator: "section 01 Anatomical Implausibilities (1.1 to 1.5)"
+    note: "Missing, extra and merged fingers, nonexistent fingernails; misaligned or non-circular pupils; teeth overlapping lips; extra limbs; merged bodies."
+  - source: kellogg-insight-ai-photo-signs
+    locator: "sign 1, anatomical implausibilities"
+  - source: sightengine-spot-ai-images
+    locator: "hands and faces sections"
+    note: "Too many or too few fingers, odd finger spreading, eyes with unusual reflections, distorted ears."
+  - source: atlantic-why-ai-art-looks
+    locator: "description of frequent errors"
+    note: "Extra fingers named among common errors."
+related:
+  - {id: dysfunctional-objects, relation: distinct-from}
+history:
+  - {date: 2026-11-17, change: "Added to the v1 image catalog as candidate."}
+notes: >
+  Counter-evidence: socialmediaexaminer-generic-ai-images (2026-08-11) reports six-fingered hands as
+  largely gone from current models. The research guide already shows subtler cases (a thumb that
+  appears detached, an implausible knee) alongside the obvious ones.

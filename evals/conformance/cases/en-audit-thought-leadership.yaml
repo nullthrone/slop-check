@@ -1,0 +1,14 @@
+id: en-audit-thought-leadership
+language: en
+mode: audit
+notes: Corporate thought-leadership paragraph with unsourced claims and importance inflation.
+text: |
+  Artificial intelligence is reshaping the way businesses operate. Experts agree that companies which fail to adapt will fall behind within the next few years, and studies show that early adopters already enjoy a clear advantage.
+
+  From small startups to Fortune 500 enterprises, organizations are investing in new tools, new skills and new processes. The shift marks a significant turning point for the entire economy, underscoring the importance of continuous learning. Leaders who embrace change will set the pace, highlighting their commitment to innovation.
+
+  Yet technology alone is not enough. Teams need room to experiment, managers need clear goals, and employees need the confidence that their work still matters. The organizations that get this balance right are shaping the future of work, cementing their position as the employers of choice.
+
+  The impact of these changes cannot be overstated. Every company now has to decide whether it wants to lead this transformation or watch it happen from the sidelines.
+must_find: [vague-attribution, inflated-importance, false-range, participle-padding]
+must_not_find: [emoji-decoration, bullet-bold-lead, sycophant-residue, curly-quotes]

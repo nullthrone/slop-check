@@ -1,0 +1,76 @@
+id: excessive-enumeration
+modality: text
+name: Excessive enumeration
+summary: >
+  A numbered list is disguised as prose: consecutive paragraphs open with "First, ...",
+  "Second, ...", "Third, ..." or "The first takeaway is ... The second takeaway is ...". The text
+  keeps the rigidity of a list without its scannability and without real transitions between the
+  ideas.
+category: structure
+status: observation
+detector:
+  kind: regex
+  position: paragraph_start
+threshold:
+  min_count: 3
+  comparison: gte
+  scope: text
+requires: null
+realizations:
+  en:
+    patterns:
+      - '(?i)^(?:first|second|third|fourth|fifth)(?:ly)?,'
+      - '(?i)^the\s(?:first|second|third|fourth|fifth|final)\s(?:reason|point|takeaway|lesson|challenge|hurdle|wall|question|insight|factor|benefit|problem|issue|pillar|principle|thing)\s(?:is|was)\b'
+    examples:
+      positive:
+        - "First, the onboarding flow is too long."
+        - "Secondly, nobody owns the backlog."
+        - "The second takeaway is that pricing matters less than support."
+        - "The first wall is the absence of a free, scoped API."
+      negative:
+        - "First-time users should read the setup guide before they connect a device."
+        - "Second-hand equipment needs a safety check before use."
+        - "The first edition sold out in two weeks."
+        - "The first step is to back up the database."
+  de:
+    patterns:
+      - '(?i)^(?:erstens|zweitens|drittens|viertens|fünftens)\b'
+      - '(?i)^(?:der|die|das)\s(?:erste|zweite|dritte|vierte|fünfte|letzte)\s(?:Grund|Punkt|Erkenntnis|Lektion|Herausforderung|Hürde|Frage|Lehre|Aspekt|Faktor|Vorteil|Problem|Säule|Prinzip|Mauer)\s(?:ist|war|lautet|besteht)\b'
+    examples:
+      positive:
+        - "Erstens ist der Onboarding-Prozess zu lang."
+        - "Zweitens fühlt sich niemand für das Backlog verantwortlich."
+        - "Die zweite Erkenntnis ist, dass der Preis weniger zählt als der Support."
+      negative:
+        - "Erstmals seit 2019 sank der Umsatz im dritten Quartal."
+        - "Zweitwohnungen sind in der Stadt steuerpflichtig."
+        - "Die erste Auflage war nach zwei Wochen vergriffen."
+        - "Der erste Schritt ist ein Backup der Datenbank."
+legitimate_use: >
+  Arguments with genuinely sequential steps, legal reasoning and spoken presentations enumerate on
+  purpose, and two ordinal openers in a long text are normal. Flag texts where three or more
+  paragraphs run through an ordinal sequence and the content would read better as a real list or
+  as connected prose.
+fix: >
+  Either format the points as a list the reader can scan, or write connected prose in which each
+  paragraph says how it follows from the previous one.
+prevention: >
+  Do not open consecutive paragraphs with "First", "Second", "Third". Use a real list for parallel
+  items, or link paragraphs by their content.
+notes: >
+  Single-source observation. Threshold chosen at migration: three enumerated paragraph openers in
+  one text, matching the "first, second, third" shape the source describes. "The first step is"
+  is left out because instructions use it legitimately.
+sources:
+  - source: tropes-fyi
+    locator: "entry 'Excessive Enumeration', category Paragraph Structure, status rising"
+    note: "Examples recorded at migration: \"The first wall is the absence of a free, scoped API...\", \"The second takeaway is that... The third takeaway is that...\"."
+related:
+  - {id: compulsive-counting, relation: overlaps}
+  - {id: transition-stacking, relation: overlaps}
+  - {id: bullet-bold-lead, relation: distinct-from}
+history:
+  - {date: 2026-09-06, change: "Recorded in the legacy knowledge base as a single-source observation (tropes.fyi, status new): lists disguised as prose through 'The first... The second...' constructions."}
+  - {date: 2026-09-13, change: "tropes.fyi status changed from new to rising; directory-internal change, not counted as confirmation."}
+  - {date: 2026-11-15, change: "Still single-source."}
+  - {date: 2026-11-17, change: "Migrated to slop-check repository as observation excessive-enumeration."}

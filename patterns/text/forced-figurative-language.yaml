@@ -1,0 +1,76 @@
+id: forced-figurative-language
+modality: text
+name: Forced figurative language
+summary: >
+  A strained simile or freshly coined metaphor is used because it sounds clever, without
+  clarifying anything ("Like tracking weight loss with a scale you control."). The image needs
+  decoding, often fits the point only loosely, and replaces the plain statement it imitates.
+category: rhetoric
+status: observation
+detector:
+  kind: llm
+  position: any
+  rubric: >
+    Find similes and metaphors that are strained or coined for effect and do not make the point
+    clearer than a literal statement would. Count an image when at least one holds: the mapping
+    between image and topic is loose or breaks on reflection; the image needs more explanation
+    than the literal point; several unrelated images are mixed in one passage; the image is a
+    generic stock comparison that adds no specific insight. Do not count idioms and dead metaphors
+    used as ordinary vocabulary (bottleneck, pipeline, Engpass, Flaschenhals), images that make an
+    abstract or technical idea concrete for the reader, figurative language in fiction, poetry or
+    advertising slogans, and quoted speech. Return each strained image as a hit.
+threshold:
+  min_count: 2
+  comparison: gte
+  scope: text
+requires: null
+realizations:
+  en:
+    examples:
+      positive:
+        - "Using story points to measure productivity is like tracking weight loss with a scale you control."
+        - "Our onboarding is a symphony of tiny handshakes, each one a seed planted in the garden of trust."
+        - "Data is the new oxygen, and dashboards are the lungs of the modern company."
+      negative:
+        - "The database is the bottleneck: every request waits for the same lock."
+        - "Think of the cache as a notebook on your desk: faster to reach than the archive in the basement, but with far less room."
+        - "The release pipeline runs the tests, builds the image and deploys it to staging."
+  de:
+    examples:
+      positive:
+        - "Story Points als Produktivitätsmaß zu nutzen ist, als würde man den Gewichtsverlust mit einer Waage messen, die man selbst einstellt."
+        - "Unser Onboarding ist eine Symphonie kleiner Handschläge, jeder ein Samenkorn im Garten des Vertrauens."
+        - "Daten sind der neue Sauerstoff, und Dashboards sind die Lunge des modernen Unternehmens."
+      negative:
+        - "Die Datenbank ist der Engpass: Jede Anfrage wartet auf dieselbe Sperre."
+        - "Stellen Sie sich den Cache wie einen Notizblock auf dem Schreibtisch vor: schneller erreichbar als das Archiv im Keller, aber mit viel weniger Platz."
+        - "Die Release-Pipeline führt die Tests aus, baut das Image und verteilt es auf Staging."
+legitimate_use: >
+  A well-chosen analogy that makes an unfamiliar idea concrete is good writing, and fiction,
+  poetry and slogans live on figurative language. Flag strained or mixed images that need more
+  decoding than the literal point.
+fix: >
+  State the point literally. Keep an analogy only if it explains something the reader would
+  otherwise miss, and check that it holds on reflection.
+prevention: >
+  Use a metaphor or simile only when it explains something better than a literal sentence. Never
+  stack or mix images for effect.
+notes: >
+  Single-source observation. ignorance.ai lists "Awkward Analogies" (generic metaphors that sound
+  plausible but lack specificity); the legacy knowledge base noted it as a weaker, broader match
+  and did not count it. Threshold chosen at migration.
+sources:
+  - source: tropes-fyi
+    locator: "entry 'Forced Figurative Language', category Tone, status new"
+    note: "Example recorded by the legacy knowledge base: \"Like tracking weight loss with a scale you control.\""
+  - source: ignorance-ai
+    locator: "entry 'Awkward Analogies'"
+    note: "Broader and weaker match; not counted by the legacy knowledge base."
+related:
+  - {id: brochure-tone, relation: distinct-from}
+  - {id: hollow-sentences, relation: overlaps}
+history:
+  - {date: 2026-09-06, change: "Recorded in the legacy knowledge base as a single-source observation (tropes.fyi, status new)."}
+  - {date: 2026-09-20, change: "Weaker related find at ignorance.ai ('Awkward Analogies') noted, not counted."}
+  - {date: 2026-11-15, change: "No new source found."}
+  - {date: 2026-11-17, change: "Migrated to slop-check repository as observation forced-figurative-language."}

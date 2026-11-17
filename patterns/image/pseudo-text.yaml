@@ -1,0 +1,66 @@
+id: pseudo-text
+modality: image
+name: Pseudo-text and malformed lettering
+summary: >
+  Lettering in the image is glyph-like nonsense, misspelled or missing letters, switches font inside a
+  word, wanders off its baseline, or uses a typeface the object would never carry; fake logos imitate
+  brand marks without being any brand. Text rendering has improved, so the errors have moved from
+  obvious gibberish toward almost-right typography that still breaks on a close read.
+category: visual-typography
+status: candidate
+detector:
+  kind: vision
+  rubric: >
+    Read every piece of text in the image: signs, labels, screens, clothing, packaging, logos and
+    numbers. Flag the image if any text is illegible glyph-like shapes or a nonexistent language; if a
+    real word is misspelled or missing letters; if letters change font, weight or size inside a word;
+    if kerning is irregular or baselines wander; if the same symbol is rendered differently within one
+    graphic; or if a logo-like mark resembles a brand but reads as nonsense. Also flag a typeface that
+    is implausible for the object, such as a script font on a university sweatshirt. Count one hit per
+    image. Does not count: text that is legible and correct; text intentionally blurred, out of focus or
+    too small to read; invented scripts in fantasy or science-fiction art that the brief asks for; real
+    brand logos rendered correctly. Describe the visible pattern only; do not infer how the image was
+    made.
+threshold: {min_count: 1}
+realizations:
+  "*":
+    examples:
+      positive:
+        - "Image of a café storefront whose sign reads 'COFEFE BARISTAH' in letters that change from serif to sans-serif halfway through."
+        - "Infographic in which the percent signs and digits change shape from one statistic to the next and the headline baseline wavers."
+        - "Street scene with shop signs full of letter-like shapes that form no language and a logo resembling a sportswear swoosh fused with a letter."
+      negative:
+        - "Photo of a street sign that reads 'Main St' clearly and correctly."
+        - "Shallow-focus photo in which a distant poster is blurred beyond reading."
+        - "Fantasy map with an invented runic script requested in the brief."
+legitimate_use: >
+  Invented scripts in fiction, deliberate glitch typography, and text that is out of focus by design.
+fix: >
+  Remove generated text and set real type in a layout tool, or regenerate with the exact wording; replace
+  fake logos with real assets used with permission or with neutral surfaces; proofread spelling, kerning
+  and the consistency of repeated symbols.
+prevention: >
+  Either give the exact wording in quotes with font style and placement ("the words 'Open Daily' in bold
+  condensed sans-serif on the awning"), or ask for surfaces free of text and logos and add typography
+  later in a layout tool. Request a brand logo only when the image is allowed to use it, and supply the
+  real asset.
+sources:
+  - source: arxiv-2406-08651
+    locator: "section 3.4 Text & Logos"
+    note: "Glyph-like text in nonexistent languages, nonexistent words, spelling errors; perfect text in an unconventional font for a sweatshirt."
+  - source: sightengine-spot-ai-images
+    locator: "text section"
+    note: "Letters 'warped, stretched or twisted'; font switches within one word or sentence."
+  - source: venngage-ai-slop-design
+    locator: "typography signs"
+    note: "Inconsistent kerning, baselines, letter shapes and stroke weights; the same percent sign rendered differently."
+  - source: snake-oil-genai-hype
+    locator: "machine learning prompt results"
+    note: "Images with illegible characters."
+related:
+  - {id: dysfunctional-objects, relation: distinct-from}
+history:
+  - {date: 2026-11-17, change: "Added to the v1 image catalog as candidate."}
+notes: >
+  openart-visual-cliches (2026-05) states that current models render legible text well; the pattern
+  now targets almost-right typography and fake logos as much as gibberish.

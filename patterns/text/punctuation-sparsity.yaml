@@ -1,0 +1,128 @@
+id: punctuation-sparsity
+modality: text
+name: Punctuation sparsity and and-stacking
+summary: >
+  Two linked signals. First, conspicuously few commas, semicolons and parentheses relative to
+  sentence length, compared with human reference prose. Second, "and" ("und") serves as the main
+  connector in overlong sentences where punctuation or a sentence break would structure the
+  thought. The prose reads smooth but flat, with clauses chained instead of weighted.
+category: typography
+status: candidate
+legacy_id: T2.14
+detector:
+  kind: metric
+  position: any
+  metric: comma_density
+  params: {}
+threshold:
+  value: {op: lt, x: 0.4}
+  min_units: 8
+requires: null
+realizations:
+  "*":
+    examples:
+      positive:
+        - >-
+          The new system connects every department and gives managers a clear view of their teams
+          and their goals. It collects data from sales and support and turns it into reports that
+          anyone can read. Teams can plan their work and track progress and share results with
+          leadership in one place. The dashboard updates in real time and highlights the numbers
+          that matter most for each role. Managers no longer need to wait for weekly exports and can
+          act on problems as soon as they appear. The rollout starts in March and covers all offices
+          in Europe and North America by the end of the year. Training sessions will help every
+          employee get started and make the most of the new tools. The project team expects faster
+          decisions and fewer meetings and a better experience for customers.
+        - >-
+          Das neue System verbindet alle Abteilungen und gibt Führungskräften einen klaren Blick auf
+          ihre Teams und Ziele. Es sammelt Daten aus Vertrieb und Support und macht daraus
+          verständliche Berichte. Teams planen ihre Arbeit und verfolgen den Fortschritt und teilen
+          Ergebnisse an einem Ort. Das Dashboard aktualisiert sich in Echtzeit und hebt die
+          wichtigsten Zahlen für jede Rolle hervor. Führungskräfte warten nicht mehr auf wöchentliche
+          Exporte und reagieren sofort auf Probleme. Der Rollout beginnt im März und umfasst bis
+          Jahresende alle Standorte in Europa und Nordamerika. Schulungen helfen allen Mitarbeitenden
+          beim Einstieg und bei der Nutzung der neuen Werkzeuge. Das Projektteam erwartet schnellere
+          Entscheidungen und weniger Meetings und zufriedenere Kunden.
+      negative:
+        - >-
+          On Tuesday, at 03:10, the nightly export failed. The job had run for six years without
+          trouble, so nobody watched it closely. When the on-call engineer looked, the disk was full;
+          a debug flag, left on after a test in May, had written 40 GB of logs. She cleared the logs,
+          restarted the export, and filed a ticket. The export finished at 05:40, two hours late,
+          which delayed the morning reports for finance. We have since added a disk alert (warning
+          at 80 %, page at 90 %). The debug flag is now off by default, and the config linter
+          rejects it in production. Next month, we will review the other nightly jobs in the same
+          way.
+        - "The build passed. We merged the branch and tagged the release. Nobody noticed anything unusual."
+        - >-
+          Als der Export am Dienstag um 03:10 Uhr abbrach, bemerkte es zunächst niemand. Der Job lief
+          seit sechs Jahren, ohne dass es Probleme gab, deshalb überwachte ihn keiner genau. Die
+          Bereitschaft stellte fest, dass die Platte voll war, weil ein Debug-Schalter seit einem
+          Test im Mai aktiv war. Sie löschte die Logs, startete den Export neu und legte ein Ticket
+          an. Der Export endete um 05:40 Uhr, also zwei Stunden zu spät, was die Berichte für die
+          Buchhaltung verzögerte. Inzwischen gibt es einen Alarm, der bei 80 Prozent warnt. Der
+          Schalter ist standardmäßig aus, und der Linter lehnt ihn in Produktion ab. Nächsten Monat
+          prüfen wir die übrigen Jobs, die nachts laufen, auf dieselbe Weise.
+    notes: >
+      The second negative example has only three sentences, below min_units. German comma rules
+      (mandatory commas before subordinate clauses) raise the baseline, which makes the shared
+      threshold conservative for de.
+legitimate_use: >
+  Plain-language writing, children's books, instructions and spoken-style texts use short,
+  simple sentences with few commas on purpose. Some authors chain clauses with "and" for rhythm
+  (polysyndeton). Dismiss a hit when the sentences are short or the and-chain is a deliberate
+  stylistic choice; flag long sentences whose clauses are strung together without structure.
+fix: >
+  Split overlong and-chains into separate sentences, or subordinate the less important clause
+  (because, although, which). Use commas, semicolons or parentheses where they mark the logic of
+  the sentence.
+prevention: >
+  Do not chain three or more clauses with "and" in one sentence. Break long sentences, and use
+  punctuation to show which part depends on which.
+notes: >
+  The legacy knowledge base never found an operational threshold and suggested counting commas and
+  semicolons per 100 words. The registry metric comma_density counts commas per sentence, so the
+  value 0.4 with at least 8 sentences was chosen at migration and is uncalibrated. Expected false
+  positives: texts built from many short sentences fall below the threshold without being sparse,
+  because the metric does not normalize for sentence length. The and-stacking component is not
+  covered by the metric; a host model applying the pattern by hand should check it. Evidence is
+  mixed: one source claims the opposite for semicolons (see sources), and a later secondary
+  analysis weakens that counter-claim.
+sources:
+  - source: legacy-knowledge-base
+    locator: "Candidate T2.14, opened 2026-08-09; section 5 (state 2026-11-15)"
+  - source: economist-ai-writing-analysis
+    note: >
+      Names verbosity and low punctuation density as the clearest remaining signals of chatbot
+      prose (55,940 sentences, four chatbots, against Economist prose). Gives corpus means only, no
+      length-independent number. Syndicated coverage adds no independent data.
+  - source: skill-avoid-ai-writing
+    locator: "and-stacking entry"
+    note: "Supports the and-stacking component only; contains no punctuation-sparsity item (checked 2026-09-20)."
+  - source: tropes-fyi
+    locator: "entries 'Never-Ending Conclusion' (Composition) and 'Comma-Clipped Trailing Phrase' (Sentence Structure)"
+    note: >
+      Adjacent mechanisms: endings that keep stacking clauses instead of landing on one point, and
+      short phrases tacked on after a comma.
+  - source: michellekassorla-substack
+    note: >
+      Counter-evidence, does not support the pattern: claims AI text overuses semicolons instead
+      of conjunctions. Small, unquantified basis.
+  - source: pebblous-graphite-analysis
+    note: >
+      Semicolon frequency fell from 6.10 to 1.64 per 1,000 words between Opus 5 and Opus 5.5
+      (figures from a third-party tally service). Weakens the semicolon-overuse counter-claim; one
+      model pair only, and derived from the Graphite data, so the legacy knowledge base did not
+      count it as a source.
+related:
+  - {id: em-dash-inflation, relation: distinct-from}
+  - {id: uniform-rhythm, relation: distinct-from}
+history:
+  - {date: 2026-08-09, change: "Opened as legacy candidate T2.14 on the basis of The Economist data analysis; no threshold specifiable (corpus means only); suggested operationalization: commas and semicolons per 100 words."}
+  - {date: 2026-08-16, change: "and-stacking entry of avoid-ai-writing recorded as weaker independent evidence for the and-stacking component."}
+  - {date: 2026-08-23, change: "tropes.fyi entries 'Never-Ending Conclusion' and 'Comma-Clipped Trailing Phrase' recorded."}
+  - {date: 2026-09-13, change: "An article on AI punctuation (aiprompthackers.com) describes an em dash surplus and does not confirm the pattern."}
+  - {date: 2026-09-27, change: "Counter-finding recorded: a composition course blog claims semicolon overuse; evidence for the sparsity component weaker."}
+  - {date: 2026-10-04, change: "rewritelyapp.com lists punctuation as a feature group ('Humans have quirks. AI has consistency.') without a matching claim or threshold; not counted."}
+  - {date: 2026-10-11, change: "Pebblous secondary analysis (semicolons minus 73 % from Opus 5 to Opus 5.5) weakens the counter-finding; not counted as a source."}
+  - {date: 2026-11-15, change: "No new source and no operational threshold."}
+  - {date: 2026-11-17, change: "Migrated to slop-check repository as candidate punctuation-sparsity; comma_density threshold chosen at migration."}

@@ -1,0 +1,76 @@
+id: format-bleed
+modality: text
+name: Format bleed
+summary: >
+  Markdown syntax that was never rendered shows up literally in the final text: asterisks around
+  words, hash signs in front of headings, backticks, pipe tables or bracketed link syntax in an
+  email, a chat message, a form field or a printed letter. It is a technical artifact of pasting
+  generated output into a medium that does not render markdown.
+category: formatting
+status: observation
+detector:
+  kind: llm
+  position: any
+  rubric: >
+    Decide from the text itself whether its target medium renders markdown. Signals for plain
+    text: email greeting and sign-off, letter layout, SMS or chat style, form-field answers,
+    subtitles, social posts on platforms without markdown. Only for such texts, find literal
+    markdown syntax that a reader would see as stray characters: **bold** or __bold__ markers,
+    single asterisks or underscores used for italics, lines starting with #, ##, ###, backtick
+    code spans or fences, pipe-table rows, [text](url) links, and escaped markers such as \*.
+    Do not count markdown in documents meant for rendering (README files, wiki pages, chat
+    platforms that render markdown), asterisks used as footnote markers or censoring (f***),
+    hashtags in social posts, and code samples. Return each stray markup span as a hit.
+threshold:
+  min_count: 1
+  comparison: gte
+  scope: text
+requires: null
+realizations:
+  en:
+    examples:
+      positive:
+        - "Hi team,\n\n**Next steps:** please send the signed contract by Friday.\n\nBest regards"
+        - "Dear customer, thank you for your order. ### Delivery\nYour parcel ships on Monday."
+        - "Hello, the meeting moved to [Room 4](https://intranet.example/rooms/4). See you there!"
+      negative:
+        - "Hi team,\n\nNext steps: please send the signed contract by Friday.\n\nBest regards"
+        - "Loved the conference! #devops #berlin"
+        - "The results were significant* (*p < 0.05, see appendix)."
+  de:
+    examples:
+      positive:
+        - "Hallo zusammen,\n\n**Nächste Schritte:** Bitte schickt den unterschriebenen Vertrag bis Freitag.\n\nViele Grüße"
+        - "Sehr geehrte Kundin, vielen Dank für Ihre Bestellung. ### Lieferung\nIhr Paket wird am Montag verschickt."
+        - "Hallo, das Meeting findet jetzt in [Raum 4](https://intranet.example/raeume/4) statt."
+      negative:
+        - "Hallo zusammen,\n\nNächste Schritte: Bitte schickt den unterschriebenen Vertrag bis Freitag.\n\nViele Grüße"
+        - "Toller Konferenztag! #devops #berlin"
+        - "Die Ergebnisse waren signifikant* (*p < 0,05, siehe Anhang)."
+legitimate_use: >
+  Markdown is correct in documents that will be rendered (READMEs, wikis, many chat tools), and
+  asterisks or hash signs have other conventional uses (footnotes, hashtags, censoring). Flag
+  markup only where the medium shows it as stray characters.
+fix: >
+  Strip the markdown syntax and use the medium's own means: plain line breaks, capitalized labels
+  or the formatting tools of the email client.
+prevention: >
+  When writing for email, chat without markdown rendering, forms or print, write plain text with
+  no markdown syntax.
+notes: >
+  Single-source observation. Detector kind llm because only the target medium decides whether
+  markup is an artifact; the engine cannot know whether a text will be rendered. The legacy
+  knowledge base noted that this may be a rendering indicator more than a style pattern, and kept
+  it separate from the markdown-bleed aspect of markdown-emphasis-inflation (candidate T2.26).
+  Threshold chosen at migration.
+sources:
+  - source: vrid-ai-signs
+    locator: "entry 'Format Bleed'"
+    note: "Unrendered markdown characters (asterisks, hash signs) in the final text."
+related:
+  - {id: markdown-emphasis-inflation, relation: overlaps}
+  - {id: emoji-decoration, relation: distinct-from}
+history:
+  - {date: 2026-09-13, change: "Recorded in the legacy knowledge base as a single-source observation (vrid.ai); possibly a rendering indicator more than a style pattern."}
+  - {date: 2026-11-15, change: "Still single-source; kept separate from the markdown-bleed aspect of the new candidate T2.26."}
+  - {date: 2026-11-17, change: "Migrated to slop-check repository as observation format-bleed."}

@@ -1,0 +1,78 @@
+id: premodifier-stacking
+modality: text
+name: Premodifier stacking
+summary: >
+  Modification moves out of relative clauses and "of"/"von" phrases into the slot before the noun:
+  "the user-reported issue" instead of "the issue that users reported", "AI-driven insights"
+  instead of "insights that AI produces", "das nutzerseitig gemeldete Problem" instead of "das
+  Problem, das Nutzer gemeldet haben". Function words disappear and noun phrases grow dense, which
+  makes the reader unpack them.
+category: lexical
+status: candidate
+legacy_id: T2.24
+detector:
+  kind: metric
+  position: any
+  metric: hyphenated_premodifier_density
+  params: {}
+threshold:
+  value: {op: gt, x: 2}
+requires: null
+realizations:
+  "*":
+    examples:
+      positive:
+        - "The user-reported issue affects the AI-driven insights in the real-time dashboard."
+        - "Our cloud-native, AI-powered platform delivers data-driven, customer-centric results."
+        - "Die KI-gestützte Plattform liefert cloud-basierte, daten-getriebene Analysen."
+      negative:
+        - "The issue that users reported affects the insights that the model produces."
+        - "The method is well known and the results are up to date."
+        - "Das Problem, das Nutzer gemeldet haben, betrifft die Auswertung der Daten."
+    notes: >
+      The metric counts only hyphenated premodifiers. German participial premodification is
+      usually written without hyphens ("das nutzerseitig gemeldete Problem") and stays invisible
+      to it; the German example uses the hyphenated marketing style.
+legitimate_use: >
+  Technical and legal writing relies on established compound modifiers ("open-source license",
+  "real-time system", "end-to-end test", "long-term contract"); one or two per paragraph are normal.
+  Dismiss hits on fixed terms of the field; flag dense chains where a relative clause or an "of"
+  phrase would read more easily.
+fix: >
+  Unpack dense noun phrases: move the modifier into a relative clause or a prepositional phrase,
+  and name who did what ("the issue that users reported").
+prevention: >
+  Avoid stacking hyphenated or participial modifiers in front of nouns. Prefer a relative clause or
+  a short sentence that names the actor.
+notes: >
+  No source gives a threshold. The value of more than 2 hyphenated premodifiers per 100 words was
+  chosen at migration and is uncalibrated; very short texts reach it with a single hit. The legacy
+  knowledge base examined arXiv:2610.29162 and did not count it as a fourth source because it
+  measures noun-noun compounds, tracked separately as stacked-nouns.
+sources:
+  - source: legacy-knowledge-base
+    locator: "Candidate T2.24, opened 2026-11-01; section 5 (state 2026-11-15)"
+  - source: skill-better-ai-writing
+    locator: "attributive-adjective stacking observation ('2026-07 research pass')"
+    note: >
+      Preference for preposed adjective-noun chains over relative clauses, with a reference to an
+      unnamed academic source; no concrete text examples.
+  - source: arxiv-2609-23090
+    note: >
+      Decline of the function words of, a, an, is, are in CHI papers after the introduction of LLM
+      writing aids, read by the authors as modifiers moving into noun phrases. One edited academic
+      register only.
+  - source: arxiv-2605-06030
+    note: >
+      HPSG parsing of model continuations of news lead sentences shows a preference for "nominal
+      head + preceding adjunct" constructions. Single prompt-based news genre.
+related:
+  - {id: nominalization-density, relation: distinct-from}
+  - {id: stacked-nouns, relation: distinct-from}
+  - {id: function-word-shift, relation: overlaps}
+history:
+  - {date: 2026-09-20, change: "Attributive-adjective stacking recorded as a single-source observation (better-ai-writing-skills fork)."}
+  - {date: 2026-11-01, change: "Opened as legacy candidate T2.24 with arXiv:2609.23090 (function-word decline) as second source."}
+  - {date: 2026-11-08, change: "arXiv:2605.06030 (nominal head + preceding adjunct) added as third source."}
+  - {date: 2026-11-15, change: "arXiv:2610.29162 checked and not counted (noun-noun compounds, see stacked-nouns); a TMLR 2026 study on adjectives as a prompt-steering mechanism rejected as unrelated."}
+  - {date: 2026-11-17, change: "Migrated to slop-check repository as candidate premodifier-stacking; metric threshold chosen at migration."}

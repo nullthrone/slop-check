@@ -1,0 +1,105 @@
+id: model-fingerprint-opener
+modality: text
+name: Model-fingerprint opener
+summary: >
+  The text opens with a stock phrase that chat assistants put at the start of a response:
+  "Certainly! Here's ...", "Below is a structured overview", "Let me walk you through",
+  "Based on the text, ...". Studies link such first words to specific model families. In a finished
+  document the phrase is leftover framing from a conversation and tells the reader nothing.
+category: lexical
+status: candidate
+legacy_id: T2.23
+detector:
+  kind: regex
+  position: text_start
+threshold:
+  min_count: 1
+  comparison: gte
+  scope: text
+requires: null
+realizations:
+  en:
+    patterns:
+      - '(?i)^(?:certainly|sure|absolutely|of\scourse)[!,.]\s{1,3}(?:here|below|I[’'']d|I\scan|let)\b'
+      - '(?i)^(?:below\sis|below\syou[’'']ll\sfind|here[’'']?s|here\sis)\s(?:a|an|the|your)\s(?:quick\s|brief\s|short\s|concise\s|detailed\s|step-by-step\s|structured\s|revised\s)?(?:breakdown|summary|overview|rundown|draft|version|list|table|explanation|guide)\b'
+      - '(?i)^let\sme\swalk\syou\sthrough\b'
+      - '(?i)^(?:based\son|according\sto)\sthe\s(?:text|provided\s\w{1,20}|information\sprovided|passage|document\sprovided)\b'
+    examples:
+      positive:
+        - "Certainly! Here's a summary of the article."
+        - "Sure! Here's a quick breakdown of the costs."
+        - "Below is a structured overview of the proposal."
+        - "Let me walk you through the setup."
+        - "Based on the text, the author argues that remote work increases output."
+      negative:
+        - "Certainly not before Friday; the supplier confirmed delivery for 14 March."
+        - "The table below is sorted by date."
+        - "According to the 2023 census, the town has 4,812 residents."
+        - "Here is the key you left on my desk yesterday."
+        - "Sure enough, the cache was stale."
+  de:
+    patterns:
+      - '(?i)^(?:gerne|natürlich|selbstverständlich|klar|sicher)[!,.]\s{1,3}(?:hier|nachfolgend|im\sFolgenden|ich)\b'
+      - '(?i)^(?:hier\sist|hier\ssind|nachfolgend\s(?:finden\sSie|findest\sdu)|unten\s(?:finden\sSie|findest\sdu))\s(?:eine|ein|die|der|das|deine|Ihre)\s(?:kurze\s|knappe\s|ausführliche\s|strukturierte\s|überarbeitete\s)?(?:Übersicht|Zusammenfassung|Aufschlüsselung|Liste|Tabelle|Erklärung|Anleitung|Version|Entwurf)\b'
+      - '(?i)^(?:basierend\sauf|laut|gemäß)\s(?:dem|den)\s(?:bereitgestellten|vorliegenden|angegebenen)\s(?:Text|Informationen|Dokument|Artikel)\b'
+      - '(?i)^lass(?:en\sSie)?\s(?:mich|uns)\s(?:Sie\s|dich\s|euch\s)?(?:durch\s\w{1,20}\sführen|Schritt\sfür\sSchritt\sdurch)\b'
+    examples:
+      positive:
+        - "Gerne! Hier ist eine Übersicht der wichtigsten Punkte."
+        - "Hier ist eine kurze Zusammenfassung des Artikels:"
+        - "Basierend auf dem bereitgestellten Text lässt sich sagen, dass die Kosten steigen."
+        - "Nachfolgend finden Sie eine strukturierte Übersicht."
+      negative:
+        - "Gerne hätten wir den Termin verschoben, aber der Saal war belegt."
+        - "Die Übersicht unten ist nach Datum sortiert."
+        - "Laut dem Bericht des Bundesamts stieg die Zahl um 4 Prozent."
+        - "Hier ist der Schlüssel, den du gestern vergessen hast."
+legitimate_use: >
+  Human emails and documents also open with "Below is the agenda" or "Here is the summary you asked
+  for". Dismiss a hit when the opener answers a real request in an exchange; flag it in standalone
+  documents where it is leftover conversational framing. Reports describe the phrase as a style
+  pattern and never name or guess the model that wrote the text (docs/architecture.md D2).
+fix: >
+  Delete the opening phrase and start with the first piece of content. If the text answers a
+  question, start with the answer.
+prevention: >
+  Do not open with assistant framing such as "Certainly! Here's", "Below is a summary" or "Let me
+  walk you through". Start with the content itself.
+notes: >
+  Position text_start because the sources describe the first words of a response; a phrase such as
+  "below is" in the middle of a document is ordinary. The bare single-word openers from the legacy
+  examples ("I'd", "My") are left out of the detector because they start countless human texts.
+  Independence: skill-better-ai-writing and sej-ai-fingerprints both relay the same study
+  (sun-icml-2025-fingerprints), which the migration verified; the legacy knowledge base had counted
+  them as two independent sources. With vrid.ai the pattern keeps at least two independent clusters.
+sources:
+  - source: legacy-knowledge-base
+    locator: "Candidate T2.23, opened 2026-09-20; section 5 (state 2026-11-15)"
+  - source: vrid-ai-signs
+    locator: "entry 'First-Word Fingerprints'"
+    note: "Model-specific signature words at the start: ChatGPT \"Certainly\", Claude \"I'd\", Gemini \"My\"."
+  - source: skill-better-ai-writing
+    locator: "entry 'Model-fingerprint openers' ('2026-07 research pass')"
+    note: "Cites a classification study with 97.1 % detection accuracy (see sun-icml-2025-fingerprints)."
+  - source: sej-ai-fingerprints
+    note: >
+      ChatGPT opens with "Below is..." or "Sure!", Claude uses "here is a summary", Gemini
+      "certainly! below", Grok sometimes "which" or "where"; "first words are highly predictable in
+      AI content".
+  - source: sun-icml-2025-fingerprints
+    note: >
+      Five-way source-model classification at 97.1 %; the first token alone reaches roughly 50 %
+      (chance 20 %); ChatGPT begins responses with "certainly" and "below is". Checked at migration
+      on the arXiv full text.
+related:
+  - {id: sycophant-residue, relation: overlaps}
+  - {id: generic-opening, relation: overlaps}
+  - {id: announce-then-answer, relation: overlaps}
+history:
+  - {date: 2026-09-13, change: "vrid.ai 'First-Word Fingerprints' recorded as a single-source observation."}
+  - {date: 2026-09-20, change: "Opened as legacy candidate T2.23 with the better-ai-writing-skills fork (citing an ICML 2025 study) as second source."}
+  - {date: 2026-09-27, change: "A category 'Model-Fingerprint Opening Words' in an open-source detection project checked and rejected: it covers knowledge-cutoff phrases."}
+  - {date: 2026-10-04, change: "Search Engine Journal article added as third source; Graphite model-specific word frequencies not counted because they are not position-bound."}
+  - {date: 2026-10-11, change: "arXiv:2603.27006 not counted (em dash frequencies, not position-bound)."}
+  - {date: 2026-11-15, change: "arXiv:2405.14057 read and rejected (position-independent features only); arXiv:2503.01659 not accessible."}
+  - {date: 2026-11-17, change: "Migrated to slop-check repository as candidate model-fingerprint-opener; the Search Engine Journal article turned out to cite the same study as the skill fork and is registered as derived from it."}

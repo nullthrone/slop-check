@@ -1,0 +1,70 @@
+id: self-echo
+modality: text
+name: Self-echo
+summary: >
+  A distinctive word, phrase or image from earlier in the same text comes back as if it were a
+  deliberate callback, while it is really the same narrow vocabulary recurring under topic
+  pressure ("wearing the same italics ... wearing a different costume"). The repetition poses as a
+  punchline and adds nothing.
+category: composition
+status: observation
+detector:
+  kind: llm
+  position: any
+  rubric: >
+    Find distinctive words, phrases or images (not ordinary function words or the topic's key
+    terms) that appear two or more times in the text, where a later occurrence is staged as a
+    callback or punchline (often at a paragraph or section end) but adds no new meaning to the
+    first. Typical signs: the same unusual verb or metaphor reused for different things, a
+    paragraph closing with a phrase lifted from the opening, a coined image recurring in each
+    section. Do not count consistent technical terms, deliberate refrains in speeches, poems or
+    songs, and callbacks that change or resolve the meaning of the first use. Return each echoed
+    phrase as a hit with its occurrences.
+threshold:
+  min_count: 2
+  comparison: gte
+  scope: text
+requires: null
+realizations:
+  en:
+    examples:
+      positive:
+        - "The old dashboard was wearing the same italics as the report it replaced. Six months later, the new one is the same problem wearing a different costume."
+        - "Our roadmap is a quiet bet on simplicity. Each feature we cut was a quiet bet too. In the end, the whole company became a quiet bet."
+      negative:
+        - "The cache stores session tokens. When the cache is full, the oldest tokens are evicted first."
+        - "We said in March that we would ship in June. We shipped in June."
+  de:
+    examples:
+      positive:
+        - "Das alte Dashboard trug dieselbe Kursivschrift wie der Bericht, den es ersetzte. Sechs Monate später ist das neue dasselbe Problem im anderen Kostüm."
+        - "Unsere Roadmap ist eine leise Wette auf Einfachheit. Jedes gestrichene Feature war ebenfalls eine leise Wette. Am Ende wurde das ganze Unternehmen zu einer leisen Wette."
+      negative:
+        - "Der Cache speichert Sitzungstoken. Ist der Cache voll, werden die ältesten Token zuerst entfernt."
+        - "Im März haben wir den Juni als Termin genannt. Wir haben im Juni geliefert."
+legitimate_use: >
+  Consistent terminology is good practice, and speeches, poems and essays use refrains and
+  callbacks deliberately, often changing the meaning on the second use. Flag recurring distinctive
+  phrases that pose as callbacks without adding meaning.
+fix: >
+  Cut the echo, or replace it with a statement that says something new. Keep a callback only if
+  the second use changes or resolves the first.
+prevention: >
+  Do not reuse a distinctive phrase or image from earlier in the text as a closing punchline. Say
+  something new or end the paragraph.
+notes: >
+  Single-source observation. The legacy knowledge base noted the closeness to T1.5 (compulsive
+  summary) and fractal summaries without merging. Threshold chosen at migration.
+sources:
+  - source: tropes-fyi
+    locator: "entry 'Self-Echo', category Composition, status new"
+    note: "Example: \"wearing the same italics ... wearing a different costume\"."
+related:
+  - {id: fractal-summaries, relation: overlaps}
+  - {id: compulsive-summary, relation: overlaps}
+  - {id: synonym-cycling, relation: distinct-from}
+history:
+  - {date: 2026-08-30, change: "Noted in the legacy knowledge base among new single-source tropes.fyi entries."}
+  - {date: 2026-09-13, change: "Recorded as a single-source observation in section 5a (tropes.fyi, status new); closeness to T1.5 and fractal summaries noted, not merged."}
+  - {date: 2026-11-15, change: "Still single-source."}
+  - {date: 2026-11-17, change: "Migrated to slop-check repository as observation self-echo."}

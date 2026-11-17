@@ -1,0 +1,60 @@
+id: bullet-list-preference
+modality: text
+name: Bullet list preference
+summary: >
+  Content that a person would write as connected prose is broken into bullet or numbered lists,
+  regardless of whether the items are parallel. The list format hides the relations between the
+  points (cause, contrast, sequence) that prose would have to state.
+category: formatting
+status: observation
+detector:
+  kind: regex
+  position: any
+threshold:
+  min_count: 4
+  per_words: 100
+  comparison: gte
+  scope: text
+requires: null
+realizations:
+  "*":
+    patterns:
+      - '^[ \t]{0,6}(?:[-*+•]|\d{1,2}[.)])[ \t]{1,4}\S'
+    examples:
+      positive:
+        - "- Faster onboarding"
+        - "1. Fill in the application form"
+        - "• Schnellere Einarbeitung"
+        - "2) Antrag ausfüllen"
+      negative:
+        - "Profit fell - again - in the third quarter."
+        - "3.5 million users signed up in the first week."
+        - "-5 °C is expected tonight."
+        - "Der Gewinn sank – erneut – im dritten Quartal."
+        - "3,5 Millionen Nutzer meldeten sich in der ersten Woche an."
+legitimate_use: >
+  Lists suit parallel items: steps of a procedure, requirements, options, reference material. Flag
+  lists whose items depend on each other or that a reader would understand better as a paragraph,
+  especially in short answers.
+fix: >
+  Turn the list into prose that states how the points relate (because, but, then). Keep lists for
+  truly parallel items and procedures.
+prevention: >
+  Write connected prose by default. Use a list only for parallel items, steps or reference data.
+notes: >
+  Single-source observation; distinct from bullet-bold-lead, which concerns the bold-lead structure
+  of list items. Threshold chosen at migration: 4 list items per 100 words, uncalibrated. Expected
+  false positives in documentation and checklists.
+sources:
+  - source: pangram-signs-of-ai-writing
+    locator: "bullet lists"
+    note: >
+      General preference for lists where human authors would choose prose, 9x the human baseline.
+      Corpus size and methodology not disclosed.
+related:
+  - {id: bullet-bold-lead, relation: distinct-from}
+  - {id: excessive-enumeration, relation: distinct-from}
+  - {id: markdown-emphasis-inflation, relation: overlaps}
+history:
+  - {date: 2026-11-15, change: "Recorded in the legacy knowledge base as a single-source observation (Pangram, 9x)."}
+  - {date: 2026-11-17, change: "Migrated to slop-check repository as observation bullet-list-preference."}

@@ -1,0 +1,49 @@
+id: prompt-overfitting
+modality: image
+name: Prompt overfitting
+summary: >
+  One attribute from the prompt leaks into parts of the image where it does not belong: stripes asked
+  for on shirts reappear on the wallpaper, one face is duplicated across several people, a theme color
+  bleeds into hems, laces and props. Documented in one research guide; kept as an observation until a
+  second independent source is registered.
+category: visual-artifact
+status: observation
+detector:
+  kind: vision
+  rubric: >
+    Compare the image with its evident subject, and with the prompt if one is available. Flag it if a
+    single attribute (a pattern, color, object or face) repeats across unrelated parts of the scene in a
+    way real scenes rarely show: the same stripe pattern on clothes, walls and furniture; one face on
+    several people; a theme color bleeding into hems, props and background. Count one hit per image.
+    Does not count: coordinated designs where repetition is intended (team uniforms, branded event
+    decor, matching outfits); twins; repeating architecture. Describe the visible pattern only; do not
+    infer how the image was made.
+threshold: {min_count: 1}
+realizations:
+  "*":
+    examples:
+      positive:
+        - "Image of a group of kids in striped shirts standing in front of wallpaper with the same stripes, next to a striped sofa."
+        - "Office scene in which the same woman's face appears on three different people around the table."
+        - "Image of a student in a purple university hoodie where purple also shows up on the frayed edges of black jeans and on the shoelaces."
+      negative:
+        - "Photo of a football team in identical striped jerseys during a match."
+        - "Photo of identical twins sitting side by side."
+        - "Branded conference stage where the logo color repeats on banners by design."
+legitimate_use: >
+  Intended repetition: uniforms, matching outfits, branded decor, twins, repeating architecture.
+fix: >
+  Regenerate with each attribute bound to its object ("only the shirts are striped; plain white wall"),
+  inpaint stray repetitions, and check the faces in groups for duplicates.
+prevention: >
+  Bind each attribute to its object and describe the other elements explicitly, for example "the
+  children wear striped shirts; the wall behind them is plain white; each child has a different face,
+  age and hairstyle".
+sources:
+  - source: arxiv-2406-08651
+    locator: "section 3.5 Prompt Overfitting"
+    note: "Stripes from 'kids wearing striped shirts' overrepresented in the wallpaper; a person apparently cloned; university colors on frayed denim."
+related:
+  - {id: dysfunctional-objects, relation: distinct-from}
+history:
+  - {date: 2026-11-17, change: "Added to the v1 image catalog as observation (single source cluster)."}

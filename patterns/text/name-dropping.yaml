@@ -1,0 +1,89 @@
+id: name-dropping
+modality: text
+name: Name dropping
+summary: >
+  Media outlets or publications are piled up to borrow credibility ("cited in The New York Times,
+  BBC, Financial Times, and The Hindu") without saying what any of them reported. The list works
+  as a badge; the reader learns nothing that could be checked.
+category: attribution
+status: candidate
+legacy_id: T2.19
+detector:
+  kind: regex
+  position: any
+threshold:
+  min_count: 1
+  comparison: gte
+  scope: text
+requires: null
+realizations:
+  en:
+    patterns:
+      - '(?i:\b(?:featured|cited|quoted|mentioned|covered|profiled|recognized|reported|praised|seen|interviewed)\s(?:in|by|on))\s(?:the\s)?[A-Z][\w&.’''-]{0,24}(?:\s[A-Z][\w&.’''-]{0,24}){0,3}(?:(?:,\s(?:and\s|or\s)?|\s(?:and|or)\s)(?:the\s)?[A-Z][\w&.’''-]{0,24}(?:\s[A-Z][\w&.’''-]{0,24}){0,3}){2,8}'
+      - '(?i:\b(?:outlets|publications|media|newspapers|magazines)\s(?:like|such\sas|including))\s(?:the\s)?[A-Z][\w&.’''-]{0,24}(?:\s[A-Z][\w&.’''-]{0,24}){0,3}(?:(?:,\s(?:and\s|or\s)?|\s(?:and|or)\s)(?:the\s)?[A-Z][\w&.’''-]{0,24}(?:\s[A-Z][\w&.’''-]{0,24}){0,3}){2,8}'
+    examples:
+      positive:
+        - "Our approach has been cited in The New York Times, BBC, Financial Times, and The Hindu."
+        - "The founder has been featured in Wired, Forbes and BBC."
+        - "Covered by TechCrunch, The Verge, and Business Insider, the app keeps growing."
+        - "Her research has been praised by publications such as The Guardian, Le Monde and Der Spiegel."
+      negative:
+        - "The merger was first reported by Reuters on 3 May and confirmed in the annual filing."
+        - "The survey was conducted in Berlin and Munich with 1,200 participants."
+        - "As the Financial Times noted in its 2023 analysis of bank margins, deposit rates lagged policy rates by six months."
+        - "Interviews were featured in three episodes of the podcast, recorded in May, June and July."
+  de:
+    patterns:
+      - '(?i:\bbekannt\saus)[:\s]\s?(?:(?:der|die|das|dem|den)\s)?[A-ZÄÖÜ][\w&.’''-]{0,24}(?:\s[A-ZÄÖÜ][\w&.’''-]{0,24}){0,3}(?:(?:,\s(?:und\s|sowie\s|oder\s)?|\s(?:und|sowie|oder)\s)(?:(?:der|die|das|dem|den)\s)?[A-ZÄÖÜ][\w&.’''-]{0,24}(?:\s[A-ZÄÖÜ][\w&.’''-]{0,24}){0,3}){2,8}'
+      - '(?i:\b(?:Medien|Zeitungen|Zeitschriften|Publikationen|Magazine|Sender)\swie)\s(?:(?:der|die|das|dem|den)\s)?[A-ZÄÖÜ][\w&.’''-]{0,24}(?:\s[A-ZÄÖÜ][\w&.’''-]{0,24}){0,3}(?:(?:,\s(?:und\s|sowie\s|oder\s)?|\s(?:und|sowie|oder)\s)(?:(?:der|die|das|dem|den)\s)?[A-ZÄÖÜ][\w&.’''-]{0,24}(?:\s[A-ZÄÖÜ][\w&.’''-]{0,24}){0,3}){2,8}'
+      - '(?i:\b(?:berichteten|schrieben)\s(?:bereits\s)?(?:unter\sanderem|u\.\s?a\.))\s(?:(?:der|die|das|dem|den)\s)?[A-ZÄÖÜ][\w&.’''-]{0,24}(?:\s[A-ZÄÖÜ][\w&.’''-]{0,24}){0,3}(?:(?:,\s(?:und\s|sowie\s|oder\s)?|\s(?:und|sowie|oder)\s)(?:(?:der|die|das|dem|den)\s)?[A-ZÄÖÜ][\w&.’''-]{0,24}(?:\s[A-ZÄÖÜ][\w&.’''-]{0,24}){0,3}){2,8}'
+    examples:
+      positive:
+        - "Bekannt aus Spiegel, FAZ, Handelsblatt und der Zeit."
+        - "Über unser Start-up berichteten unter anderem die Süddeutsche Zeitung, das Handelsblatt und der BR."
+        - "Unsere Gründerin wurde in Medien wie der Zeit, dem Spiegel und Wired zitiert."
+      negative:
+        - "Die Zahlen veröffentlichte zuerst das Handelsblatt am 3. Mai; der Konzern bestätigte sie später."
+        - "Die Methode ist aus der Statistik bekannt und wird in Lehrbüchern, Normen und Leitfäden beschrieben."
+        - "Bekannt aus der Fernsehwerbung ist vor allem der Slogan, nicht das Produkt."
+        - "Die Studie wurde in Berlin, München und Hamburg vorgestellt."
+legitimate_use: >
+  Press reviews, media analyses and reference lists name several outlets because the outlets are
+  the subject. Academic texts list cited author surnames in the same shape after "cited in".
+  Dismiss a hit when each named source comes with what it reported, a date or a link; flag
+  bare lists that serve only as a credibility badge.
+fix: >
+  Name one source that matters and state what it reported, with date or link. Delete the rest of
+  the list, or move it to a references section.
+prevention: >
+  Do not list media outlets or publications to signal credibility. Cite a specific source only
+  together with what it reported.
+notes: >
+  The legacy knowledge base found no quantified threshold. Threshold chosen at migration: a single
+  match, because the regex itself requires a credit phrase followed by three or more capitalized
+  names. German has no trigger for "zitiert in" because capitalized common nouns ("in Lehrbüchern,
+  Normen und Leitfäden") would match; only badge phrases are covered.
+sources:
+  - source: legacy-knowledge-base
+    locator: "Candidate T2.19, opened 2026-09-20; section 5 (state 2026-11-15)"
+  - source: gptzero-ai-patterns
+    locator: "entry 'Name Dropping'"
+    note: "The example names Wired, Forbes and BBC. Page last modified 2026-09-28 per its metadata."
+  - source: skill-avoid-ai-writing
+    locator: "entry 'Notability Name-Dropping'"
+    note: "Near-identical description with its own example."
+  - source: fireprompts-io
+    locator: "'Name-dropping brands'"
+    note: >
+      "Featured in TechCrunch" as an unsupported appeal to authority. Recorded on 2026-08-30 as a
+      separate single-source note; the legacy knowledge base never linked it to T2.19.
+related:
+  - {id: vague-attribution, relation: distinct-from}
+history:
+  - {date: 2026-08-30, change: "fireprompts.io 'Name-dropping brands' recorded as a single-source observation."}
+  - {date: 2026-09-13, change: "GPTZero 'Name Dropping' recorded as a single-source observation, distinguished from T3.1 (there attribution is missing, here it is piled up)."}
+  - {date: 2026-09-20, change: "Opened as legacy candidate T2.19 with avoid-ai-writing ('Notability Name-Dropping') as second source."}
+  - {date: 2026-09-27, change: "A category 'Vague Attribution/Source Name-Dropping' in an open-source detection project checked and rejected: it matches T3.1."}
+  - {date: 2026-10-11, change: "GPTZero page re-read without change; studies on AI search citations rejected as a different topic."}
+  - {date: 2026-11-15, change: "No new source; no quantified threshold."}
+  - {date: 2026-11-17, change: "Migrated to slop-check repository as candidate name-dropping."}

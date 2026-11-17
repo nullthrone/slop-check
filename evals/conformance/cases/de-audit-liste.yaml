@@ -1,0 +1,20 @@
+id: de-audit-liste
+language: de
+mode: audit
+notes: Social-Media-Liste mit Emoji-Aufzählung und fett gesetzten Einleitungen.
+text: |
+  🌱 Fünf Tipps für einen nachhaltigeren Alltag
+
+  Nachhaltigkeit beginnt im Kleinen. Und jetzt wird es spannend: Die meisten Tipps sparen sogar Geld.
+
+  - **Leitungswasser**: Wer Leitungswasser statt Flaschenwasser trinkt, spart Verpackung und schleppt keine Kisten mehr.
+  - **Saisonal einkaufen**: Obst und Gemüse aus der Region haben kurze Transportwege und schmecken meist besser.
+  - **Reparieren statt wegwerfen**: In vielen Städten gibt es Repair-Cafés, in denen Ehrenamtliche beim Flicken helfen.
+  - **Fahrrad für kurze Wege**: Strecken unter fünf Kilometern sind mit dem Rad oft schneller erledigt als mit dem Auto.
+  - **Stoffbeutel**: Ein Beutel in der Jackentasche ersetzt Hunderte Plastiktüten im Jahr.
+
+  ✅ Fang mit einem Tipp an und nimm dir jede Woche einen weiteren vor.
+
+  💚 Jeder Schritt zählt.
+must_find: [bullet-bold-lead, emoji-decoration, payoff-announcement]
+must_not_find: [german-stock-phrases, compulsive-summary, cya-disclaimer]

@@ -1,0 +1,20 @@
+id: en-audit-listicle
+language: en
+mode: audit
+notes: Social-media style listicle with emoji bullets and bold lead-ins.
+text: |
+  🚀 Five habits that changed how I work
+
+  I used to start every morning in my inbox. Here's the thing: the inbox is everyone else's to-do list. These are the habits that replaced it.
+
+  - **Time blocking**: I reserve the first two hours of the day for one project and keep notifications off.
+  - **Weekly review**: Every Friday I clear my task list, close loops and write down three priorities for Monday.
+  - **Single tab rule**: I keep one browser tab open per task, which makes it obvious when I start to drift.
+  - **Walking meetings**: One-on-ones happen outside whenever the weather allows it.
+  - **Shutdown ritual**: At six I write tomorrow's first task on a sticky note and close the laptop.
+
+  ✅ The best part: none of this costs money.
+
+  💡 Start with one habit, keep it for two weeks, and then add the next one. Small changes compound faster than you think.
+must_find: [bullet-bold-lead, emoji-decoration, payoff-announcement]
+must_not_find: [german-stock-phrases, curly-quotes, compulsive-summary]

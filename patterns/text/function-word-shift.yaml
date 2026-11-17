@@ -1,0 +1,60 @@
+id: function-word-shift
+modality: text
+name: Function-word shift
+summary: >
+  A cluster of prepositions and conjunctions becomes more frequent in LLM-assisted English prose:
+  "across", "into", "where", "while" and "beyond" ("insights across teams", "beyond the dashboard",
+  "while ensuring"). Each word is ordinary; the shift shows only as a density change across a text.
+category: lexical
+status: observation
+detector:
+  kind: lexicon
+  position: any
+threshold:
+  min_count: 12
+  per_words: 1000
+  comparison: gte
+  scope: text
+  min_units: null
+requires: null
+realizations:
+  en:
+    terms: [across, into, where, while, beyond]
+    examples:
+      positive:
+        - "We rolled the tool out across all teams, beyond the original pilot group."
+        - "The model turns raw logs into insights while keeping costs low."
+        - "This is where the new workflow helps."
+      negative:
+        - "Meanwhile, the team moved the servers to the new data center in May."
+        - "Whereas the old process took days, the new one takes an hour."
+        - "Elsewhere, the intolerant parser rejected the file."
+legitimate_use: >
+  These are high-frequency function words; any single use is normal. Only an unusual density over
+  a longer text is of interest, and even then technical descriptions of spatial or temporal
+  relations use them legitimately.
+fix: >
+  Check whether "across", "beyond" and "while" carry a literal relation of place or time. Replace
+  vague uses with the concrete relation ("in all three teams", "in addition to").
+prevention: >
+  Use "across", "beyond", "into", "where" and "while" only for their literal relation; prefer the
+  concrete phrasing when the relation is vague.
+notes: >
+  Single-source observation from one edited academic register (CHI papers, English only), so there
+  is no German realization; German equivalents have no evidence yet. The density threshold of 12
+  per 1,000 words was chosen at migration without calibration and is expected to misfire on many
+  ordinary English texts; it exists to let a measurement test the claim. The legacy knowledge base
+  found no second source with a nameable trope and example sentences. Related to the
+  function-word decline that supports premodifier-stacking.
+sources:
+  - source: arxiv-2609-23090
+    note: >
+      Rise of across, into, where, while and beyond in CHI papers since LLM writing aids appeared,
+      reported next to the decline of of, a, an, is, are. One edited academic register; the
+      authors note that the break coincides with the removal of the CHI page limit in 2021.
+related:
+  - {id: premodifier-stacking, relation: overlaps}
+history:
+  - {date: 2026-11-01, change: "Recorded in the legacy knowledge base as a single-source observation (arXiv:2609.23090)."}
+  - {date: 2026-11-15, change: "Still single-source; no second source with example sentences."}
+  - {date: 2026-11-17, change: "Migrated to slop-check repository as observation function-word-shift."}

@@ -1,0 +1,70 @@
+id: appeal-to-familiarity
+modality: text
+name: Appeal to familiarity
+summary: >
+  A point is presented as canonical or common knowledge without evidence ("A classic.", "As we all
+  know", "We've all been there"), borrowing the authority of a consensus that the text never
+  shows. The imagined authority is the reader's assumed prior experience.
+category: rhetoric
+status: observation
+detector:
+  kind: regex
+  position: any
+threshold:
+  min_count: 1
+  comparison: gte
+  scope: text
+requires: null
+realizations:
+  en:
+    patterns:
+      - '(?i)\b(?:as\severyone\sknows|as\swe\sall\sknow|we[’'']ve\sall\sbeen\sthere|you\sknow\sthe\sdrill|a\stale\sas\sold\sas\stime|it[’'']s\scommon\sknowledge\sthat|it[’'']s\sno\ssecret\sthat)\b'
+      - '(?:^|(?<=[.!?]\s))(?:A\s)?[Cc]lassic(?:\s(?:case|move|mistake|story|trap))?[.!,]'
+    examples:
+      positive:
+        - "As we all know, onboarding makes or breaks retention."
+        - "We've all been there: the deploy fails at 5 p.m. on a Friday."
+        - "The project ran over budget. A classic."
+        - "It's no secret that remote teams struggle with alignment."
+      negative:
+        - "The novel is a classic of Russian literature and was first published in 1869."
+        - "Everyone in the office knows the door code, which is why we change it monthly."
+        - "The survey found that 62 % of respondents knew the policy."
+        - "We have all been invited to the review on Thursday."
+  de:
+    patterns:
+      - '(?i)\b(?:wie\sjeder\sweiß|wie\swir\salle\swissen|jeder\skennt\sdas|das\skennt\sjeder|kennen\swir\salle|es\sist\skein\sGeheimnis,?\sdass|wie\sallgemein\sbekannt)\b'
+      - '(?:^|(?<=[.!?]\s))(?:Ein\s)?(?:Klassiker|Klassisch)[.!,]'
+    examples:
+      positive:
+        - "Wie wir alle wissen, entscheidet das Onboarding über die Bindung."
+        - "Jeder kennt das: Das Deployment scheitert am Freitag um 17 Uhr."
+        - "Das Projekt sprengte das Budget. Ein Klassiker."
+        - "Es ist kein Geheimnis, dass verteilte Teams mit Abstimmung kämpfen."
+      negative:
+        - "Der Roman ist ein Klassiker der russischen Literatur und erschien 1869."
+        - "Jeder im Büro kennt den Türcode, deshalb ändern wir ihn monatlich."
+        - "Laut Umfrage kannten 62 Prozent der Befragten die Richtlinie."
+legitimate_use: >
+  Shared experience is a legitimate way to connect with readers in personal essays and humor, and
+  some facts really are common knowledge. Flag appeals that stand in for evidence on a point the
+  reader could dispute.
+fix: >
+  Replace the appeal with the evidence or example that makes the point, or state the point
+  plainly without claiming consensus.
+prevention: >
+  Do not claim that everyone knows or has experienced something. Give the evidence or the example
+  instead.
+notes: >
+  Single-source observation. The detector covers stock phrases only; claims of canonicity phrased
+  freely ("the textbook example") need a reader's judgement. Threshold chosen at migration.
+sources:
+  - source: tropes-fyi
+    locator: "entry 'Appeal to Familiarity', category Tone, status new"
+    note: "Example: \"A classic,\"."
+related:
+  - {id: vague-attribution, relation: overlaps}
+history:
+  - {date: 2026-09-13, change: "Recorded in the legacy knowledge base as a single-source observation (tropes.fyi, status new)."}
+  - {date: 2026-11-15, change: "Still single-source."}
+  - {date: 2026-11-17, change: "Migrated to slop-check repository as observation appeal-to-familiarity."}

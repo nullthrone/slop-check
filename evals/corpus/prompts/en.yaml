@@ -1,0 +1,51 @@
+# English generation prompts for the AI corpus (docs/architecture.md section 6.1).
+# The prompts are deliberately plain: they read like everyday requests and carry no style
+# instructions, so the corpus shows each model's default writing.
+#
+# Placeholders: {topic} (derived from a human document, no LLM call) and {words} (target length
+# matched to that document). `human_registers` maps a prompt to the human corpus registers it
+# is paired with; one prompt per document is chosen deterministically from the candidates.
+
+language: en
+prompts:
+  - id: en-blog-post
+    register: blog-post
+    human_registers: [web]
+    user: |
+      Write a blog post about this topic: {topic}
+      Length: about {words} words.
+
+  - id: en-marketing-page
+    register: marketing-page
+    human_registers: [web]
+    user: |
+      Write the text for a web page that presents the following to potential customers or visitors: {topic}
+      Length: about {words} words.
+
+  - id: en-opinion-piece
+    register: opinion-piece
+    human_registers: [web]
+    user: |
+      Write an opinion piece on this topic: {topic}
+      Length: about {words} words.
+
+  - id: en-email
+    register: email
+    human_registers: [web]
+    user: |
+      Write an email about the following to people who would be interested in it: {topic}
+      Length: about {words} words.
+
+  - id: en-encyclopedic-article
+    register: encyclopedic-article
+    human_registers: [encyclopedic]
+    user: |
+      Write an encyclopedia article about: {topic}
+      Length: about {words} words.
+
+  - id: en-explainer
+    register: explainer
+    human_registers: [qa]
+    user: |
+      Someone posted this question in an online forum: {topic}
+      Write a reply that answers and explains it. Length: about {words} words.

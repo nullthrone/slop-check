@@ -1,0 +1,16 @@
+id: de-clean-wanderbericht
+language: de
+mode: audit
+notes: Sachlicher Vereinsbericht mit konkreten Angaben. Erwartet GREEN ohne gewertete Befunde.
+text: |
+  Am Samstag sind wir mit elf Leuten vom Bahnhof Lauenstein aus auf den Kammweg gegangen. Die Strecke ist gut 14 Kilometer lang und hat etwa 450 Höhenmeter, die meisten davon in der ersten Stunde.
+
+  Oben war es windig und deutlich kälter als im Tal. Wer keine Mütze dabeihatte, hat sich an der Hütte am Sattel eine geliehen. Die Hütte ist nur am Wochenende bewirtet. Es gibt Suppe und Kuchen, bezahlt wird bar.
+
+  Der Abstieg über den Forstweg war nach dem Regen der letzten Tage stellenweise matschig. Zwei von uns sind ausgerutscht, verletzt hat sich zum Glück niemand. Wer die Tour nachgehen möchte, sollte feste Schuhe tragen und für den Rückweg etwas mehr Zeit einplanen, als die Schilder angeben.
+
+  Zurück am Bahnhof hatten wir noch eine halbe Stunde bis zum Zug. Die nächste Tour ist für den 14. Oktober geplant. Wer mitkommen will, sagt bitte bis Mittwoch dem Vorstand Bescheid.
+must_find: []
+must_not_find: [german-stock-phrases, antithesis-template, hallmark-vocabulary, brochure-tone, compulsive-summary]
+expect_verdict: [GREEN]
+max_findings: 0

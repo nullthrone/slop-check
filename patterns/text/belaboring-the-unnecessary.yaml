@@ -1,0 +1,75 @@
+id: belaboring-the-unnecessary
+modality: text
+name: Belaboring the unnecessary
+summary: >
+  The text defends or qualifies a minor, uncontroversial point as if answering an objection nobody
+  raised ("I don't mean any of that as cynicism about players."). The pre-emptive defence costs
+  space and pulls attention away from the actual argument.
+category: composition
+status: observation
+detector:
+  kind: llm
+  position: any
+  rubric: >
+    Find sentences that defend, justify or qualify a point that is minor or uncontroversial in
+    context, as if pre-empting an objection that the text gives no reason to expect. Typical forms:
+    "I don't mean this as criticism of ...", "To be clear, this is not about ...", "None of this is
+    to say ...", "Das soll keine Kritik an ... sein", "Damit ist nicht gesagt, dass ...", when the
+    preceding text contains nothing that a reasonable reader would take as that criticism or
+    claim. Do not count qualifications that answer an objection the text itself raised or that a
+    real audience is known to hold, legal or safety caveats, and corrections of a likely
+    misreading of a technical statement. Return each pre-emptive defence as a hit.
+threshold:
+  min_count: 2
+  comparison: gte
+  scope: text
+requires: null
+realizations:
+  en:
+    examples:
+      positive:
+        - "The team switched the build tool in May. I don't mean any of that as criticism of the old tool, which served us well."
+        - "We moved the stand-up to 9:30. To be clear, this is not about anyone being late; it simply fits the new time zones better."
+        - "The cafeteria now closes at three. None of this is to say that lunch is unimportant."
+      negative:
+        - "Some readers took last week's post as an attack on the vendor. It was not: the outage was our configuration error."
+        - "This is not legal advice; consult a lawyer before you sign the lease."
+        - "The function returns null on timeout. That does not mean the request failed; it may still complete on the server."
+  de:
+    examples:
+      positive:
+        - "Wir haben das Build-Tool im Mai gewechselt. Das soll keine Kritik am alten Tool sein, das uns gut gedient hat."
+        - "Das Daily beginnt jetzt um 9:30 Uhr. Damit will ich niemandem Unpünktlichkeit vorwerfen; die Zeit passt einfach besser zu den Zeitzonen."
+        - "Die Kantine schließt jetzt um 15 Uhr. Damit ist nicht gesagt, dass das Mittagessen unwichtig wäre."
+      negative:
+        - "Einige Leser verstanden den Beitrag als Angriff auf den Anbieter. Das war er nicht: Der Ausfall lag an unserer Konfiguration."
+        - "Dies ist keine Rechtsberatung; lassen Sie den Vertrag vor der Unterschrift prüfen."
+        - "Die Funktion gibt bei einem Timeout null zurück. Das heißt nicht, dass die Anfrage fehlgeschlagen ist."
+legitimate_use: >
+  Writers address objections their readers actually hold, add required legal or safety caveats,
+  and correct likely misreadings of technical statements. Flag defences against objections that
+  nothing in the text or its audience suggests.
+fix: >
+  Delete the pre-emptive defence. If a real objection exists, name it and answer it with evidence.
+prevention: >
+  Do not defend points nobody disputes. Address an objection only when the reader is likely to
+  raise it, and then answer it concretely.
+notes: >
+  Single-source observation. vrid.ai describes a related mechanism ("Over-Explanation of Basics",
+  defining obvious terms); the legacy knowledge base kept it separate because defining a term and
+  defending against an imagined objection differ. Threshold chosen at migration.
+sources:
+  - source: tropes-fyi
+    locator: "entry 'Belaboring the Unnecessary', category Composition, status new"
+    note: "Example: \"I don't mean any of that as cynicism about players.\""
+  - source: vrid-ai-signs
+    locator: "entry 'Over-Explanation of Basics'"
+    note: "Related, not the same mechanism (defining obvious terms, e.g. \"email\" in an email marketing article); not counted."
+related:
+  - {id: cya-disclaimer, relation: distinct-from}
+  - {id: hollow-sentences, relation: overlaps}
+history:
+  - {date: 2026-09-06, change: "Recorded in the legacy knowledge base as a single-source observation (tropes.fyi)."}
+  - {date: 2026-09-13, change: "Related vrid.ai finding (Over-Explanation of Basics) recorded and kept separate."}
+  - {date: 2026-11-15, change: "No new source found."}
+  - {date: 2026-11-17, change: "Migrated to slop-check repository as observation belaboring-the-unnecessary."}

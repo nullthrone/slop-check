@@ -1,0 +1,66 @@
+id: averaged-face
+modality: image
+name: Averaged idealized face
+summary: >
+  People get generically beautiful faces averaged out of many: symmetric, ageless, conventionally
+  attractive, in proportion, without distinguishing marks, and in groups they resemble one another.
+  Research on synthetic faces finds them more average and more in proportion than real faces, with
+  attractiveness a usable cue; practitioner sources list the generic face as a current default. The
+  result is a cast of interchangeable people.
+category: visual-subject
+status: candidate
+detector:
+  kind: vision
+  rubric: >
+    Look at each prominent human face. Flag the image if the faces are idealized and interchangeable:
+    high symmetry, smooth proportions, no distinguishing marks (asymmetry, scars, moles, crooked teeth,
+    irregular noses, wrinkles fitting the stated or apparent age), model-like attractiveness whatever
+    the role, and in group images faces that share the same features apart from skin tone or hair.
+    Count one hit per image. Does not count: professional models in fashion or beauty contexts;
+    illustration or animation styles that idealize faces by convention; faces too small or distant to
+    judge; a single attractive person whose features are still specific and irregular. Describe the
+    visible pattern only; do not infer how the image was made.
+threshold: {min_count: 1}
+realizations:
+  "*":
+    examples:
+      positive:
+        - "Stock-style image of a construction crew in which all five workers have flawless symmetric faces, perfect teeth and the same model-like features."
+        - "Portrait captioned 'a 70-year-old fisherman' showing a face with hardly any wrinkles, symmetric features and the look of a fashion model."
+        - "Group photo of a startup team in which the faces differ in skin tone and hair but share the same nose, jaw and eye shape."
+      negative:
+        - "Portrait of a man with a crooked nose, a scar on his chin, uneven eyebrows and deep crow's feet."
+        - "Fashion campaign image of a professional model, where idealized beauty is the brief."
+        - "Wide shot of a stadium crowd in which faces are too small to assess."
+legitimate_use: >
+  Fashion, beauty and casting contexts that ask for model looks, and illustration styles that idealize
+  faces by convention.
+fix: >
+  Re-cast: give each person specific, irregular features that fit age and role (asymmetry, wrinkles,
+  scars, moles, glasses, a gap between the teeth, different face shapes) and vary them across a group.
+  Keep idealized beauty for contexts where it is the point.
+prevention: >
+  Describe people as individuals: age, build and a couple of specific features ("a broad face with a
+  crooked nose and deep smile lines", "freckles and a chipped front tooth"). For groups, state that
+  faces, ages and body types differ. Ask for model looks only when the brief is about fashion or beauty.
+sources:
+  - source: openart-visual-cliches
+    locator: "cliché 5, generically beautiful face"
+    note: "'symmetrical, ageless, conventionally attractive', 'a face averaged out of a thousand other faces'."
+  - source: psychsci-ai-hyperrealism
+    locator: "abstract; institutional press release"
+    note: "AI faces (StyleGAN2) judged human more often than real faces; 'more in-proportion'."
+  - source: bps-ai-faces-realer
+    locator: "summary of results"
+    note: "AI faces 'more average (and therefore less distinctive)'; attractiveness a correct cue. Derived from the paper."
+  - source: atlantic-why-ai-art-looks
+    locator: "description of the default look"
+    note: "Idealized, beautiful people."
+related:
+  - {id: plastic-texture, relation: overlaps}
+  - {id: stereotyped-default-people, relation: overlaps}
+history:
+  - {date: 2026-11-17, change: "Added to the v1 image catalog as candidate."}
+notes: >
+  The peer-reviewed evidence concerns GAN face synthesis; applying it to diffusion output is an
+  inference that the image benchmark should test.
