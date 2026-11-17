@@ -87,21 +87,47 @@ weight.
 <p class="eyebrow">Download</p>
 <h2 id="download">Get the package</h2>
 </div>
-<div class="card-grid card-grid--2">
+<div class="card-grid">
 <article class="card">
 <p class="eyebrow">Skill package</p>
 <h3 class="card__title"><code class="tag">slop-check.zip</code></h3>
-<p>The Agent Skills folder: instructions, references, the pattern catalog and an offline Python checker. Use it with every assistant that supports skills.</p>
+<p>The Agent Skills folder with instructions, references, the pattern catalog and an offline Python checker. Claude, ChatGPT, Codex, Gemini Enterprise, GitHub Copilot and most coding agents take it as it is or unzipped.</p>
 <div class="card__actions"><a class="btn btn--primary" href="{{ site.download_zip }}">Download slop-check.zip</a></div>
 </article>
 <article class="card">
-<p class="eyebrow">Single file</p>
+<p class="eyebrow">Flat package</p>
+<h3 class="card__title"><code class="tag">slop-check-flat.zip</code></h3>
+<p>The same files with <code>SKILL.md</code> at the root of the archive, for Microsoft 365 Copilot Chat, Agent Builder and Copilot Studio.</p>
+<div class="card__actions"><a class="btn btn--outline" href="{{ site.download_flat_zip }}">Download slop-check-flat.zip</a></div>
+</article>
+<article class="card">
+<p class="eyebrow">Lite package</p>
+<h3 class="card__title"><code class="tag">slop-check-lite.zip</code></h3>
+<p><code>SKILL.md</code> and the reference files without scripts, for Microsoft 365 Copilot Cowork, the Gemini app and Vibe Work.</p>
+<div class="card__actions"><a class="btn btn--outline" href="{{ site.download_lite_zip }}">Download slop-check-lite.zip</a></div>
+</article>
+</div>
+<div class="card-grid">
+<article class="card">
+<p class="eyebrow">Instruction field</p>
+<h3 class="card__title"><code class="tag">instructions.md</code></h3>
+<p>Compact instructions of at most 7,500 characters for instruction fields of about 8,000 characters, such as ChatGPT project instructions.</p>
+<div class="card__actions"><a class="btn btn--outline" href="{{ site.download_instructions }}">Download instructions.md</a></div>
+</article>
+<article class="card">
+<p class="eyebrow">Knowledge file</p>
+<h3 class="card__title"><code class="tag">knowledge.md</code></h3>
+<p>The skill instructions and the complete pattern catalog in one Markdown file, for knowledge files and project files.</p>
+<div class="card__actions"><a class="btn btn--outline" href="{{ site.download_knowledge }}">Download knowledge.md</a></div>
+</article>
+<article class="card">
+<p class="eyebrow">System message</p>
 <h3 class="card__title"><code class="tag">system-prompt.md</code></h3>
-<p>The skill instructions, the report format and a condensed catalog in one Markdown file, sized for the custom instructions of assistants without skills.</p>
+<p>The skill instructions, the report format and a condensed catalog in about 62,000 characters, for API system messages. It is too long for typical instruction fields.</p>
 <div class="card__actions"><a class="btn btn--outline" href="{{ site.download_prompt }}">Download system-prompt.md</a></div>
 </article>
 </div>
-<p class="home-section__body">Both files are attached to every <a href="{{ site.releases_url }}">release on GitHub</a>.</p>
+<p class="home-section__body">All six files are attached to every <a href="{{ site.releases_url }}">release on GitHub</a>. The <a href="{{ '/setup/' | relative_url }}">setup overview</a> shows which one your assistant needs.</p>
 </section>
 
 <section class="home-section" aria-labelledby="setup">

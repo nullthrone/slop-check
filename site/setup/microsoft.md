@@ -69,11 +69,11 @@ JetBrains IDEs). IDE support depends on the version you use.
 | Project (in the repository) | `.github/skills/`, `.claude/skills/`, `.agents/skills/` |
 | Personal (in your home folder) | `~/.copilot/skills/`, `~/.agents/skills/` |
 
-The supported folders depend on the surface. In VS Code they depend on the agent harness: the
-Copilot harness reads `.github/skills/` and `~/.copilot/skills/`, and the Claude harness reads only
-`.claude/skills/` and `~/.claude/skills/`. The Codex harness reads `.agents/skills/`. The Local
+The supported folders depend on the surface. In VS Code they also depend on the agent harness you
+select. With Copilot, VS Code reads `.github/skills/` and `~/.copilot/skills/`. With Claude it reads
+only `.claude/skills/` and `~/.claude/skills/`, and with Codex it reads `.agents/skills/`. The Local
 harness, which Microsoft removes in February 2027, also reads the `.claude` and `.agents` folders.
-`.github/skills/` and `~/.copilot/skills/` work in Copilot CLI and with the Copilot harness.
+The two Copilot folders work in Copilot CLI as well, so the steps below use them.
 
 1. Download [slop-check.zip]({{ site.download_zip }}).
 2. For a personal skill, unzip it into `~/.copilot/skills/`:
