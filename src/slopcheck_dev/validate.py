@@ -211,7 +211,7 @@ def _check_location(report: Report, rel: str, path: Path, root: Path, pattern: d
         report.error(rel, f"rule 8: file name must be '{pid}.yaml' (id is '{pid}')")
     if path.parent.resolve() != expected_dir:
         where = relpath(path.parent, root)
-        report.error(rel, f"rule 8: modality '{modality}' must live in patterns/{modality}/, found in {where}/")
+        report.error(rel, f"rule 8: modality '{modality}' goes in patterns/{modality}/, found in {where}/")
 
 
 def _check_realization_keys(report: Report, rel: str, pattern: dict) -> None:
@@ -221,7 +221,7 @@ def _check_realization_keys(report: Report, rel: str, pattern: dict) -> None:
         return
     for key in real:
         if not isinstance(key, str) or not LANG_KEY.match(key):
-            report.error(rel, f"rule 7: realization key {key!r} is not a language subtag (^[a-z]{{2,3}}$) or '*'")
+            report.error(rel, f"rule 7: realization key {key!r} is neither a language subtag nor '*'")
 
 
 def _check_terms(report: Report, rel: str, pattern: dict) -> None:
@@ -231,9 +231,10 @@ def _check_terms(report: Report, rel: str, pattern: dict) -> None:
         for term in real.get("terms") or []:
             if not isinstance(term, str):
                 continue
-            key = " ".join(term.split()).casefold()
+            key = " ".join(term.split()).lower()  # the engine matches with re.IGNORECASE
             if key in seen:
-                report.error(rel, f"rule 6: realizations.{lang}.terms: duplicate term {term!r} (also {seen[key]!r})")
+                dup = f"duplicate term {term!r} (also {seen[key]!r})"
+                report.error(rel, f"rule 6: realizations.{lang}.terms: {dup}")
             else:
                 seen[key] = term
 
@@ -251,7 +252,7 @@ def _check_payload(report: Report, rel: str, pattern: dict) -> None:
     star = bool((real.get("*") or {}).get(field_name))
     for lang, body in sorted(real.items()):
         if not body.get(field_name) and not star:
-            report.error(rel, f"detector kind {kind}: realizations.{lang} has no '{field_name}' (and no '*' payload)")
+            report.error(rel, f"detector kind {kind}: realizations.{lang} lacks '{field_name}' (so does '*')")
 
 
 def _check_examples(report: Report, rel: str, pattern: dict, thresholds: dict) -> None:

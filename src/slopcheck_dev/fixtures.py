@@ -3,11 +3,12 @@
 Each example runs through ``slopcheck.engine.analyze`` with a one-pattern catalog:
 
 - ``examples.positive`` must produce at least one hit and ``examples.negative`` none. This
-  is a detector-level check. For regex and lexicon detectors the threshold is relaxed to
-  ``min_count: 1`` (no density, short-text or context overrides, no ``requires``), keeping
-  the detector ``position``. Metric detectors keep their value rule, scope and
-  ``min_units`` (a value metric has no hits without its rule); count metrics are relaxed
-  to ``min_count: 1`` like the others.
+  is a detector-level check. For regex and lexicon detectors and for count metrics (whose
+  value is a number of instances, each reported as a hit) the threshold is relaxed to
+  ``min_count: 1``: no value rule, density, short-text or context overrides and no
+  ``requires``; the detector ``position`` stays. Aggregate metrics (densities, ratios,
+  variation) report no hit on their own, so they keep their value rule, scope and
+  ``min_units`` and an example counts as a hit when that rule is met.
 - ``test_texts`` run with the full threshold (including short-text and context
   overrides). ``requires`` is dropped because it depends on other patterns.
 
@@ -70,11 +71,21 @@ class FixtureReport:
         return "\n".join(lines)
 
 
+def is_aggregate_metric(pattern: dict) -> bool:
+    """True for metric detectors whose value aggregates instances (``MetricSpec.aggregate``)."""
+    detector = pattern.get("detector") or {}
+    if detector.get("kind") != "metric":
+        return False
+    from slopcheck.metrics import METRICS
+
+    spec = METRICS.get(detector.get("metric"))
+    return bool(spec is not None and spec.aggregate)
+
+
 def relaxed_threshold(pattern: dict) -> dict:
     """Detector-level threshold for examples (see module docstring)."""
-    detector = pattern.get("detector") or {}
     base = pattern.get("threshold") or {}
-    if detector.get("kind") == "metric" and base.get("value"):
+    if is_aggregate_metric(pattern) and base.get("value"):
         out = {"min_count": 1, "value": base["value"]}
         for key in ("scope", "min_units"):
             if base.get(key) is not None:
@@ -109,9 +120,9 @@ def _run(text: str, catalog: dict, pattern: dict, lang: str, context: str = "def
 def _example_outcome(info: dict, pattern: dict) -> tuple[bool, str]:
     """(hit, description) for one example under the relaxed threshold."""
     count = int(info.get("count") or 0)
-    if (pattern.get("detector") or {}).get("kind") == "metric" and (pattern.get("threshold") or {}).get("value"):
-        value = info.get("value")
-        return bool(info.get("triggered")), f"triggered={bool(info.get('triggered'))}, value={value}"
+    if is_aggregate_metric(pattern) and (pattern.get("threshold") or {}).get("value"):
+        triggered = bool(info.get("triggered"))
+        return triggered, f"triggered={triggered}, value={info.get('value')}"
     return count >= 1, f"{count} hit(s)"
 
 

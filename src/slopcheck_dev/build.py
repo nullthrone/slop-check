@@ -147,7 +147,11 @@ def _verdict_thresholds(measurements: dict | None, thresholds: dict) -> dict:
     if isinstance(measured, dict) and measured.get("yellow") is not None and measured.get("red") is not None:
         return {"yellow": float(measured["yellow"]), "red": float(measured["red"]), "source": "measured"}
     boot = thresholds.get("verdict_bootstrap") or {}
-    return {"yellow": float(boot.get("yellow", 2.0)), "red": float(boot.get("red", 5.0)), "source": "bootstrap"}
+    return {
+        "yellow": float(boot.get("yellow", 2.0)),
+        "red": float(boot.get("red", 5.0)),
+        "source": "bootstrap",
+    }
 
 
 def compile_catalog(
@@ -252,7 +256,7 @@ def detection_words(pattern: dict) -> str:
     kind = detector.get("kind")
     where = POSITION_WORDS.get(detector.get("position") or "any", POSITION_WORDS["any"])
     if kind == "regex":
-        return f"Phrase match, {where}. Each match of the phrase shapes shown in the example hits counts once."
+        return f"Phrase match, {where}. Each phrase shaped like the example hits counts once."
     if kind == "lexicon":
         return (
             f"Word list, {where}. Each whole-word, case-insensitive occurrence of a listed term counts "
@@ -737,7 +741,7 @@ def build(
     if ref_src.is_dir():
         for path in sorted(ref_src.glob("*.md")):
             if path.name in GENERATED_REFERENCES:
-                raise BuildError(f"skill/references/{path.name} clashes with a generated reference of that name")
+                raise BuildError(f"skill/references/{path.name} clashes with a generated reference")
             shutil.copyfile(path, refs_dir / path.name)
             handwritten.append(path.name)
     missing = [n for n in HANDWRITTEN_REFERENCES if n not in handwritten]

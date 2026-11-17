@@ -359,8 +359,14 @@ def sample_source(
     rows_fn: Callable[..., list] = fetch_rows,
     seen_hashes: set[str] | None = None,
     log: Callable[[str], None] = lambda _m: None,
+    concurrency: int = 4,
 ) -> list[dict]:
-    """Deterministically sample ``src.docs`` documents from one source."""
+    """Deterministically sample ``src.docs`` documents from one source.
+
+    Offsets come from a PRNG seeded with the spec seed and the source id. Up to ``concurrency``
+    requests run at once (cold datasets-server shards can take 20 s), but rows are always
+    processed in offset order, so the result does not depend on response timing.
+    """
     adapter = ADAPTERS.get(src.adapter)
     if adapter is None:
         raise ValueError(f"unknown adapter {src.adapter!r} for source {src.id}")
@@ -374,64 +380,100 @@ def sample_source(
     batch = max(1, min(src.batch, MAX_ROWS_PER_REQUEST))
     upper = max(1, int(src.rows) - batch + 1)
     requests = 0
-    while len(docs) < src.docs:
-        if requests >= max_requests:
-            raise RuntimeError(
-                f"source {src.id}: only {len(docs)}/{src.docs} documents after {requests} requests; "
-                "relax filters or raise max_requests"
-            )
+    window = max(1, int(concurrency))
+    pool = ThreadPoolExecutor(max_workers=window) if window > 1 else None
+    pending: list[Any] = []
+
+    def submit() -> None:
         offset = rng.randrange(0, upper)
-        requests += 1
-        for row_idx, row in rows_fn(src.dataset, src.config, src.split, offset, batch):
-            if row_idx in seen_rows or len(docs) >= src.docs:
-                continue
-            seen_rows.add(row_idx)
-            adapted = adapter(row, src)
-            if not adapted or not adapted.get("text"):
-                continue
-            text = adapted["text"]
-            if "\ufffd" in text:
-                continue  # mojibake
-            if not (
-                language_ok(text, src.language) and prose_ok(text) and repetition_ok(text) and table_ok(text)
-            ):
-                continue
-            words = count_words(text)
-            if words > max_w and src.truncate:
-                text = truncate_paragraphs(text, max_w)
-                words = count_words(text)
-            if words < min_w or words > max_w:
-                continue
-            domain = adapted.get("domain")
-            if src.max_per_domain and domain and per_domain.get(domain, 0) >= src.max_per_domain:
-                continue
-            digest = sha256_text(text)
-            if digest in seen_hashes:
-                continue
-            seen_hashes.add(digest)
-            if domain:
-                per_domain[domain] = per_domain.get(domain, 0) + 1
-            doc_id = make_doc_id(src, row_idx)
-            docs.append(
-                {
-                    "doc_id": doc_id,
-                    "language": src.language,
-                    "register": src.register,
-                    "source": src.id,
-                    "dataset": src.dataset,
-                    "config": src.config,
-                    "hf_split": src.split,
-                    "row_idx": row_idx,
-                    "title": adapted.get("title"),
-                    "date": adapted.get("date"),
-                    "words": words,
-                    "sha256": digest,
-                    "split": split_of(doc_id),
-                    "text": text,
-                }
-            )
+        if pool is None:
+            pending.append(rows_fn(src.dataset, src.config, src.split, offset, batch))
+        else:
+            pending.append(pool.submit(rows_fn, src.dataset, src.config, src.split, offset, batch))
+
+    try:
+        while len(docs) < src.docs:
+            if requests >= max_requests:
+                raise RuntimeError(
+                    f"source {src.id}: only {len(docs)}/{src.docs} documents after {requests} requests; "
+                    "relax filters or raise max_requests"
+                )
+            while len(pending) < window and requests + len(pending) < max_requests:
+                submit()
+            head = pending.pop(0)
+            rows = head if pool is None else head.result()
+            requests += 1
+            if requests % 50 == 0:
+                log(f"{src.id}: {len(docs)}/{src.docs} documents after {requests} requests")
+            _accept_rows(rows, src, adapter, min_w, max_w, seen_rows, seen_hashes, per_domain, docs)
+    finally:
+        if pool is not None:
+            for f in pending:
+                f.cancel()
+            pool.shutdown(wait=True)
     log(f"{src.id}: {len(docs)} documents from {requests} requests")
     return docs
+
+
+def _accept_rows(
+    rows: list,
+    src: HumanSource,
+    adapter: Callable[[dict, HumanSource], dict | None],
+    min_w: int,
+    max_w: int,
+    seen_rows: set[int],
+    seen_hashes: set[str],
+    per_domain: dict[str, int],
+    docs: list[dict],
+) -> None:
+    for row_idx, row in rows:
+        if row_idx in seen_rows or len(docs) >= src.docs:
+            continue
+        seen_rows.add(row_idx)
+        adapted = adapter(row, src)
+        if not adapted or not adapted.get("text"):
+            continue
+        text = adapted["text"]
+        if "\ufffd" in text:
+            continue  # mojibake
+        if not (
+            language_ok(text, src.language) and prose_ok(text) and repetition_ok(text) and table_ok(text)
+        ):
+            continue
+        words = count_words(text)
+        if words > max_w and src.truncate:
+            text = truncate_paragraphs(text, max_w)
+            words = count_words(text)
+        if words < min_w or words > max_w:
+            continue
+        domain = adapted.get("domain")
+        if src.max_per_domain and domain and per_domain.get(domain, 0) >= src.max_per_domain:
+            continue
+        digest = sha256_text(text)
+        if digest in seen_hashes:
+            continue
+        seen_hashes.add(digest)
+        if domain:
+            per_domain[domain] = per_domain.get(domain, 0) + 1
+        doc_id = make_doc_id(src, row_idx)
+        docs.append(
+            {
+                "doc_id": doc_id,
+                "language": src.language,
+                "register": src.register,
+                "source": src.id,
+                "dataset": src.dataset,
+                "config": src.config,
+                "hf_split": src.split,
+                "row_idx": row_idx,
+                "title": adapted.get("title"),
+                "date": adapted.get("date"),
+                "words": words,
+                "sha256": digest,
+                "split": split_of(doc_id),
+                "text": text,
+            }
+        )
 
 
 def fetch_human(

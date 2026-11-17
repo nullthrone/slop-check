@@ -89,7 +89,7 @@ sources:
     license: CC0 1.0 (dataset card; the answers remain the work of their forum authors)
     adapter: mqa
     rows: 1623000
-    batch: 4
+    batch: 12
     docs: 75
     max_bucket: "2021.52"
     max_per_domain: 2
@@ -104,7 +104,7 @@ sources:
     license: CC0 1.0 (dataset card; the answers remain the work of their forum authors)
     adapter: mqa
     rows: 1085067
-    batch: 4
+    batch: 12
     docs: 75
     max_bucket: "2021.52"
     max_per_domain: 2
