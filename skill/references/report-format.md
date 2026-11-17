@@ -1,7 +1,8 @@
 # Report format
 
-Use these layouts for all audit and rewrite results, including batch runs. The bundled script prints the
-same audit layout, so reports look alike whether you counted by hand or ran the script.
+Use these layouts for all audit and rewrite results, including batch runs. The bundled
+script prints the same audit layout, so reports look alike whether you counted by hand or ran
+the script.
 
 Write the labels in the language of the conversation: German labels when the user writes
 German, English labels otherwise. Pattern names and IDs stay as they appear in the catalog.
@@ -62,9 +63,10 @@ Gesamtbefund: <BEFUND> (Score <score>; Gelb ab <gelb>, Rot ab <rot>) | <wörter>
    (English) or `Text` (German).
 2. Verdict line. `<VERDICT>` is `GREEN`, `YELLOW` or `RED`; with German labels write `GRÜN`,
    `GELB` or `ROT`. Write all scores and weights with at least one decimal, the verdict
-   thresholds as well (`2.0`, `2.5`, `3.25`); with German labels use a decimal comma (`2,0`). `<words>` is the
-   word count of the analyzed text without code blocks. `<lang>` is the language code of the
-   text: `de`, `en`, or `und` when the language is not German or English.
+   thresholds as well (`2.0`, `2.5`, `3.25`); with German labels use a decimal comma
+   (`2,0`). `<words>` is the word count of the analyzed text without code blocks. `<lang>`
+   is the language code of the text: `de`, `en`, or `und` when the language is not German or
+   English.
 3. Rationale. Name up to three findings in report order with their weights:
    `Heaviest findings: Antithesis template (2.5), Triad (1.0).` With German labels:
    `Schwerste Befunde: Antithesis template (2,5), Triad (1,0).` When nothing triggered, write
