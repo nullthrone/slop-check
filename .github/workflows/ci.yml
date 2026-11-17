@@ -49,6 +49,7 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          fetch-depth: 2
           persist-credentials: false
       # Content pull requests merge without review (D10), so the content paths may hold only
       # regular files of the shapes the tooling reads, at most 256 KiB each. Symlinks are
@@ -79,6 +80,29 @@ jobs:
           fi
       - uses: ./.github/actions/setup
       - run: slopcheck-dev validate
+      # The gates skip deleted files, other modalities and detectors they cannot run, so a content
+      # pull request could take a scored pattern out of the score unmeasured. The guard fails that
+      # unless the pull request also changes governance/ (code-owner review).
+      - name: Scored patterns stay in the gate
+        env:
+          EVENT: ${{ github.event_name }}
+          BEFORE: ${{ github.event.before }}
+        run: |
+          base=HEAD^1  # pull_request: parent 1 of the merge commit is the base branch tip
+          if [ "$EVENT" = push ] && [ -n "$BEFORE" ] && [ "$BEFORE" != 0000000000000000000000000000000000000000 ]; then
+            if git fetch --no-tags --depth=1 origin "$BEFORE"; then base=$BEFORE; fi
+          fi
+          python .github/scripts/data_branch.py checkout --branch data --dir "$RUNNER_TEMP/data"
+          measurements=()
+          if [ -f "$RUNNER_TEMP/data/measurements/measurements.json" ]; then
+            measurements=(--measurements "$RUNNER_TEMP/data/measurements/measurements.json")
+          fi
+          rc=0
+          slopcheck-dev guard --base "$base" "${measurements[@]}" --summary "$GITHUB_STEP_SUMMARY" || rc=$?
+          if [ "$rc" -eq 1 ]; then
+            echo "::error title=Scored-pattern guard::This change takes a scored pattern out of the gate and needs a maintainer (see the job summary)."
+          fi
+          exit "$rc"
 
   fixtures:
     runs-on: ubuntu-latest
