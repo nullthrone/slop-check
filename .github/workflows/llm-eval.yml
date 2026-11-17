@@ -7,6 +7,16 @@
 # Pull request files are fetched through the REST API at the head commit and treated as data
 # (.github/scripts/llm_gate.py). Values from github.event.workflow_run reach shell steps only
 # through environment variables. Posts the commit status "llm-gate", a required check on main.
+#
+# Jobs:
+# - llm-gate finds the pull request and validates its data files. Without changed llm patterns it
+#   posts the final status itself, so ordinary content pull requests never wait for the budget.
+# - judge spends budget. Like every job that calls OpenRouter (measure.yml, conformance.yml) it is
+#   in the concurrency group "openrouter-budget", so spending jobs run one at a time and each reads
+#   budget/ledger.json from branch data only after it holds the group. GitHub keeps one pending job
+#   per group: a newer one cancels it, and the job "displaced" then posts an error status that asks
+#   for a new run, so the pull request never waits on a status that will not come.
+# - record-spend merges the judge's spend into the ledger; it holds the only token that can push.
 name: llm-eval
 
 on:
@@ -20,6 +30,11 @@ concurrency:
   group: llm-eval-${{ github.event.workflow_run.head_sha }}
   cancel-in-progress: true
 
+env:
+  HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+  HEAD_REPO: ${{ github.event.workflow_run.head_repository.full_name }}
+  RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
 jobs:
   llm-gate:
     if: >-
@@ -27,18 +42,16 @@ jobs:
       github.event.workflow_run.event == 'pull_request' &&
       github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 30
     permissions:
       contents: read
       statuses: write
-      pull-requests: write
     outputs:
-      spent: ${{ steps.spend.outputs.spent }}
+      pr: ${{ steps.prepare.outputs.pr }}
+      llm_ids: ${{ steps.prepare.outputs.llm_ids }}
+      validate: ${{ steps.validate.outputs.result || 'skipped' }}
     env:
       GH_TOKEN: ${{ github.token }}
-      HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
-      HEAD_REPO: ${{ github.event.workflow_run.head_repository.full_name }}
-      RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -53,10 +66,6 @@ jobs:
           echo "CANDIDATE=$RUNNER_TEMP/candidate" >> "$GITHUB_ENV"
           python .github/scripts/llm_gate.py prepare --candidate "$RUNNER_TEMP/candidate" --out "$RUNNER_TEMP/llm"
 
-      - name: Mark llm-gate as pending
-        if: steps.prepare.outputs.pr != ''
-        run: python .github/scripts/llm_gate.py status --state pending --description "LLM gate is running"
-
       - name: Validate pattern and source files on a copy of the trusted checkout
         id: validate
         if: steps.prepare.outputs.pr != '' && steps.prepare.outputs.data_files != '0'
@@ -67,6 +76,59 @@ jobs:
             echo "result=failed" >> "$GITHUB_OUTPUT"
           fi
 
+      - name: Decide and post llm-gate (no llm patterns changed)
+        if: steps.prepare.outputs.pr != '' && steps.prepare.outputs.llm_ids == ''
+        env:
+          VALIDATE: ${{ steps.validate.outputs.result || 'skipped' }}
+        run: |
+          python .github/scripts/llm_gate.py decide --candidate "$CANDIDATE" --prepare "$WORK/prepare.json" \
+            --validate "$VALIDATE"
+
+      - name: Mark llm-gate as queued for the budget
+        if: steps.prepare.outputs.pr != '' && steps.prepare.outputs.llm_ids != ''
+        run: python .github/scripts/llm_gate.py status --state pending --description "Waiting for the LLM budget queue"
+
+      - name: Report a workflow error as llm-gate
+        if: failure() && steps.prepare.outputs.pr != ''
+        run: python .github/scripts/llm_gate.py status --state error --description "LLM gate workflow failed; see the run log"
+
+  judge:
+    needs: llm-gate
+    if: github.repository == 'nullthrone/slop-check' && needs.llm-gate.outputs.llm_ids != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    concurrency:
+      group: openrouter-budget
+      cancel-in-progress: false
+    permissions:
+      contents: read
+      statuses: write
+      pull-requests: write
+    outputs:
+      spent: ${{ steps.spend.outputs.spent }}
+    env:
+      GH_TOKEN: ${{ github.token }}
+      VALIDATE: ${{ needs.llm-gate.outputs.validate }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          persist-credentials: false
+      - uses: ./.github/actions/setup
+
+      # Same head commit as in llm-gate; prepare fails if the pull request head moved since.
+      - name: Fetch the pull request's pattern and source files again
+        id: prepare
+        run: |
+          echo "WORK=$RUNNER_TEMP/llm" >> "$GITHUB_ENV"
+          echo "CANDIDATE=$RUNNER_TEMP/candidate" >> "$GITHUB_ENV"
+          python .github/scripts/llm_gate.py prepare --candidate "$RUNNER_TEMP/candidate" --out "$RUNNER_TEMP/llm"
+
+      - name: Mark llm-gate as running
+        if: steps.prepare.outputs.pr != ''
+        run: python .github/scripts/llm_gate.py status --state pending --description "LLM gate is running"
+
+      # Read only now, while this job holds the openrouter-budget group.
       - name: Read branch data
         id: data
         if: steps.prepare.outputs.llm_ids != ''
@@ -84,7 +146,7 @@ jobs:
 
       - name: Judge the examples of changed llm patterns
         id: examples
-        if: steps.prepare.outputs.llm_ids != '' && steps.validate.outputs.result == 'ok'
+        if: steps.prepare.outputs.llm_ids != '' && env.VALIDATE == 'ok'
         env:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           IDS: ${{ steps.prepare.outputs.llm_ids }}
@@ -133,7 +195,6 @@ jobs:
       - name: Decide and post llm-gate
         if: steps.prepare.outputs.pr != ''
         env:
-          VALIDATE: ${{ steps.validate.outputs.result || 'skipped' }}
           MEASURE_STATE: ${{ steps.measure.outputs.state || 'not-run' }}
         run: |
           python .github/scripts/llm_gate.py decide --candidate "$CANDIDATE" --prepare "$WORK/prepare.json" \
@@ -161,10 +222,36 @@ jobs:
         if: failure() && steps.prepare.outputs.pr != ''
         run: python .github/scripts/llm_gate.py status --state error --description "LLM gate workflow failed; see the run log"
 
-  # Separate job so that the job holding the API key never holds a token that can push.
+  # A pending judge is cancelled when a newer job joins the openrouter-budget group (or a newer
+  # run for the same commit starts). Leave a visible error instead of a status that never ends.
+  displaced:
+    needs: [llm-gate, judge]
+    if: >-
+      always() && github.repository == 'nullthrone/slop-check' &&
+      needs.llm-gate.outputs.llm_ids != '' && needs.judge.result == 'cancelled'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      statuses: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          persist-credentials: false
+      - name: Report the cancelled LLM gate
+        run: |
+          python3 .github/scripts/llm_gate.py status --state error \
+            --description "LLM gate was cancelled while waiting for the budget queue; push again or re-run"
+
+  # Separate job so that the job holding the API key never holds a token that can push. The
+  # ledger was read and written inside judge while it held openrouter-budget; this merge is a
+  # union by entry key and retries on a moved branch tip, so it needs no group of its own.
   record-spend:
-    needs: llm-gate
-    if: always() && github.repository == 'nullthrone/slop-check' && needs.llm-gate.outputs.spent == 'true'
+    needs: judge
+    if: always() && github.repository == 'nullthrone/slop-check' && needs.judge.outputs.spent == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:
