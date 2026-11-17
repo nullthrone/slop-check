@@ -2,23 +2,24 @@
 
 ``derive(pattern, measurement, thresholds) -> (effective_status, weight, weight_source)``
 
-| declared             | measurement            | effective   | weight                   |
-|----------------------|------------------------|-------------|--------------------------|
-| observation          | any                    | observation | 0                        |
-| candidate            | none or not meets_core | candidate   | 0                        |
-| candidate            | meets_core             | core        | measured                 |
-| core (grandfathered) | none                   | core        | bootstrap by legacy_tier |
-| core (grandfathered) | meets_core             | core        | measured                 |
-| core (grandfathered) | meets_fading           | fading      | 0                        |
-| core (grandfathered) | neither                | core        | measured                 |
-| any measured core    | meets_fading           | fading      | 0                        |
+| declared          | measurement            | effective   | weight                     |
+|-------------------|------------------------|-------------|----------------------------|
+| observation       | any                    | observation | 0                          |
+| candidate         | none or not meets_core | candidate   | 0                          |
+| candidate         | meets_core             | core        | measured                   |
+| core (initial)    | none                   | core        | provisional (initial_core) |
+| core (initial)    | meets_core             | core        | measured                   |
+| core (initial)    | meets_fading           | fading      | 0                          |
+| core (initial)    | neither                | core        | measured                   |
+| any measured core | meets_fading           | fading      | 0                          |
 
 A measurement applies only while its ``pattern_hash`` equals the hash of the pattern as it
 is now; an edited pattern falls back to its declared status until it is remeasured.
 A measurement without a usable lift (no human or AI documents) does not cover the pattern:
-grandfathered core then keeps its bootstrap weight (section 5.3).
+an initial-core pattern then keeps its provisional weight from
+``governance/thresholds.yaml: initial_core`` (section 5.3).
 
-``weight_source`` is ``measured``, ``bootstrap`` or ``none`` (weight 0).
+``weight_source`` is ``measured``, ``provisional`` or ``none`` (weight 0).
 """
 
 from __future__ import annotations
@@ -30,8 +31,6 @@ from typing import Any
 
 from .patterns import normalize_dates
 
-#: Fields that ``compile_catalog`` adds to a pattern; never part of the hash.
-CATALOG_ONLY_FIELDS = ("effective_status", "weight", "weight_source")
 WEIGHT_DIGITS = 3
 
 
@@ -41,17 +40,14 @@ def canonical_json(obj: Any) -> str:
 
 
 def pattern_hash(pattern: dict) -> str:
-    """sha256 of the canonical JSON of ``pattern`` without ``history``.
+    """sha256 of the canonical JSON of the whole pattern (section 6.3).
 
-    Dates are normalized to ISO strings and catalog-only fields (effective_status, weight,
-    weight_source) are dropped, so a YAML pattern and its catalog entry hash the same.
+    ``pattern`` is the pattern as its YAML file defines it, not a catalog entry (which
+    carries ``effective_status``, ``weight`` and ``weight_source`` on top). Date values are
+    written as ISO strings, as the loader does, so a parsed file and its normalized dict
+    hash the same.
     """
-    body = {
-        k: v
-        for k, v in normalize_dates(pattern).items()
-        if k != "history" and k not in CATALOG_ONLY_FIELDS
-    }
-    return hashlib.sha256(canonical_json(body).encode("utf-8")).hexdigest()
+    return hashlib.sha256(canonical_json(normalize_dates(pattern)).encode("utf-8")).hexdigest()
 
 
 def measurement_applies(pattern: dict, measurement: dict | None) -> bool:
@@ -78,24 +74,37 @@ def measured_weight(lift: float | None, thresholds: dict) -> float | None:
     return round(max(lo, min(hi, math.log(lift))), WEIGHT_DIGITS)
 
 
-def bootstrap_weight(pattern: dict, thresholds: dict) -> float | None:
-    """Bootstrap weight for a grandfathered pattern by ``legacy_tier``; None if unknown."""
-    tier = pattern.get("legacy_tier")
-    table = (thresholds.get("weights") or {}).get("bootstrap") or {}
-    value = table.get(f"legacy_tier_{tier}")
-    return None if value is None else float(value)
+def initial_core(thresholds: dict) -> dict[str, float]:
+    """``governance/thresholds.yaml: initial_core`` as ``{pattern_id: provisional weight}``.
+
+    Entries whose weight is not a number are left out (``slopcheck-dev validate`` reports them).
+    """
+    table = thresholds.get("initial_core")
+    if not isinstance(table, dict):
+        return {}
+    out = {}
+    for pid, weight in table.items():
+        if isinstance(weight, bool) or not isinstance(weight, (int, float)):
+            continue
+        out[str(pid)] = float(weight)
+    return out
+
+
+def provisional_weight(pattern: dict, thresholds: dict) -> float | None:
+    """Provisional weight of an initial-core pattern; None if its id is not listed."""
+    return initial_core(thresholds).get(str(pattern.get("id")))
 
 
 def _core(pattern: dict, measurement: dict | None, thresholds: dict) -> tuple[str, float, str]:
-    """Effective core: measured weight if the measurement has a lift, else bootstrap."""
+    """Effective core: measured weight if the measurement has a lift, else provisional."""
     if measurement is not None:
         weight = measured_weight(measurement.get("lift"), thresholds)
         if weight is not None:
             return "core", weight, "measured"
-    boot = bootstrap_weight(pattern, thresholds)
-    if boot is None:
+    provisional = provisional_weight(pattern, thresholds)
+    if provisional is None:
         return "core", 0.0, "none"
-    return "core", boot, "bootstrap"
+    return "core", provisional, "provisional"
 
 
 def derive(

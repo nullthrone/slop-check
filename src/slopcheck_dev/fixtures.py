@@ -42,7 +42,7 @@ class Failure:
         excerpt = " ".join(self.text.split())
         if len(excerpt) > 120:
             excerpt = excerpt[:117] + "..."
-        return f"{self.pattern_id} [{self.lang}] {self.what} #{self.index + 1}: {self.detail}: \"{excerpt}\""
+        return f'{self.pattern_id} [{self.lang}] {self.what} #{self.index + 1}: {self.detail}: "{excerpt}"'
 
 
 @dataclass
@@ -168,9 +168,7 @@ def check_pattern(pattern: dict, short_text_max_words: int, report: FixtureRepor
     report.checked.append(pid)
 
 
-def check_fixtures(
-    patterns: list[dict], thresholds: dict, ids: list[str] | None = None
-) -> FixtureReport:
+def check_fixtures(patterns: list[dict], thresholds: dict, ids: list[str] | None = None) -> FixtureReport:
     """Check examples and test texts of ``patterns`` (optionally only ``ids``)."""
     report = FixtureReport()
     by_id = {p["id"]: p for p in patterns}

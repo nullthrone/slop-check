@@ -50,10 +50,10 @@ def test_load_patterns_sorted_and_thresholds(repo):
     assert [(p["modality"], p["id"]) for p in pats] == [
         ("image", "img-one"),
         ("text", "cand-one"),
-        ("text", "gf-one"),
+        ("text", "core-one"),
     ]
     assert load_patterns(repo.root, "image")[0]["id"] == "img-one"
-    assert load_thresholds(repo.root)["grandfathered_core"][0] == "gf-one"
+    assert load_thresholds(repo.root)["initial_core"]["core-one"] == 2.5
 
 
 # ---------------------------------------------------------------------------
@@ -92,9 +92,38 @@ def test_source_schema_and_filename(repo):
 # rules 1-8
 
 
-def test_rule1_core_requires_grandfathered(repo):
+def test_rule1_core_requires_initial_core(repo):
     repo.write_pattern(make_pattern("new-core", status="core"))
-    assert messages(run(repo), "rule 1")
+    errs = messages(run(repo), "rule 1")
+    assert len(errs) == 1 and "new-core.yaml" in errs[0] and "initial_core" in errs[0]
+
+
+def test_rule1_initial_core_ids_may_declare_core(repo):
+    repo.write_pattern(make_pattern("core-two", status="core"))
+    assert run(repo).ok
+
+
+def test_weight_fields_are_not_declared_in_pattern_files(repo):
+    # weight and effective status are derived by the build, never declared (D5)
+    for field, value in (("weight", 2.5), ("effective_status", "core"), ("weight_source", "measured")):
+        repo.write_pattern(make_pattern("core-two", status="core", **{field: value}))
+        errs = messages(run(repo), "patterns/text/core-two.yaml")
+        assert any("schema" in e and field in e for e in errs), (field, errs)
+
+
+def test_initial_core_must_map_ids_to_weights(repo):
+    repo.thresholds["initial_core"] = {"core-one": "heavy", "core-two": -1, "core-three": 0.5}
+    repo.write_thresholds()
+    report = run(repo)
+    errs = messages(report, "governance/thresholds.yaml")
+    assert len(errs) == 2
+    assert any("'core-one'" in e for e in errs) and any("'core-two'" in e for e in errs)
+    assert any("'core-three' has no pattern file" in str(w) for w in report.warnings)
+    repo.thresholds["initial_core"] = ["core-one"]
+    repo.write_thresholds()
+    report = run(repo)
+    assert messages(report, "initial_core must be a mapping")
+    assert messages(report, "rule 1")  # a list grants no core status
 
 
 def test_rule2_candidate_needs_two_independent_sources(repo):
@@ -135,7 +164,7 @@ def test_rule2_examples_per_language(repo):
 
 def test_rule2_not_applied_to_observation_or_core(repo):
     repo.write_pattern(make_pattern("obs-one", status="observation", realizations={"en": {}}))
-    core = make_pattern("gf-two", status="core", sources=[{"source": "src-own"}])
+    core = make_pattern("core-two", status="core", sources=[{"source": "src-own"}])
     core["realizations"]["en"]["examples"] = {"positive": ["foo"]}
     repo.write_pattern(core)
     assert run(repo).ok

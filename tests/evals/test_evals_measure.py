@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import hashlib
+import json
 import math
 
 import pytest
@@ -22,10 +24,7 @@ def pattern(pid, kind="regex", langs=("en", "de"), status="candidate", **extra):
         "realizations": {lang: {"patterns": ["x"]} for lang in langs},
         "fix": "Fix the thing.",
         "sources": [{"source": "s"}],
-        "history": [{"date": "2026-01-01", "change": "added"}],
     }
-    if status == "core":
-        p.update({"provisional": True, "legacy_id": "T1.1", "legacy_tier": 1})
     p.update(extra)
     return p
 
@@ -122,8 +121,10 @@ def test_pattern_hash():
     p = pattern("alpha")
     h = M.pattern_hash(p)
     assert h == M.pattern_hash(dict(reversed(list(p.items()))))
-    assert h == M.pattern_hash({**p, "history": []})
+    canonical = json.dumps(p, sort_keys=True, ensure_ascii=False, separators=(",", ":"))
+    assert h == hashlib.sha256(canonical.encode("utf-8")).hexdigest()
     assert h != M.pattern_hash({**p, "fix": "Another fix text."})
+    assert h != M.pattern_hash({**p, "related": [{"id": "beta", "relation": "overlaps"}]})
     catalog_entry = {**p, "effective_status": "core", "weight": 2.0, "weight_source": "measured"}
     assert M.pattern_hash(M.source_pattern(catalog_entry)) == h
 

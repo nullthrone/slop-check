@@ -146,11 +146,11 @@ def _verdict_thresholds(measurements: dict | None, thresholds: dict) -> dict:
     measured = (measurements or {}).get("verdict_thresholds") if isinstance(measurements, dict) else None
     if isinstance(measured, dict) and measured.get("yellow") is not None and measured.get("red") is not None:
         return {"yellow": float(measured["yellow"]), "red": float(measured["red"]), "source": "measured"}
-    boot = thresholds.get("verdict_bootstrap") or {}
+    provisional = thresholds.get("verdict_provisional") or {}
     return {
-        "yellow": float(boot.get("yellow", 2.0)),
-        "red": float(boot.get("red", 5.0)),
-        "source": "bootstrap",
+        "yellow": float(provisional.get("yellow", 2.0)),
+        "red": float(provisional.get("red", 5.0)),
+        "source": "provisional",
     }
 
 
@@ -166,6 +166,8 @@ def compile_catalog(
 
     ``measurements`` is a measurements.json structure (or None); ``thresholds`` defaults to
     the repository's ``governance/thresholds.yaml``. Patterns are sorted by (modality, id).
+    ``weight_source`` is ``measured``, ``provisional`` (``initial_core``) or ``none``;
+    ``verdict_thresholds.source`` is ``measured`` or ``provisional`` (``verdict_provisional``).
     """
     if thresholds is None:
         thresholds = load_thresholds()
@@ -311,7 +313,7 @@ def status_words(pattern: dict) -> str:
     if status == "core":
         source = pattern.get("weight_source")
         how = {
-            "bootstrap": "bootstrap weight from the legacy catalog, not yet measured",
+            "provisional": "provisional weight, not yet measured",
             "measured": "measured on the reference corpora",
         }.get(source, "no weight source")
         return f"Status: core, weight {_num(pattern.get('weight') or 0)} ({how}). Category: {category}."
@@ -429,7 +431,7 @@ def render_patterns_markdown(catalog: dict, modality: str = "text") -> str:
         intro = TEXT_INTRO.format(
             yellow=_num(vt.get("yellow", 2.0)),
             red=_num(vt.get("red", 5.0)),
-            vt_source=vt.get("source", "bootstrap"),
+            vt_source=vt.get("source", "provisional"),
             short_max=catalog.get("short_text_max_words", 150),
         )
     else:

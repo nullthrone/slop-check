@@ -30,20 +30,20 @@ LIFT_DIGITS = 3
 
 
 def pattern_hash(pattern: dict) -> str:
-    """sha256 of the canonical JSON of the pattern without ``history`` (section 6.3).
+    """sha256 of the canonical JSON of the whole pattern (section 6.3).
 
     Delegates to ``slopcheck_dev.status.pattern_hash`` so measurement and status derivation can
     never disagree. The local fallback uses the same canonicalization: keys sorted, separators
-    (",", ":"), UTF-8 without ASCII escaping, dates as ISO strings, catalog-only fields dropped.
+    (",", ":"), UTF-8 without ASCII escaping, dates as ISO strings. Fields that only the catalog
+    adds (effective_status, weight, weight_source) are not part of a pattern and are dropped.
     """
     try:
         from slopcheck_dev.status import pattern_hash as status_hash
     except ImportError:
         status_hash = None
     if status_hash is not None:
-        return status_hash(pattern)
-    body = {k: v for k, v in dates_to_str(source_pattern(pattern)).items() if k != "history"}
-    return sha256_text(canonical_json(body))
+        return status_hash(source_pattern(pattern))
+    return sha256_text(canonical_json(dates_to_str(source_pattern(pattern))))
 
 
 CATALOG_ONLY_FIELDS = ("effective_status", "weight", "weight_source")

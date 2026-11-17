@@ -69,24 +69,29 @@ def http_error(url, code, body=None, headers=None):
 # evaluation tests do not depend on them.
 
 
+def _provisional_weight(pattern, thresholds):
+    return float(((thresholds or {}).get("initial_core") or {}).get(pattern["id"], 0.0))
+
+
 def standin_compile(patterns, thresholds=None, measurements=None):
-    boot = ((thresholds or {}).get("weights") or {}).get("bootstrap") or {}
     out = []
     for p in patterns:
         e = dict(p)
         if p.get("status") == "core":
+            weight = _provisional_weight(p, thresholds)
             e["effective_status"] = "core"
-            e["weight"] = float(boot.get(f"legacy_tier_{p.get('legacy_tier', 2)}", 1.0))
-            e["weight_source"] = "bootstrap"
+            e["weight"] = weight
+            e["weight_source"] = "provisional" if weight else "none"
         else:
             e["effective_status"] = p.get("status", "observation")
             e["weight"] = 0.0
             e["weight_source"] = "none"
         out.append(e)
+    vt = (thresholds or {}).get("verdict_provisional") or {"yellow": 2.0, "red": 5.0}
     return {
         "catalog_version": "test",
         "short_text_max_words": 150,
-        "verdict_thresholds": {"yellow": 2.0, "red": 5.0, "source": "bootstrap"},
+        "verdict_thresholds": {"yellow": vt["yellow"], "red": vt["red"], "source": "provisional"},
         "patterns": out,
     }
 
@@ -97,8 +102,7 @@ def standin_derive(pattern, measurement, thresholds):
         return "observation", 0.0, "none"
     if measurement is None:
         if declared == "core":
-            boot = thresholds["weights"]["bootstrap"]
-            return "core", boot[f"legacy_tier_{pattern.get('legacy_tier', 2)}"], "bootstrap"
+            return "core", _provisional_weight(pattern, thresholds), "provisional"
         return "candidate", 0.0, "none"
     if measurement.get("meets_fading") and declared == "core":
         return "fading", 0.0, "none"

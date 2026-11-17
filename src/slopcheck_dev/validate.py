@@ -13,7 +13,7 @@ Per-file checks (limited to changed files with ``--changed-only``):
 Cross-file checks (always run on every file):
 
 - duplicate pattern and source ids;
-- rule 1 grandfathered core;
+- rule 1 initial core (``governance/thresholds.yaml: initial_core``, a mapping of id to weight);
 - rule 2 and 3 source counts, with independence clusters per section 5.2;
 - rule 4 source references resolve, source ``derived_from`` resolves;
 - ``related`` ids resolve.
@@ -35,6 +35,7 @@ from .patterns import (
     MODALITIES,
     PATTERN_DIR,
     SOURCE_DIR,
+    THRESHOLDS_FILE,
     LoadError,
     Record,
     load_pattern_records,
@@ -344,7 +345,8 @@ def _check_patterns_cross(
     pattern_ids: set[str],
     thresholds: dict,
 ) -> None:
-    grandfathered = set(thresholds.get("grandfathered_core") or [])
+    table = thresholds.get("initial_core")
+    initial = {str(k) for k in table} if isinstance(table, dict) else set()
     admission = thresholds.get("admission") or {}
     min_independent = int((admission.get("candidate") or {}).get("min_independent_sources", 2))
     min_obs = int((admission.get("observation") or {}).get("min_sources", 1))
@@ -359,11 +361,11 @@ def _check_patterns_cross(
             if sid not in sources:
                 report.error(rel, f"rule 4: source '{sid}' does not resolve to sources/{sid}.yaml")
         # rule 1
-        if status == "core" and pid not in grandfathered:
+        if status == "core" and pid not in initial:
             report.error(
                 rel,
                 "rule 1: status core is reserved for ids listed in governance/thresholds.yaml: "
-                "grandfathered_core; new patterns start as candidate or observation",
+                "initial_core; new patterns start as candidate or observation",
             )
         # rule 2 (sources) and rule 3
         if status == "candidate":
@@ -387,6 +389,22 @@ def _check_patterns_cross(
                 report.error(rel, "related: a pattern cannot relate to itself")
             elif target not in pattern_ids:
                 report.error(rel, f"related: id '{target}' does not resolve to a pattern")
+
+
+def _check_initial_core(report: Report, thresholds: dict, pattern_ids: set[str]) -> None:
+    """``initial_core`` maps pattern ids to non-negative provisional weights."""
+    rel = THRESHOLDS_FILE.as_posix()
+    table = thresholds.get("initial_core")
+    if table is None:
+        return
+    if not isinstance(table, dict):
+        report.error(rel, "initial_core must be a mapping of pattern id to provisional weight")
+        return
+    for pid, weight in table.items():
+        if isinstance(weight, bool) or not isinstance(weight, (int, float)) or weight < 0:
+            report.error(rel, f"initial_core: weight of '{pid}' must be a non-negative number, is {weight!r}")
+        if pid not in pattern_ids:
+            report.warn(rel, f"initial_core: '{pid}' has no pattern file")
 
 
 def _duplicates(report: Report, records: list[tuple[str, dict]], what: str) -> None:
@@ -521,6 +539,7 @@ def validate(
     report.patterns = len(patterns_ok)
     _duplicates(report, patterns_ok, "pattern")
     ids = {d["id"] for _r, d in patterns_ok if isinstance(d.get("id"), str)}
+    _check_initial_core(report, thresholds, ids)
     _check_patterns_cross(report, patterns_ok, sources, ids, thresholds)
     _check_regexes(report, timed, regex_timing, limit_ms)
     return report

@@ -245,3 +245,26 @@ def test_repository_cases_agree_with_engine():
                 assert result["verdict"] in c["expect_verdict"]
         else:
             assert result["findings"], c["id"]
+
+
+def test_parses_the_json_examples_of_the_skill_report_format():
+    """The scorer reads the JSON shapes that skill/references/report-format.md prescribes."""
+    path = K.repo_root() / "skill" / "references" / "report-format.md"
+    if not path.is_file():
+        pytest.skip("skill/references/report-format.md not written yet")
+    fences = K._FENCE_RE.findall(path.read_text(encoding="utf-8"))
+    blocks = [json.loads(body) for info, body in fences if info == "json"]
+    audit = next(b for b in blocks if "all_patterns" in b)
+    reply_text = "# Slop-Check: example\n\nReport.\n\n```json\n" + json.dumps(audit) + "\n```\n"
+    case = {
+        **AUDIT,
+        "must_find": [audit["findings"][0]["pattern_id"]],
+        "must_not_find": ["nope"],
+        "expect_verdict": [audit["verdict"]],
+    }
+    res = K.score_audit(case, reply_text)
+    assert res.parse_ok and res.passed and res.verdict == audit["verdict"]
+    rewrite = next((b for b in blocks if b.get("mode") == "rewrite"), None)
+    if rewrite is not None:
+        text, method = K.extract_rewrite("Done.\n\n```json\n" + json.dumps(rewrite) + "\n```\n")
+        assert method == "json" and text == rewrite["rewritten_text"]

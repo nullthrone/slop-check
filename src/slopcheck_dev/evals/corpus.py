@@ -600,6 +600,7 @@ def load_human_docs(human_dir: str | Path, *, verify: bool = True) -> list[dict]
 # topics and prompts
 
 _URL_RE = re.compile(r"https?://\S+|www\.\S+")
+_DOMAIN_RE = re.compile(r"(?i)\b[\w-]+(?:\.[\w-]+)*\.(?:com|net|org|info|biz|de|at|ch|eu|uk|io)\b")
 _EMAIL_RE = re.compile(r"[\w.+-]+@[\w-]+(?:\.[\w-]+)+")
 _HANDLE_RE = re.compile(r"(?<!\w)@\w+")
 _PHONE_RE = re.compile(r"\+?\d[\d ()/.-]{7,}\d")
@@ -611,6 +612,7 @@ _CLAUSE_RE = re.compile(r"(?<=[,;:])\s+|\s+[–—]\s+")
 def clean_topic(text: str) -> str:
     t = _URL_RE.sub(" ", text or "")
     t = _EMAIL_RE.sub(" ", t)
+    t = _DOMAIN_RE.sub(" ", t)
     t = _HANDLE_RE.sub(" ", t)
     t = _PHONE_RE.sub(" ", t)
     t = _TITLE_SITE_RE.split(t)[0]
@@ -640,14 +642,11 @@ def _topic_lines(text: str) -> list[str]:
     return out
 
 
-def first_sentence(text: str, min_words: int = 3) -> str:
-    """First sentence of the first usable line; a dateline ("Berlin.") takes the next one too."""
-    lines = _topic_lines(text)
-    para = lines[0] if lines else text.strip()
-    sentences = _SENT_END_RE.split(para)
+def first_sentence(line: str, min_words: int = 3) -> str:
+    """First sentence of ``line``; a dateline ("Berlin.") takes the following sentence too."""
     kept: list[str] = []
-    for s in sentences:
-        kept.append(s)
+    for sentence in _SENT_END_RE.split(line.strip()):
+        kept.append(sentence)
         if count_words(" ".join(kept)) >= min_words:
             break
     return " ".join(kept)
@@ -667,23 +666,30 @@ def _shorten(text: str, max_words: int) -> str:
     return " ".join(text.split()[:max_words])
 
 
-def derive_topic(doc: dict, max_words: int = 20) -> str:
-    """Deterministic topic: title, else a short first line, else the (shortened) first sentence.
+def derive_topic(doc: dict, max_words: int = 20, scan_lines: int = 8) -> str:
+    """Deterministic topic: title, else a short leading line, else the (shortened) first sentence.
 
-    A title may be a single word (an encyclopedia lemma). The first line needs at least two
-    words, and quoted lines and site boilerplate (cookie or translation notices) are skipped.
+    A title may be a single word (an encyclopedia lemma). Otherwise the leading lines are scanned
+    up to the first prose paragraph: the first line of 2 to ``max_words`` words wins (one-word
+    navigation crumbs, quoted lines and cookie or translation notices are skipped); without one,
+    the first sentence of that paragraph is used.
     """
     text = doc.get("text") or ""
     title = clean_topic(doc.get("title") or "")
     if 1 <= count_words(title) <= max_words:
         return title
-    lines = _topic_lines(text)
-    first_line = lines[0] if lines else next((ln.strip() for ln in text.splitlines() if ln.strip()), "")
-    t = clean_topic(first_line)
-    if 2 <= count_words(t) <= max_words:
-        return t
-    sentence = clean_topic(first_sentence(text))
-    return clean_topic(_shorten(sentence, max_words)) or clean_topic(first_line)[:160]
+    lines = _topic_lines(text) or [ln.strip() for ln in text.splitlines() if ln.strip()]
+    prose = lines[0] if lines else ""
+    for line in lines[:scan_lines]:
+        t = clean_topic(line)
+        n = count_words(t)
+        if 2 <= n <= max_words:
+            return t
+        if n > max_words:
+            prose = line
+            break
+    sentence = clean_topic(first_sentence(prose))
+    return clean_topic(_shorten(sentence, max_words)) or clean_topic(prose)[:160]
 
 
 def target_words(doc: dict, lo: int = 150, hi: int = 1200) -> int:

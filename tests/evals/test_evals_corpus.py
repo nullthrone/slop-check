@@ -327,22 +327,28 @@ def test_derive_topic():
 
 def test_derive_topic_lemma_dateline_quotes_and_boilerplate():
     assert C.derive_topic({"title": "Tertiärquarzit", "text": DE_PARA}) == "Tertiärquarzit"
-    dateline = {"text": "Eschenbach. In der Nacht zum Montag wurde ein Kind gefunden. Mehr Text folgt hier."}
+    dateline = {
+        "text": "Eschenbach. In der Nacht zum Montag wurde ein Kind gefunden. Die Polizei hat die "
+        "Ermittlungen aufgenommen und bittet Zeugen, sich bei der Dienststelle in der Stadt zu melden."
+    }
     assert C.derive_topic(dateline) == "Eschenbach. In der Nacht zum Montag wurde ein Kind gefunden"
     quoted = {"title": "", "text": '> sind relativ einfach umzuziehen ")\n\nDas Display war nur geklebt.'}
     assert C.derive_topic(quoted) == "Das Display war nur geklebt"
     cookie = {
-        "text": "Um alle Funktionen dieser Seite zu nutzen, aktivieren Sie bitte die Cookies in Ihrem Browser.\n\n"
-        "Neue Messgeräte für die Biotechnologie\n\nText."
+        "text": "Um alle Funktionen dieser Seite zu nutzen, aktivieren Sie bitte die Cookies in Ihrem "
+        "Browser.\n\nNeue Messgeräte für die Biotechnologie\n\nText."
     }
     assert C.derive_topic(cookie) == "Neue Messgeräte für die Biotechnologie"
     plain = {"text": "Chocolate chip cookies keep for a week in a tin.\n\nMore text."}
     assert C.derive_topic(plain) == "Chocolate chip cookies keep for a week in a tin"
+    crumbs = {"text": "Infos\n\nmy.example.com\n\nEinladung zum Parlament der Bäume\n\nText."}
+    assert C.derive_topic(crumbs) == "Einladung zum Parlament der Bäume"
 
 
 def test_machine_translated_pages_are_rejected():
     assert C.human_written_ok(DE_PARA) and C.human_written_ok(EN_PARA)
-    assert not C.human_written_ok("Wichtig: Dieser Artikel wurde maschinell und nicht von einem Menschen übersetzt.")
+    mt_notice = "Wichtig: Dieser Artikel wurde maschinell und nicht von einem Menschen übersetzt."
+    assert not C.human_written_ok(mt_notice)
     assert not C.human_written_ok("This page was machine-translated from the German original.")
     assert C.human_written_ok("The novel was translated into twelve languages by human translators.")
     rows = [(1, {"text": "Dieser Artikel wurde automatisch übersetzt.\n" + DE_PARA * 6})]

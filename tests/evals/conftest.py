@@ -47,11 +47,9 @@ def thresholds():
             },
             "fading": {"max_lift": 1.5, "min_fpr_human": 0.08},
         },
-        "weights": {
-            "from_lift": {"fn": "ln", "min": 0.5, "max": 3.0},
-            "bootstrap": {"legacy_tier_1": 2.5, "legacy_tier_2": 1.0, "legacy_tier_3": 0.5},
-        },
-        "verdict_bootstrap": {"yellow": 2.0, "red": 5.0},
+        "weights": {"from_lift": {"fn": "ln", "min": 0.5, "max": 3.0}},
+        "verdict_provisional": {"yellow": 2.0, "red": 5.0},
+        "initial_core": {"delta": 2.5, "antithesis-template": 2.5, "generic-opening": 2.5},
         "budget": {
             "monthly_usd_cap": 26.0,
             "per_pull_request_usd_cap": 0.5,

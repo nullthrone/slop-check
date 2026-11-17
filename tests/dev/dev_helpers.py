@@ -1,8 +1,8 @@
 """Helpers for the dev tooling tests: a minimal repository in a temporary directory.
 
 The tests never read the real patterns or sources (other contributors change them); they
-use the real JSON schemas, the real governance file (with a test list of grandfathered
-ids) and the real engine.
+use the real JSON schemas, the real governance file (with a test ``initial_core``) and the
+real engine.
 """
 
 from __future__ import annotations
@@ -13,7 +13,8 @@ from pathlib import Path
 import yaml
 
 REPO = Path(__file__).resolve().parents[2]
-GRANDFATHERED = ["gf-one", "gf-two", "gf-three"]
+#: Test ``initial_core``: pattern id -> provisional weight.
+INITIAL_CORE = {"core-one": 2.5, "core-two": 1.0, "core-three": 0.5}
 
 
 def make_pattern(pid: str, status: str = "candidate", modality: str = "text", **over) -> dict:
@@ -41,12 +42,17 @@ def make_pattern(pid: str, status: str = "candidate", modality: str = "text", **
         "prevention": "Do not write foo.",
         "sources": [{"source": "src-a"}, {"source": "src-b"}],
     }
-    if status == "core":
-        pattern.update(provisional=True, legacy_id="T1.1", legacy_tier=1)
     if status == "observation":
         pattern["sources"] = [{"source": "src-a"}]
     pattern.update(over)
     return pattern
+
+
+def governance_thresholds() -> dict:
+    """The real governance file with the test ``initial_core``."""
+    data = yaml.safe_load((REPO / "governance" / "thresholds.yaml").read_text(encoding="utf-8"))
+    data["initial_core"] = dict(INITIAL_CORE)
+    return data
 
 
 def make_source(sid: str, **over) -> dict:
@@ -67,13 +73,16 @@ class MiniRepo:
         (root / "schema").mkdir(parents=True)
         for name in ("pattern", "source"):
             shutil.copyfile(REPO / "schema" / f"{name}.schema.json", root / "schema" / f"{name}.schema.json")
-        thresholds = yaml.safe_load((REPO / "governance" / "thresholds.yaml").read_text(encoding="utf-8"))
-        thresholds["grandfathered_core"] = list(GRANDFATHERED)
+        thresholds = governance_thresholds()
         self.thresholds = thresholds
         (root / "governance").mkdir()
-        (root / "governance" / "thresholds.yaml").write_text(yaml.safe_dump(thresholds), encoding="utf-8")
+        self.write_thresholds()
         (root / "patterns" / "text").mkdir(parents=True)
         (root / "sources").mkdir()
+
+    def write_thresholds(self) -> None:
+        path = self.root / "governance" / "thresholds.yaml"
+        path.write_text(yaml.safe_dump(self.thresholds, sort_keys=False), encoding="utf-8")
 
     def write_pattern(self, pattern: dict, rel: str | None = None) -> Path:
         path = self.root / (rel or f"patterns/{pattern.get('modality', 'text')}/{pattern['id']}.yaml")
@@ -104,11 +113,15 @@ class MiniRepo:
         fm = frontmatter if frontmatter is not None else default_fm
         body = "\n# Slop-Check\n\nFollow the audit procedure.\n"
         (skill / "SKILL.md").write_text(fm + body, encoding="utf-8")
-        refs = references if references is not None else {
-            "audit-procedure.md": "# Audit procedure\n\nStep one.\n",
-            "report-format.md": "# Report format\n\nUse the structure.\n",
-            "rewrite-procedure.md": "# Rewrite procedure\n\nChange little.\n",
-            "prevention-procedure.md": "# Prevention procedure\n\nApply the rules.\n",
-        }
+        refs = (
+            references
+            if references is not None
+            else {
+                "audit-procedure.md": "# Audit procedure\n\nStep one.\n",
+                "report-format.md": "# Report format\n\nUse the structure.\n",
+                "rewrite-procedure.md": "# Rewrite procedure\n\nChange little.\n",
+                "prevention-procedure.md": "# Prevention procedure\n\nApply the rules.\n",
+            }
+        )
         for name, text in refs.items():
             (skill / "references" / name).write_text(text, encoding="utf-8")

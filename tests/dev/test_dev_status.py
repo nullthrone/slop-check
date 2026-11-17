@@ -8,20 +8,22 @@ import json
 import math
 
 import pytest
-import yaml
-from dev_helpers import make_pattern
+from dev_helpers import INITIAL_CORE, make_pattern
 
 from slopcheck_dev.status import (
-    bootstrap_weight,
     derive,
+    initial_core,
     measured_weight,
     measurement_applies,
     measurement_for,
     pattern_hash,
+    provisional_weight,
 )
 
 
-def entry(pattern: dict, lift: float | None = 8.0, meets_core: bool = False, meets_fading: bool = False) -> dict:
+def entry(
+    pattern: dict, lift: float | None = 8.0, meets_core: bool = False, meets_fading: bool = False
+) -> dict:
     """A measurements.json entry that matches ``pattern``."""
     return {
         "pattern_hash": pattern_hash(pattern),
@@ -33,8 +35,8 @@ def entry(pattern: dict, lift: float | None = 8.0, meets_core: bool = False, mee
     }
 
 
-def core(tier: int = 1, pid: str = "gf-one") -> dict:
-    return make_pattern(pid, status="core", legacy_tier=tier)
+def core(pid: str = "core-one", **over) -> dict:
+    return make_pattern(pid, status="core", **over)
 
 
 # ---------------------------------------------------------------------------
@@ -67,31 +69,31 @@ def test_row_candidate_meets_core_is_measured_core(thresholds):
     assert weight == pytest.approx(math.log(8.0), abs=1e-3)
 
 
-@pytest.mark.parametrize(("tier", "weight"), [(1, 2.5), (2, 1.0), (3, 0.5)])
-def test_row_grandfathered_core_without_measurement_bootstrap(thresholds, tier, weight):
-    assert derive(core(tier), None, thresholds) == ("core", weight, "bootstrap")
+@pytest.mark.parametrize(("pid", "weight"), sorted(INITIAL_CORE.items()))
+def test_row_initial_core_without_measurement_is_provisional(thresholds, pid, weight):
+    assert derive(core(pid), None, thresholds) == ("core", weight, "provisional")
 
 
-def test_row_grandfathered_core_meets_core_measured(thresholds):
-    pattern = core(1)
+def test_row_initial_core_meets_core_measured(thresholds):
+    pattern = core()
     status, weight, source = derive(pattern, entry(pattern, lift=4.0, meets_core=True), thresholds)
     assert (status, source) == ("core", "measured")
     assert weight == pytest.approx(math.log(4.0), abs=1e-3)
 
 
-def test_row_grandfathered_core_meets_fading(thresholds):
-    pattern = core(1)
+def test_row_initial_core_meets_fading(thresholds):
+    pattern = core()
     assert derive(pattern, entry(pattern, lift=1.1, meets_fading=True), thresholds) == ("fading", 0.0, "none")
 
 
-def test_row_grandfathered_core_neither_keeps_core_with_measured_weight(thresholds):
-    pattern = core(2)
+def test_row_initial_core_neither_keeps_core_with_measured_weight(thresholds):
+    pattern = core("core-two")
     status, weight, source = derive(pattern, entry(pattern, lift=3.0), thresholds)
     assert (status, source) == ("core", "measured")
     assert weight == pytest.approx(math.log(3.0), abs=1e-3)
 
 
-@pytest.mark.parametrize("pattern", [make_pattern("cand-one"), core(1)], ids=["candidate", "core"])
+@pytest.mark.parametrize("pattern", [make_pattern("cand-one"), core()], ids=["candidate", "core"])
 def test_row_any_measured_core_meeting_fading_is_fading(thresholds, pattern):
     m = entry(pattern, lift=1.2, meets_core=True, meets_fading=True)
     assert derive(pattern, m, thresholds) == ("fading", 0.0, "none")
@@ -107,11 +109,9 @@ def test_stale_measurement_falls_back_to_declared_status(thresholds):
     edited = make_pattern("cand-one", summary="An edited summary that is long enough.")
     assert not measurement_applies(edited, m)
     assert derive(edited, m, thresholds) == ("candidate", 0.0, "none")
-    grandfathered = core(1)
-    fading = entry(grandfathered, lift=1.0, meets_fading=True)
-    edited_core = core(1)
-    edited_core["fix"] = "A different fix."
-    assert derive(edited_core, fading, thresholds) == ("core", 2.5, "bootstrap")
+    fading = entry(core(), lift=1.0, meets_fading=True)
+    edited_core = core(fix="A different fix.")
+    assert derive(edited_core, fading, thresholds) == ("core", 2.5, "provisional")
 
 
 def test_check_hash_false_applies_stale_measurement(thresholds):
@@ -121,15 +121,20 @@ def test_check_hash_false_applies_stale_measurement(thresholds):
 
 
 def test_measurement_without_hash_never_applies(thresholds):
-    pattern = core(1)
+    pattern = core()
     m = entry(pattern, lift=1.0, meets_fading=True)
     m.pop("pattern_hash")
-    assert derive(pattern, m, thresholds) == ("core", 2.5, "bootstrap")
+    assert derive(pattern, m, thresholds) == ("core", 2.5, "provisional")
 
 
-def test_measurement_without_lift_keeps_bootstrap(thresholds):
-    pattern = core(3)
-    assert derive(pattern, entry(pattern, lift=None), thresholds) == ("core", 0.5, "bootstrap")
+def test_measurement_without_lift_keeps_provisional_weight(thresholds):
+    pattern = core("core-three")
+    assert derive(pattern, entry(pattern, lift=None), thresholds) == ("core", 0.5, "provisional")
+
+
+def test_core_outside_initial_core_has_no_weight(thresholds):
+    # validate rejects such a file (rule 1); derive must still not invent a weight
+    assert derive(core("not-listed"), None, thresholds) == ("core", 0.0, "none")
 
 
 def test_unknown_status_raises(thresholds):
@@ -162,10 +167,16 @@ def test_measured_weight_reads_thresholds(thresholds):
     assert measured_weight(100.0, thresholds) == 2.0
 
 
-def test_bootstrap_weight_unknown_tier(thresholds):
-    assert bootstrap_weight(make_pattern("cand-one"), thresholds) is None
-    assert bootstrap_weight(core(9), thresholds) is None
-    assert derive(core(9), None, thresholds) == ("core", 0.0, "none")
+def test_initial_core_and_provisional_weight(thresholds):
+    assert initial_core(thresholds) == INITIAL_CORE
+    assert provisional_weight(core("core-two"), thresholds) == 1.0
+    assert provisional_weight(make_pattern("cand-one"), thresholds) is None
+    thresholds["initial_core"] = {"a": 2, "b": "heavy", "c": True}
+    assert initial_core(thresholds) == {"a": 2.0}
+    thresholds["initial_core"] = ["a"]
+    assert initial_core(thresholds) == {}
+    thresholds["initial_core"] = {"core-one": 1.75}
+    assert derive(core(), None, thresholds) == ("core", 1.75, "provisional")
 
 
 def test_measurement_for():
@@ -185,39 +196,26 @@ REFERENCE = {
     "status": "candidate",
     "threshold": {"min_count": 2, "comparison": "gte"},
     "realizations": {"de": {"terms": ["maßgeblich"]}},
-    "history": [{"date": "2026-11-17", "change": "Added."}],
+    "notes": "Checked 2026-11-17.",
 }
 #: Pinned so that a change of the canonical form (key order, separators, escaping) is caught:
 #: such a change would silently invalidate every stored measurement.
-REFERENCE_HASH = "bfcaf7ab541140bb14eb607eceab3643d07c79fbe1296b15797df67c303a81e3"
+REFERENCE_HASH = "1723ac7c278ef5a1b3640e090423ee1ded56e3f3a9314bd9322b564816477106"
 
 
 def test_pattern_hash_pinned_value():
     assert pattern_hash(REFERENCE) == REFERENCE_HASH
 
 
-def test_pattern_hash_is_sha256_of_canonical_json_without_history():
-    body = {k: v for k, v in REFERENCE.items() if k != "history"}
-    canonical = json.dumps(body, sort_keys=True, ensure_ascii=False, separators=(",", ":"))
+def test_pattern_hash_is_sha256_of_canonical_json_of_whole_pattern():
+    canonical = json.dumps(REFERENCE, sort_keys=True, ensure_ascii=False, separators=(",", ":"))
     assert pattern_hash(REFERENCE) == hashlib.sha256(canonical.encode("utf-8")).hexdigest()
 
 
-def test_pattern_hash_ignores_key_order_history_and_catalog_fields():
+def test_pattern_hash_ignores_key_order():
     reordered = dict(reversed(list(REFERENCE.items())))
     reordered["threshold"] = {"comparison": "gte", "min_count": 2}
     assert pattern_hash(reordered) == REFERENCE_HASH
-    longer = {**REFERENCE, "history": [*REFERENCE["history"], {"date": "2026-12-01", "change": "Edited."}]}
-    assert pattern_hash(longer) == REFERENCE_HASH
-    assert pattern_hash({k: v for k, v in REFERENCE.items() if k != "history"}) == REFERENCE_HASH
-    catalog_entry = {**REFERENCE, "effective_status": "core", "weight": 2.5, "weight_source": "bootstrap"}
-    assert pattern_hash(catalog_entry) == REFERENCE_HASH
-
-
-def test_pattern_hash_does_not_mutate_input():
-    pattern = make_pattern("cand-one", history=[{"date": dt.date(2026, 11, 17), "change": "Added."}])
-    before = json.dumps(pattern, default=str, sort_keys=True)
-    pattern_hash(pattern)
-    assert json.dumps(pattern, default=str, sort_keys=True) == before
 
 
 @pytest.mark.parametrize(
@@ -227,26 +225,37 @@ def test_pattern_hash_does_not_mutate_input():
         {"threshold": {"min_count": 2}},
         {"status": "observation"},
         {"notes": "A new note."},
+        {"related": [{"id": "other", "relation": "overlaps"}]},
+        {"sources": [{"source": "src-a"}, {"source": "src-b", "note": "A new note on the source."}]},
     ],
 )
-def test_pattern_hash_changes_with_content(change):
+def test_pattern_hash_covers_every_field(change):
     base = make_pattern("cand-one")
     assert pattern_hash({**base, **change}) != pattern_hash(base)
 
 
+def test_pattern_hash_does_not_mutate_input():
+    pattern = make_pattern("cand-one", notes="Seen on a date.")
+    pattern["sources"][0]["accessed"] = dt.date(2026, 11, 17)
+    before = json.dumps(pattern, default=str, sort_keys=True)
+    pattern_hash(pattern)
+    assert json.dumps(pattern, default=str, sort_keys=True) == before
+
+
 def test_pattern_hash_equal_for_yaml_dates_and_iso_strings(tmp_path):
-    text = (
-        "id: dated\nstatus: candidate\nnotes: checked\n"
-        "sources:\n  - {source: src-a, note: 'seen 2026-07-30'}\n"
-        "history:\n  - {date: 2026-07-30, change: Added.}\n"
-        "extra_date: 2026-08-16\n"
-    )
+    import yaml
+
+    from slopcheck_dev.patterns import load_yaml
+
+    text = "id: dated\nstatus: candidate\nsources:\n  - {source: src-a, seen: 2026-07-30}\n"
     path = tmp_path / "dated.yaml"
     path.write_text(text, encoding="utf-8")
     raw = yaml.safe_load(path.read_text(encoding="utf-8"))
-    assert isinstance(raw["extra_date"], dt.date)
-    as_strings = {**raw, "extra_date": "2026-08-16", "history": [{"date": "2026-07-30", "change": "Added."}]}
+    assert isinstance(raw["sources"][0]["seen"], dt.date)
+    as_strings = {
+        "id": "dated",
+        "status": "candidate",
+        "sources": [{"source": "src-a", "seen": "2026-07-30"}],
+    }
     assert pattern_hash(raw) == pattern_hash(as_strings)
-    from slopcheck_dev.patterns import load_yaml
-
     assert pattern_hash(load_yaml(path)) == pattern_hash(as_strings)

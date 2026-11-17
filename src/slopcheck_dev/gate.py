@@ -8,8 +8,9 @@ Rules per pattern:
 
 - Patterns that score after the merge must meet the core criteria on the dev split
   (``meets_core`` in the measurement). That covers patterns that are effective core now
-  (by measurement or bootstrap) and every declared ``core`` pattern, because an edited
-  pattern falls back to its declared status until it is remeasured.
+  (measured, or initial core with a provisional weight) and every declared ``core``
+  pattern, because an edited pattern falls back to its declared status until it is
+  remeasured.
 - Other candidates need ``fpr_human <= admission.candidate.pr_gate.max_fpr_human``, pooled
   and in every measured language.
 - The measurement must come from the dev split and its ``pattern_hash`` must match the

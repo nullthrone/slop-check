@@ -10,7 +10,7 @@ directory, and only `manifest.json` (references and SHA-256 hashes) goes to bran
 
 Specification: [`human.yaml`](human.yaml). Cutoff: nothing published on or after 2022-11-01
 (the public release of ChatGPT was on 2022-11-30). Every source below predates that by at least
-eleven months; the web sources are restricted further, to pages crawled before June 2020, when
+ten months; the web sources are restricted further, to pages crawled before June 2020, when
 the GPT-3 API opened and the first generated marketing copy started to appear on the open web.
 
 All rows come from the Hugging Face datasets-server JSON API
@@ -53,11 +53,13 @@ Applied in this order, for every source:
    configuration contains Russian and Spanish pages, for example).
 4. Prose: letters must make up at least 85 % of the non-space characters, which removes formulas,
    code and markup dumps.
-5. Repetition and tables: pages built from repeated sentences or dominated by table rows are
+5. Translation notices: pages that say they were translated by machine ("maschinell übersetzt",
+   "machine-translated") are skipped, because the baseline has to be human-written.
+6. Repetition and tables: pages built from repeated sentences or dominated by table rows are
    skipped.
-6. Length: 150 to 1200 words (Unicode word tokens). Wikipedia articles longer than 1200 words are
+7. Length: 150 to 1200 words (Unicode word tokens). Wikipedia articles longer than 1200 words are
    cut at a paragraph boundary instead of being dropped, so long articles are not lost.
-7. Diversity: `max_per_domain` limits documents per web domain; exact duplicates are dropped.
+8. Diversity: `max_per_domain` limits documents per web domain; exact duplicates are dropped.
 
 ### Known biases
 
@@ -67,8 +69,8 @@ Applied in this order, for every source:
 - Wikipedia articles cut at 1200 words have no natural ending, which can lower the human rate of
   patterns that inspect the last paragraph.
 - Some German web pages in Common Crawl were machine translated before 2020 (statistical or
-  early neural systems). They stay in the corpus: they predate LLM text, and real readers meet
-  them too.
+  early neural systems) without saying so. Only pages with a translation notice are filtered;
+  the others stay, since they predate LLM text and real readers meet them too.
 
 ## AI corpus
 
@@ -77,9 +79,13 @@ Prompts: [`prompts/en.yaml`](prompts/en.yaml) and [`prompts/de.yaml`](prompts/de
 prompts whose `human_registers` contains the document's register, by hash of the document id),
 fills in a topic and a target length, and sends it to every generator in `models/lock.json`.
 
-- Topic: the document title if there is one, else its first line when that is 2 to 20 words long,
-  else its first sentence shortened at a clause boundary. URLs, e-mail addresses, handles and phone
-  numbers are removed. No LLM is involved.
+- Topic: the document title if there is one (a single word such as an encyclopedia lemma is
+  enough). Otherwise the leading lines up to the first prose paragraph are scanned, and the first
+  line of 2 to 20 words wins; without one, the first sentence of that paragraph is used, shortened
+  at a clause boundary. One-word navigation lines, quoted lines (`>`), cookie and JavaScript
+  notices and translation notices are skipped, and a dateline such as "Eschenbach." is joined with
+  the sentence after it. URLs, domain names, e-mail addresses, handles and phone numbers are
+  removed. No LLM is involved.
 - Target length: the human document's word count rounded to tens, clamped to 150 to 1200.
 - Selection: each generator takes the first `docs_per_language` documents of one fixed order
   (sorted by a hash of the document id), so cheaper and more expensive models share topics.
