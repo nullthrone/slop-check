@@ -46,7 +46,7 @@ notes: >
   automatically. Keeping the English trigger rate at or below 4 % would need about 23 curly
   characters per text, a count that tracks text length and editing software rather than generated
   text, so no meaningful core threshold exists for this metric. German is exempt via
-  exempt_languages (no German text triggers). The pattern can return to the candidate track if a
+  exempt_languages (no German text triggers). The pattern can move to the candidate track if a
   length-normalized measure or a scope limited to plain-text channels (commit messages, Markdown
   source) shows separation from AI-generated text. The German negative example with „…“ relies on
   language detection recognising the sentence as German.

@@ -416,7 +416,8 @@ slopcheck-dev models resolve [--out FILE] [--previous FILE]
 
 The package must satisfy the strictest known runtime (Gemini app, Nov 2026):
 
-- Folder name equals skill name `slop-check`; `SKILL.md` in the package root with frontmatter `name` (lowercase, hyphens) and `description` (states the situations in which the skill applies; runtimes auto-trigger on it).
+- Folder name equals skill name `slop-check`; `SKILL.md` in the package root with frontmatter `name` (lowercase, hyphens) and `description` of at most 200 characters (claude.ai's limit, the strictest known; it states the situations in which the skill applies, and runtimes auto-trigger on it).
+- Two archives: `slop-check.zip` with the folder `slop-check/` at its root (Claude, Gemini) and `slop-check-flat.zip` with `SKILL.md` at its root (runtimes that expect that, such as Microsoft 365 Copilot and Copilot Studio).
 - Allowed file types only: `.md`, `.py`, `.json`, `.yaml`, `.txt`. No archives inside, no hidden files, no `__pycache__`/`.pyc`, total size far below 100 MB.
 - Scripts must not need network access. The engine runs fully offline; `--llm` is a CLI feature outside skill mode.
 - The skill must work when scripts cannot run: the host model then applies `references/text-patterns.md` itself.
