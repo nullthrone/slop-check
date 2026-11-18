@@ -44,7 +44,7 @@ names no way to do it. The guide for each product links its sources.
 
 | Product | Package | Picked automatically | Explicit call | Scripts run | Reference files read | Notes |
 |---|---|---|---|---|---|---|
-| Claude apps (claude.ai, desktop, Cowork, Office add-ins) | `slop-check.zip`, uploaded as it is | Yes | Name the skill in the request | Yes, in the code-execution container | Yes, on demand | Code execution must be on. The upload also reaches Cowork on mobile and Claude Code signed in with the same account (v2.1.273 or later). Upload from mobile is not documented. |
+| Claude apps (claude.ai, desktop, Cowork, Office add-ins) | `slop-check.zip`, uploaded as it is | Yes | Name the skill in the request | Yes, in the code-execution container | Yes, on demand | Code execution must be on. A zip with `SKILL.md` at its root (flat or lite) is not recognized. The upload also reaches Cowork on mobile and Claude Code signed in with the same account (v2.1.273 or later). Upload from mobile is not documented. |
 | Claude Code | `slop-check.zip`, unzipped into `~/.claude/skills/` or `.claude/skills/` | Yes | `/slop-check` | Yes, with the local Python; asks before Bash unless pre-approved | Yes | Claude Code on the web reads the repository copy and skills from claude.ai, not `~/.claude/skills/`. |
 | Claude API | `slop-check.zip`, uploaded to `/v1/skills` | Yes | None documented | Yes: Python 3.11, no network | Yes | Separate from claude.ai uploads. Up to 20 skills per request. |
 | Claude Agent SDK | `slop-check.zip`, unzipped into `.claude/skills/` | Yes | `/slop-check` in the prompt | Yes, when Bash is allowed | Yes, through Read or Bash | Sessions with an API key get no skills from claude.ai. |
@@ -53,10 +53,10 @@ names no way to do it. The guide for each product links its sources.
 
 | Product | Package | Picked automatically | Explicit call | Scripts run | Reference files read | Notes |
 |---|---|---|---|---|---|---|
-| Gemini app | `slop-check-lite.zip` | Yes, for active skills | `/` (or `@`), then pick the skill | No (observed; Google does not document it) | On demand, when Gemini decides to | Upload only on gemini.google.com and in the Mac app. Mobile apps can use the skill. |
-| Gemini Enterprise | `slop-check.zip` | Yes | `@` or `/` mention, or "Use the slop-check skill" | Yes, Python and Bash; runtime version and network unverified | Yes, on demand | An administrator turns skills on. Skills do not work together with agents. |
-| Gemini CLI | `slop-check.zip`, unzipped into `~/.gemini/skills/` or `~/.agents/skills/` | Yes, after a consent prompt | None documented | Yes, locally, after approval | Yes, on demand | Workspace skills load only in trusted folders. |
-| Antigravity CLI, App and IDE | `slop-check.zip`, unzipped into `~/.gemini/config/skills/` | Yes | `/slop-check` | Yes, locally | Yes, as needed | Project skills go in `.agents/skills/`, not `.gemini/skills/`. |
+| Gemini app | `slop-check-lite.zip` | Yes, for active skills | `/` (or `@`), then pick the skill | Not documented: `.py` and `.sh` uploads are accepted, but they did not run in tests | On demand, when Gemini decides to | Upload only on gemini.google.com and in the Mac app. Mobile apps can use the skill. |
+| Gemini Enterprise | `slop-check.zip` (the flat zip works too) | Yes | `@` or `/` mention, or "Use the slop-check skill" | Yes, Python and Bash; runtime version and network unverified | Yes, on demand | An administrator turns skills on. Skills are not available with agents. Canvas works best with skills that have only a `SKILL.md`. Up to 100 files and 100 MB. |
+| Gemini CLI | `slop-check.zip`, unzipped into `~/.gemini/skills/` or `~/.agents/skills/`, or added with `gemini skills install` or `gemini skills link` | Yes, after a consent prompt | None documented | Yes, locally, after approval | Yes, on demand | Workspace skills load only in trusted folders. Unpaid-tier and Google One users have Antigravity CLI instead. |
+| Antigravity CLI, App and IDE | `slop-check.zip`, unzipped into `~/.gemini/config/skills/` | Yes | `/slop-check` | Yes, locally | Yes, as needed | Project skills go in `.agents/skills/` (also read in parent folders up to the repository root; `.agent/skills` still works), not `.gemini/skills/`. |
 | Gemini API managed agents | Folder from `slop-check.zip`, mounted at `.agents/skills/slop-check/` | Yes | None documented | Yes, in the sandbox | Yes | Preview. Network follows the sandbox's egress allowlist. |
 | Agent Platform Skill Registry | `slop-check.zip` | Yes | None documented | Unverified | Unverified | For developers. Zip up to 10 MB. |
 | Gemini API without agents | `system-prompt.md` as the system instruction | n/a | n/a | No | n/a | The API has no skills. |
@@ -66,10 +66,10 @@ names no way to do it. The guide for each product links its sources.
 
 | Product | Package | Picked automatically | Explicit call | Scripts run | Reference files read | Notes |
 |---|---|---|---|---|---|---|
-| ChatGPT (web and mobile, Chat and Work) | `slop-check.zip` | Yes | `@slop-check` | Unverified | Unverified | OpenAI does not document the upload format; a zip with one root folder is reported to work. OpenAI's pages disagree on which plans can upload. The desktop app keeps its own skills. |
+| ChatGPT (web and mobile, Chat and Work) | `slop-check.zip` | Yes | `@slop-check` | Unverified | Unverified | OpenAI's Learn page lists standalone skills only in the desktop app, Codex CLI and the IDE extension, and skills in plugins on the web; the web upload of a standalone skill is unverified. OpenAI does not document the upload format; a zip with one root folder is reported to work. OpenAI's pages disagree on which plans can upload. The desktop app keeps its own skills. |
 | ChatGPT projects | `instructions.md` in the instructions, `knowledge.md` as a project file | n/a | n/a | No | `knowledge.md`, found by search | Project instructions take about 8,000 characters (user reports). |
 | Codex CLI and IDE extension | `slop-check.zip`, unzipped into `~/.agents/skills/` or `.agents/skills/` | Yes | `$slop-check` or `/skills` | Yes, in the sandbox, network off by default | Yes, when needed | Codex Cloud reads only skills committed to the repository. Restart Codex if the skill does not appear. |
-| OpenAI API | `slop-check.zip`, uploaded to `/v1/skills` | Yes | None documented | Yes; hosted containers have no outbound network by default | Yes | Zip up to 50 MB and 500 files. |
+| OpenAI API | `slop-check.zip`, uploaded to `/v1/skills` | Yes | None documented | Yes; hosted containers have no outbound network by default | Yes | Zip up to 50 MB and 500 files, each file up to 25 MB uncompressed. |
 | OpenAI Agents SDK | Folder from `slop-check.zip`, mounted with the sandbox `Skills` capability | Yes, from an index and the `load_skill` tool | None documented | Depends on the sandbox you configure | Yes | Sandbox agents only. |
 
 ### Microsoft
@@ -77,11 +77,11 @@ names no way to do it. The guide for each product links its sources.
 | Product | Package | Picked automatically | Explicit call | Scripts run | Reference files read | Notes |
 |---|---|---|---|---|---|---|
 | GitHub Copilot CLI | `slop-check.zip`, unzipped into `~/.copilot/skills/` or `.github/skills/` | Yes | `/slop-check` | Yes; asks before the shell tool runs | Yes | Also reads `~/.agents/skills/`. |
-| VS Code agent mode | `slop-check.zip`, unzipped into `~/.copilot/skills/` or `.github/skills/` | Yes | `/` in the chat input | Yes, through the terminal tool | On demand | The folder depends on the agent harness. |
+| VS Code agent mode | `slop-check.zip`, unzipped into `~/.copilot/skills/` or `.github/skills/` | Yes | `/` in the chat input | Yes, through the terminal tool | On demand | The folder depends on the agent harness. The experimental Codex integration also reads `.github/skills/`. |
 | Copilot cloud agent | `slop-check.zip`, unzipped into `.github/skills/` and committed | Yes | Slash commands on github.com | Unverified (Python availability) | Yes | Personal skills only in cloud sandbox sessions, from the dotfiles repository. |
-| Copilot code review | The committed copy in `.github/skills/` | Yes, if relevant to the review | None documented | Unverified | Unverified | Reads only `.github/skills/`. |
+| Copilot code review | The committed copy in `.github/skills/` | Yes, if relevant to the review | None documented | Unverified | Unverified | GitHub documents `.github/skills/`; that it reads no other folder is an inference. |
 | Microsoft 365 Copilot Chat | `slop-check-flat.zip` | Yes, with the per-skill toggle on | Select the installed skill | Yes, in a sandbox without network; Python version unverified | Yes | Not supported with Purview Information Barriers. |
-| Agent Builder | `slop-check-flat.zip` | Yes | None documented | Yes, in a sandbox without network | Yes | Up to 8 skills per agent. |
+| Agent Builder | `slop-check-flat.zip` | Yes | None documented | Yes, in a sandbox without network | Yes | Opened from **Agents & Skills** in Copilot Chat. Up to 8 skills per agent. |
 | Copilot Studio | `slop-check-flat.zip` | Yes | None documented | Unverified | Unverified | Microsoft Copilot harness only. Whether the zip needs `SKILL.md` at its root is unverified. |
 | Microsoft 365 Copilot Cowork | `slop-check-lite.zip` | Yes | None documented in conversations | Documented, but the lite package has no scripts | Yes, on demand | At most 20 files besides `SKILL.md` and 50 custom skills. Not on mobile. |
 
@@ -89,9 +89,9 @@ names no way to do it. The guide for each product links its sources.
 
 | Product | Package | Picked automatically | Explicit call | Scripts run | Reference files read | Notes |
 |---|---|---|---|---|---|---|
-| Vibe Work (formerly Le Chat) | Files of `slop-check-lite.zip`, entered in the skill form; `instructions.md` if the form takes text only | Yes | `/slop-check`, the `/` picker or the skill's name | Unverified; do not attach `scripts/` | Yes, as needed | No package import. The number of supporting files is limited. |
+| Vibe Work (formerly Le Chat) | Files of `slop-check-lite.zip`, entered in the skill form; `instructions.md` if the form takes text only | Yes | `/slop-check`, the `/` picker or the skill's name | Unverified; do not attach `scripts/` | Yes, as needed | No package import in Work; the beta Studio Skills API creates a skill from JSON, then **Publish to Vibe**. The number of supporting files is limited. Skills also appear in Work on Desktop. |
 | Vibe Chat | Not supported; use a Work skill | n/a | n/a | n/a | n/a | Custom instructions are meant to be short, and active skills override them. |
-| Vibe CLI | `slop-check.zip`, unzipped into `~/.vibe/skills/` or `~/.agents/skills/` | Yes | `/slop-check` | Yes, through Bash; asks first by default | Unverified | Use version 2.25.4 or later. |
+| Vibe CLI | `slop-check.zip`, unzipped into `~/.vibe/skills/` or `~/.agents/skills/` | Yes | `/slop-check` | Yes, through Bash; asks first by default | Unverified | Use version 2.25.4 or later. Run `/reload` if a new skill does not appear. |
 
 ### Other runtimes
 
@@ -138,7 +138,7 @@ folders each agent reads, as documented on the pages linked from its guide.
 | Zed | `~/.agents/skills/` | `.agents/skills/` |
 | JetBrains Junie | `~/.agents/skills/`, `~/.junie/skills/` | `.agents/skills/` (trusted projects), `.junie/skills/` |
 | Vibe CLI | `~/.agents/skills/`, `~/.vibe/skills/` | `.agents/skills/`, `.vibe/skills/` (trusted folders) |
-| Antigravity CLI, App and IDE | `~/.gemini/config/skills/` | `.agents/skills/` |
+| Antigravity CLI, App and IDE | `~/.gemini/config/skills/` (CLI also `~/.gemini/skills/`, `~/.gemini/antigravity-cli/skills/`) | `.agents/skills/`, also in parent folders up to the repository root |
 | Claude Code | `~/.claude/skills/` | `.claude/skills/` |
 | Kiro | `~/.kiro/skills/` | `.kiro/skills/` |
 

@@ -4,7 +4,7 @@ eyebrow: Setup · Gemini
 lead: Upload the script-free slop-check-lite to the Gemini app, the full package to Gemini Enterprise, or add the skill folder to Gemini CLI and Antigravity.
 description: Upload slop-check-lite.zip to the Gemini app, deactivate a converted slop Gem, upload slop-check.zip to Gemini Enterprise, and add the skill folder to Gemini CLI or Antigravity.
 aside: setup
-checked: 2026-11-17
+checked: 2026-11-18
 verified:
   - title: Create and manage skills for Gemini Apps (Gemini Apps Help)
     url: https://support.google.com/gemini/answer/17094296?hl=en
@@ -30,6 +30,8 @@ verified:
     url: https://geminicli.com/docs/cli/skills/
   - title: Creating Agent Skills (Gemini CLI documentation)
     url: https://geminicli.com/docs/cli/creating-skills/
+  - title: CLI reference, skills management (Gemini CLI documentation)
+    url: https://geminicli.com/docs/cli/cli-reference/
   - title: Agent skills (Antigravity documentation)
     url: https://antigravity.google/docs/skills/
   - title: Transitioning Gemini CLI to Antigravity CLI (Google Developers Blog)
@@ -59,12 +61,13 @@ The help page asks only that you are 18 or older and signed in. You can upload s
 [gemini.google.com](https://gemini.google.com) and in the Gemini app on Mac. The Android and iOS
 apps can use an uploaded skill but cannot upload one.
 
-Gemini chat cannot run the bundled scripts. Google documents no way for chat to run them, and in
-tests Gemini answered that the scripts cannot run in its environment. The skill is built to work
-without them: its `SKILL.md` contains the core pattern list and the report layout, so an audit
-works from `SKILL.md` alone. The lite package holds `SKILL.md` and the `references` folder and
-leaves the scripts out. Use it here; in reported tests, Gemini either refused the full package
-because of its scripts or stopped at them.
+Do not count on the bundled scripts in Gemini chat. Google's help page lists `.py` and `.sh` among
+the supported upload types and says that scripts that require access to the internet are not
+supported, but it does not say that chat runs scripts. In tests Gemini answered that the scripts
+cannot run in its environment. The skill is built to work without them: its `SKILL.md` contains the
+core pattern list and the report layout, so an audit works from `SKILL.md` alone. The lite package
+holds `SKILL.md` and the `references` folder and leaves the scripts out. Use it here; in reported
+tests, Gemini either refused the full package because of its scripts or stopped at them.
 
 1. Download [slop-check-lite.zip]({{ site.download_lite_zip }}). `SKILL.md` sits at the top
    level of the archive, next to the `references` folder.
@@ -95,7 +98,7 @@ open it and select **More**, then **Replace skill**, and upload the whole packag
 |---|---|
 | Automatic use | Gemini uses active skills when a request matches. It decides from the skill's name and description only. |
 | Explicit call | Type `/slop-check` in the chat (or `@slop-check` with the updated shortcut) and select the skill. Use this for audits. |
-| Bundled scripts | They do not run in chat. The lite package leaves them out, and the skill works without them. |
+| Bundled scripts | Google accepts `.py` and `.sh` files in a skill but does not say that chat runs them; in tests they did not run. The lite package leaves them out, and the skill works without them. |
 | Reference files | Gemini opens them only when it decides it needs them. `SKILL.md` carries everything an audit needs. |
 | Language | Google's Workspace admin guide says skills in the Gemini app are initially available in English only. |
 
@@ -103,13 +106,17 @@ For an audit, call the skill explicitly and choose a higher thinking level in th
 the answer has no verdict line, ask again at a higher thinking level. Run audits in a normal chat:
 Google says skills do not yet work with Canvas and Deep Research. Task mode uses the same skills
 and can run code on a remote computer, but Google does not say whether it runs skill scripts
-there, so that is unverified.
+there, so that is unverified. Task mode needs a personal Google Account. Outside Australia,
+Canada, India, Japan, South Korea and the US it needs a Google AI Pro or Ultra subscription, and it
+is not available in the European Economic Area, Switzerland, the United Kingdom and Nigeria.
 
 ## Work and school accounts
 
 Google's Workspace admin guide lists skills in the Gemini app as available for Workspace accounts,
-in English and with manual file uploads. The Gemini Apps Help page still describes availability for
-work and school accounts as coming soon. Administrators control skills through the **Gemini app
+in English and with manual file uploads. The skills page of the Gemini Apps Help no longer
+describes availability for work and school accounts as coming soon, while Google's page on the
+transition from Gems still says that availability will expand to them soon. Task mode is not
+available with work and school accounts. Administrators control skills through the **Gemini app
 access settings**, for the whole organization or for organizational units. The upload steps are
 the same as above.
 
@@ -129,8 +136,9 @@ Standard, Plus and pay-as-you-go editions can upload skills. Frontline users can
 upload them.
 
 1. Download [slop-check.zip]({{ site.download_zip }}). Gemini Enterprise accepts an archive with
-   `SKILL.md` inside a single top-level folder whose name matches the skill name, so the zip works
-   as it is. Archives may hold up to 100 files and 100 MB.
+   exactly one `SKILL.md`, either at the root of the archive or inside a single top-level folder
+   whose name matches the skill name. The zip works as it is, and so would
+   [slop-check-flat.zip]({{ site.download_flat_zip }}).
 2. Sign in to the Gemini Enterprise web app and select **Skills** in the navigation menu.
 3. Select the add icon, then **Upload skill**.
 4. Drag in `slop-check.zip` or browse for it, then select **Import**. Gemini Enterprise turns the
@@ -148,7 +156,20 @@ upload them.
 Google says skill availability in a chat depends on the selected model. If slop-check does not
 appear in a chat, switch the model.
 
+Google lists these limits and restrictions:
+
+- `name` up to 64 characters, `description` up to 1,024 characters and the Markdown body of
+  `SKILL.md` up to 500,000 characters. Longer values make the upload fail.
+- Archives up to 100 MB compressed and uncompressed, 100 files and 10 levels of folder nesting.
+- Skills are not available for use with agents.
+- Skills work best with Canvas when a skill has only one `SKILL.md` file. slop-check also has
+  reference files and scripts, so run audits in a normal chat.
+
 ## Gemini CLI
+
+Since 2026-06-18, unpaid-tier and Google One users use Antigravity CLI instead
+of Gemini CLI, as a banner on the Gemini CLI documentation says. Follow the
+[Antigravity](#antigravity) steps in that case.
 
 Gemini CLI discovers skills at the start of each session and asks for your confirmation before it
 activates one.
@@ -163,6 +184,11 @@ activates one.
 
    For one project, unzip it into `.agents/skills/` (or `.gemini/skills/`) in the project folder.
    `~/.agents/skills/` works as an alias for the user folder.
+
+   Gemini CLI can also do this for you. Unzip the package anywhere, then run
+   `gemini skills install ./slop-check` to install the skill from that local folder, or
+   `gemini skills link ./slop-check` to link it with a symlink instead of copying it. Add
+   `--scope workspace` to install it for the current project only.
 3. Start a session and run `/skills list`. The list should contain `slop-check`. In a running
    session, `/skills reload` picks up a new skill.
 4. Ask for an audit. Approve the activation prompt when Gemini CLI asks to use the skill.
@@ -191,9 +217,12 @@ Assist licenses and API-key users keep Gemini CLI.
    unzip slop-check.zip -d ~/.gemini/config/skills
    ```
 
-   Antigravity CLI also reads `~/.gemini/skills/`, which the App does not.
-3. For one project, unzip it into `.agents/skills/` at the workspace root. Antigravity does not
-   read `.gemini/skills/` inside a project; move an existing copy to `.agents/skills/`.
+   Antigravity CLI also reads `~/.gemini/skills/` and `~/.gemini/antigravity-cli/skills/`, which
+   the App does not. The Antigravity IDE also reads the older `~/.gemini/antigravity/skills/`.
+3. For one project, unzip it into `.agents/skills/` at the workspace root. Antigravity also reads
+   `.agents/skills/` in each parent folder up to the repository root, and still reads the older
+   `.agent/skills`. Antigravity does not read `.gemini/skills/` inside a project; move an existing
+   copy to `.agents/skills/`.
 4. In a running Antigravity CLI session, run `/skills reload` or start a new conversation.
 
 ### What works here
