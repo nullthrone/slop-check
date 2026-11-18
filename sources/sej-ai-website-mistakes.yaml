@@ -1,0 +1,17 @@
+id: sej-ai-website-mistakes
+title: "7 Common AI Website Mistakes That Are Easy To Avoid"
+url: https://www.searchenginejournal.com/7-common-ai-website-mistakes-that-are-easy-to-avoid/574196/
+publisher: Search Engine Journal
+authors: [Roger Montti]
+published: 2026-05-07
+accessed: 2026-11-18
+type: press
+derived_from: [yc-design-review-vibe-coded]
+notes: >
+  Trade-press summary of the Y Combinator design-review episode; derived from it and from the same
+  publisher as sej-ai-fingerprints, so it adds no independence. Lists "five examples of generic design
+  trends", including "Using bento-box layouts without originality" and "Generic visual elements like
+  the example of the software dashboard". Mistake 2 ("Unexpected User Interaction Feedback"): cursor-
+  following effects, "Superfluous background animation effects", "Automatic fade-ins", hover effects
+  that move things without purpose. Mistake 3: scroll hijacking, "Clickable-looking elements that do
+  not behave clearly" and hover-only interactions.

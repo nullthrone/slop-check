@@ -1,0 +1,17 @@
+id: suh-2025-human-or-llm-accessible-code
+title: "Human or LLM? A Comparative Study on Accessible Code Generation Capability"
+url: https://arxiv.org/abs/2503.15885
+publisher: arXiv
+authors: [Hyunjae Suh, Mahan Tafreshipour, Sam Malek, Iftekhar Ahmed]
+published: 2025-03-20
+accessed: 2026-11-18
+type: academic-preprint
+derived_from: []
+notes: >
+  Compares web code from GPT-4o and Qwen2.5-Coder with human-written code using AChecker and
+  QualWeb. Important counter-evidence: naive LLM output had lower inaccessibility rates than the
+  human code (AChecker 0.347/0.348 vs 0.425) and fewer contrast and alt-text violations
+  (contrast dominated at 80% of violations overall). LLMs did worse on ARIA ("complex ARIA handling
+  remains difficult for LLMs"), and both models "struggled with FontSizeCSS, ScopeDataTbl, and
+  HeadingsOrg"; Qwen2.5-Coder also had FocusRemoveFail issues. Use it to keep claims about
+  contrast and alt text modest; it supports heading-structure and focus-removal findings.

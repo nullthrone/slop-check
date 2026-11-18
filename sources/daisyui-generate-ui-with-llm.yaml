@@ -1,0 +1,15 @@
+id: daisyui-generate-ui-with-llm
+title: "Generate UI with LLM"
+url: https://daisyui.com/ai/generate-ui-with-llm/
+publisher: daisyUI
+published: null
+accessed: 2026-11-18
+type: documentation
+derived_from: []
+notes: >
+  Component-library vendor page (has a stake: it sells semantic component classes as the fix).
+  Describes LLM output built from raw Tailwind utilities: the model has to "invent a button from
+  utilities", rebuilding "color, border, spacing, hover, active, disabled, and focus styles" each
+  time, so "One button becomes five different button class strings" and "A card uses different
+  padding on each page"; "If the context contains long utility chains, the model has to reason
+  through them." No measurement.

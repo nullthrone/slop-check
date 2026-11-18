@@ -1,0 +1,16 @@
+id: webaim-million-2026
+title: "The WebAIM Million: The 2026 report on the accessibility of the top 1,000,000 home pages"
+url: https://webaim.org/projects/million/
+publisher: WebAIM
+published: 2026-03-30
+accessed: 2026-11-18
+type: corpus-study
+derived_from: []
+notes: >
+  Human-web baseline, not a study of generated pages (date is "Last updated"; data collected
+  February 2026). Home pages with low-contrast text 83.9%, missing alt text 53.1%, missing form
+  labels 51%, empty links 46.3%, empty buttons 30.6%; 46.1% have a main landmark; 18.1% have more
+  than one h1; skipped heading levels on 41.8%; average 56.1 errors per page (+10.1% on 2025). The
+  conclusion links the rise, without measuring it, to "3rd party frameworks and libraries and
+  automated or AI-assisted coding practices ("vibe coding")". Use only to show that these defects
+  are common on all pages, so they are weak signals alone.

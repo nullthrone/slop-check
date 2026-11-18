@@ -1,0 +1,81 @@
+id: template-centered-hero
+modality: web
+name: Template centered hero stack
+summary: >
+  The first screen is a single centered column: a small pill badge, a large headline, a gray
+  subheadline, and one or two buttons (filled primary, outlined or ghost secondary), often with a
+  framed product screenshot or dashboard mock below. The same stack appears whatever the page is
+  for, so the opening says nothing about the subject. A corpus scan of about 1,500 Show HN landing
+  pages used "Centered hero set in a generic sans" and "Badge right above the hero H1" as two of its
+  checks, and several practitioner write-ups describe the same centered headline, badge and button
+  pair as the default.
+category: web-layout
+status: candidate
+detector:
+  kind: vision
+  rubric: >
+    Look at the first viewport only. Flag the page when the hero is a horizontally centered stack
+    with no competing element beside it and contains at least three of these four parts in this
+    vertical order: (1) a small rounded pill or chip above the headline (text such as "New",
+    "Now in beta", "Introducing ...", a version number or "Backed by ...", often with a sparkle,
+    dot or arrow); (2) a large centered headline of one to three lines; (3) a centered, lighter or
+    gray subheadline paragraph; (4) a row of one or two centered buttons, typically one filled and
+    one outlined, ghost or text-with-arrow. A framed screenshot, browser chrome or dashboard mock
+    centered directly beneath strengthens the hit but is not required. One hit per page. In the
+    HTML/CSS source: a first section whose wrapper uses text-center / text-align:center or
+    flex-col items-center with mx-auto max-w-*; a rounded-full inline element with small text
+    before the h1; a paragraph with a muted text color (text-gray-500/600, text-muted-foreground)
+    after it; and a flex row of two links or buttons with different variants (default and outline).
+    Does not count: a left-aligned or split hero (text on one side, image or demo on the other); a
+    centered hero whose main element is a full-bleed photograph, video, live product, interactive
+    demo or typographic composition that carries the subject; a centered page title on an inner
+    page (docs, blog post, legal); an event or campaign page whose badge carries real information
+    (date and venue) and whose layout is otherwise subject-specific. Describe the visible pattern
+    only; do not infer how the page was made.
+threshold: {min_count: 1}
+realizations:
+  "*":
+    examples:
+      positive:
+        - "Landing page for an invoicing tool: on a white background, centered, a small rounded chip reading 'New: AI reminders' with a sparkle icon, under it a two-line bold headline, a gray one-sentence subheadline, then two buttons side by side, a solid 'Start free trial' and an outlined 'Book a demo'; below, a tilted screenshot of a dashboard in a rounded frame."
+        - "Site for a local bakery whose first screen is a centered pill 'Now taking online orders', a large headline, a gray subtitle, and the buttons 'Order now' and 'Learn more', with no photograph of bread or of the shop anywhere in the first viewport."
+        - "Dark developer-tool page: a centered pill 'v2.0 is here ->', a big headline, a muted gray subheadline, a filled 'Get started' button next to a ghost 'View on GitHub' button, and a terminal-window mock centered underneath."
+      negative:
+        - "Hero with the headline and one button left-aligned in the left half and a large product photograph filling the right half."
+        - "Centered hero of a museum exhibition page consisting of a full-bleed photograph of the main exhibit with the exhibition title overlaid and the dates as the only small label."
+        - "Documentation start page with a centered search field and title 'How can we help?' and no buttons or badge."
+legitimate_use: >
+  A centered stack is a sound choice for a single-action page (a waitlist, an app download) when
+  the content is deliberately minimal and the type, imagery or demo inside it is specific to the
+  product; a badge is legitimate when it carries real, current news.
+fix: >
+  Decide what the most characteristic thing in the subject's world is and lead with it: the real
+  product in use, a photograph of the place, a live demo, a strong typographic statement. Move the
+  text off the center axis or into a split composition when the visual needs the space, keep one
+  primary action, and delete the badge unless it states a concrete, current fact.
+prevention: >
+  Do not open with the badge-headline-subheadline-two-buttons stack by reflex. Before building the
+  hero, name the one thing a visitor must see first (product, place, people, result) and compose
+  the first screen around it: choose alignment deliberately (left, split, asymmetric or centered
+  for a reason), give it one clear primary action, and use real screenshots or photographs instead
+  of a generic dashboard frame. An explicit brand or user wish overrides this.
+sources:
+  - source: krebs-design-slop-show-hn
+    locator: "pattern list, Layout; checker README pattern table rows 9 and 13"
+    note: "Scored about 1,400-1,590 Show HN pages with DOM checks including 'Centered hero set in a generic sans' and 'Badge right above the hero H1' ('A pill badge floating above the H1'); no per-pattern rates."
+  - source: twentyfirst-not-look-ai-generated
+    locator: "list of what reads as generated, hero item"
+    note: "'Purple to blue, centred headline, two buttons, a soft glow behind'; suggests an off-centre hero and real product screenshots as fixes."
+  - source: alanwest-ai-generated-look
+    locator: "The fix, part 2: break the layout grammar"
+    note: "'Centered hero + three cards is the visual equivalent of beige carpet'; recommends an asymmetric hero grid."
+  - source: mindstudio-vibecoded-landing-pages
+    locator: "section on the hero formula"
+    note: "The hero follows 'the exact same formula' with 'a single centered call-to-action button'."
+  - source: anthropic-frontend-design-skill
+    locator: "Design principles, first paragraph"
+    note: "The hero should open 'with the most characteristic thing in the subject's world'; basis for the prevention rule."
+related:
+  - {id: template-section-sequence, relation: overlaps}
+  - {id: stat-banner-row, relation: distinct-from}
+  - {id: centered-symmetric-composition, relation: distinct-from}

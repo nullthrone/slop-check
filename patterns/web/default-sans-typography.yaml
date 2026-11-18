@@ -1,0 +1,77 @@
+id: default-sans-typography
+modality: web
+name: Default sans as the only typeface
+summary: >
+  The whole page, display headings included, is set in one stock sans-serif (Inter, Roboto, Open Sans,
+  Lato, Arial or the system UI font), and hierarchy comes only from size and weight steps, often shallow
+  ones. Anthropic and OpenAI both tell their models to avoid exactly these default stacks, independent
+  design skills list them as the faces "every model reaches for first", and an HCI preprint describes the
+  homogenized vibe-coded site as using "standard sans-serif typography".
+category: web-visual-style
+status: candidate
+detector:
+  kind: vision
+  rubric: >
+    Look at the headline, section headings, body text, buttons and navigation. Flag the page when all of
+    them use a single neutral grotesque sans of the Inter, Roboto, Open Sans, Lato, Arial, Helvetica or
+    system-UI kind (even, closed shapes, no distinctive letterforms), with no second face for display or
+    accents, and the type hierarchy is made only of bolder and larger versions of the same face. A flat
+    scale (headings barely larger than body text) strengthens the hit. Count one hit per page. When only
+    the source is available, signs are font-family: Inter, Roboto, 'Open Sans', Lato, Arial, system-ui,
+    -apple-system or ui-sans-serif as the only family, Tailwind font-sans without a configured custom
+    family, or one Google Fonts import of Inter. Does not count: a product UI, dashboard or documentation
+    site where a neutral sans is the right working face; a page using the brand's own licensed typeface
+    even if it is a sans; a page that pairs a neutral sans for body text with a distinct display or serif
+    face; a high-contrast serif or italic serif headline (see stock-tasteful-palette). Describe the
+    visible pattern only; do not infer how the page was made.
+threshold: {min_count: 1}
+realizations:
+  "*":
+    examples:
+      positive:
+        - "Landing page for a wine shop where the hero headline, the navigation, the product cards and the footer are all set in the same neutral grotesque sans; the headline is just the body face at 56px bold."
+        - "Portfolio page for an illustrator set entirely in a system-UI sans, headings in semibold only slightly larger than the paragraphs."
+        - "Event page whose title, schedule and buttons all use one Inter-like sans in three weights, with no other face anywhere."
+      negative:
+        - "Admin dashboard for a logistics team set in a neutral sans with tabular figures, where legibility at small sizes is the point."
+        - "Landing page that uses a condensed display face for headlines and a neutral sans for body text."
+        - "Company site in the brand's own commissioned sans-serif, which also appears on its packaging and signage."
+legitimate_use: >
+  Interfaces, dashboards, documentation and forms where a neutral working face serves reading; a brand
+  whose typeface is a neutral sans; a deliberate Swiss-style design that builds hierarchy through scale
+  contrast, grid and spacing rather than a second face.
+fix: >
+  Choose a display face that fits the subject and the brand and pair it with a readable body face; set a
+  type scale with clear steps (at least a 1.25 ratio between levels) and keep weights to two or three.
+  Keep the neutral sans only for interface text where it serves.
+prevention: >
+  Decide typography before layout: pick a display face for its character in the subject's world (a
+  grotesque from rail signage, a slab from old packaging, a humanist serif from print), a body face that
+  reads well with it, and a scale with clear steps. Do not default to Inter, Roboto, Open Sans, Lato,
+  Arial or system fonts, and do not swap to the next most common face (Space Grotesk, Geist) by reflex;
+  use them only when the brand, the existing codebase or the brief names them.
+sources:
+  - source: anthropic-frontend-design-blog
+    locator: "introduction; use_interesting_fonts prompt; frontend_aesthetics prompt"
+    note: "Model conforms to 'Inter fonts'; 'Never use: Inter, Roboto, Open Sans, Lato, default system fonts'; also notes convergence on Space Grotesk."
+  - source: openai-frontends-gpt-5-4
+    locator: "Practical tips quickstart, sample prompt"
+    note: "'avoid default stacks (Inter, Roboto, Arial, system)'."
+  - source: impeccable-design-skill
+    locator: "rule registry, overused-font and flat-type-hierarchy"
+    note: "'Each new wave of AI-generated UIs converges on the same handful of faces'; flags heading and body sizes 'separated by less than 1.25x at every step'."
+  - source: hallmark-design-skill
+    locator: "references/fonts.md 'Banned as a default'; gates.md gate 1"
+    note: "'Every model reaches for these first, so they read as unchosen: Inter, Roboto, Open Sans, Lato ... system-ui, Arial and Helvetica'."
+  - source: ux-skill-anti-slop-ban-list
+    locator: "ban list entry on typography"
+    note: "'Inter used for both body and display, as it is in every generated landing page'."
+  - source: saastr-gemini-3-vibe-coded-look
+    locator: "list of telltale signs"
+    note: "'Inter or similar sans-serif fonts'; 'Specific fonts (Inter, system fonts)'."
+  - source: arxiv-2603-13036
+    locator: "section 5.3.1"
+    note: "Homogenized default characterized by 'minimalist whitespace, standard sans-serif typography, and predictable hero images'."
+related:
+  - {id: stock-tasteful-palette, relation: distinct-from}
+  - {id: gradient-headline-text, relation: distinct-from}

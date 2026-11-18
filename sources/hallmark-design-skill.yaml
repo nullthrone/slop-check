@@ -1,0 +1,26 @@
+id: hallmark-design-skill
+title: "Hallmark: a design skill for Claude Code, Codex, Cursor and OpenCode that refuses to look AI-generated"
+url: https://github.com/Nutlope/hallmark
+publisher: Together AI
+published: null
+accessed: 2026-11-18
+type: practitioner-skill
+access_note: >
+  Read from a shallow clone of the main branch (last commit 2026-11-11): skills/hallmark/SKILL.md,
+  references/gates.md, craft.md, direction.md, fonts.md, imagery.md, comp.md and the glow check in
+  scripts/sloplint.mjs. The README says "Made by Together AI"; the repository sits under the Nutlope account.
+notes: >
+  Open-source design skill with a numbered gate list and a CSS/markup linter. Gate 2a (Floor):
+  "Purple-to-blue, purple-to-pink or cyan-on-dark gradient anywhere, background-clip: text included";
+  2b: "Gradient text in any other hue". Gate 1: "Inter, Roboto, Open Sans, Poppins, Lato or a system face
+  as the display"; fonts.md: "Every model reaches for these first, so they read as unchosen". Gate 29:
+  "aurora or mesh blobs behind text, floating blurred orbs, a chromatic radial halo or spotlight, a
+  coloured zero-offset glow shadow on dark"; the linter also flags a "glass panel: backdrop-filter blur
+  over a translucent white/black". Gate 11: "the same lift or scale on every card". Finish checks F5 "an
+  icon in a coloured coin", F7 "one container recipe stamped on six or more selectors", F24 "a hairline
+  border under a wide soft shadow". Gate 30a: "An emoji standing in for an icon". Gate 65 and
+  direction.md ("What every model ships, refused on sight"): "cream, off-white or beige paper with a
+  high-contrast serif and a clay accent", "near-black with one neon accent", "purple into blue". Reflex
+  gates are defined as "A default a language model falls into". Practitioner judgement, no frequencies.
+  It may share influences with the Anthropic skill (it targets the same agents) but its wording and
+  rules are its own.

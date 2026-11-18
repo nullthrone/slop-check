@@ -1,0 +1,19 @@
+id: wathan-indigo-apology-tweet
+title: "Post by Adam Wathan on X, 7 August 2025"
+url: https://x.com/adamwathan/status/1953510802159219096
+publisher: Adam Wathan (X)
+authors: [Adam Wathan]
+published: 2025-08-07
+accessed: 2026-11-18
+type: blog
+derived_from: []
+access_note: >
+  Read without login through the public embed endpoints (cdn.syndication.twimg.com tweet-result and
+  api.fxtwitter.com) for the status id; text identical in both.
+notes: >
+  Framework author's statement: "I'd like to formally apologize for making every button in
+  Tailwind UI `bg-indigo-500` five years ago, leading to every AI generated UI on earth also being
+  indigo." Quotes a post "So, GPT-5 hasn't solved the "purple problem"". About 1.5 million views.
+  A tongue-in-cheek remark, not a measurement, but it ties the generated look to an unmodified
+  default utility class from Tailwind's own examples. Widely retold (e.g. dev.to, prg.sh); those
+  retellings are derived from it.

@@ -1,0 +1,97 @@
+id: template-section-sequence
+modality: web
+name: Template landing-page section sequence
+summary: >
+  The page is assembled from the stock landing-page kit in its stock order: hero, logo strip or
+  social proof, feature grid, how-it-works steps, testimonials, a three-tier pricing table with a
+  raised middle plan, an FAQ accordion, a closing call-to-action band and a multi-column footer,
+  whatever the site is for. The sequence comes from component-library examples and templates, not
+  from the content, so a bakery, a nonprofit and a developer tool get the same page. A developer
+  who asked three code-generation tools for a landing page got this order "practically identical"
+  each time, design reviewers of vibe-coded sites name the same run of sections, and a preprint on
+  vibe coding describes "generic layouts" produced "regardless of the cultural context".
+category: web-layout
+status: candidate
+detector:
+  kind: vision
+  rubric: >
+    Judge the full-page screenshot as a whole. List the sections from top to bottom and match them
+    against the stock kit: (a) centered hero; (b) logo strip or "Trusted by" row; (c) grid of
+    3, 4 or 6 feature cards; (d) numbered "How it works" steps; (e) testimonial cards or carousel;
+    (f) pricing table of three plans side by side with the middle one highlighted, raised or
+    labeled "Most popular"; (g) FAQ accordion near the bottom; (h) full-width closing CTA band;
+    (i) footer with three to five link columns. Flag the page (one hit) when at least five of the
+    nine kit sections are present and they appear in this relative order, and when at least one
+    present section does not fit what the site offers (for example a pricing table or "trusted by"
+    logos on a site that sells nothing per seat, an FAQ with generic questions) or when no section
+    exists that is specific to the subject (a menu, a map, a schedule, a portfolio, a reading
+    list). In the HTML/CSS source: sibling <section> elements with ids or headings such as
+    #features, #how-it-works, #testimonials, #pricing, #faq, #cta, often each wrapped in the same
+    container (max-w-7xl mx-auto px-6 py-24); a pricing grid of three cards where one has a
+    'Most popular' badge, a ring/border-primary or scale-105; <details> or accordion components
+    in the lower half. Does not count: a software product page that has a real pricing model,
+    real customers and real FAQs and also includes sections specific to the product (changelog,
+    docs, integrations list, live demo); a page with only two or three of the kit sections; a
+    page that uses the same section types in an order and form driven by its content (for example
+    pricing first on a page for existing customers). Describe the visible pattern only; do not
+    infer how the page was made.
+threshold: {min_count: 1}
+realizations:
+  "*":
+    examples:
+      positive:
+        - "Page for a family-run dental practice that scrolls through: centered hero, a row of grayscale 'trusted by' logos, six feature cards ('Fast', 'Secure', 'Friendly'), three numbered steps, three testimonial cards, three price plans with the middle one marked 'Most popular', an FAQ accordion, a gradient band 'Ready to get started?' and a four-column footer; no team photos, opening hours or map."
+        - "Portfolio site of an illustrator built as hero, feature grid ('Creative', 'Reliable', 'Fast delivery'), how-it-works steps, testimonials, three pricing tiers, FAQ and closing CTA, with only one small image of the artist's work."
+        - "Community garden association page with hero, 'Trusted by' row, feature cards, testimonials, three membership plans with a highlighted middle plan labeled 'Most popular', FAQ accordion and CTA band, in that order."
+      negative:
+        - "Software product page with hero, real customer logos, feature sections that each show a real screenshot, an integrations directory, a changelog link, pricing with a usage calculator and a contact form."
+        - "Restaurant site with a full-bleed photo hero, the menu, opening hours with a map, a reservation widget and an Instagram strip."
+        - "A pricing page whose whole purpose is comparing plans, with a feature comparison table and FAQ about billing."
+legitimate_use: >
+  Software and subscription products with a real tiered price, real customers and recurring
+  questions can legitimately use these sections; the sequence is a reasonable default when each
+  section carries real, product-specific content and sections without content are left out.
+fix: >
+  Write down what a visitor to this specific site needs to do or know, in order, and rebuild the
+  page from that list. Delete sections without real content (logos of non-customers, generic FAQs,
+  pricing on a site that sells nothing per plan), add the sections the subject needs (menu, map,
+  schedule, case studies, portfolio), and vary section form and rhythm instead of stacking
+  identical containers.
+prevention: >
+  Do not start from the hero-features-steps-testimonials-pricing-FAQ-CTA kit. Derive the page
+  structure from the subject: list the visitor's questions and the content you actually have,
+  then order and shape sections around them (for a place: location, hours, what it looks like;
+  for a portfolio: the work; for a nonprofit: what it does and how to help). Include pricing,
+  testimonials and FAQ only when real content exists, and give at least one section a form that
+  only this site would have. An explicit brand or user wish overrides this.
+sources:
+  - source: alanwest-ai-generated-look
+    locator: "The problem; Root cause, item 2 'The component-library layout vocabulary'"
+    note: "Three code-gen tools gave 'Practically identical' pages with three feature cards, 'A pricing section with the middle plan slightly elevated. A FAQ accordion at the bottom'; order 'Hero → features grid → social proof → pricing → FAQ → footer', traced to shadcn/ui examples, Tailwind UI and Vercel templates."
+  - source: yc-design-review-vibe-coded
+    locator: "Build0 chapter, about 25:43"
+    note: "Reviewers walk past icon tiles, quotes and 'frequently asked questions and then more gradients': 'I think we just keep seeing a lot of these common patterns'."
+  - source: twentyfirst-not-look-ai-generated
+    locator: "introduction"
+    note: "Generated pages share 'the same three sections in the same order'."
+  - source: thevibemarketer-ai-landing-pages
+    locator: "opening section"
+    note: "Asking for 'a modern landing page' returns 'generic hero, feature grid, testimonial carousel'."
+  - source: krebs-design-slop-show-hn
+    locator: "checker README pattern 14; src/patterns/faq-accordion.js header comment"
+    note: "FAQ accordion with 3+ collapsible items in the lower half is one of 14 scored patterns; comment: 'Almost every AI-template site ends with one'."
+  - source: arxiv-2603-13036
+    locator: "section 5.3.1 and Figure 1; section 5.4.1"
+    note: "A broad prompt yields 'a globally average aesthetic ... regardless of the cultural context'; LLMs 'default to the same familiar patterns—generic layouts, standard component libraries'."
+  - source: anthropic-frontend-design-blog
+    locator: "list 'Avoid generic AI-generated aesthetics'"
+    note: "Lists 'Predictable layouts and component patterns' and 'Cookie-cutter design that lacks context-specific character'; same publisher as anthropic-frontend-design-skill."
+related:
+  - {id: template-centered-hero, relation: overlaps}
+  - {id: identical-feature-card-grid, relation: overlaps}
+  - {id: numbered-steps-section, relation: overlaps}
+  - {id: stat-banner-row, relation: overlaps}
+notes: >
+  The "Most popular" middle pricing tier rests on one source (alanwest-ai-generated-look: "middle
+  plan slightly elevated"); it is a widespread conversion convention, so the rubric only counts it
+  as one of nine kit sections, never on its own.

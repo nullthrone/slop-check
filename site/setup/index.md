@@ -17,7 +17,7 @@ Every file is attached to the [latest release]({{ site.releases_url }}/latest).
 | [slop-check-lite.zip]({{ site.download_lite_zip }}) | `SKILL.md` and `references/` at the root, no scripts | Microsoft 365 Copilot Cowork, the Gemini app, Vibe Work |
 | [instructions.md]({{ site.download_instructions }}) | Compact instructions, at most 7,500 characters | Instruction fields of about 8,000 characters |
 | [knowledge.md]({{ site.download_knowledge }}) | Skill instructions and the complete catalog in one file | Knowledge files and project files |
-| [system-prompt.md]({{ site.download_prompt }}) | Skill instructions, report format and a condensed catalog, about 62,000 characters | API system messages and large fields; it does not fit typical instruction fields |
+| [system-prompt.md]({{ site.download_prompt }}) | Skill instructions, report format and a condensed catalog, about 80,000 characters | API system messages and large fields; it does not fit typical instruction fields |
 
 When you unzip `slop-check.zip`, keep the folder name `slop-check`: several runtimes require it to
 match the skill name. The packaged `SKILL.md` contains the core pattern list and the report layout,

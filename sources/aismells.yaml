@@ -10,4 +10,7 @@ notes: >
   Compilation page with 15 "smells" in 5 categories and no visible creation date. Relevant entries:
   "Emoji Overload" (a check mark in front of every bullet as a fingerprint) and "Emphasis Epidemic"
   (formatting category, including visible unrendered markdown). Several other entries match existing
-  patterns. The entry links point to aismells.com.
+  patterns. The entry links point to aismells.com. The site also has design entries (read
+  2026-11-18 on aismells.pages.dev): "Gradient Fog" (cyan, violet and blue blur blobs behind a
+  landing page) and "Bento Box Sprawl" (pages chopped into evenly weighted rounded tiles with eyebrow
+  labels, micro-icons and one stat per tile; the entry links arXiv 2603.13036).

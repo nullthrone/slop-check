@@ -1,0 +1,72 @@
+id: stock-tasteful-palette
+modality: web
+name: Stock "tasteful" palette
+summary: >
+  The page avoids the purple default by landing on one of the next stock looks: warm cream or beige paper
+  with a high-contrast (often italic) serif display and a terracotta or clay accent, or a near-black page
+  with a single bright neon accent (acid green, vermilion, cyan). Anthropic's own design skill lists both
+  as traits generated design "clusters around", and two further design skills flag the cream palette, the
+  italic serif hero and neon-on-dark as defaults models reach for.
+category: web-visual-style
+status: candidate
+detector:
+  kind: vision
+  rubric: >
+    Look at the page background, the display typeface and the accent color together. Flag the page when it
+    matches one of two looks and nothing in the subject or brand motivates it: (a) a warm off-white, cream
+    or beige page background, a high-contrast or italic serif for the headline, and a terracotta, rust,
+    clay or burnt-orange accent; (b) a near-black or tinted-black background with one bright neon accent
+    (acid green, lime, vermilion, electric cyan) used for buttons, highlights and small labels, often with
+    monospace labels. Count one hit per page. When only the source is available, signs are background
+    values near #F4F1EA, #FAF9F5 or similar warm off-whites with an accent near #D97757 or #C96442 and a
+    serif display family (Fraunces, Instrument Serif, Playfair Display, Newsreader, Recoleta); or a
+    background of #0B0B0B, #111 or similar with a single accent like #C6FF00, #D4FF3F or #FF4D00. Does not
+    count: brands whose identity is these colors (a bakery whose packaging is cream and terracotta, a
+    sports brand with a neon-green logo); editorial and magazine sites where a serif on paper is the genre;
+    developer tools that use a dark theme with a syntax-highlighting accent tied to the product; the
+    purple-blue default (see purple-blue-gradient-default). Describe the visible pattern only; do not infer
+    how the page was made.
+threshold: {min_count: 1}
+realizations:
+  "*":
+    examples:
+      positive:
+        - "Landing page for a cloud backup service on a cream background, with a large italic serif headline and terracotta buttons and underlines; the product's logo is blue."
+        - "Near-black page for an HR tool with a single acid-green accent on the buttons, the headline highlight and small monospace labels."
+        - "Agency template with beige paper texture, a high-contrast serif display, clay-colored links and hairline rules, used for a cybersecurity product."
+      negative:
+        - "Website of a pottery studio whose real glazes and clay are shown in photos, with a cream background and a terracotta accent drawn from them."
+        - "Literary magazine site using a serif on off-white because it reproduces its printed issues."
+        - "Sports drink site with a neon-green accent taken from its can design on a black background."
+legitimate_use: >
+  Brands, subjects and genres that own these colors and faces (craft, food, print media, a neon brand
+  mark), or a brief that asks for the look. The pattern is reaching for it as the safe alternative when the
+  axis is free.
+fix: >
+  Move at least one axis away from the stock look, starting with the accent: take the accent from the
+  product or brand, then reconsider the background, then the display face. Check that the result still
+  fits the subject.
+prevention: >
+  Derive background, display face and accent from the subject: its materials, places, printed matter and
+  brand assets. Write down why each was chosen. When the brief leaves color and type free, do not settle
+  on cream paper with a serif and a clay accent, or on near-black with one neon accent, as the
+  "distinctive" choice; pick from the subject's world instead.
+sources:
+  - source: anthropic-frontend-design-skill
+    locator: "calibration traits, items 1 and 2"
+    note: "'a warm cream background (near #F4F1EA) with a high-contrast serif display and a terracotta or warm-clay accent'; 'a near-black background with a single bright acid-green or vermilion accent'."
+  - source: hallmark-design-skill
+    locator: "references/direction.md 'Spent'; gates.md gate 65; fonts.md 'Saturated'"
+    note: "'What every model ships, refused on sight: cream, off-white or beige paper with a high-contrast serif and a clay accent ... near-black with one neon accent'."
+  - source: impeccable-design-skill
+    locator: "rule registry: cream-palette, italic-serif-display, ai-color-palette"
+    note: "Cream background 'has become the default tasteful AI surface'; italic serif hero 'has become the universal AI-startup landing page hero'; flat neon ink on dark charged with a second tell hue."
+  - source: fountain-institute-ai-ui-tells
+    locator: "tell 1, Neon color palette"
+    note: "'Neon-on-dark is overrepresented in modern UI training data'."
+  - source: ux-skill-anti-slop-ban-list
+    locator: "ban list entry on typography"
+    note: "'Heavy serif for every headline, mid-2020s revival default'."
+related:
+  - {id: purple-blue-gradient-default, relation: distinct-from}
+  - {id: default-sans-typography, relation: distinct-from}

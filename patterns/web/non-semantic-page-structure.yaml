@@ -1,0 +1,88 @@
+id: non-semantic-page-structure
+modality: web
+name: Non-semantic page structure (div soup)
+summary: >
+  The page is built from generic div and span elements styled to look structured: no header, nav,
+  main or footer landmarks, headings picked for their size rather than the outline (no h1, several
+  h1, skipped levels, or styled divs and paragraphs as headings), and clickable divs or spans in
+  place of buttons and links. The visual hierarchy exists only in CSS, so assistive technology,
+  search engines and keyboard users get a flat page. Studies of LLM-generated pages report divs
+  used "exclusively" with landmark coverage of 11% and correct heading hierarchy of 33% under a
+  plain prompt, a missing main landmark and missing h1, and missing main elements and content
+  outside landmarks among the most frequent violations; practitioner checklists name clickable divs
+  and several h1 per page.
+category: web-markup
+status: candidate
+detector:
+  kind: llm
+  rubric: >
+    Read the HTML/JSX of the whole page. Check three things. (1) Landmarks: is there a main element
+    (or role="main") and are the site header, primary navigation and footer marked as header, nav
+    and footer (or the matching roles)? (2) Heading outline: list h1-h6 in document order; flag no
+    h1, more than one h1 on a single-page layout, a jump of more than one level downward (h1 to
+    h3, h2 to h4), or visible section titles that are div, p or span elements with heading-size
+    classes (text-3xl font-bold, font-size 2rem) instead of h2/h3. (3) Interactive elements: div or
+    span with onClick, @click or addEventListener('click') that acts as a button or link, without a
+    native element; role="button" plus tabindex plus a key handler mitigates but still counts as a
+    weak sign. Count one hit per page when at least two of the three checks fail, or when check 3
+    fails for a primary control (main CTA, menu toggle, form submit). Does not count: pages that use
+    landmarks and a correct outline but also many layout divs (divs are fine for layout); component
+    files that are clearly fragments rendered inside a layout which supplies the landmarks; a second
+    h1 inside a modal or a separate article element where the outline is still coherent; a heading
+    level skipped once in a footer; custom widgets that correctly use role, tabindex and keyboard
+    handling (e.g. a listbox); a single-purpose app screen whose one heading is h1. Describe the
+    visible pattern only; do not infer how the page was made.
+threshold: {min_count: 1}
+realizations:
+  "*":
+    examples:
+      positive:
+        - "<div class=\"min-h-screen\"><div class=\"flex justify-between p-6\"><div class=\"text-xl font-bold\">Acme</div><div class=\"flex gap-6\"><div onclick=\"go('features')\">Features</div><div onclick=\"go('pricing')\">Pricing</div></div></div><div class=\"text-5xl font-bold\">Build faster</div>... (no header, nav, main, footer; the hero title is a div)"
+        - "<h1>Ship faster</h1> ... <h1>Features</h1> ... <h1>Pricing</h1> ... <h4>Simple plans</h4> (three h1 on one landing page, h1 jumps to h4)"
+        - "<div className=\"rounded-lg bg-indigo-600 px-4 py-2 text-white cursor-pointer\" onClick={() => setOpen(true)}>Get started</div> as the main call to action, next to a page with no main element"
+      negative:
+        - "<header><nav aria-label=\"Main\">...</nav></header><main><h1>...</h1><section><h2>...</h2><div class=\"grid gap-6\"><div class=\"card\">...</div></div></section></main><footer>...</footer> (many divs, but inside landmarks with a correct outline)"
+        - "A React component file Card.jsx that returns <div class=\"card\"><h3>...</h3><p>...</p></div>, imported into a layout that already provides main and the h2 above it."
+        - "<div role=\"button\" tabindex=\"0\" aria-pressed=\"false\" onKeyDown={handleKey} onClick={toggle}> in a custom toggle chip group with documented keyboard support, on a page with header, main and footer."
+legitimate_use: >
+  Generic containers are the right tool for layout and grouping. The pattern is the absence of the
+  semantic layer, not the presence of divs. Single-component demos and embeddable widgets need no
+  page landmarks, and a correctly implemented custom ARIA widget is acceptable where no native
+  element fits.
+fix: >
+  Wrap the page in header, nav, main and footer; give the page one h1 that names it and turn every
+  visible section title into an h2 (sub-titles h3) in order, moving size and weight into CSS; turn
+  every clickable div into a button (actions) or an a element with a real href (navigation), then
+  check that Tab reaches each control and Enter/Space activates it. Validate with an outline tool
+  and an automated checker (axe, WAVE).
+prevention: >
+  Write the document outline before the styling: one h1, h2 per section, landmarks for header,
+  navigation, main content and footer, native button and a elements for everything clickable.
+  Choose heading levels by position in the outline and set visual size with classes, never the
+  reverse. Use divs only for layout inside that structure. An explicit brand or user wish overrides
+  this only where it does not break the outline (e.g. a visual style for headings).
+sources:
+  - source: gurita-vatavu-w4a-2025
+    locator: "4.3.1 UI structure and navigation; Table 3"
+    note: "Accessibility-agnostic prompt: '<div> elements were used exclusively'; 'misused heading levels or relied on styled <div> elements'; landmark roles 11%, heading hierarchy 33% (94% and 89% with an accessibility prompt)."
+  - source: ahmed-2025-chatgpt-accessible-webpage
+    locator: "Results, manual evaluation"
+    note: "GPT-4o page without accessibility instructions 'failed to include a main landmark' and had no h1; the authors note it did use some semantic tags."
+  - source: webaccessvl-arxiv-2602-03850
+    locator: "Figure 3 and violation ranking"
+    note: "On synthetic WebSight pages, content outside landmarks is the most common language violation; missing main element and text blocks without headings are in the top five."
+  - source: hustletoai-vibe-coded-checklist
+    locator: "accessibility and SEO sections"
+    note: "'Divs and spans with onClick handlers instead of semantic <button> elements'; 'several <h1> tags on one page'."
+  - source: vercel-web-interface-guidelines
+    locator: "Integrate with Agents; Accessibility and Navigation rules"
+    note: "Agent-facing rules: native elements before aria-*, hierarchical h1-h6, never a button or div for navigational links; 'Audit all generated interfaces'."
+  - source: suh-2025-human-or-llm-accessible-code
+    locator: "RQ results, QualWeb categories"
+    note: "Both GPT-4o and Qwen2.5-Coder 'struggled with ... HeadingsOrg'."
+  - source: webaim-million-2026
+    locator: "Landmarks; Headings"
+    note: "Baseline: only 46.1% of top home pages have a main landmark, 18.1% more than one h1, 41.8% skipped levels, so a single failure is weak evidence on its own."
+related:
+  - {id: default-look-accessibility-gaps, relation: overlaps}
+  - {id: non-functional-controls, relation: distinct-from}

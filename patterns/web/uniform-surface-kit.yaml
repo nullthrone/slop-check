@@ -1,0 +1,81 @@
+id: uniform-surface-kit
+modality: web
+name: Uniform rounded-card surface kit
+summary: >
+  Every container on the page wears the same surface recipe regardless of hierarchy: one generous corner
+  radius, the same soft low-opacity drop shadow, often a hairline border under that shadow, and the same
+  hover lift or scale on every card. The look matches the stock settings of popular component kits.
+  Anthropic's design skill calls it "the SaaS-card kit", two further design skills check for the hairline
+  border under a wide shadow and identical hover lifts, and an HCI preprint names "standard drop shadows
+  or rounded corners" as the generic styles that override a brand.
+category: web-visual-style
+status: candidate
+detector:
+  kind: vision
+  rubric: >
+    Judge surface styling only, not how the cards are arranged. Look at cards, panels, buttons, inputs,
+    images and badges across the page. Flag the page when nearly all containers share one large corner
+    radius (roughly 12 to 24px) and one soft, diffuse, low-contrast shadow, with no variation between
+    levels (a page-level panel, a card inside it and a button all rounded alike), especially when a 1px
+    light-grey border sits under a wide soft shadow, or when every card lifts, scales or gains a bigger
+    shadow on hover in the same way. Count one hit per page. When only the source is available, signs
+    are the same rounded-xl or rounded-2xl plus shadow-sm/shadow-md/shadow-lg plus border on most
+    container elements, CSS like border-radius: 12px with box-shadow: 0 1px 3px rgba(0,0,0,.1) or
+    0 20px 60px rgba(0,0,0,.1) repeated across selectors, and hover:-translate-y-1, hover:scale-105 or
+    hover:shadow-xl on every card. Does not count: a product UI built on a documented design system whose
+    radius and elevation tokens are applied consistently with real hierarchy (modals elevated, inline
+    cards flat); rounded shapes that come from the brand (a pill-shaped logo language, a children's
+    brand); a single floating element (a modal, a popover) that has both border and shadow; hover feedback
+    on genuinely interactive elements that differs by element type. Describe the visible pattern only; do
+    not infer how the page was made.
+threshold: {min_count: 1}
+realizations:
+  "*":
+    examples:
+      positive:
+        - "Landing page where the hero panel, the six feature cards, the testimonial cards, the pricing cards and the newsletter box all have the same 16px rounded corners, a thin light-grey border and the same faint wide shadow."
+        - "Page on which every card, including non-clickable info boxes, rises a few pixels and grows its shadow on hover."
+        - "Rounded white cards with soft grey shadows nested inside a larger rounded white panel with the same radius and the same shadow."
+      negative:
+        - "A banking app where only the modal dialog floats with a shadow and a border, while list rows and cards are flat with hairline dividers."
+        - "A toy store site whose bubbly rounded shapes repeat the rounded letterforms of its logo and packaging."
+        - "A brutalist portfolio with square corners and a hard black offset shadow chosen as the page's concept."
+legitimate_use: >
+  Application interfaces built on a design system where shared tokens are the point and elevation follows
+  hierarchy; brands whose identity is soft and rounded; a single elevated element that needs both edge and
+  depth.
+fix: >
+  Define a surface ladder: plain whitespace first, then a hairline divider, then a tinted well, then a card
+  only for content that is independently interactive. Give each nesting level its own radius (smaller
+  inside), use either a border or a shadow but not both, drop decorative shadows, and keep one hover signal
+  per interactive element type.
+prevention: >
+  Derive shape and depth from the brand and the content: decide a radius scale (it may be zero) and use
+  it by level, separate most content with spacing, type and dividers rather than boxes, reserve shadows
+  for things that actually float, and give hover feedback only to interactive elements, with one signal
+  each. Do not ship a component kit's stock radius, shadow and hover-lift settings unchanged.
+sources:
+  - source: anthropic-frontend-design-skill
+    locator: "calibration traits, item 4; motion section"
+    note: "'the SaaS-card kit: ... identical rounded cards, one border-radius on everything regardless of hierarchy, the same soft grey shadow (rgba(0,0,0,.1)) under each'; 'hover transitions on every card are the generic default'."
+  - source: impeccable-design-skill
+    locator: "rule registry, gpt-thin-border-wide-shadow; animate.md"
+    note: "'Every card of this row wears a hairline border paired with a wide, diffuse shadow, which is a recurring generated-UI signature'; 'A generic fade-and-rise, hover lift ... is not a thesis'."
+  - source: hallmark-design-skill
+    locator: "references/gates.md gate 11, F7, F24"
+    note: "'the same lift or scale on every card'; 'one container recipe stamped on six or more selectors'; 'a hairline border under a wide soft shadow'."
+  - source: ux-skill-anti-slop-ban-list
+    locator: "ban list entries on radius and shadow"
+    note: "'border-radius: 12px on every element regardless of context'; 'box-shadow: 0 20px 60px rgba(0,0,0,0.3) on cards that don't actually float'."
+  - source: saastr-gemini-3-vibe-coded-look
+    locator: "list of telltale signs"
+    note: "'Rounded corners everywhere', 'The same card shadows', 'cards with shadows, rounded corners'."
+  - source: arxiv-2603-13036
+    locator: "section 5.4.2"
+    note: "Generated output 'uses generic web styles—such as standard drop shadows or rounded corners' instead of a brand's sharp edges and high-contrast borders."
+  - source: jcarterjohnson-vibecoded-design-tells
+    locator: "README findings"
+    note: "shadcn/Tailwind defaults lead the ranking of complained-about features (shares not read)."
+related:
+  - {id: ambient-glow-decoration, relation: distinct-from}
+  - {id: generic-icon-treatment, relation: distinct-from}

@@ -1,0 +1,76 @@
+id: uniform-decorative-motion
+modality: web
+name: Uniform decorative motion
+summary: >
+  The same entrance and hover effects are applied to everything regardless of purpose: every
+  section fades and slides up on scroll, every card scales or lifts on hover, numbers count up,
+  headlines type themselves, backgrounds float or follow the cursor, often with transition-all and
+  without a prefers-reduced-motion fallback. Motion that is not triggered by the user and does not
+  explain a change adds load and distraction. Anthropic's design skill calls "fade-and-slide-up
+  entrances on each section and hover transitions on every card" the generic default; reviewers of
+  vibe-coded sites list automatic fade-ins, superfluous background animation and purposeless hover
+  movement; Vercel's agent guidelines forbid transition: all and require honoring reduced motion.
+category: web-markup
+status: candidate
+detector:
+  kind: llm
+  rubric: >
+    Read the source (HTML/JSX classes, CSS, animation libraries such as AOS, framer-motion, GSAP,
+    IntersectionObserver code). Flag one hit per page when motion is applied uniformly: (a) a
+    scroll-reveal (fade-in, fade-up, data-aos, whileInView, an observer adding a class) on most
+    sections or most cards, AND at least one of (b) the same hover transform on most cards or
+    buttons (hover:scale-105, hover:-translate-y-1, whileHover scale), (c) decorative
+    non-interactive animation (counting-up statistics, typewriter headline, floating or pulsing
+    blobs, cursor-follow light, infinite marquee), (d) transition-all / transition: all on many
+    elements. Add a note, not a second hit, when there is no prefers-reduced-motion media query or
+    useReducedMotion check. If only a screenshot or the rendered page is available, judge it by
+    scrolling: the same entrance on every block and the same lift on every card. Does not count:
+    one orchestrated hero or page-load sequence; motion that responds to a user action and shows a
+    state change (menu opening, accordion expanding, toast, button press feedback); hover color or
+    underline changes; a single hover lift used only on clickable cards that link somewhere; a
+    product demo or animation that is the content; motion wrapped in a reduced-motion guard and
+    limited to one or two places. Describe the visible pattern only; do not infer how the page was
+    made.
+threshold: {min_count: 1}
+realizations:
+  "*":
+    examples:
+      positive:
+        - "Every <section> has data-aos=\"fade-up\", every feature card has class=\"transition-all duration-300 hover:scale-105 hover:shadow-xl\", and the stats row animates from 0 to '10,000+' on scroll; no prefers-reduced-motion rule in the CSS."
+        - "document.querySelectorAll('section').forEach(s => observer.observe(s)) adding 'animate-fade-in-up' to each section, plus a hero headline that types itself letter by letter with a blinking cursor."
+        - "<motion.div initial={{opacity:0,y:40}} whileInView={{opacity:1,y:0}} whileHover={{scale:1.05}}> wrapped around each of twelve cards, testimonials and pricing tiers, and two blurred gradient blobs with animate-pulse floating behind the hero."
+      negative:
+        - "A hero with one staggered page-load sequence (headline, then subline, then CTA), all other sections static, wrapped in @media (prefers-reduced-motion: no-preference)."
+        - "Navigation drawer that slides in when the menu button is pressed and an accordion whose panel expands with a height transition."
+        - "Link cards that change border color and underline the title on hover, using transition-colors only."
+legitimate_use: >
+  Motion is legitimate when it answers a user action, explains a change of state, or is the
+  product itself (an animation studio, a demo of an interactive tool). One deliberate entrance
+  moment can carry a brand. The pattern is the same effect stamped on every block.
+fix: >
+  Remove scroll reveals from all sections except, at most, one moment that matters; drop hover
+  transforms from non-clickable elements and keep a subtle color or border change on clickable
+  ones; replace transition-all with the specific properties (opacity, transform, color); remove
+  counters and typing effects or show the final value; wrap remaining motion in a
+  prefers-reduced-motion guard.
+prevention: >
+  Decide where motion carries meaning before adding any: feedback for user actions, state changes,
+  and at most one orchestrated entrance. Animate only opacity and transform, name the properties
+  instead of "all", and always provide a reduced-motion variant. Show numbers and headlines in
+  their final state. An explicit brand or user wish for a motion-heavy experience overrides this,
+  but still honor reduced motion.
+sources:
+  - source: anthropic-frontend-design-skill
+    locator: "Design principles, motion paragraph; Restraint and self-critique"
+    note: "'fade-and-slide-up entrances on each section and hover transitions on every card are the generic default and read as AI-generated'; quality floor includes 'reduced motion respected'."
+  - source: sej-ai-website-mistakes
+    locator: "Mistake 2, Unexpected User Interaction Feedback"
+    note: "YC reviewers of vibe-coded sites list 'Superfluous background animation effects', 'Automatic fade-ins', hover effects that move things without purpose, cursor-following lights; 'The animation is too distracting.'"
+  - source: hustletoai-vibe-coded-checklist
+    locator: "visual patterns section"
+    note: "'glowing hover effects on nearly every element' and inconsistent hover states."
+  - source: vercel-web-interface-guidelines
+    locator: "Animation rules"
+    note: "Agent-facing: 'Honor prefers-reduced-motion', 'Never transition: all'."
+related:
+  - {id: non-functional-controls, relation: distinct-from}

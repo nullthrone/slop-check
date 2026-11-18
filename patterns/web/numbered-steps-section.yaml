@@ -1,0 +1,70 @@
+id: numbered-steps-section
+modality: web
+name: Numbered how-it-works steps
+summary: >
+  A "How it works" section shows three (sometimes four) equal columns or cards marked with large
+  numerals or numbered circles (1, 2, 3 or 01, 02, 03), each with a short title and one line, often
+  joined by a thin connector line. The numbering is applied whether or not the content is a real
+  sequence, and the three steps are usually generic ("Sign up", "Connect", "Grow"). A corpus scan of
+  Show HN landing pages scored "Numbered '1, 2, 3' step sequences" as a layout pattern, and
+  Anthropic's design skill notes that "Many generic designs use numbered markers (01 / 02 / 03)"
+  where the content is not a sequence.
+category: web-component
+status: candidate
+detector:
+  kind: vision
+  rubric: >
+    Flag a section (one hit per page) that consists of three to five equal columns, cards or rows
+    each led by a prominent ordinal marker (a large digit, "01"-style numeral, "Step 1" label or a
+    digit in a circle or badge) followed by a short title and one or two lines of text, when at
+    least one of these holds: the items are not an actual ordered process (they could be read in
+    any order: "Fast", "Secure", "Scalable" numbered 01-03); the steps are generic and could belong
+    to any product ("Create an account", "Customize", "Launch"); or the same numbered treatment is
+    repeated across several sections. In the HTML/CSS source: a grid of 3-4 children rendered from
+    an array with fields step/number, title, description; elements containing only "1", "2", "3" or
+    "01", "02", "03" set in large or bold type or inside rounded-full badges; "How it works" as the
+    section heading; an absolutely positioned connector line between steps. Does not count: a real
+    procedure the visitor must follow with concrete, product-specific steps (installation commands,
+    an application process with documents and dates, a recipe); a timeline with dates; an ordered
+    list inside running text; a checkout progress indicator. Describe the visible pattern only; do
+    not infer how the page was made.
+threshold: {min_count: 1}
+realizations:
+  "*":
+    examples:
+      positive:
+        - "Section 'How it works' with three equal cards, each topped by a purple circle containing 1, 2 or 3, titled 'Sign up', 'Customize', 'Launch', each with one generic sentence, joined by a dashed line."
+        - "Benefits section of a florist's site with large outlined numerals 01, 02, 03 above 'Fresh flowers', 'Fast delivery', 'Happy customers', items that are not steps at all."
+        - "A page that repeats the numbered treatment in three sections: '01 / 02 / 03' over the features, '01 / 02 / 03' over the process and '01 / 02 / 03' over the values."
+      negative:
+        - "Installation guide with numbered steps that each contain the exact command to run and a screenshot of the expected result."
+        - "Visa application page listing five numbered steps with required documents, fees and processing times."
+        - "Company history timeline marked with years, not ordinals."
+legitimate_use: >
+  Real, product-specific procedures where order matters and each step contains information the
+  visitor needs to act on, and timelines whose markers carry real dates.
+fix: >
+  If the items are not a sequence, remove the numbers and treat them as content of their own (or
+  fold them into the feature they describe). If they are a real process, make each step concrete:
+  what the visitor actually does, what they need, how long it takes, ideally with a screenshot or
+  example, and drop steps that state the obvious.
+prevention: >
+  Number items only when the order carries information the visitor needs. Before writing a
+  "How it works" section, check that the steps are specific to this product or service and that
+  someone could follow them; otherwise show the process with a real example, a short demo or a
+  single sentence. Do not reuse the same 01/02/03 treatment across sections. An explicit brand or
+  user wish overrides this.
+sources:
+  - source: krebs-design-slop-show-hn
+    locator: "pattern list, Layout; checker README row 11; src/patterns/numbered-steps.js"
+    note: "'Numbered “1, 2, 3” step sequences' scored on Show HN pages; rule looks for at least three ascending prominent numeric markers ('The numbered how-it-works step row')."
+  - source: anthropic-frontend-design-skill
+    locator: "Design principles, 'Visual structure is information'"
+    note: "'Many generic designs use numbered markers (01 / 02 / 03), but that's only appropriate if the content actually is a sequence — like a stepped process or a timeline.'"
+  - source: impeccable-design-skill
+    locator: "reference/craft-floor.md, Refuse, Page scaffolds"
+    note: "'Section numbers (01 / 02 / 03) unless the sequence itself carries information the reader needs' (derived from Anthropic's skill)."
+related:
+  - {id: template-section-sequence, relation: overlaps}
+  - {id: identical-feature-card-grid, relation: overlaps}
+  - {id: excessive-enumeration, relation: distinct-from}

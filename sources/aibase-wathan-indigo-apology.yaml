@@ -1,0 +1,20 @@
+id: aibase-wathan-indigo-apology
+title: "Tailwind CSS co-founder apologizes for indigo buttons (AIBase news report)"
+url: https://news.aibase.com/news/20365
+publisher: AIBase
+published: 2025-08-08
+accessed: 2026-11-18
+derived_from: [wathan-indigo-apology-tweet]
+type: press
+access_note: >
+  Researcher could not open x.com directly; the original post was read separately through public
+  embed endpoints (see wathan-indigo-apology-tweet).
+  Title paraphrased from the article's lead, which begins "August 7, 2025, Adam Wathan, co-founder of
+  Tailwind CSS, posted a seemingly casual apology tweet on X platform".
+notes: >
+  AI news site reporting a post by the Tailwind CSS creator on 2025-08-07: "I'd like to formally apologize
+  for making every button in Tailwind UI use bg-indigo-500 five years ago", "which caused every
+  AI-generated interface on Earth to turn indigo" (quoted as reported; 684,000 views). Reports reactions
+  attributing the purple preference to tools defaulting to Tailwind CSS. A framework author's joking
+  statement relayed secondhand; it is evidence that the indigo default is widely recognized, not a
+  measurement. Derived from wathan-indigo-apology-tweet.

@@ -1,0 +1,18 @@
+id: ux-skill-anti-slop-ban-list
+title: "Anti AI slop ban list (ux-skill wiki)"
+url: https://github.com/Laith0003/ux-skill/wiki/Anti-AI-slop-ban-list.md
+publisher: Laith0003/ux-skill (GitHub)
+published: null
+accessed: 2026-11-18
+type: practitioner-skill
+access_note: "Read through the raw wiki redirect target raw.githubusercontent.com/wiki/Laith0003/ux-skill/Anti-AI-slop-ban-list.md; no date visible."
+notes: >
+  Ban list of a community design skill, each item with a fix. Lists "linear-gradient(135deg, #667eea 0%,
+  #764ba2 100%) — the 'AI default purple gradient'"; "Gradient text on headlines as default treatment"
+  (fix: single-colour headlines, gradient on one element per page at most); "Inter used for both body and
+  display, as it is in every generated landing page" and "Heavy serif for every headline, mid-2020s revival
+  default"; "backdrop-filter: blur(20px); background: rgba(255,255,255,0.1) on every panel"; "box-shadow:
+  0 0 80px rgba(120, 80, 200, 0.6) on every card"; "border-radius: 12px on every element regardless of
+  context"; "box-shadow: 0 20px 60px rgba(0,0,0,0.3) on cards that don't actually float"; "Section
+  headings prefixed with sparkles, fire, rocket" and emoji as functional icons. Practitioner judgement,
+  no frequencies.

@@ -54,7 +54,7 @@ dist/slop-check.zip             Folder slop-check/ at the archive root (Claude, 
 dist/slop-check-flat.zip        Same package with SKILL.md at the archive root (Microsoft 365 Copilot, Copilot Studio)
 dist/slop-check-lite.zip        SKILL.md and references/*.md at the archive root, no scripts/ (Gemini app,
                                 Microsoft 365 Copilot Cowork, Vibe Work: no script execution or at most 20 companion files)
-dist/exports/system-prompt.md   Single-file export for API system messages and other large fields (about 60 kB)
+dist/exports/system-prompt.md   Single-file export for API system messages and other large fields (about 80 kB)
 dist/exports/instructions.md    At most 7,500 characters for instruction fields (ChatGPT project instructions,
                                 Microsoft declarative agents): procedure, report skeleton, thresholds, scored patterns
 dist/exports/knowledge.md       Full single-file export (all references) for runtimes with knowledge files

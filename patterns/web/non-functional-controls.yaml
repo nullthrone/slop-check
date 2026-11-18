@@ -1,0 +1,77 @@
+id: non-functional-controls
+modality: web
+name: Non-functional controls presented as working
+summary: >
+  The page shows controls that look finished but do nothing: navigation, footer and "Sign in" links
+  pointing to "#", buttons without a handler, newsletter and contact forms with no action and no
+  submit logic (or a handler that only prevents the default and logs), a search field that searches
+  nothing, data that is hardcoded or kept in component state and gone on reload. The interface
+  promises features the page does not have. Practitioner checklists for vibe-coded sites name
+  buttons with "no onClick handler wired up, or link to #" and forms that show no success or error
+  state; an agency reports forms that "look fine but often fail to actually submit & store data";
+  a studio describes generated interfaces whose "buttons are there" while "the data behind them is
+  hardcoded".
+category: web-markup
+status: candidate
+detector:
+  kind: llm
+  rubric: >
+    Read the HTML/JSX and the scripts. List the controls a visitor would expect to work: primary and
+    footer navigation links, sign-in/sign-up/get-started buttons, forms (newsletter, contact,
+    waitlist, login), search fields, social links, "Download"/"Book a demo" buttons. Mark a control
+    dead when: an a element has href="#", href="" or javascript:void(0) and no click handler and is
+    not an in-page anchor; a button has no onClick/handler, no type="submit" inside a working form
+    and no listener attached in the scripts; a form has no action (or action="#") and its submit
+    handler is missing, only calls preventDefault, only logs, only shows an alert or toast without
+    sending anything, or sets local state; a search input has no form, handler or results logic.
+    Count one hit per page when at least two different dead controls are presented as working
+    features (no "coming soon", disabled state or demo label). Does not count: in-page anchors
+    (href="#pricing") that match an existing id; href="#" with a real handler attached by
+    addEventListener or a framework router; forms handled by a named service (Netlify data-netlify,
+    Formspree, a server action, fetch() to an API route); controls that are visibly disabled or
+    labelled "coming soon"; files clearly presented as a mockup, template or component demo;
+    a single forgotten link in an otherwise working page. If only the rendered page is available,
+    count controls that visibly lead nowhere (URL ends in #, no navigation, no feedback after
+    submit). Describe the visible pattern only; do not infer how the page was made.
+threshold: {min_count: 1}
+realizations:
+  "*":
+    examples:
+      positive:
+        - "<nav><a href=\"#\">Product</a><a href=\"#\">Pricing</a><a href=\"#\">Docs</a><a href=\"#\" class=\"btn\">Sign in</a></nav> with no matching ids, no router and no script."
+        - "<form class=\"flex gap-2\"><input type=\"email\" placeholder=\"Enter your email\"><button>Subscribe</button></form> with no action, and the only script is form.addEventListener('submit', e => { e.preventDefault(); alert('Thanks for subscribing!') })."
+        - "const handleSubmit = (e) => { e.preventDefault(); console.log(formData); setSubmitted(true) } on a contact form that tells the visitor 'We'll get back to you within 24 hours', plus footer social icons all linking to '#'."
+      negative:
+        - "<a href=\"#features\">Features</a> where <section id=\"features\"> exists on the same page."
+        - "<form name=\"contact\" method=\"POST\" data-netlify=\"true\"> with a hidden form-name field (handled by the host)."
+        - "<button disabled class=\"opacity-50\">Mobile app - coming soon</button> on an otherwise working page."
+legitimate_use: >
+  Mockups, design comps, templates and component demos are meant to have inert controls and should
+  say so. A page under construction may show a disabled control with a clear label. The pattern is
+  a public page that presents dead controls as working features.
+fix: >
+  Remove every control that has no destination or behavior yet, or label it as coming soon and
+  disable it. Point navigation to real pages or in-page ids, connect forms to a real endpoint or
+  form service and show a real success and error state, and remove search, sign-in and social links
+  until they exist. Click through every control on the published page.
+prevention: >
+  Only render a control when its destination or behavior exists: real URLs or section ids for
+  links, a working endpoint for every form with success and error states, no sign-in, search or
+  social icons without a target. Fewer working controls beat a full navbar of dead ones. An
+  explicit request for a clickable mockup overrides this; then mark it as a mockup.
+sources:
+  - source: hustletoai-vibe-coded-checklist
+    locator: "interactivity checks"
+    note: "'Buttons that visually exist but have no onClick handler wired up, or link to #'; 'Forms that submit but show no success/error state'."
+  - source: advisorevolved-vibe-coded-websites
+    locator: "forms section"
+    note: "Forms 'might look fine but often fail to actually submit & store data'; contact, quote and booking forms named as fragile."
+  - source: thirteenlabs-prototype-gap
+    locator: "opening sections"
+    note: "'The buttons are there. The data behind them is hardcoded'; an app 'that demos perfectly and does nothing'; state 'vanishes on refresh'."
+  - source: sej-ai-website-mistakes
+    locator: "Mistake 3, Broken or Confusing UX Patterns"
+    note: "'Clickable-looking elements that do not behave clearly' among issues seen on vibe-coded sites."
+related:
+  - {id: unfilled-placeholder, relation: overlaps}
+  - {id: non-semantic-page-structure, relation: distinct-from}

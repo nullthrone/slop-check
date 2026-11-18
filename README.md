@@ -30,7 +30,7 @@ each. Keep the folder name `slop-check` when you unzip `slop-check.zip`.
 | Kiro | [slop-check.zip](https://github.com/nullthrone/slop-check/releases/latest/download/slop-check.zip), unzipped into `~/.kiro/skills/` |
 | Instruction fields of about 8,000 characters | [instructions.md](https://github.com/nullthrone/slop-check/releases/latest/download/instructions.md), at most 7,500 characters |
 | Knowledge or project files | [knowledge.md](https://github.com/nullthrone/slop-check/releases/latest/download/knowledge.md), the full catalog in one file |
-| API system messages | [system-prompt.md](https://github.com/nullthrone/slop-check/releases/latest/download/system-prompt.md), about 62,000 characters, too long for typical instruction fields |
+| API system messages | [system-prompt.md](https://github.com/nullthrone/slop-check/releases/latest/download/system-prompt.md), about 80,000 characters, too long for typical instruction fields |
 
 ## What it checks
 

@@ -1,0 +1,15 @@
+id: thirteenlabs-prototype-gap
+title: "The AI Built a Beautiful Interface but Nothing Works: How to Close the Prototype Gap"
+url: https://www.13labs.au/blog/ai-built-the-interface-not-the-backend
+publisher: 13Labs
+authors: [13Labs Team]
+published: 2026-07-25
+accessed: 2026-11-18
+type: blog
+derived_from: []
+notes: >
+  Development-studio blog (sells build-out work). Coding agents build the interface first, so the
+  result "looks finished the moment it renders": "The buttons are there. The data behind them is
+  hardcoded", an app "that demos perfectly and does nothing"; agents "invent placeholder data and
+  move on"; saved data lives in React state and "vanishes on refresh". About app prototypes more
+  than marketing pages; opinion, no measurement.
