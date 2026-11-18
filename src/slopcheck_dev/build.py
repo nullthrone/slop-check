@@ -25,7 +25,8 @@ The region of ``SKILL.md`` between ``<!-- slopcheck:core-catalog -->`` and
 the verdict thresholds and the candidate IDs, so that ``SKILL.md`` alone suffices for a correct
 audit in runtimes that neither run scripts nor open ``references/`` (section 7). The packaged
 ``SKILL.md`` must stay within the Agent Skills size guidance (``MAX_SKILL_LINES``,
-``MAX_SKILL_TOKENS``); the build shows fewer typical hits per pattern when the full list does
+``MAX_SKILL_TOKENS``) and below Agent Builder's character limit (``MAX_SKILL_CHARS``); the
+build shows fewer typical hits per pattern when the full list does
 not fit, and fails when even the list without typical hits does not fit.
 
 The lite archive serves hosts that cannot run scripts or accept at most 20 files besides
@@ -601,6 +602,9 @@ CORE_CATALOG_END = "<!-- /slopcheck:core-catalog -->"
 #: Agent Skills guidance for SKILL.md: under about 500 lines and about 5,000 tokens.
 MAX_SKILL_LINES = 500
 MAX_SKILL_TOKENS = 5000
+# Microsoft Agent Builder: skill instructions "must be under 20,000 characters" (Microsoft 365 Copilot
+# Chat recommends the same). The margin absorbs host-side counting differences.
+MAX_SKILL_CHARS = 19500
 #: Typical hits per language in the core catalog, richest first; the build takes the first
 #: level that keeps SKILL.md within the limits above.
 CORE_EXAMPLE_LEVELS = (2, 1, 0)
@@ -832,7 +836,7 @@ def render_core_catalog(catalog: dict, examples: int = CORE_EXAMPLE_LEVELS[0]) -
         # SKILL.md must suffice when a host never opens references/: name the web patterns at least.
         lines.append("")
         listed = ", ".join(f"`{i}`" for i in web_ids)
-        lines.append(f"Web page patterns (weight 0, observations only): {listed}.")
+        lines.append(f"Web page patterns: {listed}.")
     return "\n".join(lines) + "\n"
 
 
@@ -856,25 +860,28 @@ def package_skill_md(skill_text: str, catalog: dict) -> tuple[str, dict, list[st
     """Packaged SKILL.md text, its size (:func:`skill_size`) and warnings.
 
     Takes the richest level of ``CORE_EXAMPLE_LEVELS`` whose result stays within
-    ``MAX_SKILL_LINES`` and ``MAX_SKILL_TOKENS`` (a warning names a reduced level). Raises
+    ``MAX_SKILL_LINES``, ``MAX_SKILL_TOKENS`` and ``MAX_SKILL_CHARS`` (a warning names a reduced
+    level). Raises
     :class:`BuildError` when even the catalog without typical hits does not fit.
     """
     size: dict = {}
     for level in CORE_EXAMPLE_LEVELS:
         text = replace_marked_region(skill_text, render_core_catalog(catalog, level))
         size = skill_size(text)
-        if size["lines"] <= MAX_SKILL_LINES and size["tokens"] <= MAX_SKILL_TOKENS:
+        fits = size["lines"] <= MAX_SKILL_LINES and size["tokens"] <= MAX_SKILL_TOKENS
+        if fits and size["chars"] <= MAX_SKILL_CHARS:
             warnings = []
             if level != CORE_EXAMPLE_LEVELS[0]:
                 warnings.append(
                     f"SKILL.md: the core catalog shows {level} typical hits per language instead of "
-                    f"{CORE_EXAMPLE_LEVELS[0]} to stay within {MAX_SKILL_LINES} lines and about "
-                    f"{MAX_SKILL_TOKENS} tokens"
+                    f"{CORE_EXAMPLE_LEVELS[0]} to stay within {MAX_SKILL_LINES} lines, about "
+                    f"{MAX_SKILL_TOKENS} tokens and {MAX_SKILL_CHARS} characters"
                 )
             return text, size, warnings
     raise BuildError(
-        f"packaged SKILL.md has {size['lines']} lines and about {size['tokens']} tokens with the smallest "
-        f"core catalog; the limits are {MAX_SKILL_LINES} lines and about {MAX_SKILL_TOKENS} tokens "
+        f"packaged SKILL.md has {size['lines']} lines, about {size['tokens']} tokens and {size['chars']} "
+        f"characters with the smallest core catalog; the limits are {MAX_SKILL_LINES} lines, about "
+        f"{MAX_SKILL_TOKENS} tokens and {MAX_SKILL_CHARS} characters "
         "(section 7). Shorten the hand-written text of skill/SKILL.md."
     )
 
@@ -1453,7 +1460,8 @@ def run(args) -> int:
         size = result.skill_size
         print(
             f"build: SKILL.md {size['lines']} lines, {size['chars']} characters, about {size['tokens']} "
-            f"tokens (limits {MAX_SKILL_LINES} lines, about {MAX_SKILL_TOKENS} tokens)"
+            f"tokens (limits {MAX_SKILL_LINES} lines, {MAX_SKILL_CHARS} characters, "
+            f"about {MAX_SKILL_TOKENS} tokens)"
         )
     print(
         f"build: wrote {result.package_dir}, {result.zip_path}, {result.flat_zip_path}, "

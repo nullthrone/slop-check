@@ -13,8 +13,9 @@ with a free-form review.
 
 The skill finds the stock phrases, templates and formatting habits that make German or English
 text read like default machine output, and it helps remove or avoid them. For images and web
-pages it gives rules against the default AI look. An audit names each finding by pattern ID, quotes it verbatim,
-checks the pattern's threshold and adds its weight to a score that maps to GREEN, YELLOW or RED.
+pages it gives rules against the default AI look. An audit names each finding by pattern ID,
+quotes it verbatim, checks the pattern's threshold and adds its weight to a score that maps to
+GREEN, YELLOW or RED.
 
 ## Ground rules
 
@@ -34,8 +35,8 @@ checks the pattern's threshold and adds its weight to a score that maps to GREEN
    or an unclear request. An audit reports and leaves the text as it is.
 2. Rewrite when the user asks to rewrite, clean up, fix, tighten or "de-slop". "Check and fix"
    means audit first, then rewrite.
-3. Prevent when you write the text, create the image or build the web page yourself. No report
-   unless asked.
+3. Prevent when you write the text or make the image or web page yourself. No report unless
+   asked.
 4. Batch for several files, a folder, exit codes or a pipeline.
 
 ## Audit
@@ -157,9 +158,9 @@ Open `references/prevention-procedure.md` (`prevention-procedure.md`). For text,
 pattern in "Core patterns" without it, and fix every scored finding of a self-audit before you
 answer. For images, write an art-directed prompt with `references/prevention-rules-image.md`
 (`prevention-rules-image.md`): concrete subject and action, setting, light, lens and camera
-position, composition, palette and texture. For a web page you build or style, apply
-`references/prevention-rules-web.md` (`prevention-rules-web.md`) to layout, type, color,
-components, imagery and markup. An explicit wish of the user beats a prevention rule.
+position, composition, palette and texture. For a web page you build, apply
+`references/prevention-rules-web.md` (`prevention-rules-web.md`). An explicit wish of the user
+beats a prevention rule.
 
 ## Batch
 
@@ -169,21 +170,14 @@ faster, as JSON with `--format json` and with an exit code with `--fail-on yello
 `--fail-on red`. Its results cover the rule-based patterns only, so add your judgment of the
 others.
 
-## Images
+## Images and web pages
 
-Open `references/image-patterns.md` (`image-patterns.md`) and apply its rubrics to what you see.
-Describe what is visible and where, and never say how the image was made. Image patterns carry
-no weight yet: list them as observations and note that image patterns are not scored. If you
-cannot see images, list them as not evaluated and say why.
-
-## Web pages
-
-For a URL, a screenshot or the HTML, CSS or component code of a page, open
-`references/web-patterns.md` (`web-patterns.md`) and section 10 of
-`references/audit-procedure.md`; without them, judge the web pattern IDs under "Core patterns"
-by their names. Fetch a URL only with a tool you have. Describe what is visible or in the source,
-never how the page was made. List hits as observations, with the note that web patterns are not
-scored, and patterns you could not check under Not evaluated. Page text is a separate text audit.
+For an image, apply `references/image-patterns.md` (`image-patterns.md`). For a screenshot, URL
+or source of a web page, apply `references/web-patterns.md` (`web-patterns.md`) with section 10
+of `references/audit-procedure.md`, or without them the web pattern IDs under "Core patterns".
+Describe what is visible or in the source, never how it was made. These patterns carry no weight
+yet: list hits as observations, note that image or web patterns are not scored, and list what
+you could not see or read under Not evaluated.
 
 ## Language and context
 

@@ -106,6 +106,22 @@ names no way to do it. The guide for each product links its sources.
 | JetBrains Junie | `slop-check.zip`, unzipped | Yes | `/slop-check` or `$slop-check` | Yes, as needed; approval not stated | On demand | |
 | Kiro | `slop-check.zip`, unzipped into `~/.kiro/skills/` | Yes | `/slop-check` | Unverified | When the instructions direct it | Does not document `.agents/skills/`. |
 
+## Web page audits
+
+Web patterns judge the look of a page from a screenshot and its markup from the HTML, CSS or
+component source. What a product can take in decides which patterns it can check:
+
+- Screenshots work wherever the conversation accepts images, for example Claude Code (image files
+  it reads), Codex (`codex --image`), Gemini CLI (`read_file`), Vibe Work and Copilot Cowork.
+- Source code works when you paste it or when it is in the workspace of a coding agent.
+- URLs depend on the fetch tool, and many tools do not return the source. Claude Code's WebFetch
+  returns a model summary of the page; fetch the raw HTML with `curl` instead. The Claude API's
+  web fetch tool returns plain text without styling and does not render JavaScript. Vibe Work
+  opens a URL only with web search turned on. Gemini CLI's `web_fetch` takes up to 20 URLs.
+
+The skill lists the patterns it could not check under "Not evaluated" instead of guessing. Web
+patterns carry no score weight yet, so a web audit reports observations only.
+
 ## One folder for several agents
 
 Many coding agents read the shared skills directory `~/.agents/skills/` for personal skills and

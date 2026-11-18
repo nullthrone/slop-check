@@ -485,7 +485,9 @@ The package must satisfy the strictest known runtime (Gemini app, Nov 2026):
   fading IDs. The region is generated from the compiled catalog, so it follows every measurement. The
   build fails when the marker pair is missing or malformed.
 - Size of the packaged `SKILL.md`: at most 500 lines and about 5,000 tokens (Agent Skills guidance),
-  estimated as characters ÷ 4 (`MAX_SKILL_LINES`, `MAX_SKILL_TOKENS`). The build takes the richest
+  estimated as characters ÷ 4 (`MAX_SKILL_LINES`, `MAX_SKILL_TOKENS`), and at most 19,500 characters
+  (`MAX_SKILL_CHARS`), below Microsoft Agent Builder's hard limit of 20,000 characters for skill
+  instructions. The build takes the richest
   core list that fits (two typical hits per language, then one, then none) and warns when it had to
   reduce it; it fails only when even the list without typical hits does not fit, and then the
   hand-written text of `skill/SKILL.md` must get shorter. A measurement that promotes more patterns to

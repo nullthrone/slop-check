@@ -51,9 +51,10 @@ Take the files from [slop-check-lite.zip]({{ site.download_lite_zip }}), which c
    description field; it tells Work when to activate the skill.
 5. Paste the rest of `SKILL.md`, everything below the closing `---` line, into the `SKILL.md`
    field. Whether the field expects the frontmatter block as well is not documented.
-6. Add the files of the `references` folder as supporting files. Work limits the number of
-   supporting files and does not publish the number. If the limit stops you, add
-   `text-patterns.md`, `report-format.md` and `audit-procedure.md` first.
+6. Add the `references` folder as supporting files; the form takes files or folders. Work limits
+   the number of supporting files and does not publish the number. If the limit stops you, add
+   `text-patterns.md`, `report-format.md` and `audit-procedure.md` first, then `web-patterns.md`
+   if you want to audit web pages.
 7. Select **Create Skill**.
 
 If the form accepts text only, paste [instructions.md]({{ site.download_instructions }}) into the

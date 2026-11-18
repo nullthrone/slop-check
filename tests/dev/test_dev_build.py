@@ -321,7 +321,7 @@ def test_prevention_rules_grouped_by_category(thresholds):
 def test_core_catalog_names_web_pattern_ids(thresholds):
     patterns = [*text_patterns(), image_pattern(), *web_patterns()]
     region = render_core_catalog(compile_catalog(patterns, None, thresholds, generated_at=STAMP))
-    expected = "Web page patterns (weight 0, observations only): `web-one`, `web-two`."
+    expected = "Web page patterns: `web-one`, `web-two`."
     assert region.rstrip("\n").endswith(expected)
     assert "img-one" not in region
     without = render_core_catalog(compile_catalog(text_patterns(), None, thresholds, generated_at=STAMP))
@@ -787,6 +787,25 @@ def test_skill_md_size_budget_drops_typical_hits_then_fails(skill_repo, tmp_path
     monkeypatch.setattr(build_mod, "MAX_SKILL_LINES", skill_size(bare)["lines"] - 1)
     with pytest.raises(BuildError, match="lines"):
         package_skill_md(source, catalog)
+
+
+def test_skill_md_character_limit_drops_typical_hits(skill_repo, monkeypatch, thresholds):
+    patterns = [*text_patterns(), image_pattern(), *web_patterns()]
+    catalog = compile_catalog(patterns, None, thresholds, generated_at=STAMP)
+    source = (skill_repo.root / "skill" / "SKILL.md").read_text(encoding="utf-8")
+    full = replace_marked_region(source, render_core_catalog(catalog, 2))
+    monkeypatch.setattr(build_mod, "MAX_SKILL_CHARS", skill_size(full)["chars"] - 1)
+    text, size, warnings = package_skill_md(source, catalog)
+    assert text != full and size["chars"] < skill_size(full)["chars"]
+    assert len(warnings) == 1 and "characters" in warnings[0]
+    bare = replace_marked_region(source, render_core_catalog(catalog, 0))
+    monkeypatch.setattr(build_mod, "MAX_SKILL_CHARS", skill_size(bare)["chars"] - 1)
+    with pytest.raises(BuildError, match="characters with the smallest core catalog"):
+        package_skill_md(source, catalog)
+
+
+def test_real_skill_md_fits_agent_builder_limit():
+    assert build_mod.MAX_SKILL_CHARS < 20000  # Agent Builder: "must be under 20,000 characters"
 
 
 def test_skill_size_estimates_tokens():
