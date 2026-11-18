@@ -1,0 +1,17 @@
+id: openai-frontends-gpt-5-4
+title: "Designing delightful frontends with GPT-5.4"
+url: https://developers.openai.com/blog/designing-delightful-frontends-with-gpt-5-4
+publisher: OpenAI
+published: null
+accessed: 2026-11-18
+type: documentation
+notes: >
+  Vendor prompting guide on the OpenAI developer site (no author or date visible). Says underspecified
+  prompts lead to "overrepresented habits we want to avoid". Its sample prompt: "Color & Look: Choose a
+  clear visual direction; define CSS variables; avoid purple-on-white defaults", "No purple bias or dark
+  mode bias", "Typography: Use expressive, purposeful fonts and avoid default stacks (Inter, Roboto,
+  Arial, system)", "Decorative gradients and abstract backgrounds do not count as the main visual idea",
+  "Avoid pill clusters, stat strips, icon rows, boxed promos". The embedded frontend skill lists
+  "decorative gradients behind routine product UI" and "ornamental icons that do not improve scanning"
+  as failures for apps and asks "Would the design still feel premium if all decorative shadows were
+  removed?". Independent of the Anthropic sources (different vendor); reports no frequencies.

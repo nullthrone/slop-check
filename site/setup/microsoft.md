@@ -123,8 +123,8 @@ slop-check script needs neither. It needs Python 3.10 or newer, and Microsoft do
 sandbox's Python version, so script use here is unverified. If the script cannot run, the skill
 audits by reading.
 
-Microsoft recommends keeping `SKILL.md` under 20,000 characters, and the packaged file stays under
-that. Skills are not supported in tenants that use Microsoft Purview Information Barriers.
+Microsoft recommends keeping `SKILL.md` under 20,000 characters. The build keeps the packaged file
+below 19,500 characters. Skills are not supported in tenants that use Microsoft Purview Information Barriers.
 
 ## Agent Builder
 
@@ -137,7 +137,8 @@ the agent instructions, which are limited to 8,000 characters.
 3. Upload the complete `slop-check-flat.zip`.
 
 Agent Builder accepts zips of up to 50 MB with up to 350 files, 25 MB per file and three folder
-levels. The flat package fits. Scripts run in a sandbox without network access. The agent picks
+levels, and skill instructions must be under 20,000 characters. The flat package fits: the build
+keeps the packaged `SKILL.md` below 19,500 characters. Scripts run in a sandbox without network access. The agent picks
 the skill from its description; Microsoft documents no way to call a skill by name.
 
 To put slop-check into the agent instructions instead, paste
@@ -148,7 +149,7 @@ route.
 ## Microsoft 365 Copilot Cowork
 
 Cowork allows at most 20 companion files per skill, counting every file besides `SKILL.md`. The
-full package has 22, so Cowork reports a validation error for it. Use the lite package, which
+full package has 24, so Cowork reports a validation error for it. Use the lite package, which
 leaves out the scripts. Cowork documents script execution for skills, but slop-check audits fully
 without its script.
 

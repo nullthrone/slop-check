@@ -1,0 +1,83 @@
+id: identical-feature-card-grid
+modality: web
+name: Identical icon feature-card grid
+summary: >
+  Features or benefits are shown as a row or grid of three, four or six same-size cards, each an
+  icon on top, a two- or three-word title and one line of description, with no card larger, no
+  image of the actual thing, and no difference in rhythm. Equal cells make every item look equally
+  important and say nothing a list could not. A corpus scan of Show HN landing pages checked for
+  "Identical feature cards, each with an icon on top", design reviewers of vibe-coded sites called
+  the icon-on-top 3x2 tile grid "quite common" and "very non-original", and several practitioner
+  write-ups name the three-card row as the stock feature section.
+category: web-component
+status: candidate
+detector:
+  kind: vision
+  rubric: >
+    Find sections laid out as a grid or row of 3 to 8 sibling tiles. Flag a section when the tiles
+    have the same size and the same internal structure, and each consists mainly of a small icon
+    (often in a tinted rounded square or circle) above or beside a short title and a one- or
+    two-line description, with no product image, data, link destination or detail that
+    distinguishes one tile from another. Equal-size tiles labeled as a "bento" grid count when they
+    follow the same icon-title-line recipe. Count one hit per section; flag the page at one hit.
+    In the HTML/CSS source: a container with grid-cols-3 / md:grid-cols-3 / lg:grid-cols-4 /
+    grid-template-columns: repeat(3, 1fr) whose children are rendered from one array map with the
+    fields icon, title, description, each child an identical card component (often with lucide or
+    heroicons icons). Does not count: a grid of real items that are naturally equivalent (team
+    members with photos, products with images and prices, blog posts with thumbnails, integrations
+    with real logos); a feature section where tiles differ in size and content because one feature
+    matters more and shows a real screenshot; a comparison table; a short three-item icon row used
+    as a compact summary under a section that already explains the features in depth. Describe the
+    visible pattern only; do not infer how the page was made.
+threshold: {min_count: 1}
+realizations:
+  "*":
+    examples:
+      positive:
+        - "Section 'Why choose us' with three equal white cards in a row; each has a purple icon in a rounded square (lightning bolt, shield, clock), the titles 'Lightning fast', 'Secure by default', 'Save time' and one gray sentence each."
+        - "A 3x2 grid of six identical dark tiles, each an outline icon on top, a bold two-word heading and one line of text, on the page of a yoga studio, with no photograph of the studio or the classes."
+        - "Four equal cards across the width ('Easy setup', 'Analytics', 'Integrations', 'Support'), each with a centered icon, title and one-line description, repeated with the same layout in a second section further down."
+      negative:
+        - "Grid of six product cards, each with a different product photograph, name, price and 'Add to cart' button."
+        - "Team section with four equal cards showing real portrait photographs, names and roles."
+        - "Feature section alternating full-width rows, each with a large real screenshot on one side and two paragraphs on the other."
+legitimate_use: >
+  Truly parallel items of equal weight, each backed by real content (product listings, people,
+  locations, plan features), and compact icon rows that summarize detail given elsewhere.
+fix: >
+  Rank the features and show the one that matters most with a real screenshot, photograph or demo
+  at a larger size; merge or cut the minor ones; replace generic icons with the actual interface or
+  object; vary tile sizes and section rhythm to express the ranking, or turn the items into
+  connected prose or a plain list.
+prevention: >
+  Do not present features as identical icon-title-sentence cards. Decide which two or three
+  features matter most, show each with real evidence (a screenshot, a photograph, numbers from the
+  product, a short example) and give the most important one more space. Use a grid of equal cells
+  only for items that really are equal and each have their own image or data. An explicit brand or
+  user wish overrides this.
+sources:
+  - source: krebs-design-slop-show-hn
+    locator: "pattern list, Layout"
+    note: "'Identical feature cards, each with an icon on top' is one of the scored layout patterns."
+  - source: yc-design-review-vibe-coded
+    locator: "Build0 chapter, about 25:43"
+    note: "Tiles of 'icon at the top. And then a bit of text' in 'a 3x two that that's yeah quite common'; the bento boxes are 'not a bad pattern. But it's also very non-original'."
+  - source: sej-ai-website-mistakes
+    locator: "list 'five examples of generic design trends'"
+    note: "'Using bento-box layouts without originality' (summary of the same YC episode; not independent of it)."
+  - source: mindstudio-vibecoded-landing-pages
+    locator: "feature section paragraph"
+    note: "'a three or four item grid with an icon, a bolded word, and one sentence of description', 'repeated with no variation in rhythm or hierarchy'."
+  - source: alanwest-ai-generated-look
+    locator: "The problem"
+    note: "'Three feature cards in a row with rounded corners and lucide icons'."
+  - source: twentyfirst-not-look-ai-generated
+    locator: "feature-card item; 'Break the symmetry once'"
+    note: "'Three feature cards with three icons and three sentences of equal length'; 'Every generated layout is a grid of equal cells'."
+  - source: impeccable-design-skill
+    locator: "reference/craft-floor.md, Refuse, Page scaffolds"
+    note: "'Same-size cards of icon plus heading plus text as the page structure' (derived from Anthropic's skill)."
+related:
+  - {id: card-chopped-page, relation: overlaps}
+  - {id: template-section-sequence, relation: overlaps}
+  - {id: triad, relation: distinct-from}

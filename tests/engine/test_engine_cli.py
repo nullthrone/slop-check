@@ -23,6 +23,7 @@ def catalog_file(tmp_path, pattern, catalog):
         pattern("tokC", weight=2.5, realizations={"*": {"patterns": [r"\btokC\b"]}}),
         pattern("cand", status="candidate", realizations={"*": {"patterns": [r"\bcand\b"]}}),
         pattern("img", kind="vision", rubric="Waxy skin.", modality="image", status="candidate"),
+        pattern("web", kind="vision", rubric="Purple hero.", modality="web", status="candidate"),
         catalog_version="test-1",
     )
     path = tmp_path / "catalog.json"
@@ -191,11 +192,13 @@ def test_patterns_command_filters(catalog_file, capsys):
     assert [p["id"] for p in json.loads(capsys.readouterr().out)] == ["cand"]
     main(["patterns", "--modality", "image", "--format", "json", "--catalog", str(catalog_file)])
     assert [p["id"] for p in json.loads(capsys.readouterr().out)] == ["img"]
+    main(["patterns", "--modality", "web", "--format", "json", "--catalog", str(catalog_file)])
+    assert [p["id"] for p in json.loads(capsys.readouterr().out)] == ["web"]
 
 
 def test_version(catalog_file, capsys, monkeypatch):
     assert main(["version", "--catalog", str(catalog_file)]) == 0
-    assert capsys.readouterr().out == f"slopcheck {__version__} (catalog test-1, 5 patterns)\n"
+    assert capsys.readouterr().out == f"slopcheck {__version__} (catalog test-1, 6 patterns)\n"
     monkeypatch.setenv("SLOPCHECK_CATALOG", "/nonexistent/catalog.json")
     assert main(["version"]) == 0
     assert "no catalog found" in capsys.readouterr().out

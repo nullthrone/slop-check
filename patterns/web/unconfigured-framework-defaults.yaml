@@ -1,0 +1,78 @@
+id: unconfigured-framework-defaults
+modality: web
+name: Unconfigured framework defaults in the source
+summary: >
+  The styling uses a utility framework exactly as shipped: every color is a stock palette step
+  (indigo-600, slate-900, gray-500), spacing, radius and shadow are stock scale steps, there is no
+  project theme or token layer, and the same long utility string is pasted onto every repeated
+  element instead of a component or class. The source shows that no design system was set up, which
+  is why such pages look interchangeable. Tailwind's creator attributes the indigo look of generated
+  UIs to the bg-indigo-500 default in Tailwind UI; a component vendor describes LLM output that
+  rebuilds each button from raw utilities so that "One button becomes five different button class
+  strings"; a practitioner checklist names default palette steps such as gray-900.
+category: web-markup
+status: candidate
+detector:
+  kind: llm
+  rubric: >
+    Needs the HTML/JSX/CSS source (and tailwind config or CSS theme block if present). Flag one hit
+    per page when all three hold: (1) Colors: every or nearly every color utility uses a stock
+    framework palette name with a numeric step (bg-indigo-600, hover:bg-indigo-700, text-gray-600,
+    text-slate-500, bg-gray-50, from-purple-600 to-blue-500, Bootstrap btn-primary with stock blue),
+    and there is no custom color token (bg-brand, text-primary, var(--color-accent), a theme
+    extension, arbitrary hex values chosen for the brand). (2) No theme: no tailwind.config theme
+    extension, no @theme block or CSS custom properties defining the palette, fonts or radii, or
+    the config exists but is empty. (3) Repetition: the same long utility string (about 8 or more
+    classes, e.g. "rounded-xl bg-white p-6 shadow-md hover:shadow-lg transition") is copied verbatim
+    on three or more sibling elements, or near-identical strings with small arbitrary differences
+    (p-6 here, p-8 there) style what is visually the same component. Does not count: a project that
+    defines its own tokens even if they are mapped to framework scales (primary: colors.indigo);
+    shadcn/ui or similar setups that use semantic variables (bg-primary, text-muted-foreground) from
+    a theme file; repetition produced by a loop or component (one class string in a map() or a
+    Card component); prototypes, docs examples or internal tools labelled as such; a single default
+    color among custom tokens. Describe the visible pattern only; do not infer how the page was
+    made.
+threshold: {min_count: 1}
+realizations:
+  "*":
+    examples:
+      positive:
+        - "<a href=\"#\" class=\"rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500\">Get started</a> with text-gray-900 / text-gray-600 everywhere and no tailwind.config theme or CSS variables in the project."
+        - "Three pricing cards, each written out by hand with the identical string class=\"bg-white rounded-2xl shadow-lg p-8 border border-gray-100 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1\"."
+        - "Feature section in which buttons use 'px-4 py-2 bg-blue-600 rounded-lg', 'px-5 py-2.5 bg-blue-500 rounded-md' and 'px-6 py-3 bg-blue-600 rounded-xl' for the same primary button, all stock palette and scale steps, no theme file."
+      negative:
+        - "Tailwind project whose config extends colors with brand: {50:'#f3f7f2', 600:'#2f5d3a'} and whose markup uses bg-brand-600 and text-ink; stock gray-200 appears only on dividers."
+        - "shadcn/ui page using bg-primary text-primary-foreground and border-input, with the palette defined as CSS variables in globals.css."
+        - "{plans.map(p => <div key={p.id} className=\"rounded-2xl border p-8 shadow-sm\">...)} - a long class string, but written once in a loop."
+legitimate_use: >
+  Stock framework palettes are well designed and fine for prototypes, internal tools, admin
+  screens and documentation examples, or when the brand color happens to match a default step and
+  is aliased as a token. The pattern is a public-facing page whose whole visual language is the
+  unmodified kit.
+fix: >
+  Define a small token set (4-6 named colors, a type scale, one or two radii, one shadow) in the
+  framework theme or as CSS custom properties, replace stock palette names with those tokens, and
+  extract repeated utility strings into a component or a single class. Then adjust the tokens to the
+  brand instead of editing class strings one by one.
+prevention: >
+  Before writing markup, set up the theme: name the brand colors, fonts, radii and shadow as tokens
+  and use only those names in the markup; reach for stock palette steps only for neutral utility
+  (borders, disabled states) and only through an alias. Build each repeated element once as a
+  component. Choose the accent from the subject and brand, not from the framework's example
+  buttons. An explicit brand or user wish (e.g. "use stock Tailwind") overrides this.
+sources:
+  - source: wathan-indigo-apology-tweet
+    locator: "post text"
+    note: "Tailwind's creator: making every Tailwind UI button 'bg-indigo-500' led 'to every AI generated UI on earth also being indigo'."
+  - source: daisyui-generate-ui-with-llm
+    locator: "problem description"
+    note: "LLMs 'invent a button from utilities'; 'One button becomes five different button class strings'; 'A card uses different padding on each page' (vendor with a stake)."
+  - source: hustletoai-vibe-coded-checklist
+    locator: "visual patterns section"
+    note: "Dark backgrounds described by developers 'as gray-900'; Tailwind's default rounded corners are weak evidence alone."
+  - source: gurita-vatavu-w4a-2025
+    locator: "Listing 1"
+    note: "Illustrative only: generated JSX styled with stock utilities (text-sm text-gray-600, bg-white)."
+related:
+  - {id: default-look-accessibility-gaps, relation: overlaps}
+  - {id: default-color-grade, relation: distinct-from}

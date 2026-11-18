@@ -7,7 +7,7 @@ if this page and that file disagree, the file wins. The technical contract is
 
 ## What counts as a slop pattern
 
-A slop pattern is a writing or image pattern that appears clearly more often in current
+A slop pattern is a writing, image or web design pattern that appears clearly more often in current
 language-model output than in comparable human work. Sources and good examples make a pattern
 worth testing. Only a measurement against human text decides whether it is scored.
 
@@ -83,7 +83,7 @@ pull request has to change `governance/` (for example remove the id from `initia
 requires code-owner review. Edits to thresholds, examples, regular expressions, word lists and
 rubrics stay open to everyone, because the gates measure them.
 
-`llm-gate` covers patterns whose detector is a rubric for a language model. Two judge models from
+`llm-gate` covers text patterns whose detector is a rubric for a language model. Two judge models from
 different families read each example; a hit counts only when both agree. The positive examples
 must be recognized at a rate of at least 0.8 and the negative examples flagged at a rate of at
 most 0.2 (each example is judged without itself in the prompt). The dev-half rules above apply
@@ -92,6 +92,10 @@ requests, in the pull request gate as in the monthly measurement, so the rubric 
 candidate cannot change how a scored pattern is judged.
 
 Until branch `data` holds a corpus, the corpus-based parts of both gates are skipped with a notice.
+
+Image and web page patterns have no benchmark yet. Both gates skip them, so they enter as
+candidates on the schema checks alone, carry weight 0 and appear in reports as observations
+until a benchmark for their modality exists.
 
 ## Why your own examples are not enough
 

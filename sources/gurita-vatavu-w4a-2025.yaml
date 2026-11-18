@@ -1,0 +1,23 @@
+id: gurita-vatavu-w4a-2025
+title: "When LLM-Generated Code Perpetuates User Interface Accessibility Barriers, How Can We Break the Cycle?"
+url: https://mintviz.usv.ro/publications/2025.W4A.3.pdf
+publisher: ACM (W4A '25, 22nd International Web for All Conference)
+authors: [Alexandra-Elena Guriţă, Radu-Daniel Vatavu]
+published: 2025-04-28
+accessed: 2026-11-18
+type: peer-reviewed
+derived_from: []
+notes: >
+  DOI 10.1145/3744257.3744266 (author PDF read; date is the conference date). ChatGPT and Claude
+  generated banking-app homepages from an accessibility-agnostic prompt ("Design the homepage of a
+  banking app") and an accessibility-oriented prompt; evaluation by automated testing (MAUVE++),
+  two experts and LLM self-reflection. With the agnostic prompt, "<div> elements were used
+  exclusively" in place of landmarks; the control condition "often led to misused heading levels
+  or relied on styled <div> elements for implementing the visual hierarchy"; it "often relied on
+  browser defaults or omitted focus indicators entirely". Table 3 (agnostic vs oriented): landmark
+  roles 11% vs 94%, heading hierarchy 33% vs 89%, skip links 0% vs 100%, ARIA labels 28% vs 95%.
+  Table 4: focus indicators 56% vs 98%, keyboard access 48% vs 94%, touch targets 32px vs 44px.
+  Listing 1 shows generated JSX with Tailwind default utilities (text-sm text-gray-600). Small
+  sample (80 UIs); percentages are "implementation completeness" as defined by the authors. Cites
+  Aljedaani et al. (W4A '24): 84% of ChatGPT-generated sites had violations. Shares an author with
+  calo-chi-ea-2026-semantic-accessibility.

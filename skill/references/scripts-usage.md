@@ -16,7 +16,7 @@ Run the commands from the folder that holds `SKILL.md`, or give the full path to
 ```
 python scripts/slopcheck.py audit FILE [FILE ...] [options]
 python scripts/slopcheck.py audit - [options] < FILE
-python scripts/slopcheck.py patterns [--modality text|image] [--status core|candidate|observation|fading] [--format md|json]
+python scripts/slopcheck.py patterns [--modality text|image|web] [--status core|candidate|observation|fading] [--format md|json]
 python scripts/slopcheck.py version
 ```
 

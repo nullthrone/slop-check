@@ -244,6 +244,31 @@ def test_rule8_file_name_and_directory(repo):
     assert messages(report, "rule 8: modality 'image'")
 
 
+def test_rule9_web_patterns_are_judged_not_matched(repo):
+    repo.write_pattern(make_pattern("web-regex", modality="web", category="web-markup"))
+    repo.write_pattern(
+        make_pattern(
+            "web-vision",
+            modality="web",
+            category="web-visual-style",
+            detector={"kind": "vision", "rubric": "Look at the hero."},
+            realizations={"*": {"examples": {"positive": ["a", "b"], "negative": ["c", "d"]}}},
+        )
+    )
+    repo.write_pattern(
+        make_pattern(
+            "web-llm",
+            modality="web",
+            category="web-markup",
+            detector={"kind": "llm", "rubric": "Read the markup."},
+            realizations={"*": {"examples": {"positive": ["a", "b"], "negative": ["c", "d"]}}},
+        )
+    )
+    report = run(repo)
+    assert messages(report, "rule 9: modality web allows detector kinds vision, llm, found 'regex'")
+    assert not messages(report, "web-vision") and not messages(report, "web-llm")
+
+
 def test_payload_required_for_regex(repo):
     pattern = make_pattern("cand-two")
     pattern["realizations"]["en"].pop("patterns")

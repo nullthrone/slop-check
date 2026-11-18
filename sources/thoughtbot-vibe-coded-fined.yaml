@@ -1,0 +1,15 @@
+id: thoughtbot-vibe-coded-fined
+title: "Your vibe coded website is going to get you fined"
+url: https://thoughtbot.com/blog/your-vibe-coded-website-is-going-to-get-you-fined
+publisher: thoughtbot
+authors: [Ferdia Kenny]
+published: 2026-07-03
+accessed: 2026-11-18
+type: blog
+derived_from: []
+notes: >
+  Consultancy blog auditing one vibe-coded site: "over fifty (FIFTY!) instances of very low
+  contrast" (section headers 2.77:1, footer 1.7:1), twelve form-label problems (labels not
+  associated with controls), ten text instances at 10px or smaller, AIM score 2.7/10. Says
+  accessibility "is an area where AI and vibe coding tools seriously under perform". Single case;
+  the firm sells redesign work.

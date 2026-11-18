@@ -1,0 +1,17 @@
+id: revdoku-pre-publish-checklist
+title: "The Pre-Publish Checklist for AI-Built Websites That Do Not Look Vibe-Coded"
+url: https://revdoku.com/blog/pre-publish-checklist-ai-built-websites-not-vibe-coded/
+publisher: Revdoku
+authors: ["Eugene Mi"]
+published: 2026-07-11
+accessed: 2026-11-18
+type: blog
+notes: >
+  Pre-publish checklist for sites built with AI tools (updated 2026-10-22). Names "testimonials from
+  people who do not exist" as a visible mark. Section 2 lists generated-copy patterns including
+  "Statistics with no source (\"teams save 40% of their time\")" and "Testimonials, star ratings and
+  customer logos that you cannot prove", and advises removing a testimonial section rather than
+  keeping a fake quote. It tells the reader to search for "lorem, ipsum, TODO, example.com, Your
+  Company and Acme", placeholder phone numbers and "copyright lines with the wrong year or name";
+  section 4 says to fix "every button that points to #"; section 6 requires a unique <title> per
+  page and "The favicon is yours, not the framework default." Practitioner advice, no measurement.

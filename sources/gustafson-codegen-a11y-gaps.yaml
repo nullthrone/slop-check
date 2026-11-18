@@ -1,0 +1,17 @@
+id: gustafson-codegen-a11y-gaps
+title: "Identifying Accessibility Data Gaps in CodeGen Models"
+url: https://aaron-gustafson.com/notebook/identifying-accessibility-data-gaps-in-codegen-models
+publisher: aaron-gustafson.com
+authors: [Aaron Gustafson]
+published: 2025-10-16
+accessed: 2026-11-18
+type: blog
+derived_from: []
+notes: >
+  Accessibility practitioner's experiment: a harness sent UI-component prompts (no mention of
+  accessibility) to GPT-4 on Azure OpenAI, 10 responses each at temperature 0.95, reviewed by hand
+  ("hundreds of generated code snippets"; code on GitHub as testing-llm-code-a11y). Findings: a
+  required field where "the model failed to include a visible label" (placeholder only); ARIA added
+  "for no reason"; div wrappers instead of fieldset/legend; error states that rely only on color;
+  missing aria-invalid; breadcrumb without navigation label or aria-current; JavaScript for things
+  HTML and CSS can do. Form components only; one model.

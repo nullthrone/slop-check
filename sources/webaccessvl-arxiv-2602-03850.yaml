@@ -1,0 +1,19 @@
+id: webaccessvl-arxiv-2602-03850
+title: "WebAccessVL: Violation-Aware VLM for Web Accessibility"
+url: https://arxiv.org/abs/2602.03850
+publisher: arXiv
+authors: [Amber Yijia Zheng, Jae Joong Lee, Bedrich Benes, Raymond A. Yeh]
+published: 2025-12-19
+accessed: 2026-11-18
+type: academic-preprint
+derived_from: []
+notes: >
+  Repair model paper. Its input pages are sampled from WebSight, which the WebSight dataset card
+  (huggingface.co/datasets/HuggingFaceM4/WebSight) describes as synthetic websites written by
+  Deepseek-Coder-33b-instruct from Mistral-7B ideas (v0.2 in HTML + Tailwind CSS); the paper itself
+  calls it "the synthetic WebSight dataset" and does not discuss its origin further. Raw pages
+  average 5.335 violations per site. Most frequent visual violations: insufficient text contrast,
+  invalid or missing img alt, color misuse, missing caption track, unlabeled SVG; most frequent
+  language violations: content outside landmarks (the most common), missing html lang, missing
+  page title, missing main element, text blocks without headings. Ranking only, no per-rule counts;
+  dataset sizes are reported inconsistently in the paper.

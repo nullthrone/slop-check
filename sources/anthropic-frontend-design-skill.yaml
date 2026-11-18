@@ -1,0 +1,26 @@
+id: anthropic-frontend-design-skill
+title: "frontend-design (Agent Skill, SKILL.md)"
+url: https://github.com/anthropics/skills/blob/main/skills/frontend-design/SKILL.md
+publisher: Anthropic
+published: null
+accessed: 2026-11-18
+type: practitioner-skill
+notes: >
+  Vendor skill that steers a model away from "templated defaults" in web design; current main-branch
+  text read (no date in the file). Calibration list of traits that "AI-generated design right now
+  clusters around", among them "a warm cream background (near #F4F1EA) with a high-contrast serif
+  display and a terracotta or warm-clay accent", "a near-black background with a single bright
+  acid-green or vermilion accent", and "the SaaS-card kit: content chopped into identical rounded
+  cards, one border-radius on everything regardless of hierarchy, the same soft grey shadow
+  (rgba(0,0,0,.1)) under each, and gradient washes as decoration". Hero: "a big number with a small
+  label, supporting stats, and a gradient accent is the default treatment". "Many generic designs
+  use numbered markers (01 / 02 / 03), but that's only appropriate if the content actually is a
+  sequence". Motion: "fade-and-slide-up entrances on each section and hover transitions on every
+  card are the generic default and read as AI-generated"; quality floor "visible keyboard focus,
+  reduced motion respected, visually accessible". Content: "Often a design brief may not contain
+  real content, and it's up to you to come up with copy and placeholder content"; asks to "Build
+  with the brief's real content and subject matter throughout". States that every listed trait is
+  legitimate for some briefs ("defaults rather than choices"). The current version no longer names
+  purple gradients or Inter (the blog post anthropic-frontend-design-blog does). Same publisher as
+  anthropic-frontend-design-blog and anthropic-prompting-best-practices: one source with them.
+  Qualitative; no frequencies.

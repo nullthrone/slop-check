@@ -3,7 +3,7 @@
     slopcheck audit [PATH ...|-] [--lang de|en|auto] [--context ...] [--format md|json]
                     [--report-lang en|de] [--fail-on yellow|red] [--catalog PATH]
                     [--llm] [--llm-model MODEL]
-    slopcheck patterns [--modality text|image] [--status ...] [--format md|json] [--catalog PATH]
+    slopcheck patterns [--modality text|image|web] [--status ...] [--format md|json] [--catalog PATH]
     slopcheck version
 
 Exit codes: 0 ok (or verdict below ``--fail-on``), 1 verdict reached ``--fail-on``,
@@ -50,7 +50,7 @@ def build_parser() -> argparse.ArgumentParser:
     audit.set_defaults(func=cmd_audit)
 
     patterns = sub.add_parser("patterns", help="list catalog patterns")
-    patterns.add_argument("--modality", choices=("text", "image"), default=None)
+    patterns.add_argument("--modality", choices=("text", "image", "web"), default=None)
     patterns.add_argument("--status", choices=("core", "candidate", "observation", "fading"), default=None)
     patterns.add_argument("--format", choices=("md", "json"), default="md")
     patterns.add_argument("--catalog", default=None)

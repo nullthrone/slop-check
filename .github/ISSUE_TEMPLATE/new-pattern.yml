@@ -1,5 +1,5 @@
 name: New pattern
-description: Propose a writing or image pattern that language models over-produce.
+description: Propose a writing, image or web page pattern that language models over-produce.
 title: "Pattern: "
 labels: ["pattern-proposal"]
 body:
@@ -23,6 +23,7 @@ body:
       options:
         - text
         - image
+        - web
     validations:
       required: true
   - type: input
@@ -47,7 +48,7 @@ body:
       label: Examples
       description: >
         At least three positive examples per language and at least three near misses (legitimate
-        uses that a naive detector would flag). For images, describe each image in words.
+        uses that a naive detector would flag). For images and web pages, describe each image or page in words.
     validations:
       required: true
   - type: textarea

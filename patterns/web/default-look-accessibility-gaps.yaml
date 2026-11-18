@@ -1,0 +1,101 @@
+id: default-look-accessibility-gaps
+modality: web
+name: Accessibility gaps of the default look
+summary: >
+  The default styling and markup leave the same accessibility holes: light-gray body or helper
+  text on white below 4.5:1, images without alt or with filler alt ("image", "hero image"),
+  icon-only buttons and links without an accessible name, generic names ("Submit", "Click here",
+  "Learn more"), placeholder text in place of form labels, and focus outlines removed
+  (outline-none, focus:outline-none) without a visible replacement. Studies of generated pages
+  report low contrast, unlabeled inputs and missing focus handling in GPT-4o output, focus
+  indicators on 56% of elements under a plain prompt, and generic buttons, vague links and poor alt
+  text as the top semantic violations in 300 generated UIs. The same defects are very common on
+  human-made pages, so the pattern only counts together with other findings.
+category: web-markup
+status: candidate
+detector:
+  kind: llm
+  rubric: >
+    Read the HTML/JSX/CSS. Check five defect types, one hit per type found on the page:
+    (1) Contrast: body, helper or footer text styled with light grays on white or near-white
+    (text-gray-400/text-gray-300/text-slate-400 on bg-white or bg-gray-50, #999 or lighter on
+    #fff), or white text on a light gradient; judge from the class or computed colors, roughly
+    below 4.5:1 for normal text. (2) Images: meaningful img elements (product shots, team photos,
+    diagrams) with missing alt or filler alt (alt="image", alt="hero", alt="placeholder", the file
+    name). (3) Names: icon-only buttons or links (svg or icon font only, e.g. hamburger, close,
+    social icons, carousel arrows) without aria-label, title or visually hidden text; or several
+    links and buttons whose only text is "Learn more", "Read more", "Click here", "Submit". (4)
+    Labels: inputs whose only label is the placeholder (no label element, no aria-label or
+    aria-labelledby). (5) Focus: outline-none, focus:outline-none, outline: 0 or :focus {outline:
+    none} on interactive elements without a focus-visible ring or other visible replacement.
+    Trigger at two or more defect types, and only when at least two other web patterns from this
+    catalog triggered on the same page (web patterns carry no weight, so this co-occurrence is part
+    of the rubric, not of a scored dependency). Does not count: gray text that meets 4.5:1 (e.g.
+    text-gray-600 or darker on white) or large display text that meets 3:1; decorative images with
+    alt="" or aria-hidden; icon buttons with an aria-label or sr-only text; a "Learn more" link
+    with aria-label or aria-describedby giving its target; outline removed but replaced with
+    focus-visible:ring or a box-shadow focus style; floating labels implemented with a real label
+    element. If only the rendered page is available, judge contrast and missing focus rings by
+    tabbing through the page; leave the other checks to the source. Describe the visible pattern
+    only; do not infer how the page was made.
+threshold: {min_count: 2}
+realizations:
+  "*":
+    examples:
+      positive:
+        - "<p class=\"text-gray-400\">Trusted by teams worldwide</p> on bg-white, <button class=\"p-2\"><svg ...hamburger.../></button> with no aria-label, and <input class=\"focus:outline-none\" placeholder=\"Email\"> with no label."
+        - "Every feature card ends in <a href=\"/features\">Learn more</a> with no other context, team photos use alt=\"image\", and the global CSS contains *:focus { outline: none; }."
+        - "Footer row of social icons <a href=\"...\"><i class=\"fab fa-twitter\"></i></a> without accessible names, and footer text in text-slate-400 on bg-slate-50."
+      negative:
+        - "<p class=\"text-gray-600\">...</p> on white (about 7:1), decorative blob <img src=\"blob.svg\" alt=\"\">, and a menu button with <span class=\"sr-only\">Open menu</span>."
+        - "<input class=\"outline-none focus-visible:ring-2 focus-visible:ring-offset-2\" id=\"email\"> with <label for=\"email\">Work email</label>."
+        - "Three 'Read more' links each with aria-label=\"Read more about pricing\" etc., and a single light-gray caption under a chart that is set in large bold type meeting 3:1."
+legitimate_use: >
+  None of these defects is a deliberate design choice; low-contrast text can be acceptable only
+  for disabled controls and purely decorative text. The reason for the threshold and the
+  co-occurrence condition in the rubric is that these gaps are widespread on human-made pages too (WebAIM:
+  low-contrast text on 83.9% of top home pages), so alone they indicate an inaccessible page, not a
+  generic default look.
+fix: >
+  Darken body and helper text to at least 4.5:1, write alt text that says what each meaningful
+  image shows (alt="" for decoration), give every icon-only control an aria-label or visually
+  hidden text, rewrite generic link and button text to name the destination or action, add real
+  label elements, and replace removed outlines with a visible focus-visible style. Verify with an
+  automated checker and a keyboard pass.
+prevention: >
+  Treat accessibility as part of the default style, not an optional pass: pick text colors from
+  tokens that meet 4.5:1 on their background, never remove focus outlines without a visible
+  focus-visible replacement, give every control a visible label or an accessible name that states
+  its action or destination ("Download the report", not "Click here"), and write real alt text.
+  A brand palette that fails contrast must be adjusted for text, not used as is.
+sources:
+  - source: calo-chi-ea-2026-semantic-accessibility
+    locator: "3 Results; Figure 1"
+    note: "541 semantic violations in 300 generated UIs: generic button labels 27%, vague link text 26% ('Read more', 'Learn more'), poor alt text 20% (alt='image'), ARIA 14%, generic form labels 12%; strong model differences."
+  - source: ahmed-2025-chatgpt-accessible-webpage
+    locator: "Results, Tables 1-3"
+    note: "GPT-4o page without accessibility instructions: low contrast on headings, buttons, footer links and hover text (1.71-2.23:1), inputs without labels (placeholders), placeholder or empty alt, not keyboard navigable, modal focus not managed."
+  - source: gurita-vatavu-w4a-2025
+    locator: "Table 4; 4.3.2"
+    note: "Plain prompt: focus indicators on 56% of elements (98% with an accessibility prompt), keyboard access 48%; control UIs 'often relied on browser defaults or omitted focus indicators entirely'."
+  - source: gustafson-codegen-a11y-gaps
+    locator: "findings"
+    note: "GPT-4 form components: required field without a visible label (placeholder only), color-only error states, ARIA added without need."
+  - source: thoughtbot-vibe-coded-fined
+    locator: "audit results"
+    note: "One vibe-coded site: over fifty low-contrast instances (2.77:1, 1.7:1) and twelve label problems."
+  - source: hustletoai-vibe-coded-checklist
+    locator: "accessibility section"
+    note: "'light gray text on white backgrounds is a very common AI-generated default'; no visible focus states; missing alt text."
+  - source: vercel-web-interface-guidelines
+    locator: "Accessibility and Focus rules"
+    note: "Agent-facing: visible focus ring on every focusable element, icon-only buttons named, every control labelled."
+  - source: suh-2025-human-or-llm-accessible-code
+    locator: "RQ1 results"
+    note: "Counter-evidence: naive GPT-4o and Qwen2.5-Coder output had fewer contrast and alt-text violations than human code; Qwen showed FocusRemoveFail issues."
+  - source: webaim-million-2026
+    locator: "Most common WCAG failures"
+    note: "Baseline: low-contrast text 83.9%, missing alt 53.1%, missing labels 51%, empty links 46.3%, empty buttons 30.6% of top home pages."
+related:
+  - {id: non-semantic-page-structure, relation: overlaps}
+  - {id: unconfigured-framework-defaults, relation: overlaps}

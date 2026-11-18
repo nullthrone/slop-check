@@ -17,7 +17,7 @@ Every file is attached to the [latest release]({{ site.releases_url }}/latest).
 | [slop-check-lite.zip]({{ site.download_lite_zip }}) | `SKILL.md` and `references/` at the root, no scripts | Microsoft 365 Copilot Cowork, the Gemini app, Vibe Work |
 | [instructions.md]({{ site.download_instructions }}) | Compact instructions, at most 7,500 characters | Instruction fields of about 8,000 characters |
 | [knowledge.md]({{ site.download_knowledge }}) | Skill instructions and the complete catalog in one file | Knowledge files and project files |
-| [system-prompt.md]({{ site.download_prompt }}) | Skill instructions, report format and a condensed catalog, about 62,000 characters | API system messages and large fields; it does not fit typical instruction fields |
+| [system-prompt.md]({{ site.download_prompt }}) | Skill instructions, report format and a condensed catalog, about 80,000 characters | API system messages and large fields; it does not fit typical instruction fields |
 
 When you unzip `slop-check.zip`, keep the folder name `slop-check`: several runtimes require it to
 match the skill name. The packaged `SKILL.md` contains the core pattern list and the report layout,
@@ -105,6 +105,22 @@ names no way to do it. The guide for each product links its sources.
 | Zed | `slop-check.zip`, unzipped | Yes, through the `skill` tool | `/` or an `@` mention | Unverified | On demand | Zed Agent only. Asks before a skill you installed runs. |
 | JetBrains Junie | `slop-check.zip`, unzipped | Yes | `/slop-check` or `$slop-check` | Yes, as needed; approval not stated | On demand | |
 | Kiro | `slop-check.zip`, unzipped into `~/.kiro/skills/` | Yes | `/slop-check` | Unverified | When the instructions direct it | Does not document `.agents/skills/`. |
+
+## Web page audits
+
+Web patterns judge the look of a page from a screenshot and its markup from the HTML, CSS or
+component source. What a product can take in decides which patterns it can check:
+
+- Screenshots work wherever the conversation accepts images, for example Claude Code (image files
+  it reads), Codex (`codex --image`), Gemini CLI (`read_file`), Vibe Work and Copilot Cowork.
+- Source code works when you paste it or when it is in the workspace of a coding agent.
+- URLs depend on the fetch tool, and many tools do not return the source. Claude Code's WebFetch
+  returns a model summary of the page; fetch the raw HTML with `curl` instead. The Claude API's
+  web fetch tool returns plain text without styling and does not render JavaScript. Vibe Work
+  opens a URL only with web search turned on. Gemini CLI's `web_fetch` takes up to 20 URLs.
+
+The skill lists the patterns it could not check under "Not evaluated" instead of guessing. Web
+patterns carry no score weight yet, so a web audit reports observations only.
 
 ## One folder for several agents
 

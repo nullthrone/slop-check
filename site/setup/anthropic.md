@@ -84,7 +84,7 @@ turned on, each upload is checked before it can run, which usually takes one to 
 The Help Center allows a skill name of up to 64 characters and a description of up to 200.
 Anthropic's newer guide on claude.com gives 1,024 characters for the description, the limit of the
 Agent Skills specification. Until the two agree, treat 200 as the safe limit. The slop-check
-description has 196. The frontmatter may hold only `name`, `description`, `license`,
+description has 195. The frontmatter may hold only `name`, `description`, `license`,
 `compatibility`, `metadata` and `allowed-tools`; any other key makes the upload fail. Users report
 that the upload dialog rejects archives with more than 200 files, and the package stays far below
 that.

@@ -226,5 +226,5 @@ instructions direct it to. Whether it runs the bundled script is not stated.
 Look up the skills directory in the runtime's documentation and unzip the package there. Keep the
 folder name `slop-check`. If the runtime has no skills, use one of the single-file exports described
 under [No skill support]({{ '/setup/no-skill-support/' | relative_url }}). For an instruction field
-of about 8,000 characters that is `instructions.md`; `system-prompt.md` has about 62,000 characters
+of about 8,000 characters that is `instructions.md`; `system-prompt.md` has about 80,000 characters
 and fits API system messages only.

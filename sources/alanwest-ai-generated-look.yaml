@@ -1,0 +1,18 @@
+id: alanwest-ai-generated-look
+title: "How to fix the 'AI-generated' look in your frontend"
+url: https://dev.to/alanwest/how-to-fix-the-ai-generated-look-in-your-frontend-1ahh
+publisher: Alan West (DEV Community)
+authors: [Alan West]
+published: 2026-05-18
+accessed: 2026-11-18
+type: blog
+notes: >
+  Developer post based on a small informal experiment (three code-generation tools asked for a
+  landing page for a fake SaaS product, "Practically identical" output). Describes "Three feature
+  cards in a row with rounded corners and lucide icons. A pricing section with the middle plan
+  slightly elevated. A FAQ accordion at the bottom", the section order "Hero → features grid →
+  social proof → pricing → FAQ → footer" attributed to shadcn/ui examples, Tailwind UI screenshots
+  and Vercel templates, "AI-generated layouts are almost always vertically stacked, full-width
+  sections with centered content", "Centered hero + three cards is the visual equivalent of beige
+  carpet", and "Every AI-generated component has `rounded-2xl shadow-lg p-6` somewhere". Anecdotal,
+  no counts; cites no formal sources.

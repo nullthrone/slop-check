@@ -154,14 +154,17 @@ def test_llm_vision_and_detectorless_patterns_are_skipped(thresholds):
     patterns = [
         make_pattern("llm-one", detector={"kind": "llm", "rubric": "Judge it."}),
         make_pattern("img-one", modality="image", detector={"kind": "vision", "rubric": "Look."}),
+        make_pattern("web-one", modality="web", detector={"kind": "llm", "rubric": "Read the markup."}),
         make_pattern("obs-one", status="observation", detector=None),
         make_pattern("cand-one"),
     ]
     report = check_fixtures(patterns, thresholds)
     assert report.checked == ["cand-one"]
-    assert set(report.skipped) == {"llm-one", "img-one", "obs-one"}
+    assert set(report.skipped) == {"llm-one", "img-one", "web-one", "obs-one"}
     assert report.skipped["obs-one"] == "no detector"
-    assert "Skipped (3):" in report.render()
+    assert report.skipped["web-one"].startswith("modality web, kind llm")
+    assert "LLM gate" not in report.skipped["web-one"]
+    assert "Skipped (4):" in report.render()
 
 
 def test_star_realization_runs_with_language_detection(thresholds):

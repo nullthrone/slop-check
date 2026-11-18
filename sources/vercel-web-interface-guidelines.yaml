@@ -1,0 +1,18 @@
+id: vercel-web-interface-guidelines
+title: "Web Interface Guidelines"
+url: https://vercel.com/design/guidelines
+publisher: Vercel
+published: null
+accessed: 2026-11-18
+type: documentation
+derived_from: []
+notes: >
+  Vendor guideline page with a section "Integrate with Agents": "Use these guidelines with AI
+  coding agents. Audit all generated interfaces", installable as AGENTS.md so that "agents apply
+  these guidelines during generation". Rules used here: "Honor prefers-reduced-motion"; "Never
+  transition: all"; "Use <a> or <Link> for navigation ... Never substitute with <button> or <div>
+  for navigational links"; "Prefer native elements (button, a, label, table), before aria-*";
+  "Hierarchical <h1-h6> & a 'Skip to content' link"; "Every focusable element shows a visible,
+  unobscured focus ring"; "Icon-only buttons are named"; "Every control has a <label>". It states
+  rules, not frequencies; evidence that a framework vendor treats these as things generated
+  interfaces must be audited for.

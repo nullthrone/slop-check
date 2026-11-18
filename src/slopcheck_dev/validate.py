@@ -8,6 +8,7 @@ Per-file checks (limited to changed files with ``--changed-only``):
 - rule 6 unique lexicon terms per language (case-insensitive);
 - rule 7 realization keys;
 - rule 8 file name and directory;
+- rule 9 detector kinds per modality (``web`` patterns are judged, never matched);
 - detector payload present for regex and lexicon detectors.
 
 Cross-file checks (always run on every file):
@@ -274,6 +275,26 @@ def _check_payload(report: Report, rel: str, pattern: dict) -> None:
     for lang, body in sorted(real.items()):
         if not body.get(field_name) and not star:
             emit(rel, f"detector kind {kind}: realizations.{lang} lacks '{field_name}' (so does '*')")
+
+
+# Rule 9: the runtime engine reads text only. A web page reaches it as a screenshot (vision) or as
+# HTML/CSS source that a model reads (llm); regex, lexicon and metric detectors cannot run on it.
+MODALITY_DETECTOR_KINDS = {"web": ("vision", "llm")}
+
+
+def _check_detector_kind(report: Report, rel: str, pattern: dict) -> None:
+    """Rule 9: the detector kind fits the modality."""
+    allowed = MODALITY_DETECTOR_KINDS.get(str(pattern.get("modality")))
+    detector = pattern.get("detector")
+    if allowed is None or not isinstance(detector, dict):
+        return
+    kind = detector.get("kind")
+    if kind not in allowed:
+        report.error(
+            rel,
+            f"rule 9: modality {pattern.get('modality')} allows detector kinds {', '.join(allowed)}, "
+            f"found {kind!r}",
+        )
 
 
 def _check_examples(report: Report, rel: str, pattern: dict, thresholds: dict) -> None:
@@ -559,6 +580,7 @@ def validate(
         _check_realization_keys(report, rel, data)
         _check_terms(report, rel, data)
         _check_payload(report, rel, data)
+        _check_detector_kind(report, rel, data)
         _check_examples(report, rel, data, thresholds)
         timed.append((rel, data))
     report.patterns = len(patterns_ok)

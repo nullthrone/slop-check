@@ -1,0 +1,73 @@
+id: unverified-logo-wall
+modality: web
+name: Placeholder or unverified "trusted by" logo wall
+summary: >
+  A "Trusted by" or "Used by teams at" strip is filled with logos that cannot stand for real
+  customers: placeholder names (Acme), invented wordmarks made of a stock icon plus one generic word,
+  or well-known brand names typed as plain text. The strip is a standard section of the landing-page
+  template, so it gets filled even when no customer exists. Launch checklists for AI-built sites name
+  "logos of companies you never worked with" and "placeholder logos still sitting in the bar" as
+  typical defects and tell owners to search for "Acme".
+category: web-content
+status: candidate
+detector:
+  kind: vision
+  rubric: >
+    Find the logo strip or grid that presents customers, users, partners or press ("Trusted by",
+    "Used by teams at", "Powering", "As seen in", or an unlabelled row of logos under the hero). Flag
+    it when the logos show one of these: (1) placeholder or stock-fictional names (Acme, Globex,
+    Initech, "Company", "Logo", "Brand", "Logoipsum"); (2) invented generic wordmarks: a simple
+    icon glyph (hexagon, bolt, triangle, circle, leaf) next to one generic word (Nexus, Vertex,
+    Quantum, Lumina, Apex, Stellar) in the page's own typeface, often five or six of them in
+    identical weight and gray; (3) names of globally known brands set as plain text in one uniform
+    font instead of their actual marks. Count one hit per page. From source only: the logos are text
+    spans or icon-library glyphs from an array of names rather than image or SVG brand assets; alt
+    texts like "Company 1"; file names like logo-1.svg with generic shapes. Does not count: real brand
+    marks as image assets (even if the relationship cannot be verified from the page; do not guess);
+    integration or compatibility rows ("Works with", "Connects to") that show tools the product
+    integrates with; certification or payment-method badges; a press strip linking to the articles;
+    a template demo that labels its logos as sample. Describe the visible pattern only; do not infer
+    how the page was made.
+threshold: {min_count: 1}
+realizations:
+  "*":
+    examples:
+      positive:
+        - "Under the hero, gray text 'Trusted by innovative teams worldwide' and six gray wordmarks: a hexagon with 'Nexus', a bolt with 'Voltix', a triangle with 'Apex', a circle with 'Lumina', a leaf with 'Verde', a star with 'Stellar', all in the page's sans-serif at the same weight."
+        - "Logo bar on a newly launched app reading 'Used by teams at' followed by the names of five of the world's largest technology companies typed in plain bold text in the page font, no logos and no case studies anywhere on the page."
+        - "A row labelled 'Our clients' showing 'ACME', 'Acme Corp', 'Globex' and 'Company' as light gray text blocks."
+      negative:
+        - "A 'Works with' row showing the official icons of the chat, calendar and storage services the product integrates with, each linking to an integration docs page."
+        - "A strip of distinct customer brand marks as image files, each different in shape and color, with a 'Read the case study' link under two of them."
+        - "A row of payment-method and security-certification badges above the checkout button."
+legitimate_use: >
+  Real customer or press logos used with permission; integration rows; template demos that label
+  their sample logos.
+fix: >
+  Remove every logo that does not stand for a real customer, partner or publication that agreed to
+  appear. If real ones exist, use their actual brand assets with permission and link at least one to
+  a case study or article. If none exist, delete the strip and use the space for something the page
+  can prove: a product screenshot, a concrete example, a founder note.
+prevention: >
+  Never invent company names, wordmarks or logos, and never list real brands the brief does not name
+  as customers. Build a logo strip only from logos the owner supplies, as their real assets; with none,
+  leave the section out and show the product itself in that space. An explicit brand or user wish
+  overrides this only with real material.
+sources:
+  - source: veloxthemes-launch-checklist
+    locator: "1. Content: no made-up claims"
+    note: "'AI fills empty space with \"500+ happy clients\", five-star ratings and logos of companies you never worked with'; checklist: every client logo needs a source in the brief."
+  - source: landingdoctor-ai-landing-pages
+    locator: "3. Hallucinated or borrowed proof; checklist"
+    note: "Tell: 'placeholder logos still sitting in the bar'; checklist item 'All placeholder logos and dummy quotes removed'."
+  - source: revdoku-pre-publish-checklist
+    locator: "2. Rewrite copy that can belong to any product"
+    note: "Lists 'customer logos that you cannot prove' and tells owners to search the project for template leftovers including 'Acme'."
+  - source: impeccable-design-skill
+    locator: "reference/foundations.md; reference/new-work-world.md"
+    note: "Guidance to coding agents: 'never invent a brand mark'; customers are among the commercial claims that 'stay uninventable'."
+related:
+  - {id: invented-testimonials, relation: distinct-from}
+  - {id: unsourced-proof-metrics, relation: distinct-from}
+  - {id: name-dropping, relation: overlaps}
+  - {id: pseudo-text, relation: distinct-from}

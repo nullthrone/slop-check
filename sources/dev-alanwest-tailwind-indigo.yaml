@@ -1,0 +1,15 @@
+id: dev-alanwest-tailwind-indigo
+title: "Why Every AI-Built Website Looks the Same (Blame Tailwind's Indigo-500)"
+url: https://dev.to/alanwest/why-every-ai-built-website-looks-the-same-blame-tailwinds-indigo-500-3h2p
+publisher: Alan West (DEV Community)
+authors: ["Alan West"]
+published: null
+accessed: 2026-11-18
+type: blog
+notes: >
+  Developer blog post ("March 25", edited "March 29", year not shown; it refers to the August 2025 Wathan
+  post, so 2026 at the earliest). Lists the default look: indigo/purple gradients
+  ("from-indigo-500 to-purple-600" as used in Tailwind UI components), "Inter or system-ui font",
+  "Hero section with gradient text", "Rounded corners on everything (border-radius: 0.5rem)", "Subtle box
+  shadows at low opacity", purple CTA button. Argues "The AI isnt designing. Its averaging." Opinion;
+  no data. DEV Community is a multi-author platform.

@@ -98,6 +98,30 @@ def image_pattern() -> dict:
     )
 
 
+def web_patterns() -> list[dict]:
+    """One visual and one source-judged web pattern."""
+    return [
+        make_pattern(
+            "web-one",
+            modality="web",
+            name="Gradient default",
+            category="web-visual-style",
+            detector={"kind": "vision", "rubric": "Look for a purple gradient behind the hero."},
+            realizations={"*": {}},
+            prevention="Take the accent color from the brand.",
+        ),
+        make_pattern(
+            "web-two",
+            modality="web",
+            name="Div soup",
+            category="web-markup",
+            detector={"kind": "llm", "rubric": "Look for pages without landmarks."},
+            realizations={"*": {}},
+            prevention="Use landmarks and a heading outline.",
+        ),
+    ]
+
+
 def strip_none(pattern: dict) -> dict:
     return {k: v for k, v in pattern.items() if v is not None}
 
@@ -294,6 +318,35 @@ def test_prevention_rules_grouped_by_category(thresholds):
     assert "No prevention rules for this modality yet." in none
 
 
+def test_core_catalog_names_web_pattern_ids(thresholds):
+    patterns = [*text_patterns(), image_pattern(), *web_patterns()]
+    region = render_core_catalog(compile_catalog(patterns, None, thresholds, generated_at=STAMP))
+    expected = "Web page patterns: `web-one`, `web-two`."
+    assert region.rstrip("\n").endswith(expected)
+    assert "img-one" not in region
+    without = render_core_catalog(compile_catalog(text_patterns(), None, thresholds, generated_at=STAMP))
+    assert "Web page patterns" not in without
+
+
+def test_web_patterns_reference_and_prevention(thresholds):
+    catalog = compile_catalog([*text_patterns(), *web_patterns()], None, thresholds, generated_at=STAMP)
+    md = render_patterns_markdown(catalog, "web")
+    assert md.startswith("# Web page pattern catalog\n")
+    assert headings(md) == ["web-one", "web-two"]
+    assert "Use this file to audit web pages" in md
+    assert "Detection: Visual judgment: Look for a purple gradient behind the hero." in md
+    assert "Detection: Source judgment (HTML, CSS or component code): Look for pages without landmarks." in md
+    assert "Threshold: min 1 per page." in md
+    assert "Category: Page styling." in md
+    assert "cand-one" not in md  # text patterns stay in text-patterns.md
+    rules = render_prevention_markdown(catalog, "web")
+    assert "Apply these rules while building or styling web pages" in rules
+    assert "`references/web-patterns.md`" in rules
+    groups = re.findall(r"^## (.*)$", rules, flags=re.MULTILINE)
+    assert groups == ["Page styling", "Markup and behaviour"]
+    assert "- Take the accent color from the brand. (`web-one`)" in rules
+
+
 def test_generated_markdown_is_deterministic_and_clean(thresholds):
     first = catalog_with_fading(thresholds)
     catalog_fields = ("effective_status", "weight", "weight_source")
@@ -305,7 +358,7 @@ def test_generated_markdown_is_deterministic_and_clean(thresholds):
     second = compile_catalog(patterns, measurements, thresholds, generated_at=STAMP)
     assert by_id(second)["core-fade"]["effective_status"] == "fading"
     for render in (render_patterns_markdown, render_prevention_markdown):
-        for modality in ("text", "image"):
+        for modality in ("text", "image", "web"):
             a, b = render(first, modality), render(second, modality)
             assert a == b
             assert formatting_problems(a) == []
@@ -331,7 +384,7 @@ def skill_repo(repo):
     """Mini repository with skill files, the engine and text plus image patterns."""
     repo.add_skill()
     repo.add_engine()
-    for pattern in (*text_patterns(), image_pattern()):
+    for pattern in (*text_patterns(), image_pattern(), *web_patterns()):
         repo.write_pattern(strip_none(pattern))
     return repo
 
@@ -354,8 +407,10 @@ def test_build_writes_package_zip_and_export(skill_repo, tmp_path):
             "prevention-procedure.md",
             "text-patterns.md",
             "image-patterns.md",
+            "web-patterns.md",
             "prevention-rules-text.md",
             "prevention-rules-image.md",
+            "prevention-rules-web.md",
         )
     }
     assert (
@@ -379,6 +434,8 @@ def test_build_writes_package_zip_and_export(skill_repo, tmp_path):
         "core-three",
         "obs-one",
         "img-one",
+        "web-one",
+        "web-two",
     }
 
     with zipfile.ZipFile(result.zip_path) as zf:
@@ -403,8 +460,10 @@ def test_build_writes_package_zip_and_export(skill_repo, tmp_path):
         "prevention-procedure.md",
         "text-patterns.md",
         "image-patterns.md",
+        "web-patterns.md",
         "prevention-rules-text.md",
         "prevention-rules-image.md",
+        "prevention-rules-web.md",
     ]
 
 
@@ -608,7 +667,7 @@ def test_cli_build(skill_repo, tmp_path, capsys):
     code = main(["build", "--root", str(skill_repo.root), "--out", str(out), "--version", "2026.12.01"])
     assert code == 0
     stdout = capsys.readouterr().out
-    assert "build: catalog 2026.12.01 (candidate 2, core 3, observation 1)" in stdout
+    assert "build: catalog 2026.12.01 (candidate 4, core 3, observation 1)" in stdout
     assert (out / "slop-check.zip").is_file() and (out / "exports" / "system-prompt.md").is_file()
     assert (out / "slop-check-flat.zip").is_file() and (out / "slop-check-lite.zip").is_file()
     assert (out / "exports" / "instructions.md").is_file()
@@ -705,7 +764,8 @@ def test_build_requires_one_pair_of_core_catalog_markers(skill_repo, tmp_path, b
 
 
 def test_skill_md_size_budget_drops_typical_hits_then_fails(skill_repo, tmp_path, monkeypatch, thresholds):
-    catalog = compile_catalog(text_patterns(), None, thresholds, generated_at=STAMP)
+    patterns = [*text_patterns(), image_pattern(), *web_patterns()]  # the patterns of skill_repo
+    catalog = compile_catalog(patterns, None, thresholds, generated_at=STAMP)
     source = (skill_repo.root / "skill" / "SKILL.md").read_text(encoding="utf-8")
     full = replace_marked_region(source, render_core_catalog(catalog, 2))
     bare = replace_marked_region(source, render_core_catalog(catalog, 0))
@@ -727,6 +787,25 @@ def test_skill_md_size_budget_drops_typical_hits_then_fails(skill_repo, tmp_path
     monkeypatch.setattr(build_mod, "MAX_SKILL_LINES", skill_size(bare)["lines"] - 1)
     with pytest.raises(BuildError, match="lines"):
         package_skill_md(source, catalog)
+
+
+def test_skill_md_character_limit_drops_typical_hits(skill_repo, monkeypatch, thresholds):
+    patterns = [*text_patterns(), image_pattern(), *web_patterns()]
+    catalog = compile_catalog(patterns, None, thresholds, generated_at=STAMP)
+    source = (skill_repo.root / "skill" / "SKILL.md").read_text(encoding="utf-8")
+    full = replace_marked_region(source, render_core_catalog(catalog, 2))
+    monkeypatch.setattr(build_mod, "MAX_SKILL_CHARS", skill_size(full)["chars"] - 1)
+    text, size, warnings = package_skill_md(source, catalog)
+    assert text != full and size["chars"] < skill_size(full)["chars"]
+    assert len(warnings) == 1 and "characters" in warnings[0]
+    bare = replace_marked_region(source, render_core_catalog(catalog, 0))
+    monkeypatch.setattr(build_mod, "MAX_SKILL_CHARS", skill_size(bare)["chars"] - 1)
+    with pytest.raises(BuildError, match="characters with the smallest core catalog"):
+        package_skill_md(source, catalog)
+
+
+def test_real_skill_md_fits_agent_builder_limit():
+    assert build_mod.MAX_SKILL_CHARS < 20000  # Agent Builder: "must be under 20,000 characters"
 
 
 def test_skill_size_estimates_tokens():
@@ -789,6 +868,8 @@ def test_compact_export_lists_the_core_patterns_once(skill_repo, tmp_path):
         assert len(re.findall(rf"^- `{pid}`", export, flags=re.MULTILINE)) == 1
     knowledge = (result.export_path.parent / "knowledge.md").read_text(encoding="utf-8")
     assert "Each line: ID, name, weight" in knowledge  # the package body keeps its inline list
+    assert "## Web page patterns" in export
+    assert re.search(r"^- `web-one` Gradient default \(candidate, weight 0\)\.", export, flags=re.MULTILINE)
 
 
 # ---------------------------------------------------------------------------

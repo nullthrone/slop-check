@@ -1,0 +1,19 @@
+id: anthropic-frontend-design-blog
+title: "Improving frontend design through Skills"
+url: https://www.claude.com/blog/improving-frontend-design-through-skills
+publisher: Anthropic
+authors: ["Prithvi Rajasekaran", "Justin Wei", "Alexander Bricken", "Molly Vorwerck", "Ryan Whitehead"]
+published: 2025-11-12
+accessed: 2026-11-18
+type: blog
+notes: >
+  Vendor engineering blog by the model maker. States that without direction the model "will almost
+  always conform to Inter fonts, purple gradients on white backgrounds, and minimal animations",
+  explains it by "Safe design choices ... dominate web training data", and says this generic aesthetic
+  makes generated interfaces "immediately recognizable". Its sample prompts say "Never use: Inter,
+  Roboto, Open Sans, Lato, default system fonts" and list "Overused font families (Inter, Roboto, Arial,
+  system fonts)" and "Clichéd color schemes (particularly purple gradients on white backgrounds)" under
+  "Avoid generic AI-generated aesthetics". Notes that the model still converges on other common choices
+  ("Space Grotesk, for example"). The same prompt also recommends layered CSS gradients and geometric
+  patterns for backgrounds, so it is not evidence against background decoration. Same publisher as
+  anthropic-frontend-design-skill: the two count as one source.

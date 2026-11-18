@@ -22,7 +22,7 @@ download_lite_zip: https://github.com/nullthrone/slop-check/releases/latest/down
 download_instructions: https://github.com/nullthrone/slop-check/releases/latest/download/instructions.md
 # Full single-file catalog, for knowledge and project files.
 download_knowledge: https://github.com/nullthrone/slop-check/releases/latest/download/knowledge.md
-# About 62,000 characters, for API system messages and large fields.
+# About 80,000 characters, for API system messages and large fields.
 download_prompt: https://github.com/nullthrone/slop-check/releases/latest/download/system-prompt.md
 # Same file as download_knowledge, under the key some pages use.
 knowledge_url: https://github.com/nullthrone/slop-check/releases/latest/download/knowledge.md
