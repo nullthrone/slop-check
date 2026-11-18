@@ -4,11 +4,11 @@ title: slop-check
 eyebrow: Open source · MIT license
 lead: >-
   slop-check finds the style patterns that language models overuse and helps you take them out
-  of a text. It also gives image prompts concrete art direction. It runs as a skill inside your
+  of a text. It also gives image prompts and web pages concrete art direction. It runs as a skill inside your
   AI assistant and as a command-line tool.
 description: >-
   slop-check audits text for style patterns that language models overuse, rewrites them on
-  request and keeps image prompts away from the generic AI look. Setup guides for Claude,
+  request and keeps image prompts and web pages away from the generic AI look. Setup guides for Claude,
   Gemini, ChatGPT, Copilot, Mistral and other assistants.
 ---
 
@@ -57,7 +57,7 @@ applies design rules when it builds a page; these patterns are not scored yet ei
 <article class="card">
 <p class="eyebrow">While writing</p>
 <h3 class="card__title">Prevent</h3>
-<p>Applies the rules while the assistant drafts a text or writes an image prompt.</p>
+<p>Applies the rules while the assistant drafts a text, writes an image prompt or builds a web page.</p>
 <p class="card__footer">Skill</p>
 </article>
 <article class="card">
