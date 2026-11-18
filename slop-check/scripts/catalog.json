@@ -1,6 +1,6 @@
 {
   "catalog_version": "2026.11.18",
-  "generated_at": "2026-11-18T14:22:22Z",
+  "generated_at": "2026-11-18T16:00:25Z",
   "short_text_max_words": 150,
   "verdict_thresholds": {
     "yellow": 2.0,
