@@ -4,12 +4,14 @@ eyebrow: Setup · Claude
 lead: Upload slop-check once to claude.ai for the Claude apps and Claude Code, install it as a skill folder, or use it through the Claude API and the Claude Agent SDK.
 description: Upload the slop-check skill to claude.ai for the Claude apps, Cowork, the Office add-ins and Claude Code, add it to Claude Code as a skill folder, or use it through the Claude API and the Claude Agent SDK.
 aside: setup
-checked: 2026-11-17
+checked: 2026-11-18
 verified:
   - title: Use skills in Claude (Claude Help Center)
     url: https://support.claude.com/en/articles/12512180-use-skills-in-claude
   - title: How to create custom skills (Claude Help Center)
-    url: https://support.claude.com/en/articles/12512198-creating-custom-skills
+    url: https://support.claude.com/en/articles/12512198-how-to-create-custom-skills
+  - title: Create custom skills (Claude.ai Documentation)
+    url: https://claude.com/docs/skills/how-to
   - title: Create and edit files with Claude (Claude Help Center)
     url: https://support.claude.com/en/articles/12111783-create-and-edit-files-with-claude
   - title: Use Claude Cowork on web, desktop, and mobile (Claude Help Center)
@@ -43,7 +45,9 @@ Enterprise plans. Anthropic's platform documentation lists custom skills only fr
 uploading on the Free plan is unverified.
 
 1. Download [slop-check.zip]({{ site.download_zip }}) and keep it zipped. The archive holds the
-   folder `slop-check`, which is the layout claude.ai expects.
+   folder `slop-check`, which is the layout claude.ai expects. claude.ai does not recognize a
+   `SKILL.md` at the root of a zip, so `slop-check-flat.zip` and `slop-check-lite.zip` do not
+   work here.
 2. On a Free, Pro, Max or Ultra plan, open **Settings > Capabilities** and turn on **Code execution
    and file creation**. The updated settings layout calls it **Create and edit files**. On Team
    and Enterprise plans, the organization settings below apply.
@@ -77,8 +81,10 @@ turned on, each upload is checked before it can run, which usually takes one to 
 
 ### Upload rules
 
-claude.ai accepts a skill name of up to 64 characters and a description of up to 200. The
-slop-check description has 195. The frontmatter may hold only `name`, `description`, `license`,
+The Help Center allows a skill name of up to 64 characters and a description of up to 200.
+Anthropic's newer guide on claude.com gives 1,024 characters for the description, the limit of the
+Agent Skills specification. Until the two agree, treat 200 as the safe limit. The slop-check
+description has 195. The frontmatter may hold only `name`, `description`, `license`,
 `compatibility`, `metadata` and `allowed-tools`; any other key makes the upload fail. Users report
 that the upload dialog rejects archives with more than 200 files, and the package stays far below
 that.
@@ -245,9 +251,11 @@ the request: "Use the slop-check skill to audit this text."
 ### The upload fails
 
 The Help Center lists these causes: the archive exceeds the size limit, the folder name does not
-match the skill name, `SKILL.md` is missing, or the name or description contains invalid
-characters. A frontmatter key outside the six allowed ones also makes it fail, and users report
-the same for archives with more than 200 files. The release zip meets all of these rules. If the
-upload of an unmodified `slop-check.zip` fails, compare the message with
-[How to create custom skills](https://support.claude.com/en/articles/12512198-creating-custom-skills)
-and [open an issue]({{ site.repository_url }}/issues).
+match the skill name, `SKILL.md` is missing, or the name or description contains invalid characters.
+A `SKILL.md` at the root of the zip, without the enclosing `slop-check` folder, is not recognized
+either; that is the layout of `slop-check-flat.zip` and `slop-check-lite.zip`. A frontmatter key
+outside the six allowed ones also makes it fail, and users report the same for archives with more
+than 200 files. The release zip meets all of these rules. If the upload of an unmodified
+`slop-check.zip` fails, compare the message with [How to create custom
+skills](https://support.claude.com/en/articles/12512198-how-to-create-custom-skills) and [open an
+issue]({{ site.repository_url }}/issues).

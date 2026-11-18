@@ -4,7 +4,7 @@ eyebrow: Setup · Copilot
 lead: Add slop-check to GitHub Copilot as a skill folder, or upload it to Microsoft 365 Copilot Chat, Copilot Cowork, Agent Builder and Copilot Studio.
 description: Add the slop-check skill folder to GitHub Copilot, or upload the flat or lite package to Microsoft 365 Copilot Chat, Copilot Cowork, Agent Builder and Copilot Studio.
 aside: setup
-checked: 2026-11-17
+checked: 2026-11-18
 verified:
   - title: About agent skills (GitHub Docs)
     url: https://docs.github.com/en/copilot/concepts/agents/about-agent-skills
@@ -17,15 +17,15 @@ verified:
   - title: Copilot code review agent skills generally available (GitHub Changelog, 2026-07-29)
     url: https://github.blog/changelog/2026-07-29-copilot-code-review-agent-skills-and-mcp-now-generally-available/
   - title: Use Agent Skills in VS Code (Visual Studio Code Docs)
-    url: https://code.visualstudio.com/docs/copilot/customization/agent-skills
+    url: https://code.visualstudio.com/docs/agent-customization/agent-skills
   - title: Build skills for Microsoft 365 Copilot Chat (Microsoft Learn)
-    url: https://learn.microsoft.com/en-us/microsoft-365/copilot/extensibility/build-copilot-chat-skills
+    url: https://learn.microsoft.com/en-us/plugins/build-copilot-chat-skills
   - title: Create and edit skills in Copilot (Microsoft Support)
     url: https://support.microsoft.com/en-us/microsoft-365-copilot/create-edit-skills-copilot
   - title: Skills in declarative agents (Microsoft Learn)
     url: https://learn.microsoft.com/en-us/microsoft-365/copilot/extensibility/declarative-agent-skills
   - title: Add skills in Agent Builder (Microsoft Learn)
-    url: https://learn.microsoft.com/en-us/microsoft-365/copilot/extensibility/agent-builder-add-skills
+    url: https://learn.microsoft.com/en-us/plugins/agent-builder-add-skills
   - title: Customize Copilot Cowork (Microsoft Learn)
     url: https://learn.microsoft.com/en-us/copilot/cowork/cowork-customize
   - title: Use Copilot Cowork (Microsoft Learn)
@@ -70,8 +70,10 @@ JetBrains IDEs). IDE support depends on the version you use.
 | Personal (in your home folder) | `~/.copilot/skills/`, `~/.agents/skills/` |
 
 The supported folders depend on the surface. In VS Code they also depend on the agent harness you
-select. With Copilot, VS Code reads `.github/skills/` and `~/.copilot/skills/`. With Claude it reads
-only `.claude/skills/` and `~/.claude/skills/`, and with Codex it reads `.agents/skills/`. The Local
+select. With Copilot, VS Code reads `.github/skills/` and `~/.copilot/skills/`. For Claude the VS
+Code page lists `.claude/skills/` and `~/.claude/skills/`, and for Codex `.agents/skills/` and
+`~/.agents/skills/`; it notes that this table does not list every folder a harness recognizes. The
+experimental Codex integration also discovers workspace skills in `.github/skills/`. The Local
 harness, which Microsoft removes in February 2027, also reads the `.claude` and `.agents` folders.
 The two Copilot folders work in Copilot CLI as well, so the steps below use them.
 
@@ -101,8 +103,9 @@ The Copilot cloud agent reads skills committed to the repository, so commit the 
 `.copilot/skills` in your dotfiles repository. Sessions that run on GitHub Actions do not. Whether
 Python is available there to run the script is unverified; without it the skill audits by reading.
 
-Copilot code review reads skills only from `.github/skills/` and uses one when it is relevant to
-the review.
+For Copilot code review, GitHub's changelog says to add skills under `.github/skills`. It names no
+other folder, so this guide assumes that code review reads only that one; GitHub does not say so
+explicitly. Code review uses a skill when it is relevant to the review.
 
 ## Microsoft 365 Copilot Chat
 
@@ -129,7 +132,8 @@ Declarative agents built in Agent Builder can carry up to 8 skills. A skill keep
 the agent instructions, which are limited to 8,000 characters.
 
 1. Download [slop-check-flat.zip]({{ site.download_flat_zip }}).
-2. In Agent Builder, open the agent's **Configure** tab, expand **Skills** and select **Add**.
+2. In Copilot Chat, select **Agents & Skills** to reach Agent Builder, and open the agent or
+   select **New agent**. On the agent's **Configure** tab, expand **Skills** and select **Add**.
 3. Upload the complete `slop-check-flat.zip`.
 
 Agent Builder accepts zips of up to 50 MB with up to 350 files, 25 MB per file and three folder

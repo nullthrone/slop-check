@@ -4,7 +4,7 @@ eyebrow: Setup · ChatGPT and Codex
 lead: Upload slop-check to ChatGPT where your plan has skills, add the folder to Codex, or attach it through the OpenAI API. Without skills, a ChatGPT project with instructions.md takes its place.
 description: Upload the slop-check skill to ChatGPT, add it to Codex, attach it to the shell tool of the OpenAI API, or set up a ChatGPT project with instructions.md and knowledge.md.
 aside: setup
-checked: 2026-11-17
+checked: 2026-11-18
 verified:
   - title: Build skills (ChatGPT Learn, the target of developers.openai.com/codex/skills)
     url: https://learn.chatgpt.com/docs/build-skills
@@ -43,11 +43,22 @@ package in each place you use.
 
 ## ChatGPT
 
-OpenAI's Help Center describes personal skills as generally available on Business, Enterprise,
+OpenAI's two sources disagree on where you can upload a skill. The Learn page "Build skills" says
+that standalone skills are available in the ChatGPT desktop app, Codex CLI and the IDE extension,
+and that skills bundled in plugins are also available in Chat and Work across ChatGPT on the web,
+desktop and mobile. By that page, the web takes skills only inside plugins. The upload steps below
+come from the Help Center article "Skills in ChatGPT" and from user reports. The Help Center
+refuses automated requests (HTTP 403), so the article could not be read in full for this check,
+and the web upload of a standalone skill is unverified.
+
+The Help Center describes personal skills as generally available on Business, Enterprise,
 Healthcare and Edu. The pricing page also lists skills on Free, Go, Plus and Pro; whether those
-plans can upload their own skills is unverified. In Enterprise and Edu workspaces skills are off by
-default, and the admin permission **Enable skill uploading** controls uploads. If your plan has no
-skills, use the [project fallback](#chatgpt-without-skills) below.
+plans can upload their own skills is unverified. Whether skills are on by default in Enterprise is
+unclear: the Help Center described them as off by default in Enterprise and Edu workspaces, while
+search excerpts seen on 2026-11-18 say they have been on by default for Enterprise since
+2026-07-23. Neither statement could be checked on the page itself, so ask your admin. The admin
+permission **Enable skill uploading** controls uploads. If your plan has no skills, or the upload
+option is missing, use the [project fallback](#chatgpt-without-skills) below.
 
 1. Download [slop-check.zip]({{ site.download_zip }}). OpenAI does not document the upload format
    for ChatGPT. A zip with one top-level folder, the layout of this archive, has worked in user
@@ -151,7 +162,8 @@ hosted container.
 
 1. Download [slop-check.zip]({{ site.download_zip }}). The API takes a `.zip` that contains a
    single top-level folder, which is the layout of this archive. A skill may hold up to 500 files
-   and exactly one `SKILL.md`; the zip may be up to 50 MB.
+   and exactly one `SKILL.md`; the zip may be up to 50 MB, and each file up to 25 MB
+   uncompressed.
 2. Upload it to `/v1/skills`. The response contains the skill ID:
 
    ```sh

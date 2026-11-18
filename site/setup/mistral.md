@@ -4,18 +4,22 @@ eyebrow: Setup · Vibe
 lead: Le Chat is now Vibe. Vibe Work builds skills from a form, and the Vibe CLI reads the skill folder. Both follow the Agent Skills standard.
 description: Create the slop-check skill in Vibe Work (formerly Le Chat) from the lite package files, or add the skill folder to the Vibe CLI.
 aside: setup
-checked: 2026-11-17
+checked: 2026-11-18
 verified:
   - title: Le Chat is now Vibe (Mistral Help Center)
     url: https://help.mistral.ai/en/articles/682992-le-chat-is-now-vibe
   - title: Choose between Chat, Work and Code (Mistral Docs)
     url: https://docs.mistral.ai/vibe/choose-chat-work-code
-  - title: Skills (Mistral Docs, Vibe Work)
-    url: https://docs.mistral.ai/vibe/work/skills
+  - title: Reuse work with Skills (Mistral Docs, Vibe Work)
+    url: https://docs.mistral.ai/vibe/work/web/skills
+  - title: Work on Desktop (Mistral Docs, Vibe Work)
+    url: https://docs.mistral.ai/vibe/work/desktop
   - title: Create your first Skill (Mistral Docs, Vibe Work)
     url: https://docs.mistral.ai/getting-started/quickstarts/vibe-work/create-first-skill
   - title: Create a skill (Mistral Docs, Studio)
     url: https://docs.mistral.ai/studio/prompts-and-skills/create-a-skill
+  - title: Skills endpoints, beta (Mistral API reference)
+    url: https://docs.mistral.ai/api/endpoint/beta/skills
   - title: Custom instructions (Mistral Docs)
     url: https://docs.mistral.ai/le-chat/knowledge-integrations/custom-instructions
   - title: Skills (Mistral Docs, Vibe CLI)
@@ -35,7 +39,8 @@ The Vibe CLI, the command-line side of Vibe Code, reads skill folders from disk.
 Vibe Work runs at [chat.mistral.ai/work](https://chat.mistral.ai/work). You need a Mistral account
 with access to Work; workspace admins can force skills on or off. Work creates a skill from a form
 with a title, a description, the `SKILL.md` text and optional supporting files. Mistral documents
-no import of a finished skill package, so you copy the parts in.
+no import of a finished skill package in Work, so you copy the parts in. The only programmatic
+route is the Studio Skills API, described [below](#studio-skills-api).
 
 Mistral does not document whether skill scripts run in Work. Work has a Code Interpreter sandbox on
 paid plans, but nothing says that it runs a skill's scripts. Do not attach the `scripts` folder.
@@ -65,12 +70,28 @@ Work offers two other ways to create a skill. In a conversation, ask Work to "sa
 Skill". In Mistral Studio, create the skill under **Skills** with **New Skill**, then select
 **Publish to Vibe** to make it available in Work.
 
+### Studio Skills API
+
+The Studio Skills API, marked beta, creates a skill without the form. `POST /v2/skills` takes a
+`name` and a `definition` with the `description`, the instruction `body` and the supporting files as
+`assets`, each entry keyed by its file path and holding `textContent` and `isExecutable`. The API
+takes JSON rather than a zip, so a script has to read `SKILL.md` and the files of the `references`
+folder and send their text. Then open the skill in Studio and select **Publish to Vibe**; the API
+reference lists no endpoint for that step.
+
+### Work on Desktop
+
+Vibe Work also runs in a desktop app for macOS and Windows. It shares the web app's skills, so a
+skill you create on the web is available there. The desktop app can also add local folders as
+context: in the prompt composer, select **+**, then **Folders** and **Add a folder**. This gives
+Work access to your documents; it does not install a skill.
+
 ### Call the skill
 
 Work activates the skill when a request matches its description. To call it yourself, type `/`
-and pick the skill, type `/slop-check`, or name the skill in your prompt. Mistral's getting-started
-page shows `@` for the same purpose. Whether Work derives the command name from the title is not
-documented; if `/slop-check` does not match, use the `/` picker.
+and pick the skill, type `/slop-check`, or name the skill in your prompt. Whether Work derives the
+command name from the title is not documented; if `/slop-check` does not match, use the `/`
+picker.
 
 ## Vibe Chat and custom instructions
 
@@ -98,7 +119,8 @@ description. It reads project skills only in folders you have marked as trusted.
    `~/.agents/skills/` works too. For one project, use `.vibe/skills/` or `.agents/skills/` in the
    project folder.
 3. Start Vibe and call the skill with `/slop-check`, followed by your request, for example
-   `/slop-check audit README.md`.
+   `/slop-check audit README.md`. A running session picks up a skill you add; if it does not
+   appear, run `/reload`.
 
 The skill runs its script through Vibe's Bash tool. The default agent, `accept-edits`, still asks
 before it runs a shell command; read-only commands such as `ls` and `cat` run without asking.
