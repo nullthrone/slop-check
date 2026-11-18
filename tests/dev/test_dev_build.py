@@ -348,7 +348,7 @@ def test_generated_markdown_is_deterministic_and_clean(thresholds):
     second = compile_catalog(patterns, measurements, thresholds, generated_at=STAMP)
     assert by_id(second)["core-fade"]["effective_status"] == "fading"
     for render in (render_patterns_markdown, render_prevention_markdown):
-        for modality in ("text", "image"):
+        for modality in ("text", "image", "web"):
             a, b = render(first, modality), render(second, modality)
             assert a == b
             assert formatting_problems(a) == []

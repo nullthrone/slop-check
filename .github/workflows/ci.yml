@@ -64,7 +64,7 @@ jobs:
             reason=
             if [ "$mode" != 100644 ]; then
               reason="mode $mode (symlink, submodule or executable)"
-            elif ! [[ $path =~ ^(patterns/(text|image|code|audio|video)/[a-z0-9]+(-[a-z0-9]+)*\.yaml|sources/[a-z0-9]+(-[a-z0-9]+)*\.yaml|docs/[a-z0-9]+(-[a-z0-9]+)*\.md)$ ]]; then
+            elif ! [[ $path =~ ^(patterns/(text|image|web|code|audio|video)/[a-z0-9]+(-[a-z0-9]+)*\.yaml|sources/[a-z0-9]+(-[a-z0-9]+)*\.yaml|docs/[a-z0-9]+(-[a-z0-9]+)*\.md)$ ]]; then
               reason="not patterns/<modality>/<id>.yaml, sources/<id>.yaml or docs/<name>.md"
             elif [ "$(git cat-file -s "$object")" -gt 262144 ]; then
               reason="larger than 256 KiB"
