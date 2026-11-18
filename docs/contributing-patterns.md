@@ -44,7 +44,7 @@ file name and never changes after the merge. New patterns declare `status: obser
 
 ```yaml
 id: antithesis-template
-modality: text                    # text | image (code, audio, video are reserved)
+modality: text                    # text | image | web (code, audio, video are reserved)
 name: Antithesis template
 summary: >
   Negative parallelism that simulates depth by first denying a claim nobody made and then
@@ -120,7 +120,15 @@ related:
 | `lexicon` | `realizations.<lang>.terms`, whole words, case-insensitive, `term*` matches a prefix | The signal is a set of words or fixed phrases. |
 | `metric` | `detector.metric` and `detector.params` | The signal is a rate or a distribution, such as dash density or sentence-length variation. Only the metrics listed in the schema exist; a new metric needs an engine change. |
 | `llm` | `detector.rubric`, plus the examples | Recognizing the pattern needs judgment about meaning. Write the rubric in English and say what does not count. |
-| `vision` | `detector.rubric` | Image patterns. Describe what to look at and what does not count. |
+| `vision` | `detector.rubric` | Image patterns, and web patterns judged from the rendered page or a screenshot. Describe what to look at and what does not count. |
+
+Web patterns (`patterns/web/`) describe the design and markup of a page, never its copy (copy is
+text). They use `vision` for what a screenshot shows and `llm` for what only the HTML, CSS or
+component source shows; validation rejects other kinds for them (rule 9). A `vision` rubric for a
+web pattern should also say how the pattern shows in the source, so a host that has only the code
+can still judge it. Their examples are word descriptions of a page or section, or short source
+snippets. Like image patterns, they are not measured yet: the gates skip them and they carry
+weight 0.
 
 Keep regular expressions precise. A pattern that fires on ordinary sentences fails the gate
 on the human corpus. Write quoted strings in YAML single quotes, accept the typographic

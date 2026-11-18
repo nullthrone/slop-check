@@ -20,7 +20,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-MODALITIES = ("text", "image", "code", "audio", "video")
+MODALITIES = ("text", "image", "web", "code", "audio", "video")
 PATTERN_DIR = "patterns"
 SOURCE_DIR = "sources"
 THRESHOLDS_FILE = Path("governance") / "thresholds.yaml"

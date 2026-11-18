@@ -29,7 +29,9 @@ use these patterns too, and edited model output can be free of them.
 
 The catalog covers English and German text. For images, slop-check supplies prevention rules
 that turn a request into an art-directed prompt. Image patterns can be audited as observations;
-they carry no score weight until an image benchmark exists.
+they carry no score weight until an image benchmark exists. Web pages get the same treatment:
+the skill checks a screenshot or the page source for the stock look of generated landing pages and
+applies design rules when it builds a page; these patterns are not scored yet either.
 
 </div>
 </section>

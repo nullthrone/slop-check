@@ -1,6 +1,6 @@
 ---
 name: slop-check
-description: Use to check, rewrite or write German or English text so it does not read like generic AI output (AI slop), and to art-direct images away from the default AI look. Reports style, never authorship.
+description: Use to check, rewrite or write German or English text so it avoids generic AI output (AI slop), and to check or design images and web pages away from the default AI look. Never judges authorship.
 license: MIT
 ---
 
@@ -12,8 +12,8 @@ a script or a reference file is unavailable, never mention that, and never repla
 with a free-form review.
 
 The skill finds the stock phrases, templates and formatting habits that make German or English
-text read like default machine output, and it helps remove or avoid them. For images it gives
-rules against the default AI look. An audit names each finding by pattern ID, quotes it verbatim,
+text read like default machine output, and it helps remove or avoid them. For images and web
+pages it gives rules against the default AI look. An audit names each finding by pattern ID, quotes it verbatim,
 checks the pattern's threshold and adds its weight to a score that maps to GREEN, YELLOW or RED.
 
 ## Ground rules
@@ -34,7 +34,8 @@ checks the pattern's threshold and adds its weight to a score that maps to GREEN
    or an unclear request. An audit reports and leaves the text as it is.
 2. Rewrite when the user asks to rewrite, clean up, fix, tighten or "de-slop". "Check and fix"
    means audit first, then rewrite.
-3. Prevent when you write the text or create the image yourself. No report unless asked.
+3. Prevent when you write the text, create the image or build the web page yourself. No report
+   unless asked.
 4. Batch for several files, a folder, exit codes or a pipeline.
 
 ## Audit
@@ -156,7 +157,9 @@ Open `references/prevention-procedure.md` (`prevention-procedure.md`). For text,
 pattern in "Core patterns" without it, and fix every scored finding of a self-audit before you
 answer. For images, write an art-directed prompt with `references/prevention-rules-image.md`
 (`prevention-rules-image.md`): concrete subject and action, setting, light, lens and camera
-position, composition, palette and texture. An explicit wish of the user beats a prevention rule.
+position, composition, palette and texture. For a web page you build or style, apply
+`references/prevention-rules-web.md` (`prevention-rules-web.md`) to layout, type, color,
+components, imagery and markup. An explicit wish of the user beats a prevention rule.
 
 ## Batch
 
@@ -172,6 +175,16 @@ Open `references/image-patterns.md` (`image-patterns.md`) and apply its rubrics 
 Describe what is visible and where, and never say how the image was made. Image patterns carry
 no weight yet: list them as observations and note that image patterns are not scored. If you
 cannot see images, list them as not evaluated and say why.
+
+## Web pages
+
+For a URL, a screenshot or the HTML, CSS or component code of a page, open
+`references/web-patterns.md` (`web-patterns.md`) and follow section 10 of
+`references/audit-procedure.md`. Judge the rendered page (or a screenshot) and the source,
+whichever you have; fetch a URL only with a tool this environment provides. Describe what is
+visible or written, never how the page was made. Web patterns carry no weight yet: list them as
+observations with the note that web patterns are not scored. Audit the page text separately as
+text. Patterns you cannot check without the screenshot or the source go under Not evaluated.
 
 ## Language and context
 

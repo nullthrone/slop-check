@@ -87,6 +87,25 @@ steel grey, neutral white balance. 35 mm documentary photograph, fine grain.
 An explicit wish beats a rule. If you ask for a centered product shot or a glossy 3D style, you get
 it.
 
+### Web pages
+
+Give the skill a screenshot, the HTML, CSS or component code, or a URL if your assistant can open
+web pages. It checks layout, styling, components, trust content and markup against the web
+patterns and reports what it finds as observations, since web patterns carry no score weight yet.
+The copy on the page is a separate text audit.
+
+```text
+Check this landing page for the generic AI look. Screenshot and index.html attached.
+```
+
+When the assistant builds a page itself, prevent mode applies the web rules: sections chosen for
+the page's purpose, a type pairing and palette taken from the brand, no invented testimonials,
+logos or user numbers, and semantic, working markup.
+
+```text
+Build a landing page for our bike repair shop. Apply slop-check while you build it.
+```
+
 ### Batch
 
 Batch runs the bundled script over several files or a whole folder. It returns one report per

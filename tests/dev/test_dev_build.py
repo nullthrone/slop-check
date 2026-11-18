@@ -98,6 +98,30 @@ def image_pattern() -> dict:
     )
 
 
+def web_patterns() -> list[dict]:
+    """One visual and one source-judged web pattern."""
+    return [
+        make_pattern(
+            "web-one",
+            modality="web",
+            name="Gradient default",
+            category="web-visual-style",
+            detector={"kind": "vision", "rubric": "Look for a purple gradient behind the hero."},
+            realizations={"*": {}},
+            prevention="Take the accent color from the brand.",
+        ),
+        make_pattern(
+            "web-two",
+            modality="web",
+            name="Div soup",
+            category="web-markup",
+            detector={"kind": "llm", "rubric": "Look for pages without landmarks."},
+            realizations={"*": {}},
+            prevention="Use landmarks and a heading outline.",
+        ),
+    ]
+
+
 def strip_none(pattern: dict) -> dict:
     return {k: v for k, v in pattern.items() if v is not None}
 
@@ -294,6 +318,25 @@ def test_prevention_rules_grouped_by_category(thresholds):
     assert "No prevention rules for this modality yet." in none
 
 
+def test_web_patterns_reference_and_prevention(thresholds):
+    catalog = compile_catalog([*text_patterns(), *web_patterns()], None, thresholds, generated_at=STAMP)
+    md = render_patterns_markdown(catalog, "web")
+    assert md.startswith("# Web page pattern catalog\n")
+    assert headings(md) == ["web-one", "web-two"]
+    assert "Use this file to audit web pages" in md
+    assert "Detection: Visual judgment: Look for a purple gradient behind the hero." in md
+    assert "Detection: Source judgment (HTML, CSS or component code): Look for pages without landmarks." in md
+    assert "Threshold: min 1 per page." in md
+    assert "Category: Page styling." in md
+    assert "cand-one" not in md  # text patterns stay in text-patterns.md
+    rules = render_prevention_markdown(catalog, "web")
+    assert "Apply these rules while building or styling web pages" in rules
+    assert "`references/web-patterns.md`" in rules
+    groups = re.findall(r"^## (.*)$", rules, flags=re.MULTILINE)
+    assert groups == ["Page styling", "Markup and behaviour"]
+    assert "- Take the accent color from the brand. (`web-one`)" in rules
+
+
 def test_generated_markdown_is_deterministic_and_clean(thresholds):
     first = catalog_with_fading(thresholds)
     catalog_fields = ("effective_status", "weight", "weight_source")
@@ -331,7 +374,7 @@ def skill_repo(repo):
     """Mini repository with skill files, the engine and text plus image patterns."""
     repo.add_skill()
     repo.add_engine()
-    for pattern in (*text_patterns(), image_pattern()):
+    for pattern in (*text_patterns(), image_pattern(), *web_patterns()):
         repo.write_pattern(strip_none(pattern))
     return repo
 
@@ -354,8 +397,10 @@ def test_build_writes_package_zip_and_export(skill_repo, tmp_path):
             "prevention-procedure.md",
             "text-patterns.md",
             "image-patterns.md",
+            "web-patterns.md",
             "prevention-rules-text.md",
             "prevention-rules-image.md",
+            "prevention-rules-web.md",
         )
     }
     assert (
@@ -379,6 +424,8 @@ def test_build_writes_package_zip_and_export(skill_repo, tmp_path):
         "core-three",
         "obs-one",
         "img-one",
+        "web-one",
+        "web-two",
     }
 
     with zipfile.ZipFile(result.zip_path) as zf:
@@ -403,8 +450,10 @@ def test_build_writes_package_zip_and_export(skill_repo, tmp_path):
         "prevention-procedure.md",
         "text-patterns.md",
         "image-patterns.md",
+        "web-patterns.md",
         "prevention-rules-text.md",
         "prevention-rules-image.md",
+        "prevention-rules-web.md",
     ]
 
 
@@ -608,7 +657,7 @@ def test_cli_build(skill_repo, tmp_path, capsys):
     code = main(["build", "--root", str(skill_repo.root), "--out", str(out), "--version", "2026.12.01"])
     assert code == 0
     stdout = capsys.readouterr().out
-    assert "build: catalog 2026.12.01 (candidate 2, core 3, observation 1)" in stdout
+    assert "build: catalog 2026.12.01 (candidate 4, core 3, observation 1)" in stdout
     assert (out / "slop-check.zip").is_file() and (out / "exports" / "system-prompt.md").is_file()
     assert (out / "slop-check-flat.zip").is_file() and (out / "slop-check-lite.zip").is_file()
     assert (out / "exports" / "instructions.md").is_file()
@@ -789,6 +838,8 @@ def test_compact_export_lists_the_core_patterns_once(skill_repo, tmp_path):
         assert len(re.findall(rf"^- `{pid}`", export, flags=re.MULTILINE)) == 1
     knowledge = (result.export_path.parent / "knowledge.md").read_text(encoding="utf-8")
     assert "Each line: ID, name, weight" in knowledge  # the package body keeps its inline list
+    assert "## Web page patterns" in export
+    assert re.search(r"^- `web-one` Gradient default \(candidate, weight 0\)\.", export, flags=re.MULTILINE)
 
 
 # ---------------------------------------------------------------------------
