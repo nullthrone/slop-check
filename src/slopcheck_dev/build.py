@@ -786,8 +786,8 @@ def render_core_catalog(catalog: dict, examples: int = CORE_EXAMPLE_LEVELS[0]) -
     """The region between the core-catalog markers of the packaged SKILL.md.
 
     One line per scored (core) text pattern: ID, name, weight, how to find hits, threshold and
-    ``examples`` typical hits per language; then the verdict thresholds' source and one line
-    of candidate (and fading) IDs.
+    ``examples`` typical hits per language; then the verdict thresholds' source, one line
+    of candidate (and fading) IDs and one line of web page pattern IDs.
     """
     core, candidates, fading = _groups(catalog, "text")
     vt = catalog.get("verdict_thresholds") or {}
@@ -826,6 +826,13 @@ def render_core_catalog(catalog: dict, examples: int = CORE_EXAMPLE_LEVELS[0]) -
     if tail:
         lines.append("")
         lines.extend(tail)
+    web_core, web_candidates, _web_fading = _groups(catalog, "web")
+    web_ids = [p["id"] for p in web_core + web_candidates]
+    if web_ids:
+        # SKILL.md must suffice when a host never opens references/: name the web patterns at least.
+        lines.append("")
+        listed = ", ".join(f"`{i}`" for i in web_ids)
+        lines.append(f"Web page patterns (weight 0, observations only): {listed}.")
     return "\n".join(lines) + "\n"
 
 

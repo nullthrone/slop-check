@@ -318,6 +318,16 @@ def test_prevention_rules_grouped_by_category(thresholds):
     assert "No prevention rules for this modality yet." in none
 
 
+def test_core_catalog_names_web_pattern_ids(thresholds):
+    patterns = [*text_patterns(), image_pattern(), *web_patterns()]
+    region = render_core_catalog(compile_catalog(patterns, None, thresholds, generated_at=STAMP))
+    expected = "Web page patterns (weight 0, observations only): `web-one`, `web-two`."
+    assert region.rstrip("\n").endswith(expected)
+    assert "img-one" not in region
+    without = render_core_catalog(compile_catalog(text_patterns(), None, thresholds, generated_at=STAMP))
+    assert "Web page patterns" not in without
+
+
 def test_web_patterns_reference_and_prevention(thresholds):
     catalog = compile_catalog([*text_patterns(), *web_patterns()], None, thresholds, generated_at=STAMP)
     md = render_patterns_markdown(catalog, "web")
@@ -754,7 +764,8 @@ def test_build_requires_one_pair_of_core_catalog_markers(skill_repo, tmp_path, b
 
 
 def test_skill_md_size_budget_drops_typical_hits_then_fails(skill_repo, tmp_path, monkeypatch, thresholds):
-    catalog = compile_catalog(text_patterns(), None, thresholds, generated_at=STAMP)
+    patterns = [*text_patterns(), image_pattern(), *web_patterns()]  # the patterns of skill_repo
+    catalog = compile_catalog(patterns, None, thresholds, generated_at=STAMP)
     source = (skill_repo.root / "skill" / "SKILL.md").read_text(encoding="utf-8")
     full = replace_marked_region(source, render_core_catalog(catalog, 2))
     bare = replace_marked_region(source, render_core_catalog(catalog, 0))

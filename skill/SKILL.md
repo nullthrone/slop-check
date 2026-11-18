@@ -179,12 +179,11 @@ cannot see images, list them as not evaluated and say why.
 ## Web pages
 
 For a URL, a screenshot or the HTML, CSS or component code of a page, open
-`references/web-patterns.md` (`web-patterns.md`) and follow section 10 of
-`references/audit-procedure.md`. Judge the rendered page (or a screenshot) and the source,
-whichever you have; fetch a URL only with a tool this environment provides. Describe what is
-visible or written, never how the page was made. Web patterns carry no weight yet: list them as
-observations with the note that web patterns are not scored. Audit the page text separately as
-text. Patterns you cannot check without the screenshot or the source go under Not evaluated.
+`references/web-patterns.md` (`web-patterns.md`) and section 10 of
+`references/audit-procedure.md`; without them, judge the web pattern IDs under "Core patterns"
+by their names. Fetch a URL only with a tool you have. Describe what is visible or in the source,
+never how the page was made. List hits as observations, with the note that web patterns are not
+scored, and patterns you could not check under Not evaluated. Page text is a separate text audit.
 
 ## Language and context
 
