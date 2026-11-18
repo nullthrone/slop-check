@@ -6,8 +6,10 @@ Output below ``--out`` (default ``dist``)::
     slop-check/references/*.md                   copied from skill/references/*.md
     slop-check/references/text-patterns.md       generated
     slop-check/references/image-patterns.md      generated
+    slop-check/references/web-patterns.md        generated
     slop-check/references/prevention-rules-text.md   generated
     slop-check/references/prevention-rules-image.md  generated
+    slop-check/references/prevention-rules-web.md    generated
     slop-check/scripts/catalog.json              generated (section 4.4)
     slop-check/scripts/slopcheck/                copy of src/slopcheck
     slop-check/scripts/slopcheck.py              shim: python scripts/slopcheck.py audit ...
@@ -23,7 +25,8 @@ The region of ``SKILL.md`` between ``<!-- slopcheck:core-catalog -->`` and
 the verdict thresholds and the candidate IDs, so that ``SKILL.md`` alone suffices for a correct
 audit in runtimes that neither run scripts nor open ``references/`` (section 7). The packaged
 ``SKILL.md`` must stay within the Agent Skills size guidance (``MAX_SKILL_LINES``,
-``MAX_SKILL_TOKENS``); the build shows fewer typical hits per pattern when the full list does
+``MAX_SKILL_TOKENS``) and below Agent Builder's character limit (``MAX_SKILL_CHARS``); the
+build shows fewer typical hits per pattern when the full list does
 not fit, and fails when even the list without typical hits does not fit.
 
 The lite archive serves hosts that cannot run scripts or accept at most 20 files besides
@@ -76,9 +79,12 @@ HANDWRITTEN_REFERENCES = (
 GENERATED_REFERENCES = (
     "text-patterns.md",
     "image-patterns.md",
+    "web-patterns.md",
     "prevention-rules-text.md",
     "prevention-rules-image.md",
+    "prevention-rules-web.md",
 )
+MODALITY_REFERENCES = ("text", "image", "web")  # modalities with a pattern and a prevention reference
 CATEGORY_ORDER = (
     "rhetoric",
     "lexical",
@@ -94,6 +100,11 @@ CATEGORY_ORDER = (
     "visual-artifact",
     "visual-subject",
     "visual-typography",
+    "web-layout",
+    "web-component",
+    "web-visual-style",
+    "web-content",
+    "web-markup",
 )
 CATEGORY_LABELS = {
     "rhetoric": "Rhetoric",
@@ -110,6 +121,22 @@ CATEGORY_LABELS = {
     "visual-artifact": "Visual artifacts",
     "visual-subject": "Subjects",
     "visual-typography": "Lettering in images",
+    "web-layout": "Page layout",
+    "web-component": "Components",
+    "web-visual-style": "Page styling",
+    "web-content": "Page content and trust signals",
+    "web-markup": "Markup and behaviour",
+}
+CATALOG_TITLES = {
+    "text": "Text pattern catalog",
+    "image": "Image pattern catalog",
+    "web": "Web page pattern catalog",
+}
+THRESHOLD_UNITS = {"image": "per image", "web": "per page"}  # replaces "per text" in threshold sentences
+PREVENTION_TASKS = {
+    "text": "writing text",
+    "image": "writing image prompts or generating images",
+    "web": "building or styling web pages (layout, components, styling, content and markup)",
 }
 POSITION_WORDS = {
     "any": "anywhere in the text",
@@ -302,6 +329,8 @@ def detection_words(pattern: dict) -> str:
             text += f" Paragraphs with fewer than {min_sentences} sentences break a run."
             used += ("min_sentences_per_paragraph",)
         return text + _params_text(params, used)
+    if kind == "llm" and pattern.get("modality") == "web":
+        return "Source judgment (HTML, CSS or component code): " + _clean(detector.get("rubric"))
     if kind == "llm":
         rubric = _clean(detector.get("rubric"))
         return f"Judgment call; the script evaluates it only with a language model. Rubric: {rubric}"
@@ -315,11 +344,11 @@ def threshold_words(pattern: dict) -> list[str]:
     from slopcheck.thresholds import describe_rule as _describe
     from slopcheck.thresholds import effective_rule
 
-    image = pattern.get("modality", "text") == "image"
+    per_unit = THRESHOLD_UNITS.get(pattern.get("modality", "text"))
 
     def describe_rule(rule: dict, requires: dict | None, unit: str) -> str:
         text = _describe(rule, requires, unit)
-        return text.replace("per text", "per image") if image else text
+        return text.replace("per text", per_unit) if per_unit else text
 
     threshold = pattern.get("threshold") or {}
     unit = _metric_unit(pattern)
@@ -445,12 +474,25 @@ Image patterns have no measured benchmark yet. Unless a pattern below is marked 
 weight 0 and belongs under observations in the report.
 """
 
+WEB_INTRO = """\
+Use this file to audit web pages: a screenshot or the rendered page, the HTML, CSS or component
+source, or both. Apply each rubric under Detection to the whole page, and check the legitimate use
+before you report a finding. "Visual judgment" rubrics need the rendered page or a screenshot; when
+you have only the source, apply what the rubric says about the source or list the pattern as not
+evaluated. "Source judgment" rubrics need the source. The page text is a text audit of its own with
+`references/text-patterns.md`. Describe what is visible or written in the source; never state how a
+page was made.
+
+Web patterns have no measured benchmark yet. Unless a pattern below is marked core, it carries
+weight 0 and belongs under observations in the report.
+"""
+
 
 def render_patterns_markdown(catalog: dict, modality: str = "text") -> str:
-    """``references/text-patterns.md`` or ``references/image-patterns.md``."""
+    """``references/<modality>-patterns.md`` for text, image and web."""
     core, candidates, fading = _groups(catalog, modality)
     vt = catalog.get("verdict_thresholds") or {}
-    title = "Text pattern catalog" if modality == "text" else "Image pattern catalog"
+    title = CATALOG_TITLES.get(modality, f"{modality.capitalize()} pattern catalog")
     lines = [f"# {title}", ""]
     lines.append(
         f"Generated by `slopcheck-dev build` from catalog version {catalog.get('catalog_version')}. "
@@ -464,6 +506,8 @@ def render_patterns_markdown(catalog: dict, modality: str = "text") -> str:
             vt_source=vt.get("source", "provisional"),
             short_max=catalog.get("short_text_max_words", 150),
         )
+    elif modality == "web":
+        intro = WEB_INTRO
     else:
         intro = IMAGE_INTRO
     lines.extend(intro.rstrip("\n").split("\n"))
@@ -501,7 +545,7 @@ def render_prevention_markdown(catalog: dict, modality: str = "text") -> str:
         and p.get("effective_status") in ("core", "candidate")
         and _clean(p.get("prevention"))
     ]
-    kind_word = "writing text" if modality == "text" else "writing image prompts or generating images"
+    kind_word = PREVENTION_TASKS.get(modality, PREVENTION_TASKS["image"])
     lines = [f"# Prevention rules ({modality})", ""]
     lines.append(
         f"Generated by `slopcheck-dev build` from catalog version {catalog.get('catalog_version')}. "
@@ -558,6 +602,9 @@ CORE_CATALOG_END = "<!-- /slopcheck:core-catalog -->"
 #: Agent Skills guidance for SKILL.md: under about 500 lines and about 5,000 tokens.
 MAX_SKILL_LINES = 500
 MAX_SKILL_TOKENS = 5000
+# Microsoft Agent Builder: skill instructions "must be under 20,000 characters" (Microsoft 365 Copilot
+# Chat recommends the same). The margin absorbs host-side counting differences.
+MAX_SKILL_CHARS = 19500
 #: Typical hits per language in the core catalog, richest first; the build takes the first
 #: level that keeps SKILL.md within the limits above.
 CORE_EXAMPLE_LEVELS = (2, 1, 0)
@@ -743,8 +790,8 @@ def render_core_catalog(catalog: dict, examples: int = CORE_EXAMPLE_LEVELS[0]) -
     """The region between the core-catalog markers of the packaged SKILL.md.
 
     One line per scored (core) text pattern: ID, name, weight, how to find hits, threshold and
-    ``examples`` typical hits per language; then the verdict thresholds' source and one line
-    of candidate (and fading) IDs.
+    ``examples`` typical hits per language; then the verdict thresholds' source, one line
+    of candidate (and fading) IDs and one line of web page pattern IDs.
     """
     core, candidates, fading = _groups(catalog, "text")
     vt = catalog.get("verdict_thresholds") or {}
@@ -783,6 +830,13 @@ def render_core_catalog(catalog: dict, examples: int = CORE_EXAMPLE_LEVELS[0]) -
     if tail:
         lines.append("")
         lines.extend(tail)
+    web_core, web_candidates, _web_fading = _groups(catalog, "web")
+    web_ids = [p["id"] for p in web_core + web_candidates]
+    if web_ids:
+        # SKILL.md must suffice when a host never opens references/: name the web patterns at least.
+        lines.append("")
+        listed = ", ".join(f"`{i}`" for i in web_ids)
+        lines.append(f"Web page patterns: {listed}.")
     return "\n".join(lines) + "\n"
 
 
@@ -806,25 +860,28 @@ def package_skill_md(skill_text: str, catalog: dict) -> tuple[str, dict, list[st
     """Packaged SKILL.md text, its size (:func:`skill_size`) and warnings.
 
     Takes the richest level of ``CORE_EXAMPLE_LEVELS`` whose result stays within
-    ``MAX_SKILL_LINES`` and ``MAX_SKILL_TOKENS`` (a warning names a reduced level). Raises
+    ``MAX_SKILL_LINES``, ``MAX_SKILL_TOKENS`` and ``MAX_SKILL_CHARS`` (a warning names a reduced
+    level). Raises
     :class:`BuildError` when even the catalog without typical hits does not fit.
     """
     size: dict = {}
     for level in CORE_EXAMPLE_LEVELS:
         text = replace_marked_region(skill_text, render_core_catalog(catalog, level))
         size = skill_size(text)
-        if size["lines"] <= MAX_SKILL_LINES and size["tokens"] <= MAX_SKILL_TOKENS:
+        fits = size["lines"] <= MAX_SKILL_LINES and size["tokens"] <= MAX_SKILL_TOKENS
+        if fits and size["chars"] <= MAX_SKILL_CHARS:
             warnings = []
             if level != CORE_EXAMPLE_LEVELS[0]:
                 warnings.append(
                     f"SKILL.md: the core catalog shows {level} typical hits per language instead of "
-                    f"{CORE_EXAMPLE_LEVELS[0]} to stay within {MAX_SKILL_LINES} lines and about "
-                    f"{MAX_SKILL_TOKENS} tokens"
+                    f"{CORE_EXAMPLE_LEVELS[0]} to stay within {MAX_SKILL_LINES} lines, about "
+                    f"{MAX_SKILL_TOKENS} tokens and {MAX_SKILL_CHARS} characters"
                 )
             return text, size, warnings
     raise BuildError(
-        f"packaged SKILL.md has {size['lines']} lines and about {size['tokens']} tokens with the smallest "
-        f"core catalog; the limits are {MAX_SKILL_LINES} lines and about {MAX_SKILL_TOKENS} tokens "
+        f"packaged SKILL.md has {size['lines']} lines, about {size['tokens']} tokens and {size['chars']} "
+        f"characters with the smallest core catalog; the limits are {MAX_SKILL_LINES} lines, about "
+        f"{MAX_SKILL_TOKENS} tokens and {MAX_SKILL_CHARS} characters "
         "(section 7). Shorten the hand-written text of skill/SKILL.md."
     )
 
@@ -1080,7 +1137,7 @@ def _compact_examples(pattern: dict, per_language: int = 1) -> str:
 
 
 def render_compact_catalog(catalog: dict) -> str:
-    """Condensed catalog for the compact export: scored core, then candidates, both modalities."""
+    """Condensed catalog for the compact export: scored core, then candidates, every modality."""
     vt = catalog.get("verdict_thresholds") or {}
     lines = [
         "# File: references/text-patterns.md (condensed)",
@@ -1090,11 +1147,12 @@ def render_compact_catalog(catalog: dict) -> str:
         "Candidates carry weight 0 and are reported as observations.",
         "",
     ]
-    for modality in ("text", "image"):
+    for modality in MODALITY_REFERENCES:
         core, candidates, _fading = _groups(catalog, modality)
         if not core and not candidates:
             continue
-        lines.extend([f"## {modality.capitalize()} patterns", ""])
+        heading = "Web page" if modality == "web" else modality.capitalize()
+        lines.extend([f"## {heading} patterns", ""])
         for pattern in core + candidates:
             status = pattern.get("effective_status")
             weight = _num(pattern.get("weight") or 0) if status == "core" else "0"
@@ -1342,12 +1400,10 @@ def build(
     if missing:
         warnings.append("hand-written references missing: " + ", ".join(missing))
 
-    generated = {
-        "text-patterns.md": render_patterns_markdown(catalog, "text"),
-        "image-patterns.md": render_patterns_markdown(catalog, "image"),
-        "prevention-rules-text.md": render_prevention_markdown(catalog, "text"),
-        "prevention-rules-image.md": render_prevention_markdown(catalog, "image"),
-    }
+    generated = {f"{m}-patterns.md": render_patterns_markdown(catalog, m) for m in MODALITY_REFERENCES}
+    generated.update(
+        {f"prevention-rules-{m}.md": render_prevention_markdown(catalog, m) for m in MODALITY_REFERENCES}
+    )
     for name, text in generated.items():
         _write(refs_dir / name, text)
         warnings.extend(f"references/{name}: {p}" for p in formatting_problems(text))
@@ -1404,7 +1460,8 @@ def run(args) -> int:
         size = result.skill_size
         print(
             f"build: SKILL.md {size['lines']} lines, {size['chars']} characters, about {size['tokens']} "
-            f"tokens (limits {MAX_SKILL_LINES} lines, about {MAX_SKILL_TOKENS} tokens)"
+            f"tokens (limits {MAX_SKILL_LINES} lines, {MAX_SKILL_CHARS} characters, "
+            f"about {MAX_SKILL_TOKENS} tokens)"
         )
     print(
         f"build: wrote {result.package_dir}, {result.zip_path}, {result.flat_zip_path}, "

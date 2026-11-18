@@ -1,0 +1,83 @@
+id: unfilled-page-placeholders
+modality: web
+name: Unfilled page placeholders and template defaults
+summary: >
+  A published page still carries the stand-in content of its template or generator: lorem ipsum,
+  "Your Company" or Acme as the site's own name, example.com addresses and 555 phone numbers, links
+  and social icons that point to "#", a copyright line with an old year, and the framework's default
+  page title or favicon. The generator fills every slot with plausible dummy values when the brief has
+  none, and nobody replaces them. Launch checklists for AI-built sites list these strings and dead
+  links as typical leftovers, a scan of 100 showcase sites from AI site builders found default favicons
+  and stale copyright years, and Anthropic's design skill notes that the model often has to come up
+  with "placeholder content" itself.
+category: web-content
+status: candidate
+detector:
+  kind: llm
+  rubric: >
+    Read the page's HTML/JSX source together with its visible text. Strong signals (any one is a hit):
+    lorem ipsum or other filler Latin; the site's own name or contact block given as "Your Company",
+    "Company Name", "Brand", "Acme" or a bracketed slot; staff or author names "John Doe" / "Jane
+    Doe"; contact data on reserved or dummy values (an example.com or example.org address,
+    "you@company.com", "info@businessname.com", a 555 phone number, "123 Main Street"); visible
+    "TODO", "Coming soon" or "Image here" text in a shipped section. Weak signals (two different
+    kinds together are a hit): three or more navigation, footer or call-to-action links with
+    href="#" or "javascript:void(0)" and no click handler; social icons linking to "#" or to a
+    platform's home page instead of a profile; a hard-coded copyright year earlier than the previous
+    calendar year; a <title> left at a framework or tool default ("Vite + React", "React App",
+    "Create Next App") or the same title on every page; the framework's default favicon (for example
+    vite.svg, the default favicon.ico of a starter); image sources pointing to placeholder services
+    or files (placeholder.svg, placehold.co, via.placeholder.com). Count one hit per page. Does not
+    count: documentation, tutorials or code samples that use example.com or 555 numbers as examples
+    on purpose; template or theme demo pages sold or shown as templates; form placeholder attributes
+    ("you@example.com" as the hint inside an email input); href="#" on elements that are wired to a
+    script (tabs, menus), which is a markup issue, not a placeholder; a copyright year from the
+    previous year early in the new year; a page explicitly labelled as a prototype or staging build.
+    The bracketed-slot form inside prose is the text pattern unfilled-placeholder; this pattern is the
+    page-level template residue. Describe the visible pattern only; do not infer how the page was made.
+threshold: {min_count: 1}
+realizations:
+  "*":
+    examples:
+      positive:
+        - "<footer><p>&copy; 2024 Your Company. All rights reserved.</p><a href=\"#\"><TwitterIcon/></a><a href=\"#\"><LinkedinIcon/></a></footer>"
+        - "<section id=\"about\"><h2>Our Story</h2><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.</p></section>"
+        - "<head><title>Vite + React + TS</title><link rel=\"icon\" href=\"/vite.svg\"></head> ... <a href=\"mailto:hello@example.com\">hello@example.com</a> <a href=\"tel:5550123\">(555) 012-3456</a>"
+      negative:
+        - "<input type=\"email\" placeholder=\"you@example.com\" required>  (hint text inside a form field)"
+        - "<pre><code>curl https://api.example.com/v1/items</code></pre>  (documentation sample)"
+        - "<button aria-expanded=\"false\" onclick=\"toggleMenu()\">Menu</button> with a footer '&copy; 2026 Harbour Bakery, 12 Quay Street'"
+legitimate_use: >
+  Documentation and tutorials that use reserved example values; template demos; pages explicitly
+  marked as drafts, prototypes or staging builds that are not presented as the live site.
+fix: >
+  Search the project for lorem, ipsum, TODO, example.com, 555, "Your Company", Acme, placeholder image
+  services and href="#", and replace each with the real value or remove the element. Point social
+  icons at real profiles or delete them. Generate the copyright year at build time or render time. Set
+  a unique <title> and meta description per page and replace the default favicon with the site's own
+  icon.
+prevention: >
+  Fill every content slot with the owner's real name, contact details, links and copy, or leave the
+  slot out. Where something is genuinely missing, ask for it or mark it as an explicit open item in
+  the handover, never as a plausible dummy value. Before delivering, set the real page title, favicon
+  and current copyright year, and give every link a real destination.
+sources:
+  - source: veloxthemes-launch-checklist
+    locator: "1. Content: no made-up claims; 5. SEO and share previews"
+    note: "'Placeholder text like lorem ipsum, \"Your Company\" or example.com, and buttons that go nowhere, often survive until launch'; checks for 'links set to \"#\"'; AI 'often leaves every page with the same title, or the framework's default'."
+  - source: revdoku-pre-publish-checklist
+    locator: "2. Rewrite copy; 4. Test links, forms and buttons; 6. Set titles, descriptions and share previews"
+    note: "Search for 'lorem, ipsum, TODO, example.com, Your Company and Acme', placeholder phone numbers and copyright lines with the wrong year or name; fix 'every button that points to #'; 'The favicon is yours, not the framework default'; unique <title> per page."
+  - source: kaplich-100-vibe-coded-sites
+    locator: "findings on favicons and copyright dates"
+    note: "Scan of 100 showcase sites from AI site builders: default or placeholder favicons and outdated copyright years, especially on uncustomized sites (qualitative, own tool)."
+  - source: webzum-why-ai-websites-look-same
+    locator: "section on signs of generic generation"
+    note: "Template copy 'Welcome to [Business Name] ...'; invented contact data such as '555-' phone numbers and 'info@businessname.com' emails."
+  - source: anthropic-frontend-design-skill
+    locator: "paragraph on written content"
+    note: "'Often a design brief may not contain real content, and it's up to you to come up with copy and placeholder content.' Explains why dummy content enters generated pages."
+related:
+  - {id: unfilled-placeholder, relation: overlaps}
+  - {id: invented-testimonials, relation: overlaps}
+  - {id: unverified-logo-wall, relation: overlaps}

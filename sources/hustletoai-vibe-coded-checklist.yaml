@@ -1,0 +1,19 @@
+id: hustletoai-vibe-coded-checklist
+title: "How to Tell If a Website Was Vibe Coded (A Developer's Checklist)"
+url: https://www.hustletoai.com/blog/programming-7/how-to-tell-if-a-website-is-vibe-coded-120
+publisher: HustleToAI
+authors: [aliakram]
+published: 2026-08-15
+accessed: 2026-11-18
+type: blog
+derived_from: []
+notes: >
+  Practitioner checklist, no measurement. Markers relevant here: "Buttons that visually exist but
+  have no onClick handler wired up, or link to #"; "Forms that submit but show no success/error
+  state"; "Divs and spans with onClick handlers instead of semantic <button> elements"; "it's common
+  to find several <h1> tags on one page"; "No visible focus states when tabbing through the page";
+  "Poor color contrast, especially light gray text on white backgrounds is a very common
+  AI-generated default"; "Missing alt text on images"; "glowing hover effects on nearly every
+  element"; dark backgrounds "developers ... describe ... as gray-900"; Tailwind's default rounded
+  corners are weak evidence because hand-built sites use them too. Explicit caveats: "None of these
+  alone is proof", "The tell isn't AI use it's absence of review". Low-authority blog.

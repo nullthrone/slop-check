@@ -1,0 +1,73 @@
+id: generic-icon-treatment
+modality: web
+name: Emoji or stock line icons as feature marks
+summary: >
+  Features, headings and list items are marked with emoji standing in for icons, or with icons from one
+  stock line set (Lucide, Heroicons and similar) placed in small tinted rounded squares or circles, where
+  the icons add no information the text does not already give. Three independent design skills ban emoji
+  as icons and flag the icon-in-a-tinted-tile, an operator blog names "Lucide React icons (always)", and
+  OpenAI's guide lists ornamental icons and icon rows as failures.
+category: web-visual-style
+status: candidate
+detector:
+  kind: vision
+  rubric: >
+    Look at icons next to features, benefits, headings, list items and steps. Flag the page when (a)
+    emoji (rocket, sparkles, lightning, check mark, fire and similar) serve as feature or heading icons,
+    or (b) most such items carry a generic outline icon of uniform stroke from one stock set, set inside a
+    small tinted square or circle in the accent color, and the icons are generic metaphors (lightning for
+    speed, shield for security, sparkles for AI) rather than depictions of the product. Count one hit per
+    page. When only the source is available, signs are imports from lucide-react, @heroicons/react or
+    react-icons used for feature lists, wrappers like 'rounded-lg bg-indigo-100 p-3' or 'rounded-full
+    bg-primary/10' around a single icon, or emoji characters inside headings and list items. Does not count:
+    icons in navigation, toolbars, forms and controls where they label actions; a custom-drawn icon set made
+    for the brand; product screenshots or illustrations; a single emoji in informal copy (covered by text
+    patterns); status icons that carry meaning (error, success). Describe the visible pattern only; do not
+    infer how the page was made.
+threshold: {min_count: 1}
+realizations:
+  "*":
+    examples:
+      positive:
+        - "Feature list of a payroll tool where each item starts with an emoji: a rocket for 'Fast setup', a lock for 'Secure', sparkles for 'AI-powered'."
+        - "Benefits section where each benefit has a thin-outline lightning, shield or chart icon inside a pale violet rounded square, all icons from the same stroke set."
+        - "Section headings prefixed with a fire emoji, a light-bulb emoji and a star emoji, used as large decorative icons."
+      negative:
+        - "Application toolbar with outline icons for bold, italic, link and undo, each with a tooltip."
+        - "Feature section where each item shows a cropped screenshot of the real product screen it describes."
+        - "Brand site with a commissioned set of hand-drawn icons that match its illustrations and packaging."
+legitimate_use: >
+  Icons that label controls and navigation; a consistent library icon set used functionally in an
+  application; a custom icon family drawn for the brand; emoji in a deliberately playful or chat-based
+  brand voice where the brief asks for them.
+fix: >
+  Remove emoji used as icons. Replace generic icon tiles with something specific: a screenshot or crop of
+  the feature, a small diagram, a number or fact, or plain typography. Where icons stay, set them inline
+  with the text in the text color, without tinted tiles.
+prevention: >
+  Mark features with evidence from the product or subject (a screenshot crop, a real photo, a concrete
+  figure) or with typography alone. Use icons only where they help scanning or label an action, from one
+  set used consistently, inline and in the text color. Do not use emoji as icons and do not put stock
+  line icons in tinted squares or circles as decoration.
+sources:
+  - source: impeccable-design-skill
+    locator: "craft-floor.md 'Surface habits'; rule registry, icon-tile-stack"
+    note: "Refuses 'Unicode glyphs or emoji standing in for an icon system'; 'A small rounded-square icon container above a heading is the universal AI feature-card template'."
+  - source: hallmark-design-skill
+    locator: "references/gates.md gate 30a, gate 3, F5; imagery.md 'Icons'"
+    note: "'An emoji standing in for an icon'; 'an icon in a rounded tile above a heading'; 'an icon in a coloured coin'."
+  - source: ux-skill-anti-slop-ban-list
+    locator: "ban list entry on emoji"
+    note: "'Section headings prefixed with sparkles, fire, rocket'; emoji as functional icons banned."
+  - source: saastr-gemini-3-vibe-coded-look
+    locator: "list of telltale signs"
+    note: "'Those same Lucide React icons'; 'Lucide React icons (always)'."
+  - source: openai-frontends-gpt-5-4
+    locator: "Practical tips quickstart; embedded frontend skill, 'Apps'"
+    note: "'Avoid ... icon rows'; 'ornamental icons that do not improve scanning'."
+  - source: fountain-institute-ai-ui-tells
+    locator: "tell 3, Emojis everywhere"
+    note: "Emoji used as visual punctuation instead of real icons or design decisions."
+related:
+  - {id: emoji-decoration, relation: overlaps}
+  - {id: uniform-surface-kit, relation: distinct-from}

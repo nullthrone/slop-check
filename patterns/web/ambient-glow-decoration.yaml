@@ -1,0 +1,82 @@
+id: ambient-glow-decoration
+modality: web
+name: Ambient glow and glass decoration
+summary: >
+  Surfaces are dressed with atmosphere that carries no content: blurred colored orbs or aurora/mesh
+  blobs behind the hero, a radial color halo or spotlight, zero-offset colored glow shadows on cards and
+  buttons, frosted-glass panels (backdrop blur over translucent white or black), and faint grid or dot
+  overlays. Three independent design skills implement checks for these as generated-UI signatures and
+  practitioners list glowing heroes and blobs among the tells; a Reddit-mining study found blob and glass
+  complaints rare, so the pattern is judged on visible density, not on any single effect.
+category: web-visual-style
+status: candidate
+detector:
+  kind: vision
+  rubric: >
+    Look at backgrounds and surfaces, mainly the hero and the cards. Count these decoration types: (a)
+    blurred colored orbs, blobs, aurora or mesh gradients floating behind content; (b) a saturated radial
+    halo or spotlight glow behind a headline, product shot or section; (c) colored glow shadows around
+    cards, buttons or text (light spreading evenly on all sides, often on a dark page); (d) frosted-glass
+    panels, translucent white or black with a blur of what lies behind, used on cards or sections rather
+    than only on a sticky navigation or overlay; (e) a faint square grid or dot-matrix pattern laid over
+    the background for texture. Flag the page when two or more types appear, or when one type repeats on
+    most sections or cards. Count one hit per page. When only the source is available, signs are
+    blur-3xl or filter: blur() on absolutely positioned colored divs, radial-gradient(... transparent)
+    backgrounds, box-shadow with 0 0 offsets and a colored rgba value, backdrop-blur or backdrop-filter:
+    blur() with bg-white/10 or rgba(255,255,255,0.1), and background-image built from repeating
+    linear-gradient lines or radial-gradient dots at a fixed pixel size. Does not count: one blurred
+    sticky header or a modal backdrop; real photography of light, sky or space; a texture that belongs to
+    the subject (a blueprint grid on an architecture page, graph paper on a math tool, a map); a canvas or
+    editor whose grid is functional; a single restrained glow on one focal element in a design that is
+    otherwise flat. Describe the visible pattern only; do not infer how the page was made.
+threshold: {min_count: 1}
+realizations:
+  "*":
+    examples:
+      positive:
+        - "Dark hero for a project-management app with two large blurred purple and cyan orbs behind the headline, a faint square grid over the whole background, and feature cards glowing with a soft violet halo."
+        - "Light landing page where every card is a frosted translucent white panel with a blur of pastel blobs behind it, and the signup button has a colored glow on all sides."
+        - "Hero section with a bright radial spotlight of teal light behind the headline fading into black, and a dot-matrix pattern covering the rest of the page."
+      negative:
+        - "A sticky navigation bar with a light backdrop blur over the scrolling content; all other surfaces are solid."
+        - "Page for an observatory whose hero is a real long-exposure photograph of the night sky."
+        - "Architecture studio site using a blueprint grid as the background of its project drawings section, matching its plan drawings."
+legitimate_use: >
+  Atmospheric or immersive briefs (music, events, games, night-time venues) where light is the concept,
+  a brand that owns a glow or glass look, operating-system style materials used for overlays and
+  navigation, and functional grids on canvas, map or measurement surfaces. The pattern is stacking these
+  effects as default decoration.
+fix: >
+  Remove the orbs, halos, glow shadows and background overlays; give surfaces a solid or subtly tinted
+  background. Express elevation with lightness steps or a neutral shadow with offset and blur, and keep
+  blur only where content scrolls under an overlay. If the page needs a visual, show the product, the
+  place or the people instead.
+prevention: >
+  Build surfaces from solid fills, tinted wells, hairlines and neutral offset shadows. Let the hero carry
+  something specific to the subject: the product in use, a photograph, a diagram, a real texture from
+  the subject's world. Use at most one atmospheric effect, and only when the brief is about light or mood;
+  never add blurred orbs, aurora blobs, colored glow shadows, glass cards or grid and dot overlays as
+  filler.
+sources:
+  - source: impeccable-design-skill
+    locator: "rule registry: dark-glow, radial-halo, radial-spotlight-glow, codex-grid-background; craft-floor.md 'Surface habits'"
+    note: "Glow shadows are 'the default cool look of AI-generated UIs'; radial spotlight is 'a reflex AI decoration'; decorative grid backgrounds are 'a recurring generated-UI signature'; refuses 'Glass and blur as decoration'."
+  - source: hallmark-design-skill
+    locator: "references/gates.md gate 29; scripts/sloplint.mjs check29Glow"
+    note: "'aurora or mesh blobs behind text, floating blurred orbs, a chromatic radial halo or spotlight, a coloured zero-offset glow shadow on dark'; linter flags glass panels."
+  - source: ux-skill-anti-slop-ban-list
+    locator: "ban list entries on glass and glow"
+    note: "'backdrop-filter: blur(20px); background: rgba(255,255,255,0.1) on every panel'; 'box-shadow: 0 0 80px rgba(120, 80, 200, 0.6) on every card'."
+  - source: fountain-institute-ai-ui-tells
+    locator: "tell 2, Dark mode glow-up"
+    note: "'Radial gradients behind hero content appear constantly in gaming, crypto, and AI product sites'."
+  - source: aismells
+    locator: "entry 'Gradient Fog' (aismells.pages.dev/gradient-fog.html)"
+    note: "'The default AI landing page weather system: cyan, violet, and blue blur blobs drifting behind a product that otherwise has no visual idea.'"
+  - source: jcarterjohnson-vibecoded-design-tells
+    locator: "README findings"
+    note: "Counter-evidence: glassmorphism and aurora gradients rank near the bottom of Reddit complaints; 'Mesh / blob / aurora backgrounds' rejected as a keyword artifact."
+related:
+  - {id: purple-blue-gradient-default, relation: overlaps}
+  - {id: uniform-surface-kit, relation: distinct-from}
+  - {id: ai-imagery-cliche, relation: distinct-from}

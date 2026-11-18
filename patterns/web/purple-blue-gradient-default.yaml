@@ -1,0 +1,81 @@
+id: purple-blue-gradient-default
+modality: web
+name: Purple-blue gradient default
+summary: >
+  The page's accent is an indigo, violet or purple hue, usually as a gradient into blue, pink or cyan,
+  spread across hero background, primary buttons and highlights, while nothing in the brand or subject
+  calls for it. Both major model vendors name purple gradients on white as a default their models fall
+  into, three independent design skills ban it as the most recognizable tell, and the Tailwind CSS creator
+  joked that his indigo-500 buttons turned generated interfaces indigo.
+category: web-visual-style
+status: candidate
+detector:
+  kind: vision
+  rubric: >
+    Look at the hero, the primary call-to-action buttons and the main accent color across the page.
+    Flag the page when its dominant accent is indigo, violet or purple and appears as a gradient into
+    blue, pink, magenta or cyan (or as flat indigo/violet buttons and highlights paired with such a
+    gradient elsewhere) on the hero background, buttons, badges or section washes, and the page shows no
+    brand reason for the hue (no logo, product or imagery in that hue). Count one hit per page. When only
+    the source is available, signs are Tailwind pairs such as from-indigo-500/from-purple-600/from-violet-500
+    with to-blue-*/to-pink-*/to-cyan-*, bg-indigo-500 or bg-violet-600 on the main button, or CSS like
+    linear-gradient(135deg, #667eea, #764ba2). Does not count: a logo or product whose own color is
+    purple and is used consistently; a single small gradient detail on an otherwise neutral page; purple
+    used as one of several data colors in a chart; photographs or illustrations whose real colors are
+    purple (a lavender field, stage lighting); a brief that asks for purple. Describe the visible pattern
+    only; do not infer how the page was made.
+threshold: {min_count: 1}
+realizations:
+  "*":
+    examples:
+      positive:
+        - "Landing page for an accounting tool: the hero background runs from indigo at the top left to blue at the bottom right, the 'Get started' button repeats the same indigo-to-violet gradient, and the logo is a plain black wordmark."
+        - "White page whose only color is a violet-to-pink gradient used on the headline highlight, the primary buttons, the pricing badge and a band behind the closing call to action; the product is a bakery ordering app."
+        - "Dark-mode page for a note-taking app with purple-to-cyan gradient borders on the hero card and a purple-to-blue glow behind the signup button."
+      negative:
+        - "Page for a company whose purple logo and purple product packaging appear in photos; the purple accent repeats that brand color on buttons."
+        - "Neutral black-and-white page with one small gradient line under the navigation."
+        - "Analytics dashboard where purple is one of six series colors in the charts and the interface chrome is grey."
+legitimate_use: >
+  A brand that owns a purple or violet identity, a subject with real purple color (a lavender farm, a
+  night-club event), or a brief that asks for a gradient look. The pattern is purple-blue appearing as
+  the default when the brand and subject give no color.
+fix: >
+  Remove the gradient from the hero, buttons and highlights. Pick one accent from the brand, the product
+  or the subject's photography, use it flat on the primary action, and keep the rest of the page in
+  neutrals derived from that accent. Re-check contrast after the change.
+prevention: >
+  Choose the palette from the brand, the product or the subject's world before writing any CSS: name one
+  accent hue and its source ("the deep green of the shop's awning"), two or three neutrals, and where the
+  accent may appear (primary action, links, one highlight). Use flat color for actions. Do not use
+  indigo, violet or purple, or gradients from purple into blue, pink or cyan, unless the brand or the
+  brief asks for them.
+sources:
+  - source: anthropic-frontend-design-blog
+    locator: "introduction; frontend_aesthetics prompt, 'Avoid generic AI-generated aesthetics'"
+    note: "Model 'will almost always conform to Inter fonts, purple gradients on white backgrounds'; lists 'Clichéd color schemes (particularly purple gradients on white backgrounds)'."
+  - source: openai-frontends-gpt-5-4
+    locator: "Practical tips quickstart, sample prompt"
+    note: "'avoid purple-on-white defaults'; 'No purple bias or dark mode bias'."
+  - source: impeccable-design-skill
+    locator: "rule registry, ai-color-palette"
+    note: "'Purple/violet gradients and cyan-on-dark are the most recognizable tells of AI-generated UIs'."
+  - source: hallmark-design-skill
+    locator: "references/gates.md gate 2a; SKILL.md rule 11; direction.md 'Spent'"
+    note: "Floor gate: 'Purple-to-blue, purple-to-pink or cyan-on-dark gradient anywhere'; listed among 'What every model ships'."
+  - source: ux-skill-anti-slop-ban-list
+    locator: "ban list entry on the purple gradient"
+    note: "'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' named 'the AI default purple gradient'."
+  - source: saastr-gemini-3-vibe-coded-look
+    locator: "list of telltale signs"
+    note: "'That particular shade of purple-blue'; 'Specific color palettes (purple, blue, teal gradients)'."
+  - source: fountain-institute-ai-ui-tells
+    locator: "tell 4, Purple gradients"
+    note: "Purple-to-blue as the default gradient for software hero sections."
+  - source: aibase-wathan-indigo-apology
+    locator: "lead and quoted post"
+    note: "Tailwind CSS creator, 2025-08-07: apologizes for 'bg-indigo-500' buttons 'which caused every AI-generated interface on Earth to turn indigo' (relayed quote)."
+related:
+  - {id: gradient-headline-text, relation: overlaps}
+  - {id: stock-tasteful-palette, relation: distinct-from}
+  - {id: default-color-grade, relation: distinct-from}

@@ -1,0 +1,73 @@
+id: stat-banner-row
+modality: web
+name: Stat banner row
+summary: >
+  A band or hero block of three to six big numbers with small labels ("10K+ users", "99.9%
+  uptime", "24/7 support", "4.9 stars") is inserted as a stock section, usually evenly spaced in a
+  row or in matching tiles, often with a gradient accent on the figures. It fills space and signals
+  scale without connecting to the page's argument. A DOM-based corpus scan of Show HN landing pages
+  scored "Stat banner rows" as one of its layout patterns, and Anthropic's design skill calls "a big
+  number with a small label, supporting stats, and a gradient accent" "the default treatment".
+category: web-component
+status: candidate
+detector:
+  kind: vision
+  rubric: >
+    Flag a section (one hit per page is enough) that consists mainly of 3 to 6 sibling items laid
+    out in a row or equal tiles, where each item's dominant element is a short large figure (a
+    number with K, M, %, x, +, a star rating or "24/7", at most about ten characters, clearly
+    larger than the body text) with a small label under or beside it, and where the figures are not
+    explained, sourced or connected to a nearby argument. Also flag a hero whose main element is
+    one big number with a small label plus a row of supporting stats. Round or maximal figures
+    (10K+, 99.9%, 100+, 24/7, 5x) strengthen the hit. In the HTML/CSS source: a flex or grid
+    container (grid-cols-2 md:grid-cols-4) of 3-6 children, each with a text-4xl/5xl font-bold
+    element holding a short numeric string and a text-sm muted label, sometimes animated with a
+    count-up script or gradient text (bg-clip-text). Does not count: prices in a pricing table;
+    numbered step markers (1, 2, 3 or 01, 02, 03); a data visualization or table of real metrics
+    with dates and sources; a single figure inside a sentence; dashboards or reports whose purpose
+    is numbers. Whether the figures are true is judged by other patterns; this one judges the stock
+    component. Describe the visible pattern only; do not infer how the page was made.
+threshold: {min_count: 1}
+realizations:
+  "*":
+    examples:
+      positive:
+        - "Below the hero, a full-width tinted band with four evenly spaced figures in large gradient type: '10K+ Active users', '99.9% Uptime', '24/7 Support', '150+ Countries', each with a small gray label and nothing else."
+        - "Hero of a consulting firm whose main element is a huge '500+' with the small label 'clients served', followed by a row of three smaller stats ('98% satisfaction', '15 years', '3x ROI') in matching rounded tiles."
+        - "Four equal cards near the footer of a craft-brewery site reading '50K+', '4.9/5', '100%', '24/7' with one-word labels."
+      negative:
+        - "Annual-report page with a chart of yearly revenue and a sourced table of figures by quarter."
+        - "Pricing table with three plans showing '$0', '$12' and '$29' per month."
+        - "How-it-works section with three steps labeled 1, 2 and 3."
+legitimate_use: >
+  Real, specific figures that matter to the visitor and are explained where they appear (a
+  charity's audited results with year and source, a transit system's on-time rate with a link to
+  the data), shown in a form chosen for that content.
+fix: >
+  Delete the band unless the figures are real, specific and relevant; if they are, attach each one
+  to the claim it supports, give period and source, and present it where it argues something (in
+  the feature it proves, in a chart, in a sentence) instead of in a free-floating row.
+prevention: >
+  Do not add a row of big round numbers as a section by default. Use a figure only when it is real,
+  specific and meaningful to the visitor, place it next to the claim it supports with its period
+  and source, and choose a presentation that fits the data (a sentence, a chart, a table). Open the
+  page with the subject itself rather than a big-number hero unless the number is the story. An
+  explicit brand or user wish overrides this.
+sources:
+  - source: krebs-design-slop-show-hn
+    locator: "pattern list, Layout; checker README row 12; src/patterns/stat-banner.js"
+    note: "'Stat banner rows' ('10K+ users · 99.9% uptime · 4.9★' stat row) scored on 1,590 Show HN pages; rule: 3-6 sibling cards each holding a number of at most 10 characters at 22px or larger, excluding ordinals and prices; rule comment calls it 'Common AI trust-padding'."
+  - source: anthropic-frontend-design-skill
+    locator: "Design principles, first paragraph"
+    note: "'a big number with a small label, supporting stats, and a gradient accent is the default treatment, so only use it if that's truly the best option'."
+  - source: impeccable-design-skill
+    locator: "reference/craft-floor.md, Refuse, Page scaffolds"
+    note: "'The hero-metric template: big number, small label, supporting stats, accent' (derived from Anthropic's skill)."
+  - source: aismells
+    locator: "entry 'Bento Box Sprawl'"
+    note: "Tiles each carrying 'one stat per tile' as part of the evenly weighted tile recipe."
+related:
+  - {id: template-centered-hero, relation: distinct-from}
+  - {id: card-chopped-page, relation: overlaps}
+  - {id: numbered-steps-section, relation: distinct-from}
+  - {id: compulsive-counting, relation: distinct-from}

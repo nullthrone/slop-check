@@ -3,7 +3,9 @@
 slop-check is an Agent Skill that finds the stock phrases and rhetorical templates that make
 German or English text read like default language-model output, along with typical formatting
 habits, and helps remove or avoid them. For images it describes the default look of image
-generators and gives prompt rules that steer away from it. Findings name style patterns with
+generators and gives prompt rules that steer away from it. For web pages it describes the stock
+look of generated landing pages, from layout and styling to placeholder trust content and markup,
+and gives design rules for building pages without it. Findings name style patterns with
 exact quotes and a weighted verdict. They never claim that a text was written by an AI.
 
 ## Setup
@@ -28,7 +30,7 @@ each. Keep the folder name `slop-check` when you unzip `slop-check.zip`.
 | Kiro | [slop-check.zip](https://github.com/nullthrone/slop-check/releases/latest/download/slop-check.zip), unzipped into `~/.kiro/skills/` |
 | Instruction fields of about 8,000 characters | [instructions.md](https://github.com/nullthrone/slop-check/releases/latest/download/instructions.md), at most 7,500 characters |
 | Knowledge or project files | [knowledge.md](https://github.com/nullthrone/slop-check/releases/latest/download/knowledge.md), the full catalog in one file |
-| API system messages | [system-prompt.md](https://github.com/nullthrone/slop-check/releases/latest/download/system-prompt.md), about 62,000 characters, too long for typical instruction fields |
+| API system messages | [system-prompt.md](https://github.com/nullthrone/slop-check/releases/latest/download/system-prompt.md), about 80,000 characters, too long for typical instruction fields |
 
 ## What it checks
 
@@ -40,6 +42,9 @@ when the construction is legitimate, how to fix it and how to avoid it while wri
 - Text patterns cover German and English. Some, such as sentence-rhythm metrics, apply to any language.
 - Image patterns ship as candidates: the skill reports them and uses their prevention rules for
   image prompts, and they carry no score weight until an image benchmark exists.
+- Web page patterns ship the same way. The skill judges a screenshot or the HTML, CSS or
+  component source, reports what it finds as observations and applies the prevention rules when
+  it builds a page. The page copy is audited as text.
 - A pattern earns a weight only by measurement: it must fire clearly more often in current model
   output than in human text written before November 2022. [docs/governance.md](docs/governance.md)
   explains the lifecycle.
@@ -49,7 +54,7 @@ when the construction is legitimate, how to fix it and how to avoid it while wri
 Audit is the default. The skill quotes every finding, counts it against the pattern's threshold
 and adds the weights to a score that maps to a traffic-light verdict. Rewrite changes only the
 flagged passages and lists each change with the pattern behind it. Prevent applies the rules
-while the model writes a text or an image prompt, then checks its own result. Batch runs the
+while the model writes a text, an image prompt or a web page, then checks its own result. Batch runs the
 bundled command line tool, which gives the same findings as JSON with an exit code.
 
 ## Command line

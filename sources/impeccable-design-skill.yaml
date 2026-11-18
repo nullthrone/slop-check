@@ -1,0 +1,29 @@
+id: impeccable-design-skill
+title: "Impeccable (design skill for coding agents)"
+url: https://github.com/pbakaus/impeccable
+publisher: pbakaus/impeccable (GitHub)
+authors: [Paul Bakaus]
+published: null
+accessed: 2026-11-18
+type: practitioner-skill
+derived_from: [anthropic-frontend-design-skill]
+access_note: >
+  Read from the main branch (last commit 2026-11-16): README, .claude/skills/impeccable/reference/
+  craft-floor.md, animate.md, quieter.md and the rule registry crates/foundation/src/registry.rs
+  (rule names and descriptions).
+notes: >
+  Open-source design skill whose README says it "started from Anthropic's frontend-design skill", so
+  it does not count as independent of that source. README: "Cards nested in cards, gray text on
+  colored backgrounds, a rounded-square icon tile above every heading. Ask an agent for a page with no
+  other guidance and these show up again and again, across models and projects." Detector rules with
+  descriptions: ai-color-palette ("Purple/violet gradients and cyan-on-dark are the most recognizable
+  tells of AI-generated UIs"), gradient-text ("decorative rather than meaningful"), overused-font
+  ("Inter, Roboto, Fraunces, Geist, Plus Jakarta Sans, and Space Grotesk"), flat-type-hierarchy,
+  dark-glow, radial-halo, codex-grid-background, gpt-thin-border-wide-shadow, icon-tile-stack ("A small
+  rounded-square icon container above a heading is the universal AI feature-card template"),
+  cream-palette, italic-serif-display. craft-floor.md refuses "Same-size cards of icon plus heading plus
+  text as the page structure", "The hero-metric template: big number, small label, supporting stats,
+  accent", "Section numbers (01 / 02 / 03) unless the sequence itself carries information", "Gradient
+  text", "Glass and blur as decoration" and "Unicode glyphs or emoji standing in for an icon system";
+  animate.md: "A generic fade-and-rise, hover lift, parallax layer, or scroll reveal is not a thesis".
+  Calls these "the category's defaults, not bans". Practitioner judgement, no frequencies.

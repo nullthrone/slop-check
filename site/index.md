@@ -4,11 +4,11 @@ title: slop-check
 eyebrow: Open source · MIT license
 lead: >-
   slop-check finds the style patterns that language models overuse and helps you take them out
-  of a text. It also gives image prompts concrete art direction. It runs as a skill inside your
+  of a text. It also gives image prompts and web pages concrete art direction. It runs as a skill inside your
   AI assistant and as a command-line tool.
 description: >-
   slop-check audits text for style patterns that language models overuse, rewrites them on
-  request and keeps image prompts away from the generic AI look. Setup guides for Claude,
+  request and keeps image prompts and web pages away from the generic AI look. Setup guides for Claude,
   Gemini, ChatGPT, Copilot, Mistral and other assistants.
 ---
 
@@ -29,7 +29,9 @@ use these patterns too, and edited model output can be free of them.
 
 The catalog covers English and German text. For images, slop-check supplies prevention rules
 that turn a request into an art-directed prompt. Image patterns can be audited as observations;
-they carry no score weight until an image benchmark exists.
+they carry no score weight until an image benchmark exists. Web pages get the same treatment:
+the skill checks a screenshot or the page source for the stock look of generated landing pages and
+applies design rules when it builds a page; these patterns are not scored yet either.
 
 </div>
 </section>
@@ -55,7 +57,7 @@ they carry no score weight until an image benchmark exists.
 <article class="card">
 <p class="eyebrow">While writing</p>
 <h3 class="card__title">Prevent</h3>
-<p>Applies the rules while the assistant drafts a text or writes an image prompt.</p>
+<p>Applies the rules while the assistant drafts a text, writes an image prompt or builds a web page.</p>
 <p class="card__footer">Skill</p>
 </article>
 <article class="card">
@@ -123,7 +125,7 @@ weight.
 <article class="card">
 <p class="eyebrow">System message</p>
 <h3 class="card__title"><code class="tag">system-prompt.md</code></h3>
-<p>The skill instructions, the report format and a condensed catalog in about 62,000 characters, for API system messages. It is too long for typical instruction fields.</p>
+<p>The skill instructions, the report format and a condensed catalog in about 80,000 characters, for API system messages. It is too long for typical instruction fields.</p>
 <div class="card__actions"><a class="btn btn--outline" href="{{ site.download_prompt }}">Download system-prompt.md</a></div>
 </article>
 </div>

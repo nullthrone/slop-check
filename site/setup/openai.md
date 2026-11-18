@@ -101,7 +101,7 @@ A project holds up to 5 files on Free, 25 on Go and Plus, and 40 on Pro, Busines
 Edu. `knowledge.md` uses one of them.
 
 Global custom instructions take 5,000 characters, or 1,500 on Free and Go, so `instructions.md`
-does not fit there. Use a project or a skill. The single-file `system-prompt.md` (about 62,000
+does not fit there. Use a project or a skill. The single-file `system-prompt.md` (about 80,000
 characters) fits no ChatGPT instruction field; it is meant for API system messages, as described
 under [No skill support]({{ '/setup/no-skill-support/' | relative_url }}). OpenAI retires custom
 GPTs on 2026-12-11, so this guide does not cover them.

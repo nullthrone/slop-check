@@ -182,6 +182,10 @@ def check_fixtures(patterns: list[dict], thresholds: dict, ids: list[str] | None
     short_max = int(thresholds.get("short_text_max_words") or 150)
     for pattern in sorted(selected, key=lambda p: p["id"]):
         kind = (pattern.get("detector") or {}).get("kind")
+        if pattern.get("modality") == "web":
+            reason = f"modality web, kind {kind} (judged by the host model; no web benchmark yet)"
+            report.skipped[pattern["id"]] = reason
+            continue
         if kind not in DETERMINISTIC_KINDS:
             reason = {
                 "llm": "kind llm (needs a language model judge; checked by the LLM gate)",

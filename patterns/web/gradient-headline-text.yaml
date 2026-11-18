@@ -1,0 +1,63 @@
+id: gradient-headline-text
+modality: web
+name: Gradient-filled headline text
+summary: >
+  Headlines, key words or big numbers are filled with a color gradient (background-clip: text) as the
+  default way to add emphasis, instead of weight, size, a typeface or one solid accent color. Three
+  independent design skills name gradient text, especially on headings and metrics, as a generated-page
+  tell, and a developer write-up lists "hero section with gradient text" in the default look.
+category: web-visual-style
+status: candidate
+detector:
+  kind: vision
+  rubric: >
+    Look at the hero headline, section headings and large figures. Flag the page when at least one
+    heading, a word inside a heading or a display-size number is filled with a multi-hue color gradient
+    (the letters change color along their length, e.g. from violet to blue or from pink to orange) on an
+    otherwise solid-colored page. Count one hit per page, however many headings carry it. When only the
+    source is available, signs are bg-clip-text together with text-transparent and bg-gradient-to-*
+    or bg-linear-to-* utilities, or CSS background-clip: text / -webkit-background-clip: text with
+    -webkit-text-fill-color: transparent over a linear-gradient. Does not count: a logo or wordmark that
+    is itself drawn with a gradient as part of the brand identity; text over a photo or texture (image
+    fill) that is a deliberate typographic illustration; a single-hue tone ramp barely visible as a
+    gradient; solid colored words used for emphasis (judge those under other patterns). Describe the
+    visible pattern only; do not infer how the page was made.
+threshold: {min_count: 1}
+realizations:
+  "*":
+    examples:
+      positive:
+        - "Hero headline 'Ship your ideas faster' in black, with the words 'faster' filled by a violet-to-blue gradient."
+        - "Pricing section where each plan price ('$29', '$79') is set in a large pink-to-orange gradient fill on white cards."
+        - "Every section heading on a dark page is filled with a cyan-to-purple gradient, while body text is grey."
+      negative:
+        - "The company's registered wordmark in the navigation uses a two-color gradient that also appears on its app icon."
+        - "A poster-style headline filled with a photograph of ocean water, used as the page's single typographic illustration."
+        - "A headline in solid dark green with one word in bold."
+legitimate_use: >
+  A brand wordmark drawn with a gradient, an editorial or event page where a gradient letterform is the
+  one deliberate typographic idea, or a brief that asks for it. The pattern is gradient fill as the
+  routine emphasis device.
+fix: >
+  Set headings and figures in one solid ink. Carry emphasis with weight, size, a display face or a single
+  solid accent color; if a gradient is wanted, move it to one non-text element.
+prevention: >
+  Give headlines one solid color and create hierarchy with a deliberate display typeface, size steps and
+  weight. When a word needs emphasis, rewrite the headline or use weight; reserve the accent color for
+  actions. Use gradient-filled text only when the brand mark or the brief calls for it.
+sources:
+  - source: impeccable-design-skill
+    locator: "rule registry, gradient-text; craft-floor.md 'Surface habits'"
+    note: "'Gradient text is decorative rather than meaningful — a common AI tell, especially on headings and metrics'; refused: 'Gradient text. Emphasis comes from weight or size.'"
+  - source: hallmark-design-skill
+    locator: "references/gates.md gates 2a and 2b"
+    note: "2a bans purple-blue gradients 'background-clip: text included'; 2b flags 'Gradient text in any other hue'; fix 'solid ink; weight or a display face'."
+  - source: ux-skill-anti-slop-ban-list
+    locator: "ban list entry on typography"
+    note: "'Gradient text on headlines as default treatment'; fix: single-color headlines."
+  - source: dev-alanwest-tailwind-indigo
+    locator: "list of the default look"
+    note: "'Hero section with gradient text'."
+related:
+  - {id: purple-blue-gradient-default, relation: overlaps}
+  - {id: default-sans-typography, relation: distinct-from}

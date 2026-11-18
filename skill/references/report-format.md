@@ -90,6 +90,8 @@ Gesamtbefund: <BEFUND> (Score <score>; Gelb ab <gelb>, Rot ab <rot>) | <wörter>
    or `fading`; German `Kandidat` or `auslaufend`. Show one quote, no suggestion.
 9. Not evaluated. Only when you skipped a pattern that applies to the text. Reasons:
    `requires an image judge` (`benötigt eine Bildbewertung`) when you cannot see the image,
+   `requires a screenshot` (`benötigt einen Screenshot`) or `requires the page source`
+   (`benötigt den Quelltext der Seite`) for web patterns,
    `requires a language model` (`benötigt ein Sprachmodell`) when a script result is passed on
    without your judgment, or a short reason of your own such as `no prompt available`.
 10. Notes. Always present, as a list, in this order where they apply:
@@ -189,6 +191,20 @@ measurement exists, so they appear under observations. Add the note `Image patte
 scored yet; the verdict covers scored patterns only.` (German: `Bildmuster werden noch nicht
 gewertet; der Gesamtbefund umfasst nur gewertete Muster.`)
 
+### Web page audits
+
+Use the image layout with these changes. The title names the page (its title or URL). The
+verdict line ends with `| web page` (German `| Webseite`) in place of word count and language.
+Quote lines describe the visible spot (`   > hero: pill badge, centered headline, two buttons`)
+or quote a short source excerpt in backticks (``   > `class="bg-gradient-to-r from-indigo-500 to-purple-600"` ``),
+without a paragraph number. Web patterns carry weight 0 until a measurement exists, so they
+appear under observations. Add the note `Web patterns are not scored yet; the verdict covers
+scored patterns only.` (German: `Webmuster werden noch nicht gewertet; der Gesamtbefund umfasst
+nur gewertete Muster.`) and, when you had only a screenshot or only the source, the note
+`Checked from the screenshot only.` or `Checked from the source only.` (German: `Nur anhand des
+Screenshots geprüft.` / `Nur anhand des Quelltexts geprüft.`). A text audit of the page copy is
+a separate report.
+
 ## JSON result
 
 Give the JSON result when the user or the calling program asks for JSON:
@@ -279,6 +295,8 @@ Field rules:
   the file name to each object.
 - For an image audit, set `"modality": "image"`, `"words": 0` and `"language": "und"`, and
   write the description of the visible spot into `quote` with `paragraph` `null`.
+- For a web page audit, do the same with `"modality": "web"`; `quote` holds the description
+  of the spot or the source excerpt.
 
 ## Rewrite result
 

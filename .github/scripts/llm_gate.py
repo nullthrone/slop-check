@@ -52,7 +52,7 @@ MAX_PR_FILES = 3000
 #: opposed to the monthly cap that other runs exhaust.
 OWN_CAPS = ("run", "call")
 DATA_PATH = re.compile(
-    r"^(?:patterns/(?:text|image|code|audio|video)/[a-z0-9]+(?:-[a-z0-9]+)*\.yaml"
+    r"^(?:patterns/(?:text|image|web|code|audio|video)/[a-z0-9]+(?:-[a-z0-9]+)*\.yaml"
     r"|sources/[a-z0-9]+(?:-[a-z0-9]+)*\.yaml)$"
 )
 COPY_IGNORE = (".git", ".venv", "venv", "__pycache__", ".cache", ".corpus", ".eval-out", "dist")

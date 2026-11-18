@@ -1,0 +1,85 @@
+id: card-chopped-page
+modality: web
+name: Card-chopped uniform page
+summary: >
+  Nearly every piece of content sits in its own rounded box with the same radius, padding and
+  shadow, stacked in full-width sections of identical vertical padding inside one centered
+  max-width column, so the page reads as an inventory of evenly weighted tiles (a "dashboard")
+  instead of an argument with emphasis. Nothing breaks the column, overlaps, bleeds or changes
+  rhythm. Anthropic's design skill lists "the SaaS-card kit: content chopped into identical
+  rounded cards, one border-radius on everything regardless of hierarchy" among the traits
+  generated design clusters around, a community catalog describes marketing pages "chopped into
+  evenly weighted rounded rectangles", and a developer reports generated layouts are "almost
+  always vertically stacked, full-width sections with centered content".
+category: web-layout
+status: candidate
+detector:
+  kind: vision
+  rubric: >
+    Judge the full-page screenshot. Flag the page (one hit) when all three hold: (1) in at least
+    three different sections the content (features, steps, quotes, stats, prices, FAQ items,
+    plain text paragraphs) is placed in boxed cards, i.e. rounded rectangles with their own
+    background, border or shadow, and the cards share one radius and one shadow regardless of
+    their importance; boxes nested inside boxes count extra; (2) all sections use the same
+    centered content column and similar vertical padding, so the section edges line up like a
+    stack of equal slabs; (3) no section uses an asymmetric, full-bleed, overlapping or editorial
+    layout (text running beside a large image, a wide quotation, a long reading column, an image
+    breaking the grid). In the HTML/CSS source: the same card class string repeated across
+    sections (rounded-xl/2xl border bg-card shadow-sm/lg p-6), every section wrapped in the same
+    container (mx-auto max-w-6xl/7xl px-4 py-16/24), shadcn/ui <Card> components used for text
+    that is not an item in a collection. Does not count: dashboards, admin panels and app
+    screens, where cards are the right container for independent widgets; e-commerce listings and
+    galleries; a page that boxes only one or two genuinely distinct elements (a pricing table, a
+    sign-up form) and otherwise uses open layout; documentation with callout boxes. Describe the
+    visible pattern only; do not infer how the page was made.
+threshold: {min_count: 1}
+realizations:
+  "*":
+    examples:
+      positive:
+        - "Landing page of a law firm where the hero subtext, the three practice areas, the 'About us' paragraph, each testimonial, each FAQ answer and the contact details all sit in white rounded cards with the same soft shadow, every section 96px tall in padding and centered in the same 1200px column."
+        - "Marketing page for a podcast chopped into a mosaic of evenly weighted rounded tiles, each with a micro-icon, a short label and one number or sentence, so the episode list, host bio and subscribe links look like dashboard widgets."
+        - "Page of a recipe newsletter where the single explanatory paragraph is itself wrapped in a bordered card, inside a larger tinted card, inside a centered section, and every following section repeats the same boxed structure."
+      negative:
+        - "Analytics dashboard with cards for independent charts and KPIs."
+        - "Editorial page with a full-bleed photograph, a long left-aligned reading column, a pull quote spanning the margin and only the newsletter sign-up form in a box."
+        - "Online shop category page with a grid of product cards."
+legitimate_use: >
+  Applications and dashboards, collections of genuinely independent items, and brands whose
+  identity is a deliberate modular grid with varied tile sizes and real content in each tile.
+fix: >
+  Remove boxes from content that is not an item in a collection and let typography, spacing and
+  alignment group it instead; never nest cards. Vary section width and rhythm: let one section
+  run full-bleed, set a long text in a reading column, put an image beside the text, and give the
+  most important section more space than the rest.
+prevention: >
+  Use a card only for an item that is one of a set and can be acted on separately. Group
+  everything else with spacing, rules, alignment and type scale. Plan the page as a sequence with
+  emphasis: decide which section is the climax and give it a different width, layout or scale;
+  mix at least two layout modes (for example a reading column, a split section and a full-bleed
+  image) and vary vertical spacing with the content. An explicit brand or user wish overrides this.
+sources:
+  - source: anthropic-frontend-design-skill
+    locator: "Process, calibration list item 4"
+    note: "'the SaaS-card kit: content chopped into identical rounded cards, one border-radius on everything regardless of hierarchy, the same soft grey shadow (rgba(0,0,0,.1)) under each'; called a default rather than a choice."
+  - source: aismells
+    locator: "entry 'Bento Box Sprawl' (aismells.pages.dev/bento-box-sprawl.html)"
+    note: "'Even simple marketing pages get chopped into evenly weighted rounded rectangles with eyebrow labels, micro-icons, and one stat per tile'; result is 'everything, equally'; bento is fine 'when the content actually wants modular chunks'."
+  - source: alanwest-ai-generated-look
+    locator: "The fix, part 2 and part 3"
+    note: "'AI-generated layouts are almost always vertically stacked, full-width sections with centered content'; 'Every AI-generated component has `rounded-2xl shadow-lg p-6` somewhere'."
+  - source: impeccable-design-skill
+    locator: "README 'Why'; reference/craft-floor.md, Refuse"
+    note: "'Cards nested in cards'; 'Cards are the lazy container; nested cards are always wrong' (derived from Anthropic's skill)."
+  - source: arxiv-2603-13036
+    locator: "section 5.3.1, Figure 1"
+    note: "Generated landing pages default to 'minimalist whitespace', overriding a regional preference for high information density."
+related:
+  - {id: identical-feature-card-grid, relation: overlaps}
+  - {id: template-section-sequence, relation: overlaps}
+notes: >
+  Merges the proposed "bento grid as default feature showcase" and "card-everything" candidates:
+  the readable sources on bento (aismells, the YC design review) describe evenly weighted tiles,
+  not a mosaic of deliberately uneven tiles, and one source recommends a bento with a genuinely
+  larger cell as a fix. Radius, shadow color and glass effects as such belong to visual-style
+  patterns; this pattern judges only the boxing and the uniform page structure.

@@ -1,0 +1,87 @@
+id: invented-testimonials
+modality: web
+name: Invented testimonials
+summary: >
+  The testimonial slot of a page template is filled with quotes nobody can trace: placeholder-sounding
+  names, a job title with no company or with a fictional one, an initials circle or generic headshot,
+  five stars on every card and praise that would fit any product. Practitioner checklists for sites
+  built with AI tools and site builders name testimonials and star ratings "nobody gave the AI" and
+  "testimonials from people who do not exist" as a typical pre-launch defect, and a developer essay
+  describes templates and AI builders inserting "three generic avatars" with randomly generated quotes.
+category: web-content
+status: candidate
+detector:
+  kind: vision
+  rubric: >
+    Find the testimonial, review or "what our customers say" section (cards, carousel, quote block).
+    Flag it when the quotes carry no verifiable attribution and show at least two of these signs:
+    (1) names that read as placeholders or stock pairs ("Jane Doe", "John D.", "Sarah Johnson",
+    first name plus initial); (2) a job title with no company ("Marketing Lead", "VP of Growth"), a
+    vague company ("a Fortune 500 company", "TechCorp", "Acme Inc.") or an invented-sounding company
+    nobody could look up; (3) avatars that are initials in colored circles, generic studio headshots,
+    or no image; (4) a uniform five-star row on every card; (5) quotes that praise generic qualities
+    (time saved, "game-changer", productivity, support) with no detail of this product, its
+    features, a number or a situation; (6) the same quote, name or face repeated in the row, or all
+    quotes of near-identical length and rhythm. Count one hit per page. From source only: a
+    hard-coded testimonials array whose entries all have rating 5, avatar URLs from placeholder-avatar
+    or random-face services, or initials computed from the name. Does not count: testimonials with
+    full name, a real-looking organization and product-specific detail; embedded third-party review
+    widgets that show the platform, date and mixed ratings; video testimonials; a theme or template
+    demo page that sells the template and labels its content as sample; testimonials explicitly
+    anonymized for a stated reason (health, legal) that still describe a specific case; a single
+    pull quote from a named press article with a link. Describe the visible pattern only; do not
+    infer how the page was made.
+threshold: {min_count: 1}
+realizations:
+  "*":
+    examples:
+      positive:
+        - "Three white cards under 'Loved by thousands': each has five yellow stars, a 40-word quote ('This tool completely transformed how our team works. We save hours every week!'), a colored circle with initials 'SJ', 'MC', 'ER', and the lines 'Sarah Johnson, Product Manager', 'Michael Chen, CTO', 'Emily Rodriguez, Marketing Director' with no company names."
+        - "Carousel of testimonials on a local bakery's site: 'Absolutely the best experience ever! Highly recommend!', signed 'Jessica M., Happy Customer', with a generic smiling studio headshot; the next slide uses the same headshot with another name."
+        - "Testimonial grid on a developer tool page: six quotes of identical length about 'seamless integration' and 'incredible support', attributed to 'Alex Rivera, Senior Engineer at TechFlow' and 'Priya Patel, Founder of Nexus Labs', each with five stars."
+      negative:
+        - "A single testimonial with a named person, their role at a named regional hospital, a photo taken on site and a quote that describes how the scheduling feature replaced a paper rota on night shifts."
+        - "An embedded review-platform widget showing 4.6 average from 212 reviews, with dates, a few three-star reviews and links to the platform."
+        - "A template marketplace preview page with obviously fictional testimonials, under a banner saying 'Demo content: replace with your own'."
+legitimate_use: >
+  Real, consented testimonials, even short ones; a template or theme demo that labels its sample
+  content; illustrative user stories clearly marked as illustrative personas rather than customers.
+fix: >
+  Delete every quote that cannot be traced to a real customer who agreed to be quoted. Replace the
+  section with one or two real testimonials (full name, organization where allowed, a concrete
+  situation or result), a link to an independent review platform, or remove the section until real
+  quotes exist. Drop the uniform five-star rows unless the rating comes from a named source.
+prevention: >
+  Do not write testimonials. If the brief provides real quotes, set them with the person's real name,
+  role and organization and keep their wording; let them be uneven in length. If it provides none,
+  leave the section out or put in a clearly labelled slot for the owner ("Add a real customer quote
+  here") and list it as an open item; show the product working instead (a screenshot, a demo, a worked
+  example). Never invent names, faces, companies or star ratings.
+sources:
+  - source: ankush-testimonials-ai-world
+    locator: "opening section and the anatomy of the generic testimonial"
+    note: "Templates, Framer sites and AI SaaS builders insert 'three generic avatars' and 'randomly generated quotes'; 'First name + last name (often a placeholder-sounding combo)', 'Generic title (Marketing Lead, VP of Growth, Product Manager)', 'a painfully vague quote'."
+  - source: veloxthemes-launch-checklist
+    locator: "What AI-built sites get wrong before launch; 1. Content: no made-up claims"
+    note: "'Badges, numbers, client logos and reviews that nobody gave the AI'; 'AI fills empty space with \"500+ happy clients\", five-star ratings and logos of companies you never worked with'; the authors' own design file repeated one customer review twice 'just to fill the row'."
+  - source: revdoku-pre-publish-checklist
+    locator: "introduction; 2. Rewrite copy that can belong to any product"
+    note: "Names 'testimonials from people who do not exist' as a visible mark; lists 'Testimonials, star ratings and customer logos that you cannot prove'; 'An empty spot is better than a fake quote.'"
+  - source: landingdoctor-ai-landing-pages
+    locator: "3. Hallucinated or borrowed proof; checklist"
+    note: "Tell: 'invented testimonials'; 'The model filled the proof slot with a confident guess'; checklist: every testimonial real and attributed to a named person, dummy quotes removed."
+  - source: impeccable-design-skill
+    locator: "reference/visualize.md"
+    note: "Evidence rules bind 'assertions, specs, testimonials, and photographs presented as real' (guidance to coding agents)."
+  - source: ftc-fake-reviews-rule
+    locator: "summary of prohibited practices"
+    note: "Why it matters: the US rule bans testimonials that misrepresent they are by someone who does not exist, 'such as AI-generated fake reviews'. Not evidence of frequency on generated pages."
+  - source: crazyegg-ai-tool-homepages
+    locator: "findings on trust and testimonials"
+    note: "Why it matters: in tests of AI-product homepages, 57% did not trust the claims and a participant said 'The testimonials sound like fake quotes'. Pages were not shown to be generated."
+related:
+  - {id: unverified-logo-wall, relation: distinct-from}
+  - {id: unsourced-proof-metrics, relation: distinct-from}
+  - {id: unfilled-page-placeholders, relation: overlaps}
+  - {id: averaged-face, relation: overlaps}
+  - {id: vague-attribution, relation: distinct-from}

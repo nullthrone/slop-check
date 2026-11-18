@@ -1,0 +1,102 @@
+id: generic-stand-in-imagery
+modality: web
+name: Generic imagery in place of the subject
+summary: >
+  The hero and section images do not show the page's actual product, place, work or people but a
+  stand-in that fits any business: a diverse team smiling at a laptop, abstract 3D blobs, flat or
+  isometric vector scenes, or a dashboard mockup with filler charts. The image slot is filled by
+  category instead of by subject. Practitioner critiques of AI-built sites name "the same smiling stock
+  photos", stock photos "with no connection to your industry or location", 3D blobs and missing real
+  product screenshots; design reviewers of vibe-coded sites said "every fake dashboard looks basically
+  like" the same, and a design skill for coding agents shows flat vector illustrations as an agent's
+  default.
+category: web-content
+status: candidate
+detector:
+  kind: vision
+  rubric: >
+    First state what the page is about from its headline and copy: a product (what it does), a place,
+    a service, specific people. Then look at the hero image and the main section images. Flag the page
+    when the hero image, or most of the section images, show a stand-in instead of that subject:
+    (1) generic stock-type people scenes with no identifying link to this business (a diverse team
+    smiling at a laptop in a bright office, a handshake, a headset agent, a person pointing at a
+    screen); (2) abstract 3D renders used as the main visual (glossy blobs, spheres, rings, floating
+    cubes, gradient glass shapes) on a page whose subject is not 3D art; (3) flat or isometric vector
+    illustrations of generic people, servers, charts or devices that would fit any company; (4) a
+    dashboard or app mockup with filler content: arbitrary line and bar charts, colored KPI tiles
+    ("Revenue +12.5%", "Users 2,847"), sparklines or gray skeleton rectangles that do not match what
+    the copy says the product does; (5) placeholder image boxes or broken image icons. Count one hit
+    per page. From source only: image URLs from stock libraries or placeholder services with alt texts
+    like "team collaborating"; a hero "screenshot" built in JSX from hard-coded random number arrays
+    and generic labels; illustration files named like hero-illustration.svg from an illustration kit.
+    Does not count: real screenshots of the product showing features the copy describes (even framed
+    or stylized); photos of the actual place, team, products or work, recognizable by specific details
+    (signage, the dishes, the building, the workshop); custom illustrations that explain this
+    product's specific mechanism; abstract or 3D visuals on pages for 3D, art or design studios
+    showing their own work; a clearly labelled demo dashboard whose metrics match the product's
+    domain; CSS background glows and gradients behind content (a decorative-effect pattern, not an
+    image choice). Describe the visible pattern only; do not infer how the page was made.
+threshold: {min_count: 1}
+realizations:
+  "*":
+    examples:
+      positive:
+        - "Hero of an accounting firm in a small town: a wide photo of five young professionals of different ethnicities laughing around a laptop in a glass-walled office; nothing on the page shows the firm's office, staff or town."
+        - "Landing page for a password manager whose hero visual is a cluster of glossy purple and blue 3D spheres and rings floating on a gradient, with no view of the app anywhere on the page."
+        - "Hero of a note-taking app showing a 'dashboard' card with a green line chart, four KPI tiles ('Revenue $45,231', 'Active users 2,350', 'Sales +12%', 'Growth 18%') and a bar chart, none of which relate to notes."
+        - "Three feature cards each topped by a flat isometric illustration (a person on a laptop, stacked servers, a rising chart) on a site for a plumbing business."
+      negative:
+        - "Hero showing the actual app screen with a real-looking note open, the sidebar of notebooks and the search the headline mentions, framed in a light device outline."
+        - "A bakery's hero photo of its own counter with handwritten price cards, the shop's name on the window and the owner behind the till."
+        - "Section header of a 3D-printing service with a photo of printed parts on the build plate of its own machine."
+        - "An analytics product hero with a dashboard showing sample web-traffic metrics labelled 'Demo data', matching the product's described function."
+legitimate_use: >
+  Stock or illustration where the subject itself is generic or abstract (an article on remote work in
+  general), a 3D or art studio showing its own work, and illustrations commissioned to explain the
+  product's specific idea.
+fix: >
+  Replace the stand-in with the subject: a real screenshot or short recording of the product doing the
+  job the headline promises, photos of the actual place, team, products or work, or an illustration
+  drawn for this product's specific mechanism. Remove filler dashboards; if a demo must show data, use
+  realistic data from the product's domain and label it as sample. If no real image exists yet, use
+  type and layout alone rather than a generic picture.
+prevention: >
+  Choose every image by subject, not by category. Open the hero with the most characteristic thing in
+  the subject's world: the product's real interface at work, the actual place, the real people or the
+  physical object. Search or shoot the specific object rather than the category, and verify stock URLs
+  show what the copy names. Do not use abstract blobs, generic team photos, vector scenes or filler
+  dashboards as the main visual. An explicit brand or user wish overrides this.
+sources:
+  - source: utsubo-built-with-ai-tells
+    locator: "signal 6 (synthetic-looking illustrations and photography); signal 7 (missing verifiable proof)"
+    note: "'the diverse team smiling at a laptop in an impossibly well-lit office'; 'AI-generated illustrations and 3D blobs' that are 'slightly too smooth, slightly too symmetrical'; 'no real product screenshots, no actual team photos'."
+  - source: webzum-why-ai-websites-look-same
+    locator: "section on single-prompt builders and signs of generic generation"
+    note: "Sites from single-prompt builders share the 'Same stock photos'; sign: 'Stock photos with no connection to your industry or location'."
+  - source: the23eleven-website-looks-like-everyone
+    locator: "body on the great flattening"
+    note: "AI-built sites have 'the same smiling stock photos'; AI cannot 'take real photographs of your real work, your real team, your real space'."
+  - source: yc-design-review-vibe-coded
+    locator: "reviews of the Build0 and Zarna sites"
+    note: "On a product dashboard visual: 'every fake dashboard looks basically like ... something like that', called a hallmark of AI design tools; on unexplained background shapes: 'Not sure what these boxes here represent'."
+  - source: sej-ai-website-mistakes
+    locator: "list of generic design trends"
+    note: "Summary of the same episode (derived, not independent): 'Generic visual elements like the example of the software dashboard'."
+  - source: impeccable-design-skill
+    locator: "README comparison; reference/new-work.md; reference/craft-floor.md"
+    note: "An agent's default build shows 'flat vector illustrations in rounded cards'; 'Search for the subject's physical object rather than the category'; refuses 'soft-shadowed rounded rectangles standing in for content'."
+  - source: anthropic-frontend-design-skill
+    locator: "paragraph on the hero"
+    note: "Hero should 'Open with the most characteristic thing in the subject's world'; 'Build with the brief's real content and subject matter throughout'."
+  - source: creativebloq-everything-looks-same
+    locator: "category examples"
+    note: "Supporting: SaaS sites converge on 'hero sections with floating dashboard mockups' (brand sameness in general, not specific to generated pages)."
+  - source: crazyegg-ai-tool-homepages
+    locator: "findings on product visuals"
+    note: "Why it matters: 67% of test participants were frustrated by the absence of in-product examples such as dashboard screenshots (AI-product homepages, not shown to be generated)."
+related:
+  - {id: ai-imagery-cliche, relation: overlaps}
+  - {id: cybersecurity-imagery-cliche, relation: overlaps}
+  - {id: stereotyped-default-people, relation: distinct-from}
+  - {id: averaged-face, relation: distinct-from}
+  - {id: plastic-texture, relation: distinct-from}

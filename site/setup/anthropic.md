@@ -78,7 +78,7 @@ turned on, each upload is checked before it can run, which usually takes one to 
 ### Upload rules
 
 claude.ai accepts a skill name of up to 64 characters and a description of up to 200. The
-slop-check description has 196. The frontmatter may hold only `name`, `description`, `license`,
+slop-check description has 195. The frontmatter may hold only `name`, `description`, `license`,
 `compatibility`, `metadata` and `allowed-tools`; any other key makes the upload fail. Users report
 that the upload dialog rejects archives with more than 200 files, and the package stays far below
 that.

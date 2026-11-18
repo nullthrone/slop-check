@@ -1,0 +1,17 @@
+id: arxiv-2603-13036
+title: "Interrogating Design Homogenization in Web Vibe Coding"
+url: https://arxiv.org/abs/2603.13036
+publisher: arXiv
+authors: ["Donghoon Shin", "Alice Gao", "Rock Yuren Pang", "Jaewook Lee", "Katharina Reinecke", "Emily Tseng"]
+published: 2026-03-13
+accessed: 2026-11-18
+type: academic-preprint
+notes: >
+  HCI preprint (University of Washington, Microsoft Research) with a literature review of 63 sources and
+  a sociotechnical risk analysis; it measures no websites. Describes the homogenized default of
+  LLM-generated sites in general terms: "minimalist whitespace, standard sans-serif typography, and
+  predictable hero images" (5.3.1); "generic layouts, standard component libraries, and a clean, but
+  non-distinctive, professional veneer" (5.4.1); in a meso-level case, generated output "uses generic web
+  styles—such as standard drop shadows or rounded corners" that differ from a brand's "sharp edges,
+  high-contrast borders" (5.4.2). Names dominant frameworks (Bootstrap, Tailwind CSS) as drivers of
+  convergence. Names no colours or specific typefaces.

@@ -1,0 +1,80 @@
+id: unsourced-proof-metrics
+modality: web
+name: Unsourced round proof metrics and badges
+summary: >
+  Customer counts, satisfaction rates, uptime, speed multipliers, ratings, rankings and award seals
+  are stated as facts on the page with no source, date or issuer: "50,000+ happy customers", "99.9%
+  uptime", "10x faster", "#1 rated". The numbers fill the proof slot of the page template rather than
+  report anything measured. Launch checklists for AI-built sites list made-up badges and numbers
+  ("Trusted by 2,000 teams", "500+ happy clients", "trusted by 10,000 teams") as a typical defect, and
+  design reviewers of vibe-coded startup sites said a row of 10x claims "just feels made up".
+category: web-content
+status: candidate
+detector:
+  kind: vision
+  rubric: >
+    Look at the hero, stat bands, badges, feature claims and footer for quantitative or ranking claims
+    about the business: number of customers, users, teams or downloads; satisfaction or success
+    percentages; uptime; time or money saved; speed or growth multipliers; average ratings; ranks
+    ("#1", "top-rated", "leading"); award or "certified" seals. Flag the page when at least one such
+    claim is presented as fact with no visible source and has at least one of these forms: a round or
+    plus-suffixed figure ("10K+", "50,000+", "500+ clients"), a percentage or multiplier of benefit
+    ("99.9%", "98% satisfaction", "3x conversions", "10x faster"), a rating without a named platform
+    and review count, a superlative rank, or a badge or seal with no named issuer and year. A visible
+    source means a footnote, a link (status page, review platform, report), a named issuer with date,
+    or a named customer case. Count one hit per page, however many stats there are. Judge the claim,
+    not the layout of the stat band. From source only: hard-coded stats arrays ({value: "10K+",
+    label: "Active users"}) or count-up animation components fed with constants. Does not count:
+    product specifications (file-size limits, supported languages, price, response time of a
+    documented SLA linked from the page); plain business facts (year founded, number of rooms,
+    opening hours); ratings with platform, review count and date; figures attributed to a named
+    customer case study; numbers in a clearly hypothetical calculator. Describe the visible pattern
+    only; do not infer how the page was made.
+threshold: {min_count: 1}
+realizations:
+  "*":
+    examples:
+      positive:
+        - "A stat band under the hero on a just-launched tool: '10K+ Active users', '99.9% Uptime', '4.9/5 Average rating', '24/7 Support', in large gradient numerals, with no source, review platform or status page link anywhere."
+        - "Hero badge 'Trusted by 2,000+ teams' with a row of overlapping avatar circles, on a page whose pricing section says the product is in early access."
+        - "Feature section claiming '10x faster deployments', '3x more conversions' and '#1 rated platform' with a gold laurel seal reading 'Award winning 2026' and no named award or issuer."
+      negative:
+        - "'4.7 on a named review platform, 1,284 reviews, updated October 2026', linking to the platform's listing."
+        - "'Uptime last 90 days: 99.95%' linking to a public status page with incident history."
+        - "A guesthouse page stating 'Fourteen rooms, family-run since 1987, 300 m from the beach'."
+legitimate_use: >
+  Measured, sourced figures; business facts the owner supplies; awards with a named issuer and year;
+  case-study results attributed to a named customer.
+fix: >
+  Delete every figure, rating, rank and badge that the owner cannot back with a source. Keep the
+  numbers that are true and add their source (platform and date, status page, report, named
+  customer). If nothing remains, remove the stat band and use the space to show what the product does.
+prevention: >
+  Never invent numbers, ratings, rankings or award badges. Use only figures from the brief or the
+  owner's data, written precisely and with their source next to them. With no figures, describe the
+  product concretely (what a user uploads, clicks and gets) or show a real screenshot instead of a
+  stat band.
+sources:
+  - source: veloxthemes-launch-checklist
+    locator: "introduction; What AI-built sites get wrong before launch; 1. Content: no made-up claims"
+    note: "A client asks where a 'Trusted by 2,000 teams' badge came from; 'Made-up claims. Badges, numbers, client logos and reviews that nobody gave the AI'; 'AI fills empty space with \"500+ happy clients\"'."
+  - source: landingdoctor-ai-landing-pages
+    locator: "3. Hallucinated or borrowed proof"
+    note: "Tell: 'a precise stat with no source', examples 'trusted by 10,000 teams', 'increase conversions 312%'; checklist: every stat has a real, citable source."
+  - source: revdoku-pre-publish-checklist
+    locator: "2. Rewrite copy that can belong to any product"
+    note: "Lists 'Statistics with no source (\"teams save 40% of their time\")' among generated-copy patterns to cut or source."
+  - source: yc-design-review-vibe-coded
+    locator: "review of the Zarna site"
+    note: "Reviewer on a page of stacked 10x claims: 'everything 10x just feels made up'."
+  - source: impeccable-design-skill
+    locator: "reference/new-work-world.md; reference/new-work.md"
+    note: "Guidance to coding agents: prices, customers, benchmarks and capabilities 'stay uninventable'; 'Prove, don't claim'."
+  - source: crazyegg-ai-tool-homepages
+    locator: "findings on trust"
+    note: "Why it matters: a test participant questioned a '3x increase' stat; 57% did not trust the claims on AI-product homepages (pages not shown to be generated)."
+related:
+  - {id: vague-attribution, relation: overlaps}
+  - {id: invented-testimonials, relation: distinct-from}
+  - {id: unverified-logo-wall, relation: distinct-from}
+  - {id: inflated-importance, relation: distinct-from}

@@ -1,0 +1,23 @@
+id: krebs-design-slop-show-hn
+title: "Scoring Show HN submissions for AI design patterns"
+url: https://adriankrebs.ch/blog/design-slop/
+publisher: adriankrebs.ch
+authors: [Adrian Krebs]
+published: 2026-04-20
+accessed: 2026-11-18
+type: corpus-study
+notes: >
+  Developer's corpus study: recent Show HN landing pages (about 1,400 in the intro, 1,590 in the
+  results) loaded in a headless browser and scored with deterministic DOM and computed-style
+  checks, no screenshots and no model judgement. Layout patterns listed include "Centered hero set
+  in a generic sans", "Badge right above the hero H1", "Identical feature cards, each with an icon
+  on top", "Numbered “1, 2, 3” step sequences" and "Stat banner rows". Results by tier only: 22%
+  (347) with 4+ patterns, 32% (508) with 2-3, 46% (735) with 0-1; no per-pattern frequencies.
+  Manual QA suggested 5-10% false positives; the author says a single pattern does not make a site
+  AI-generated and that the pattern list came from designer input and his own observation. The
+  companion open-source checker (github.com/AdrianKrebs/ai-design-checker, README read on
+  2026-11-18) lists 14 patterns, among them "Stat banner: '10K+ users · 99.9% uptime · 4.9★' stat
+  row", "Headline badge: A pill badge floating above the H1" and "FAQ accordion"; its stat-banner
+  rule fires on 3-6 sibling cards each holding a number of at most 10 characters set at 22px or
+  more, excluding ordinals and prices, and its FAQ rule comments "Almost every AI-template site
+  ends with one". Repository and blog are one source.

@@ -1,0 +1,16 @@
+id: jcarterjohnson-vibecoded-design-tells
+title: "vibecoded-design-tells: Reddit-mined data ranking the visual tells of vibe-coded (AI-built) sites"
+url: https://github.com/JCarterJohnson/vibecoded-design-tells
+publisher: JCarterJohnson (GitHub)
+published: null
+accessed: 2026-11-18
+type: corpus-study
+notes: >
+  Self-published analysis: 3,214,533 Reddit posts from 47 AI and SaaS subreddits (2020 to 2026, Arctic
+  Shift archive), 46,971 on topic, plus 3,033 comments from 125 threads; design features matched with a
+  synonym lexicon and reported as shares. "They all look the same" and "screams AI / slop" each appear in
+  about 13% of on-topic posts. shadcn/Tailwind defaults and the "AI purple" gradient lead the feature
+  ranking (exact shares only in CSV files, not read); bento grids, glassmorphism and aurora gradients sit
+  near the bottom, and "Mesh / blob / aurora backgrounds" was rejected as a keyword artifact in an
+  adversarial check. Measures what people complain about, not what pages contain; the repository also
+  promotes the author's own skills. Useful mainly as counter-evidence on glow and glass decoration.

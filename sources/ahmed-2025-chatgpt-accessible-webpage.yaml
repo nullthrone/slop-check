@@ -1,0 +1,19 @@
+id: ahmed-2025-chatgpt-accessible-webpage
+title: "From Code to Compliance: Assessing ChatGPT's Utility in Designing an Accessible Webpage - A Case Study"
+url: https://arxiv.org/abs/2501.03572
+publisher: arXiv
+authors: [Ammar Ahmed, Margarida Fresco, Fredrik Forsberg, Hallvard Grotli]
+published: 2025-01-07
+accessed: 2026-11-18
+type: academic-preprint
+derived_from: []
+notes: >
+  Case study (Norwegian University of Science and Technology). GPT-4o was asked for HTML and CSS of
+  a TV-series page (video hero, carousels, pricing table, FAQ, login and registration forms,
+  modals, footer) "without explicitly mentioning accessibility"; the output was checked with WAVE,
+  axe and manual keyboard and screen-reader tests. Default output: no "main" landmark, no h1
+  ("The absence of a level-one heading (h1) was another oversight"), form inputs without labels
+  (placeholders instead), placeholder or empty alt text, low contrast on headings, buttons, footer
+  links and hover text (ratios 1.71, 1.8, 2.23), page not fully keyboard navigable, focus not moved
+  into the modal, missing ARIA on the play button. Positive defaults noted by the authors: semantic
+  tags, lang attribute, descriptive title. Single page, single model; no frequencies.

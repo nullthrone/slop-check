@@ -26,8 +26,8 @@ exists.
 | File | Size | Use it for |
 |---|---|---|
 | [instructions.md]({{ site.download_instructions }}) | at most 7,500 characters | Instruction fields of about 8,000 characters, such as ChatGPT project instructions, the instructions of a Microsoft 365 Copilot declarative agent, or a Vibe Work skill form that takes text only |
-| [knowledge.md]({{ site.download_knowledge }}) | about 220 KB | Knowledge files and project files |
-| [system-prompt.md]({{ site.download_prompt }}) | about 62,000 characters | API system messages and instruction fields without a tight limit |
+| [knowledge.md]({{ site.download_knowledge }}) | about 340 KB | Knowledge files and project files |
+| [system-prompt.md]({{ site.download_prompt }}) | about 80,000 characters | API system messages and instruction fields without a tight limit |
 
 `instructions.md` holds the audit procedure, the report layout, short rewrite and writing rules
 and the scored patterns in compact form. `knowledge.md` holds the skill instructions with every

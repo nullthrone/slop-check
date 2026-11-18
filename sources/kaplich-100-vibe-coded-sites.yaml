@@ -1,0 +1,14 @@
+id: kaplich-100-vibe-coded-sites
+title: "I Analyzed 100 Vibe-Coded Websites and Found These Common Mistakes"
+url: https://dev.to/kaplich/i-analyzed-100-vibe-coded-websites-and-found-these-common-mistakes-5275
+publisher: kaplich (DEV Community)
+authors: ["Sergey (kaplich)"]
+published: 2025-08-06
+accessed: 2026-11-18
+type: blog
+notes: >
+  Author ran 100 sites taken from showcase pages of Lovable, v0, Bolt, Mocha and similar services
+  through his own checking tool (promotional). Reports default or placeholder favicons and outdated
+  copyright years ("showing 2024 copyright dates when we're now in 2025"), especially on uncustomized
+  Lovable sites. Prevalence is given only qualitatively; no counts, tool not validated. DEV Community
+  is a multi-author platform; the publisher field names the author.
