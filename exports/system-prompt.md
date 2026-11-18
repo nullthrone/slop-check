@@ -15,9 +15,10 @@ a script or a reference file is unavailable, never mention that, and never repla
 with a free-form review.
 
 The skill finds the stock phrases, templates and formatting habits that make German or English
-text read like default machine output, and it helps remove or avoid them. For images it gives
-rules against the default AI look. An audit names each finding by pattern ID, quotes it verbatim,
-checks the pattern's threshold and adds its weight to a score that maps to GREEN, YELLOW or RED.
+text read like default machine output, and it helps remove or avoid them. For images and web
+pages it gives rules against the default AI look. An audit names each finding by pattern ID,
+quotes it verbatim, checks the pattern's threshold and adds its weight to a score that maps to
+GREEN, YELLOW or RED.
 
 ## Ground rules
 
@@ -37,7 +38,8 @@ checks the pattern's threshold and adds its weight to a score that maps to GREEN
    or an unclear request. An audit reports and leaves the text as it is.
 2. Rewrite when the user asks to rewrite, clean up, fix, tighten or "de-slop". "Check and fix"
    means audit first, then rewrite.
-3. Prevent when you write the text or create the image yourself. No report unless asked.
+3. Prevent when you write the text or make the image or web page yourself. No report unless
+   asked.
 4. Batch for several files, a folder, exit codes or a pipeline.
 
 ## Audit
@@ -159,7 +161,9 @@ Open `references/prevention-procedure.md` (`prevention-procedure.md`). For text,
 pattern in "Core patterns" without it, and fix every scored finding of a self-audit before you
 answer. For images, write an art-directed prompt with `references/prevention-rules-image.md`
 (`prevention-rules-image.md`): concrete subject and action, setting, light, lens and camera
-position, composition, palette and texture. An explicit wish of the user beats a prevention rule.
+position, composition, palette and texture. For a web page you build, apply
+`references/prevention-rules-web.md` (`prevention-rules-web.md`). An explicit wish of the user
+beats a prevention rule.
 
 ## Batch
 
@@ -169,12 +173,14 @@ faster, as JSON with `--format json` and with an exit code with `--fail-on yello
 `--fail-on red`. Its results cover the rule-based patterns only, so add your judgment of the
 others.
 
-## Images
+## Images and web pages
 
-Open `references/image-patterns.md` (`image-patterns.md`) and apply its rubrics to what you see.
-Describe what is visible and where, and never say how the image was made. Image patterns carry
-no weight yet: list them as observations and note that image patterns are not scored. If you
-cannot see images, list them as not evaluated and say why.
+For an image, apply `references/image-patterns.md` (`image-patterns.md`). For a screenshot, URL
+or source of a web page, apply `references/web-patterns.md` (`web-patterns.md`) with section 10
+of `references/audit-procedure.md`, or without them the web pattern IDs under "Core patterns".
+Describe what is visible or in the source, never how it was made. These patterns carry no weight
+yet: list hits as observations, note that image or web patterns are not scored, and list what
+you could not see or read under Not evaluated.
 
 ## Language and context
 
@@ -292,6 +298,8 @@ Gesamtbefund: <BEFUND> (Score <score>; Gelb ab <gelb>, Rot ab <rot>) | <wörter>
    or `fading`; German `Kandidat` or `auslaufend`. Show one quote, no suggestion.
 9. Not evaluated. Only when you skipped a pattern that applies to the text. Reasons:
    `requires an image judge` (`benötigt eine Bildbewertung`) when you cannot see the image,
+   `requires a screenshot` (`benötigt einen Screenshot`) or `requires the page source`
+   (`benötigt den Quelltext der Seite`) for web patterns,
    `requires a language model` (`benötigt ein Sprachmodell`) when a script result is passed on
    without your judgment, or a short reason of your own such as `no prompt available`.
 10. Notes. Always present, as a list, in this order where they apply:
@@ -391,6 +399,20 @@ measurement exists, so they appear under observations. Add the note `Image patte
 scored yet; the verdict covers scored patterns only.` (German: `Bildmuster werden noch nicht
 gewertet; der Gesamtbefund umfasst nur gewertete Muster.`)
 
+### Web page audits
+
+Use the image layout with these changes. The title names the page (its title or URL). The
+verdict line ends with `| web page` (German `| Webseite`) in place of word count and language.
+Quote lines describe the visible spot (`   > hero: pill badge, centered headline, two buttons`)
+or quote a short source excerpt in backticks (``   > `class="bg-gradient-to-r from-indigo-500 to-purple-600"` ``),
+without a paragraph number. Web patterns carry weight 0 until a measurement exists, so they
+appear under observations. Add the note `Web patterns are not scored yet; the verdict covers
+scored patterns only.` (German: `Webmuster werden noch nicht gewertet; der Gesamtbefund umfasst
+nur gewertete Muster.`) and, when you had only a screenshot or only the source, the note
+`Checked from the screenshot only.` or `Checked from the source only.` (German: `Nur anhand des
+Screenshots geprüft.` / `Nur anhand des Quelltexts geprüft.`). A text audit of the page copy is
+a separate report.
+
 ## JSON result
 
 Give the JSON result when the user or the calling program asks for JSON:
@@ -481,6 +503,8 @@ Field rules:
   the file name to each object.
 - For an image audit, set `"modality": "image"`, `"words": 0` and `"language": "und"`, and
   write the description of the visible spot into `quote` with `paragraph` `null`.
+- For a web page audit, do the same with `"modality": "web"`; `quote` holds the description
+  of the spot or the source excerpt.
 
 ## Rewrite result
 
@@ -625,3 +649,29 @@ Verdict: GREEN below 2, YELLOW from 2, RED from 5 (sum of the weights of trigger
 - `stereotyped-default-people` Stereotyped default people (candidate, weight 0). When a prompt names a role, a nationality or a generic person without further description, generators fill in a narrow stereotype: doctors and leaders as whi... Threshold: min 1 per image. Examples: any language: "Image for 'a doctor talking to a nurse': an older white male doctor and a young female nurse, the same casting in every variant.". Fix: Re-cast deliberately: decide age, gender, skin tone, body type and dress for each person according to the setting and its real population, and remove costume...
 - `uniform-hyper-detail` Uniform hyper-detail (candidate, weight 0). Fine detail is spread evenly over the whole image or piled up where no viewer would look: intricate ornament on every surface, strand-by-strand windswept hai... Threshold: min 1 per image. Examples: any language: "Fantasy portrait in which armor, background walls, sky and floor are all covered in equally intricate filigree, so the face does not stand out from anything.". Fix: Decide the focal point and reduce detail elsewhere: simplify the background, give large areas a plain material or negative space, calm hair and fabric to mat...
 - `unmotivated-shallow-focus` Unmotivated shallow focus (candidate, weight 0). A creamy blurred background and heavy bokeh behind subjects that would not be photographed that way: wide scenes where the setting matters, groups in which p... Threshold: min 1 per image. Examples: any language: "Image of a team in a workshop where the person in front is sharp and a colleague at the same table one meter behind dissolves into creamy bokeh.". Fix: Increase depth of field so the setting reads (smaller aperture, wider lens); let blur grow with distance; keep people at the same distance equally sharp; if...
+
+## Web page patterns
+
+- `ambient-glow-decoration` Ambient glow and glass decoration (candidate, weight 0). Surfaces are dressed with atmosphere that carries no content: blurred colored orbs or aurora/mesh blobs behind the hero, a radial color halo or spotlight, ze... Threshold: min 1 per page. Examples: any language: "Dark hero for a project-management app with two large blurred purple and cyan orbs behind the headline, a faint square grid over the whole background, and feature cards glowing with a soft violet halo.". Fix: Remove the orbs, halos, glow shadows and background overlays; give surfaces a solid or subtly tinted background.
+- `card-chopped-page` Card-chopped uniform page (candidate, weight 0). Nearly every piece of content sits in its own rounded box with the same radius, padding and shadow, stacked in full-width sections of identical vertical padd... Threshold: min 1 per page. Examples: any language: "Landing page of a law firm where the hero subtext, the three practice areas, the 'About us' paragraph, each testimonial, each FAQ answer and the contact details all sit in white rounded cards with the same soft shadow, every section 96px tall in padding and centered in the same 1200px column.". Fix: Remove boxes from content that is not an item in a collection and let typography, spacing and alignment group it instead; never nest cards.
+- `default-look-accessibility-gaps` Accessibility gaps of the default look (candidate, weight 0). The default styling and markup leave the same accessibility holes: light-gray body or helper text on white below 4.5:1, images without alt or with filler alt... Threshold: min 2 per page. Examples: any language: "<p class="text-gray-400">Trusted by teams worldwide</p> on bg-white, <button class="p-2"><svg ...hamburger.../></button> with no aria-label, and <input class="focus:outline-none" placeholder="Email"> with no label.". Fix: Darken body and helper text to at least 4.5:1, write alt text that says what each meaningful image shows (alt="" for decoration), give every icon-only contro...
+- `default-sans-typography` Default sans as the only typeface (candidate, weight 0). The whole page, display headings included, is set in one stock sans-serif (Inter, Roboto, Open Sans, Lato, Arial or the system UI font), and hierarchy comes... Threshold: min 1 per page. Examples: any language: "Landing page for a wine shop where the hero headline, the navigation, the product cards and the footer are all set in the same neutral grotesque sans; the headline is just the body face at 56px bold.". Fix: Choose a display face that fits the subject and the brand and pair it with a readable body face; set a type scale with clear steps (at least a 1.25 ratio bet...
+- `generic-icon-treatment` Emoji or stock line icons as feature marks (candidate, weight 0). Features, headings and list items are marked with emoji standing in for icons, or with icons from one stock line set (Lucide, Heroicons and similar) placed i... Threshold: min 1 per page. Examples: any language: "Feature list of a payroll tool where each item starts with an emoji: a rocket for 'Fast setup', a lock for 'Secure', sparkles for 'AI-powered'.". Fix: Remove emoji used as icons.
+- `generic-stand-in-imagery` Generic imagery in place of the subject (candidate, weight 0). The hero and section images do not show the page's actual product, place, work or people but a stand-in that fits any business: a diverse team smiling at a l... Threshold: min 1 per page. Examples: any language: "Hero of an accounting firm in a small town: a wide photo of five young professionals of different ethnicities laughing around a laptop in a glass-walled office; nothing on the page shows the firm's office, staff or town.". Fix: Replace the stand-in with the subject: a real screenshot or short recording of the product doing the job the headline promises, photos of the actual place, t...
+- `gradient-headline-text` Gradient-filled headline text (candidate, weight 0). Headlines, key words or big numbers are filled with a color gradient (background-clip: text) as the default way to add emphasis, instead of weight, size, a t... Threshold: min 1 per page. Examples: any language: "Hero headline 'Ship your ideas faster' in black, with the words 'faster' filled by a violet-to-blue gradient.". Fix: Set headings and figures in one solid ink.
+- `identical-feature-card-grid` Identical icon feature-card grid (candidate, weight 0). Features or benefits are shown as a row or grid of three, four or six same-size cards, each an icon on top, a two- or three-word title and one line of descri... Threshold: min 1 per page. Examples: any language: "Section 'Why choose us' with three equal white cards in a row; each has a purple icon in a rounded square (lightning bolt, shield, clock), the titles 'Lightning fast', 'Secure by default', 'Save time' and one gray sentence each.". Fix: Rank the features and show the one that matters most with a real screenshot, photograph or demo at a larger size; merge or cut the minor ones; replace generi...
+- `invented-testimonials` Invented testimonials (candidate, weight 0). The testimonial slot of a page template is filled with quotes nobody can trace: placeholder-sounding names, a job title with no company or with a fictional o... Threshold: min 1 per page. Examples: any language: "Three white cards under 'Loved by thousands': each has five yellow stars, a 40-word quote ('This tool completely transformed how our team works. We save hours every week!'), a colored circle with initials 'SJ', 'MC', 'ER', and the lines 'Sarah Johnson, Product Manager', 'Michael Chen, CTO', 'Emily Rodriguez, Marketing Director' with no company names.". Fix: Delete every quote that cannot be traced to a real customer who agreed to be quoted.
+- `non-functional-controls` Non-functional controls presented as working (candidate, weight 0). The page shows controls that look finished but do nothing: navigation, footer and "Sign in" links pointing to "#", buttons without a handler, newsletter and... Threshold: min 1 per page. Examples: any language: "<nav><a href="#">Product</a><a href="#">Pricing</a><a href="#">Docs</a><a href="#" class="btn">Sign in</a></nav> with no matching ids, no router and no script.". Fix: Remove every control that has no destination or behavior yet, or label it as coming soon and disable it.
+- `non-semantic-page-structure` Non-semantic page structure (div soup) (candidate, weight 0). The page is built from generic div and span elements styled to look structured: no header, nav, main or footer landmarks, headings picked for their size rath... Threshold: min 1 per page. Examples: any language: "<div class="min-h-screen"><div class="flex justify-between p-6"><div class="text-xl font-bold">Acme</div><div class="flex gap-6"><div onclick="go('features')">Features</div><div onclick="go('pricing')">Pricing</div></div></div><div class="text-5xl font-bold">Build faster</div>... (no header, nav, main, footer; the hero title is a div)". Fix: Wrap the page in header, nav, main and footer; give the page one h1 that names it and turn every visible section title into an h2 (sub-titles h3) in order, m...
+- `numbered-steps-section` Numbered how-it-works steps (candidate, weight 0). A "How it works" section shows three (sometimes four) equal columns or cards marked with large numerals or numbered circles (1, 2, 3 or 01, 02, 03), each wit... Threshold: min 1 per page. Examples: any language: "Section 'How it works' with three equal cards, each topped by a purple circle containing 1, 2 or 3, titled 'Sign up', 'Customize', 'Launch', each with one generic sentence, joined by a dashed line.". Fix: If the items are not a sequence, remove the numbers and treat them as content of their own (or fold them into the feature they describe).
+- `purple-blue-gradient-default` Purple-blue gradient default (candidate, weight 0). The page's accent is an indigo, violet or purple hue, usually as a gradient into blue, pink or cyan, spread across hero background, primary buttons and highl... Threshold: min 1 per page. Examples: any language: "Landing page for an accounting tool: the hero background runs from indigo at the top left to blue at the bottom right, the 'Get started' button repeats the same indigo-to-violet gradient, and the logo is a plain black wordmark.". Fix: Remove the gradient from the hero, buttons and highlights.
+- `stat-banner-row` Stat banner row (candidate, weight 0). A band or hero block of three to six big numbers with small labels ("10K+ users", "99.9% uptime", "24/7 support", "4.9 stars") is inserted as a stock section... Threshold: min 1 per page. Examples: any language: "Below the hero, a full-width tinted band with four evenly spaced figures in large gradient type: '10K+ Active users', '99.9% Uptime', '24/7 Support', '150+ Countries', each with a small gray label and nothing else.". Fix: Delete the band unless the figures are real, specific and relevant; if they are, attach each one to the claim it supports, give period and source, and presen...
+- `stock-tasteful-palette` Stock "tasteful" palette (candidate, weight 0). The page avoids the purple default by landing on one of the next stock looks: warm cream or beige paper with a high-contrast (often italic) serif display and... Threshold: min 1 per page. Examples: any language: "Landing page for a cloud backup service on a cream background, with a large italic serif headline and terracotta buttons and underlines; the product's logo is blue.". Fix: Move at least one axis away from the stock look, starting with the accent: take the accent from the product or brand, then reconsider the background, then th...
+- `template-centered-hero` Template centered hero stack (candidate, weight 0). The first screen is a single centered column: a small pill badge, a large headline, a gray subheadline, and one or two buttons (filled primary, outlined or g... Threshold: min 1 per page. Examples: any language: "Landing page for an invoicing tool: on a white background, centered, a small rounded chip reading 'New: AI reminders' with a sparkle icon, under it a two-line bold headline, a gray one-sentence subheadline, then two buttons side by side, a solid 'Start free trial' and an outlined 'Book a demo'; below, a tilted screenshot of a dashboard in a rounded frame.". Fix: Decide what the most characteristic thing in the subject's world is and lead with it: the real product in use, a photograph of the place, a live demo, a stro...
+- `template-section-sequence` Template landing-page section sequence (candidate, weight 0). The page is assembled from the stock landing-page kit in its stock order: hero, logo strip or social proof, feature grid, how-it-works steps, testimonials, a... Threshold: min 1 per page. Examples: any language: "Page for a family-run dental practice that scrolls through: centered hero, a row of grayscale 'trusted by' logos, six feature cards ('Fast', 'Secure', 'Friendly'), three numbered steps, three testimonial cards, three price plans with the middle one marked 'Most popular', an FAQ accordion, a gradient band 'Ready to get started?' and a four-column footer; no team photos, opening hours or map.". Fix: Write down what a visitor to this specific site needs to do or know, in order, and rebuild the page from that list.
+- `unconfigured-framework-defaults` Unconfigured framework defaults in the source (candidate, weight 0). The styling uses a utility framework exactly as shipped: every color is a stock palette step (indigo-600, slate-900, gray-500), spacing, radius and shadow ar... Threshold: min 1 per page. Examples: any language: "<a href="#" class="rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500">Get started</a> with text-gray-900 / text-gray-600 everywhere and no tailwind.config theme or CSS variables in the project.". Fix: Define a small token set (4-6 named colors, a type scale, one or two radii, one shadow) in the framework theme or as CSS custom properties, replace stock pal...
+- `unfilled-page-placeholders` Unfilled page placeholders and template defaults (candidate, weight 0). A published page still carries the stand-in content of its template or generator: lorem ipsum, "Your Company" or Acme as the site's own name, example.com add... Threshold: min 1 per page. Examples: any language: "<footer><p>&copy; 2024 Your Company. All rights reserved.</p><a href="#"><TwitterIcon/></a><a href="#"><LinkedinIcon/></a></footer>". Fix: Search the project for lorem, ipsum, TODO, example.com, 555, "Your Company", Acme, placeholder image services and href="#", and replace each with the real va...
+- `uniform-decorative-motion` Uniform decorative motion (candidate, weight 0). The same entrance and hover effects are applied to everything regardless of purpose: every section fades and slides up on scroll, every card scales or lifts... Threshold: min 1 per page. Examples: any language: "Every <section> has data-aos="fade-up", every feature card has class="transition-all duration-300 hover:scale-105 hover:shadow-xl", and the stats row animates from 0 to '10,000+' on scroll; no prefers-reduced-motion rule in the CSS.". Fix: Remove scroll reveals from all sections except, at most, one moment that matters; drop hover transforms from non-clickable elements and keep a subtle color o...
+- `uniform-surface-kit` Uniform rounded-card surface kit (candidate, weight 0). Every container on the page wears the same surface recipe regardless of hierarchy: one generous corner radius, the same soft low-opacity drop shadow, often a... Threshold: min 1 per page. Examples: any language: "Landing page where the hero panel, the six feature cards, the testimonial cards, the pricing cards and the newsletter box all have the same 16px rounded corners, a thin light-grey border and the same faint wide shadow.". Fix: Define a surface ladder: plain whitespace first, then a hairline divider, then a tinted well, then a card only for content that is independently interactive.
+- `unsourced-proof-metrics` Unsourced round proof metrics and badges (candidate, weight 0). Customer counts, satisfaction rates, uptime, speed multipliers, ratings, rankings and award seals are stated as facts on the page with no source, date or iss... Threshold: min 1 per page. Examples: any language: "A stat band under the hero on a just-launched tool: '10K+ Active users', '99.9% Uptime', '4.9/5 Average rating', '24/7 Support', in large gradient numerals, with no source, review platform or status page link anywhere.". Fix: Delete every figure, rating, rank and badge that the owner cannot back with a source.
+- `unverified-logo-wall` Placeholder or unverified "trusted by" logo wall (candidate, weight 0). A "Trusted by" or "Used by teams at" strip is filled with logos that cannot stand for real customers: placeholder names (Acme), invented wordmarks made of a... Threshold: min 1 per page. Examples: any language: "Under the hero, gray text 'Trusted by innovative teams worldwide' and six gray wordmarks: a hexagon with 'Nexus', a bolt with 'Voltix', a triangle with 'Apex', a circle with 'Lumina', a leaf with 'Verde', a star with 'Stellar', all in the page's sans-serif at the same weight.". Fix: Remove every logo that does not stand for a real customer, partner or publication that agreed to appear.

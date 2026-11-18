@@ -1,7 +1,7 @@
 # Prevention procedure
 
-Use this procedure when you write a text or create an image for the user and the skill
-applies. The aim is output that needs no clean-up afterwards.
+Use this procedure when you write a text, create an image or build a web page for the user
+and the skill applies. The aim is output that needs no clean-up afterwards.
 
 ## Text
 
@@ -60,3 +60,28 @@ you direct an image tool in any other way.
    of `references/audit-procedure.md`. When a pattern clearly applies and the user did not ask
    for that look, regenerate once with a corrected prompt, or tell the user what you see and
    offer the fix. Stop after two attempts and report what remains.
+
+## Web pages
+
+Use this part when you build, restyle or generate a web page, a landing page or a front-end
+component, or when you write the prompt for a site builder.
+
+1. Read `references/prevention-rules-web.md`.
+2. Start from the material: who the page is for, what they must do or learn on it, and the
+   real assets you have (product, photos, people, numbers, quotes, logos with permission).
+   Let that decide the sections and their order instead of a stock landing-page sequence.
+3. Set a direction before writing markup: a type pairing and scale, a palette taken from the
+   brand or subject, a spacing rhythm, and the one or two places where the layout breaks
+   the grid on purpose. Write it down in a few lines when the user will see the code.
+4. Never invent trust content. No testimonials, customer logos, ratings, user counts, uptime
+   figures or awards that the user did not give you; leave a clearly marked placeholder such
+   as `[customer quote]` or leave the section out.
+5. Build working, semantic markup: landmarks, one `h1` and a heading outline, real buttons
+   and links with targets, labels for inputs, alt text for meaningful images, visible focus,
+   sufficient contrast, and motion only where it explains something, honoring
+   `prefers-reduced-motion`.
+6. If the user specifies a style, a design system or a template, follow it. The rules set
+   the defaults; they never override an explicit choice.
+7. If you can render the page or see a screenshot, check it against
+   `references/web-patterns.md` with section 10 of `references/audit-procedure.md`, fix what
+   clearly applies and the user did not ask for, and stop after two rounds.

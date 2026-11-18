@@ -1,6 +1,6 @@
 ---
 name: slop-check
-description: Use to check, rewrite or write German or English text so it does not read like generic AI output (AI slop), and to art-direct images away from the default AI look. Reports style, never authorship.
+description: Use to check, rewrite or write German or English text so it avoids generic AI output (AI slop), and to check or design images and web pages away from the default AI look. Never judges authorship.
 license: MIT
 ---
 
@@ -12,9 +12,10 @@ a script or a reference file is unavailable, never mention that, and never repla
 with a free-form review.
 
 The skill finds the stock phrases, templates and formatting habits that make German or English
-text read like default machine output, and it helps remove or avoid them. For images it gives
-rules against the default AI look. An audit names each finding by pattern ID, quotes it verbatim,
-checks the pattern's threshold and adds its weight to a score that maps to GREEN, YELLOW or RED.
+text read like default machine output, and it helps remove or avoid them. For images and web
+pages it gives rules against the default AI look. An audit names each finding by pattern ID,
+quotes it verbatim, checks the pattern's threshold and adds its weight to a score that maps to
+GREEN, YELLOW or RED.
 
 ## Ground rules
 
@@ -34,7 +35,8 @@ checks the pattern's threshold and adds its weight to a score that maps to GREEN
    or an unclear request. An audit reports and leaves the text as it is.
 2. Rewrite when the user asks to rewrite, clean up, fix, tighten or "de-slop". "Check and fix"
    means audit first, then rewrite.
-3. Prevent when you write the text or create the image yourself. No report unless asked.
+3. Prevent when you write the text or make the image or web page yourself. No report unless
+   asked.
 4. Batch for several files, a folder, exit codes or a pipeline.
 
 ## Audit
@@ -69,7 +71,7 @@ rule-based hits with `python scripts/slopcheck.py audit FILE --format json` (see
 ## Core patterns
 
 <!-- slopcheck:core-catalog -->
-Catalog 2026.11.17. Verdict: a score below 2.0 is GREEN, from 2.0 YELLOW, from 5.0 RED (provisional thresholds). A short text has at most 150 words.
+Catalog 2026.11.18. Verdict: a score below 2.0 is GREEN, from 2.0 YELLOW, from 5.0 RED (provisional thresholds). A short text has at most 150 words.
 The weights are provisional, so every report carries the provisional-weights note.
 
 Each line: ID, name, weight, how to find hits, threshold as the report writes it, typical hits per language.
@@ -102,6 +104,8 @@ Each line: ID, name, weight, how to find hits, threshold as the report writes it
 - `vague-attribution` Vague or falsely precise attribution, weight 0.5. Phrase; threshold min 1 per text; only with 3 other findings. de: `Studien zeigen`, `Experten sind sich einig`. en: `Studies show`, `Experts agree`.
 
 Candidates (weight 0, observations only): `announce-then-answer`, `assistant-self-reference`, `bullet-list-preference`, `chat-citation-artifact`, `compulsive-counting`, `contraction-avoidance`, `copula-avoidance`, `engagement-bait-closer`, `excessive-enumeration`, `forced-figurative-language`, `format-bleed`, `hope-this-finds-you-well`, `invented-concept-label`, `markdown-emphasis-inflation`, `model-fingerprint-opener`, `name-dropping`, `premodifier-stacking`, `punctuation-sparsity`, `reader-emphasis-command`, `reasoning-leak`, `rhetorical-self-answer`, `self-echo`, `stacked-nouns`, `title-case-headings`, `unfilled-placeholder`.
+
+Web page patterns: `ambient-glow-decoration`, `card-chopped-page`, `default-look-accessibility-gaps`, `default-sans-typography`, `generic-icon-treatment`, `generic-stand-in-imagery`, `gradient-headline-text`, `identical-feature-card-grid`, `invented-testimonials`, `non-functional-controls`, `non-semantic-page-structure`, `numbered-steps-section`, `purple-blue-gradient-default`, `stat-banner-row`, `stock-tasteful-palette`, `template-centered-hero`, `template-section-sequence`, `unconfigured-framework-defaults`, `unfilled-page-placeholders`, `uniform-decorative-motion`, `uniform-surface-kit`, `unsourced-proof-metrics`, `unverified-logo-wall`.
 <!-- /slopcheck:core-catalog -->
 
 ## Report layout
@@ -188,7 +192,9 @@ Open `references/prevention-procedure.md` (`prevention-procedure.md`). For text,
 pattern in "Core patterns" without it, and fix every scored finding of a self-audit before you
 answer. For images, write an art-directed prompt with `references/prevention-rules-image.md`
 (`prevention-rules-image.md`): concrete subject and action, setting, light, lens and camera
-position, composition, palette and texture. An explicit wish of the user beats a prevention rule.
+position, composition, palette and texture. For a web page you build, apply
+`references/prevention-rules-web.md` (`prevention-rules-web.md`). An explicit wish of the user
+beats a prevention rule.
 
 ## Batch
 
@@ -198,12 +204,14 @@ faster, as JSON with `--format json` and with an exit code with `--fail-on yello
 `--fail-on red`. Its results cover the rule-based patterns only, so add your judgment of the
 others.
 
-## Images
+## Images and web pages
 
-Open `references/image-patterns.md` (`image-patterns.md`) and apply its rubrics to what you see.
-Describe what is visible and where, and never say how the image was made. Image patterns carry
-no weight yet: list them as observations and note that image patterns are not scored. If you
-cannot see images, list them as not evaluated and say why.
+For an image, apply `references/image-patterns.md` (`image-patterns.md`). For a screenshot, URL
+or source of a web page, apply `references/web-patterns.md` (`web-patterns.md`) with section 10
+of `references/audit-procedure.md`, or without them the web pattern IDs under "Core patterns".
+Describe what is visible or in the source, never how it was made. These patterns carry no weight
+yet: list hits as observations, note that image or web patterns are not scored, and list what
+you could not see or read under Not evaluated.
 
 ## Language and context
 
