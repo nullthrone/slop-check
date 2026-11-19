@@ -71,7 +71,7 @@ rule-based hits with `python scripts/slopcheck.py audit FILE --format json` (see
 ## Core patterns
 
 <!-- slopcheck:core-catalog -->
-Catalog 2026.11.18. Verdict: a score below 2.0 is GREEN, from 2.0 YELLOW, from 5.0 RED (provisional thresholds). A short text has at most 150 words.
+Catalog 2026.11.19. Verdict: a score below 2.0 is GREEN, from 2.0 YELLOW, from 5.0 RED (provisional thresholds). A short text has at most 150 words.
 The weights are provisional, so every report carries the provisional-weights note.
 
 Each line: ID, name, weight, how to find hits, threshold as the report writes it, typical hits per language.
