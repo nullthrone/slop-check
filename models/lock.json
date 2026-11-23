@@ -1,0 +1,632 @@
+{
+  "version": 1,
+  "resolved_at": "2026-11-23T15:20:20Z",
+  "source": "https://openrouter.ai/api/v1/models",
+  "models_seen": 477,
+  "roles": {
+    "generators": [
+      {
+        "key": "generators/anthropic/cheap",
+        "family": "anthropic",
+        "tier": "cheap",
+        "id": "anthropic/claude-haiku-5.5",
+        "canonical_slug": "anthropic/claude-haiku-5.5-20261007",
+        "created": 1791397883,
+        "pricing": {
+          "prompt": 1e-07,
+          "completion": 5e-07,
+          "input_cache_read": 1e-08
+        },
+        "via": "match",
+        "selector": "^anthropic/claude-haiku-[0-9.]+$",
+        "docs_per_language": 200,
+        "context_length": 1000000,
+        "max_completion_tokens": 128000,
+        "reasoning": {
+          "mandatory": false,
+          "supported_efforts": [
+            "max",
+            "xhigh",
+            "high",
+            "medium",
+            "low",
+            "none"
+          ],
+          "default_effort": "medium"
+        },
+        "supported_parameters": [
+          "include_reasoning",
+          "max_completion_tokens",
+          "max_tokens",
+          "reasoning",
+          "reasoning_effort",
+          "response_format",
+          "stop",
+          "structured_outputs",
+          "tool_choice",
+          "tools",
+          "verbosity"
+        ]
+      },
+      {
+        "key": "generators/google/cheap",
+        "family": "google",
+        "tier": "cheap",
+        "id": "google/gemini-3.8-flash",
+        "canonical_slug": "google/gemini-3.8-flash-20260902",
+        "created": 1788362056,
+        "pricing": {
+          "prompt": 8.25e-07,
+          "completion": 4.125e-06,
+          "input_cache_read": 8.25e-08
+        },
+        "via": "match",
+        "selector": "^google/gemini-[0-9.]+-flash$",
+        "docs_per_language": 200,
+        "context_length": 1048576,
+        "max_completion_tokens": 65536,
+        "reasoning": {
+          "mandatory": true,
+          "default_enabled": true,
+          "supported_efforts": [
+            "high",
+            "medium",
+            "low"
+          ],
+          "default_effort": "medium"
+        },
+        "supported_parameters": [
+          "include_reasoning",
+          "max_tokens",
+          "reasoning",
+          "reasoning_effort",
+          "response_format",
+          "seed",
+          "stop",
+          "structured_outputs",
+          "temperature",
+          "tool_choice",
+          "tools",
+          "top_p"
+        ]
+      },
+      {
+        "key": "generators/openai/cheap",
+        "family": "openai",
+        "tier": "cheap",
+        "id": "openai/gpt-6-luna",
+        "canonical_slug": "openai/gpt-6-luna-20260922",
+        "created": 1790100786,
+        "pricing": {
+          "prompt": 1e-07,
+          "completion": 5e-07,
+          "input_cache_read": 1e-08
+        },
+        "via": "match",
+        "selector": "^openai/gpt-[0-9.]+-luna$",
+        "docs_per_language": 200,
+        "context_length": 1050000,
+        "max_completion_tokens": 128000,
+        "reasoning": {
+          "mandatory": false,
+          "default_enabled": true,
+          "supported_efforts": [
+            "max",
+            "xhigh",
+            "high",
+            "medium",
+            "low",
+            "none"
+          ],
+          "default_effort": "medium"
+        },
+        "supported_parameters": [
+          "include_reasoning",
+          "max_completion_tokens",
+          "max_tokens",
+          "reasoning",
+          "reasoning_effort",
+          "response_format",
+          "seed",
+          "structured_outputs",
+          "tool_choice",
+          "tools",
+          "verbosity"
+        ]
+      },
+      {
+        "key": "generators/deepseek/cheap",
+        "family": "deepseek",
+        "tier": "cheap",
+        "id": "deepseek/deepseek-v4.1-flash",
+        "canonical_slug": "deepseek/deepseek-v4.1-flash-20260910",
+        "created": 1789021285,
+        "pricing": {
+          "prompt": 4.98e-08,
+          "completion": 1.992e-07,
+          "input_cache_read": 9.96e-10
+        },
+        "via": "match",
+        "selector": "^deepseek/deepseek-v[0-9.]+-flash$",
+        "docs_per_language": 200,
+        "context_length": 1048576,
+        "max_completion_tokens": 393216,
+        "reasoning": {
+          "mandatory": false,
+          "default_enabled": true,
+          "supported_efforts": [
+            "max",
+            "high",
+            "low",
+            "none"
+          ],
+          "default_effort": "high"
+        },
+        "supported_parameters": [
+          "frequency_penalty",
+          "include_reasoning",
+          "logit_bias",
+          "logprobs",
+          "max_tokens",
+          "min_p",
+          "parallel_tool_calls",
+          "presence_penalty",
+          "reasoning",
+          "reasoning_effort",
+          "repetition_penalty",
+          "response_format",
+          "seed",
+          "stop",
+          "structured_outputs",
+          "temperature",
+          "tool_choice",
+          "tools",
+          "top_a",
+          "top_k",
+          "top_logprobs",
+          "top_p"
+        ]
+      },
+      {
+        "key": "generators/mistral/cheap",
+        "family": "mistral",
+        "tier": "cheap",
+        "id": "mistralai/mistral-small-2603",
+        "canonical_slug": "mistralai/mistral-small-2603",
+        "created": 1773695685,
+        "pricing": {
+          "prompt": 1.5e-07,
+          "completion": 6e-07,
+          "input_cache_read": 1.5e-08
+        },
+        "via": "match",
+        "selector": "^mistralai/mistral-small-[0-9]{4}$",
+        "docs_per_language": 200,
+        "context_length": 262144,
+        "max_completion_tokens": 209715,
+        "reasoning": {
+          "mandatory": false,
+          "default_enabled": false,
+          "supported_efforts": [
+            "high",
+            "none"
+          ],
+          "default_effort": "high"
+        },
+        "supported_parameters": [
+          "frequency_penalty",
+          "include_reasoning",
+          "max_tokens",
+          "presence_penalty",
+          "reasoning",
+          "reasoning_effort",
+          "response_format",
+          "seed",
+          "stop",
+          "structured_outputs",
+          "temperature",
+          "tool_choice",
+          "tools",
+          "top_p"
+        ]
+      },
+      {
+        "key": "generators/anthropic/frontier",
+        "family": "anthropic",
+        "tier": "frontier",
+        "id": "anthropic/claude-sonnet-5.5",
+        "canonical_slug": "anthropic/claude-sonnet-5.5-20260928",
+        "created": 1790618686,
+        "pricing": {
+          "prompt": 2e-06,
+          "completion": 1e-05,
+          "input_cache_read": 1e-07
+        },
+        "via": "match",
+        "selector": "^anthropic/claude-sonnet-[0-9.]+$",
+        "docs_per_language": 50,
+        "context_length": 1000000,
+        "max_completion_tokens": 128000,
+        "reasoning": {
+          "mandatory": true,
+          "supported_efforts": [
+            "max",
+            "xhigh",
+            "high",
+            "medium",
+            "low"
+          ],
+          "default_effort": "high"
+        },
+        "supported_parameters": [
+          "include_reasoning",
+          "max_completion_tokens",
+          "max_tokens",
+          "reasoning",
+          "reasoning_effort",
+          "response_format",
+          "stop",
+          "structured_outputs",
+          "tool_choice",
+          "tools",
+          "verbosity"
+        ]
+      },
+      {
+        "key": "generators/openai/frontier",
+        "family": "openai",
+        "tier": "frontier",
+        "id": "openai/gpt-6.2-sol",
+        "canonical_slug": "openai/gpt-6.2-sol-20261117",
+        "created": 1794938371,
+        "pricing": {
+          "prompt": 2e-06,
+          "completion": 1e-05,
+          "input_cache_read": 1e-07
+        },
+        "via": "match",
+        "selector": "^openai/gpt-[0-9.]+-sol$",
+        "docs_per_language": 50,
+        "context_length": 1050000,
+        "max_completion_tokens": 128000,
+        "reasoning": {
+          "mandatory": true,
+          "default_enabled": true,
+          "supported_efforts": [
+            "max",
+            "xhigh",
+            "high",
+            "medium",
+            "low"
+          ],
+          "default_effort": "medium"
+        },
+        "supported_parameters": [
+          "include_reasoning",
+          "max_completion_tokens",
+          "max_tokens",
+          "reasoning",
+          "reasoning_effort",
+          "response_format",
+          "seed",
+          "structured_outputs",
+          "tool_choice",
+          "tools",
+          "verbosity"
+        ]
+      }
+    ],
+    "judges": [
+      {
+        "key": "judges/anthropic/cheap",
+        "family": "anthropic",
+        "tier": "cheap",
+        "id": "anthropic/claude-haiku-5.5",
+        "canonical_slug": "anthropic/claude-haiku-5.5-20261007",
+        "created": 1791397883,
+        "pricing": {
+          "prompt": 1e-07,
+          "completion": 5e-07,
+          "input_cache_read": 1e-08
+        },
+        "via": "match",
+        "selector": "^anthropic/claude-haiku-[0-9.]+$",
+        "context_length": 1000000,
+        "max_completion_tokens": 128000,
+        "reasoning": {
+          "mandatory": false,
+          "supported_efforts": [
+            "max",
+            "xhigh",
+            "high",
+            "medium",
+            "low",
+            "none"
+          ],
+          "default_effort": "medium"
+        },
+        "supported_parameters": [
+          "include_reasoning",
+          "max_completion_tokens",
+          "max_tokens",
+          "reasoning",
+          "reasoning_effort",
+          "response_format",
+          "stop",
+          "structured_outputs",
+          "tool_choice",
+          "tools",
+          "verbosity"
+        ]
+      },
+      {
+        "key": "judges/openai/cheap",
+        "family": "openai",
+        "tier": "cheap",
+        "id": "openai/gpt-6-luna",
+        "canonical_slug": "openai/gpt-6-luna-20260922",
+        "created": 1790100786,
+        "pricing": {
+          "prompt": 1e-07,
+          "completion": 5e-07,
+          "input_cache_read": 1e-08
+        },
+        "via": "match",
+        "selector": "^openai/gpt-[0-9.]+-luna$",
+        "context_length": 1050000,
+        "max_completion_tokens": 128000,
+        "reasoning": {
+          "mandatory": false,
+          "default_enabled": true,
+          "supported_efforts": [
+            "max",
+            "xhigh",
+            "high",
+            "medium",
+            "low",
+            "none"
+          ],
+          "default_effort": "medium"
+        },
+        "supported_parameters": [
+          "include_reasoning",
+          "max_completion_tokens",
+          "max_tokens",
+          "reasoning",
+          "reasoning_effort",
+          "response_format",
+          "seed",
+          "structured_outputs",
+          "tool_choice",
+          "tools",
+          "verbosity"
+        ]
+      }
+    ],
+    "conformance": [
+      {
+        "key": "conformance/anthropic/frontier",
+        "family": "anthropic",
+        "tier": "frontier",
+        "id": "anthropic/claude-sonnet-5.5",
+        "canonical_slug": "anthropic/claude-sonnet-5.5-20260928",
+        "created": 1790618686,
+        "pricing": {
+          "prompt": 2e-06,
+          "completion": 1e-05,
+          "input_cache_read": 1e-07
+        },
+        "via": "match",
+        "selector": "^anthropic/claude-sonnet-[0-9.]+$",
+        "context_length": 1000000,
+        "max_completion_tokens": 128000,
+        "reasoning": {
+          "mandatory": true,
+          "supported_efforts": [
+            "max",
+            "xhigh",
+            "high",
+            "medium",
+            "low"
+          ],
+          "default_effort": "high"
+        },
+        "supported_parameters": [
+          "include_reasoning",
+          "max_completion_tokens",
+          "max_tokens",
+          "reasoning",
+          "reasoning_effort",
+          "response_format",
+          "stop",
+          "structured_outputs",
+          "tool_choice",
+          "tools",
+          "verbosity"
+        ]
+      },
+      {
+        "key": "conformance/google/cheap",
+        "family": "google",
+        "tier": "cheap",
+        "id": "google/gemini-3.8-flash",
+        "canonical_slug": "google/gemini-3.8-flash-20260902",
+        "created": 1788362056,
+        "pricing": {
+          "prompt": 8.25e-07,
+          "completion": 4.125e-06,
+          "input_cache_read": 8.25e-08
+        },
+        "via": "match",
+        "selector": "^google/gemini-[0-9.]+-flash$",
+        "context_length": 1048576,
+        "max_completion_tokens": 65536,
+        "reasoning": {
+          "mandatory": true,
+          "default_enabled": true,
+          "supported_efforts": [
+            "high",
+            "medium",
+            "low"
+          ],
+          "default_effort": "medium"
+        },
+        "supported_parameters": [
+          "include_reasoning",
+          "max_tokens",
+          "reasoning",
+          "reasoning_effort",
+          "response_format",
+          "seed",
+          "stop",
+          "structured_outputs",
+          "temperature",
+          "tool_choice",
+          "tools",
+          "top_p"
+        ]
+      },
+      {
+        "key": "conformance/openai/frontier",
+        "family": "openai",
+        "tier": "frontier",
+        "id": "openai/gpt-6.1-terra",
+        "canonical_slug": "openai/gpt-6.1-terra-20261026",
+        "created": 1793038409,
+        "pricing": {
+          "prompt": 1e-06,
+          "completion": 5e-06,
+          "input_cache_read": 5e-08
+        },
+        "via": "match",
+        "selector": "^openai/gpt-[0-9.]+-terra$",
+        "context_length": 1050000,
+        "max_completion_tokens": 128000,
+        "reasoning": {
+          "mandatory": false,
+          "default_enabled": true,
+          "supported_efforts": [
+            "max",
+            "xhigh",
+            "high",
+            "medium",
+            "low",
+            "none"
+          ],
+          "default_effort": "medium"
+        },
+        "supported_parameters": [
+          "include_reasoning",
+          "max_completion_tokens",
+          "max_tokens",
+          "reasoning",
+          "reasoning_effort",
+          "response_format",
+          "seed",
+          "structured_outputs",
+          "tool_choice",
+          "tools",
+          "verbosity"
+        ]
+      },
+      {
+        "key": "conformance/deepseek/cheap",
+        "family": "deepseek",
+        "tier": "cheap",
+        "id": "deepseek/deepseek-v4.1-flash",
+        "canonical_slug": "deepseek/deepseek-v4.1-flash-20260910",
+        "created": 1789021285,
+        "pricing": {
+          "prompt": 4.98e-08,
+          "completion": 1.992e-07,
+          "input_cache_read": 9.96e-10
+        },
+        "via": "match",
+        "selector": "^deepseek/deepseek-v[0-9.]+-flash$",
+        "context_length": 1048576,
+        "max_completion_tokens": 393216,
+        "reasoning": {
+          "mandatory": false,
+          "default_enabled": true,
+          "supported_efforts": [
+            "max",
+            "high",
+            "low",
+            "none"
+          ],
+          "default_effort": "high"
+        },
+        "supported_parameters": [
+          "frequency_penalty",
+          "include_reasoning",
+          "logit_bias",
+          "logprobs",
+          "max_tokens",
+          "min_p",
+          "parallel_tool_calls",
+          "presence_penalty",
+          "reasoning",
+          "reasoning_effort",
+          "repetition_penalty",
+          "response_format",
+          "seed",
+          "stop",
+          "structured_outputs",
+          "temperature",
+          "tool_choice",
+          "tools",
+          "top_a",
+          "top_k",
+          "top_logprobs",
+          "top_p"
+        ]
+      }
+    ],
+    "vision_judge": [
+      {
+        "key": "vision_judge/google/cheap",
+        "family": "google",
+        "tier": "cheap",
+        "id": "google/gemini-3.8-flash",
+        "canonical_slug": "google/gemini-3.8-flash-20260902",
+        "created": 1788362056,
+        "pricing": {
+          "prompt": 8.25e-07,
+          "completion": 4.125e-06,
+          "input_cache_read": 8.25e-08
+        },
+        "via": "match",
+        "selector": "^google/gemini-[0-9.]+-flash$",
+        "context_length": 1048576,
+        "max_completion_tokens": 65536,
+        "reasoning": {
+          "mandatory": true,
+          "default_enabled": true,
+          "supported_efforts": [
+            "high",
+            "medium",
+            "low"
+          ],
+          "default_effort": "medium"
+        },
+        "supported_parameters": [
+          "include_reasoning",
+          "max_tokens",
+          "reasoning",
+          "reasoning_effort",
+          "response_format",
+          "seed",
+          "stop",
+          "structured_outputs",
+          "temperature",
+          "tool_choice",
+          "tools",
+          "top_p"
+        ]
+      }
+    ]
+  },
+  "changes": [],
+  "errors": [],
+  "notes": []
+}
